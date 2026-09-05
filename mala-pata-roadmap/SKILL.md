@@ -41,31 +41,61 @@ no escribís código, no corrés el loop, no aplicás. Después el humano toma c
   app") → pedí lo mínimo y esperá; no inventes alcance.
 - Recuperable (falta 1-2 datos) → hacé preguntas concretas y esperá. Este es el gate de preguntas.
 
-## Paso 1 — Entender + investigar + anclar al código real
+## Paso 1 — Enumerar las DIMENSIONES del objetivo (ANTES de inventariar nada)
 
-En paralelo, sin escribir nada:
+⛔ **El error más peligroso de este skill: encoger el objetivo a lo que es fácil de medir.** Un
+objetivo grande casi siempre tiene VARIAS dimensiones/facetas; si te anclás al primer inventario que
+el código te deja contar fácil (una métrica, un grep, un report de higiene), vas a planificar solo
+esa faceta y dejar el resto afuera EN SILENCIO. Eso es un roadmap incompleto disfrazado de completo.
+
+Antes de tocar el código o cualquier métrica:
+
+1. **Descomponé el objetivo en sus dimensiones, derivadas de lo que el HUMANO dijo — no de lo que
+   se puede grepear.** Releé el objetivo literal y listá todas sus facetas. Ejemplos del tipo de
+   pregunta (agnósticos): ¿cuántos "tipos de cosa" abarca? ¿qué categorías nombró explícita o
+   implícitamente? ¿qué queda incluido por la frase "todo / cualquier / completo"? Escribí esa lista
+   de dimensiones — es el contrato de cobertura contra el que se mide el DAG después.
+2. **Marcá cuáles dimensiones son fáciles de medir y cuáles no.** Las difíciles de contar son
+   justamente las que se suelen dejar afuera — no las descartes por eso; hay que inventariarlas
+   igual (Paso 2), aunque cueste más.
+
+Si el objetivo resulta enorme (varias dimensiones, cada una grande de por sí), NO asumas que va todo
+en un roadmap: en el gate de cobertura (Paso 5) le ofrecés al humano scope (un roadmap
+multi-dimensión, o acotar este a una dimensión y las otras aparte). Vos no acotás en silencio.
+
+## Paso 2 — Inventariar CADA dimensión + investigar + anclar al código real
+
+En paralelo, sin escribir nada. **Inventariá TODAS las dimensiones del Paso 1, no solo la fácil:**
 
 1. **Proyecto activo**: detectá el repo/cwd y leé su arquitectura (`CLAUDE.md`, `ARCHITECTURE.md`,
    o equivalentes). `mem_search` por trabajo previo relacionado.
-2. **.codegraph/**: si el proyecto tiene índice, usá `codegraph_explore` (o los comandos read-only
-   de CodeGraph) para mapear los módulos, símbolos y dependencias reales que el objetivo toca.
+2. **.codegraph/ + inventario por dimensión**: si el proyecto tiene índice, usá `codegraph_explore`
+   (o los comandos read-only de CodeGraph) para mapear módulos, símbolos y dependencias. Corré un
+   inventario por CADA dimensión del Paso 1 (qué existe ya, qué está crudo, cuánto), no solo por la
+   que grepeás en un comando. Si una dimensión no se deja medir por código (p.ej. inventario de un
+   tipo de artefacto que no tiene marca única), decilo explícito y estimá — no la borres del mapa.
    Si no hay `.codegraph/`, mapeá con Read/Grep/Glob lo mínimo para entender las costuras reales.
 3. **Investigación externa** (WebSearch/WebFetch): cómo se resuelve este tipo de objetivo, cómo lo
    hacen equipos maduros, qué patrones/errores conocidos hay. **Anclá lo que traés a TU código** —
    la best-practice que ignora lo que ya existe no sirve (reuse-first, igual que preview).
-4. **Preguntas**: si después de esto quedan decisiones abiertas que cambian la forma del DAG,
-   preguntá ANTES de descomponer (no las resuelvas adivinando).
+4. **Preguntas**: si después de esto quedan decisiones abiertas que cambian la forma del DAG —
+   incluida cualquier dimensión que no pudiste inventariar bien — preguntá ANTES de descomponer
+   (no la resuelvas adivinando).
 
-## Paso 2 — Pase de arquitectura ANTES de descomponer
+## Paso 3 — Pase de arquitectura ANTES de descomponer
 
 Antes de cortar en fases, definí las **costuras reales** por donde va a partir el trabajo
 (interfaces, módulos, límites de datos), ancladas al `.codegraph/` del Paso 1. Esto es lo que hace
 que las fases salgan por bordes limpios y no por temas arbitrarios — la lección de los planners que
 descomponen sin visión de arquitectura y terminan con fases que no son shippeables solas.
 
-## Paso 3 — Descomponer a un DAG de fases
+## Paso 4 — Descomponer a un DAG de fases
 
 Producí el grafo de fases con estas reglas (todas, no opcionales):
+
+- **El DAG debe CUBRIR todas las dimensiones del Paso 1**, no solo la más fácil de medir. Cada
+  dimensión aparece cubierta por al menos una fase, o queda explícitamente marcada como diferida /
+  fuera de scope (para el gate del Paso 5). Nunca dejes una dimensión afuera sin nombrarla.
 
 - **Cada fase es un corte VERTICAL shippeable** — una rebanada end-to-end que deja el sistema
   funcionando, no una capa horizontal ("toda la DB", "toda la UI"). Si la fase no se puede mergear
@@ -83,13 +113,28 @@ Producí el grafo de fases con estas reglas (todas, no opcionales):
   entre en un loop. No 40 micro-fases; no una fase gigante. Si dudás entre 3 fases grandes o 8
   chicas, elegí el mínimo que respete el techo de perfil y el aislamiento de contexto.
 
-## Paso 4 — Gate humano del DAG
+## Paso 5 — Gate de cobertura + gate humano del DAG
 
-Presentá el DAG propuesto (las fases, sus perfiles, sus dependencias, el orden) y **esperá OK antes
-de escribir el `.md`**. Opciones: **Aprobar** (escribís el roadmap), **Ajustar** (el humano corrige
-fases/bordes/orden y re-presentás), **Detener**. No escribas el archivo sin aprobación.
+Antes de pedir OK, mostrá la **tabla de cobertura**: cada dimensión del Paso 1 y qué fase(s) la
+cubren (o "DIFERIDA / FUERA DE SCOPE" con el motivo). Esto es lo que impide encoger el objetivo en
+silencio — el humano VE qué queda dentro y qué afuera, y lo firma.
 
-## Paso 5 — Dónde guardar + escribir el roadmap
+```
+Cobertura del objetivo:
+- <dimensión A> → Fases 1, 3
+- <dimensión B> → Fase 4
+- <dimensión C> → DIFERIDA (motivo) / o "roadmap aparte"
+```
+
+Si el objetivo es enorme (varias dimensiones grandes), ofrecé explícitamente la decisión de scope:
+**(a)** un roadmap multi-dimensión (todas), o **(b)** acotar este roadmap a una/unas dimensiones y
+las otras en roadmaps aparte. El humano elige el scope; vos no lo decidís solo.
+
+Después presentá el DAG (fases, perfiles, dependencias, orden) y **esperá OK antes de escribir el
+`.md`**. Opciones: **Aprobar** (escribís el roadmap con el scope confirmado), **Ajustar** (el humano
+corrige dimensiones/fases/bordes/orden/scope y re-presentás), **Detener**. No escribas sin aprobación.
+
+## Paso 6 — Dónde guardar + escribir el roadmap
 
 1. **Preguntá dónde guardarlo**, sugiriendo el default **`docs/planning/roadmaps/<slug>.md`**
    (dentro del repo — este roadmap SÍ se versiona/commitea, a diferencia del kickoff transitorio de
@@ -115,7 +160,7 @@ fases_total: <N>
 ## Objetivo grande
 <qué se quiere lograr, para quién/dónde, cómo se ve el éxito — medible>
 
-## Arquitectura / costuras (Paso 2)
+## Arquitectura / costuras (Paso 3)
 <los bordes reales por donde parte el trabajo, anclados al .codegraph/ — módulos/interfaces/datos>
 
 ## Contexto e investigación
@@ -150,7 +195,7 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 - **NO ejecutás**: ni loop, ni organic, ni código. Solo el roadmap.
 - **Rutas absolutas** en comandos; relativas al hablarle al humano.
 - **Únicas preguntas válidas**: las del gate de vaguedad (Paso 0), las decisiones abiertas que
-  cambian el DAG (Paso 1), dónde guardar (Paso 5) y el gate del DAG (Paso 4). Nada de "ritmo" ni
+  cambian el DAG (Paso 2), dónde guardar (Paso 6) y el gate de cobertura + DAG (Paso 5). Nada de "ritmo" ni
   "artifact store".
 - **Redirigí a `/mala-pata-loop`** si el objetivo ya es loop-sized (Regla dura #2).
 - Cada fase del roadmap es insumo para UN kickoff de `/mala-pata-loop` — nunca las agrupes.

@@ -52,7 +52,10 @@ Medí qué tan accionable es la solicitud. Le falta lo mínimo si no podés infe
 5. **Idempotencia**: `mem_search("sdd/<change-name>/kickoff")`. Si ya existe uno igual/parecido → ofrecé actualizar o cambiar nombre.
 6. **Guard de tamaño / troceo**: un SDD = un objetivo coherente. Si abarca varios, recomendá trocear en N SDDs (con grafo de dependencias) y generá solo el primero.
 7. **Conflicto en vuelo**: `git worktree list` + branches activos. Si hay solape → avisá y confirmá antes de seguir.
-8. **Branch base — SIEMPRE se propone y confirma con el humano** (ver `references/profiles/_base.md`): proponé la base con tu razón — default `main`/`development` (integración), u otra rama si el trabajo construye sobre una feature en curso ("el código vive en X") — y **esperá el OK antes de fijarla en el kickoff**. Cualquier rama es válida con confirmación; lo prohibido es asumirla en silencio (ej. la branch actual del cwd por default) o bloquear solo por no ser main. Esta pregunta puede ir junto con la del perfil (Paso 1.5) en una sola interacción.
+8. **Branch base + tipo de rama — SIEMPRE se proponen y confirman con el humano** (ver `references/profiles/_base.md`):
+   - **Base**: proponé con tu razón — default `main`/`development` (integración), u otra rama si el trabajo construye sobre una feature en curso ("el código vive en X"). Cualquier rama es válida con confirmación; lo prohibido es asumirla en silencio o bloquear solo por no ser main.
+   - **Tipo de rama**: aconsejá el prefijo convencional según QUÉ es el cambio (`feature/` funcionalidad nueva, `fix/`/`bugfix/` corrección, `hotfix/` urgencia prod, `refactor/`, `chore/`, `docs/`, `release/`) y proponé el nombre completo `<tipo>/<change-name>`. **Nunca `sdd/...`**. Ej.: un fix de bug → propuesta `fix/<change-name>`; una feature nueva → `feature/<change-name>`.
+   - **Esperá el OK** antes de fijar `branch:` y `branch_base` en el kickoff. Estas dos confirmaciones pueden ir junto con la del perfil (Paso 1.5) en una sola interacción.
 
 ---
 
@@ -121,7 +124,7 @@ Armá el brief con esta estructura, **INYECTANDO** los MDs de reglas:
 change_name: <change-name>
 profile: <PERFIL>
 project: <project>
-branch: feature/<change-name>
+branch: <tipo>/<change-name>   # tipo confirmado (feature|fix|hotfix|refactor|chore|docs|release) — nunca sdd/
 branch_base: main|development
 worktree: <ruta absoluta sugerida>
 depends_on: <change-name(s)|ninguno>
@@ -145,8 +148,8 @@ created_at: <ISO 8601>
 El comando COMPLETO y ejecutable que crea el entorno (worktree off la branch base + symlinks de config/deps del stack). `loop-start` lo ejecuta TAL CUAL, sin decidir nada — si falta, el ejecutor PARA (Regla dura #2 de loop-start).
 
 ```bash
-# Convención ÚNICA (ver _base.md): branch feature/<change-name> · worktree <ABS-repo>/.claude/worktrees/<change-name>
-git -C <ABS-repo> worktree add <ABS-repo>/.claude/worktrees/<change-name> -b feature/<change-name> <branch_base>
+# Branch = el <tipo>/<change-name> confirmado (frontmatter `branch:`) · worktree dir = <change-name> (sin prefijo) · nunca sdd/
+git -C <ABS-repo> worktree add <ABS-repo>/.claude/worktrees/<change-name> -b <branch> <branch_base>
 ln -s <ABS-repo>/.env <ABS-repo>/.claude/worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>/.claude/worktrees/<change-name>/node_modules
 # (ajustar symlinks al stack real del proyecto)
 ```

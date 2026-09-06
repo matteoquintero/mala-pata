@@ -54,21 +54,28 @@ PROHIBIDO derivar la fase de un único hit de búsqueda. Enumerá el ciclo compl
 
 ## Paso C — Realidad git de cada SDD
 
-Convención de branch: `feature/<change-name>` — ÚNICA, sin variantes por repo (así lo
-fija `_base.md`; todos los skills mala-pata crean ramas con este patrón). Si un SDD no
-aparece bajo `origin/feature/<change>`, NO adivines otros patrones: marcá la celda git
-con `?` y flag "fuera de convención" en la evidencia — es una anomalía a corregir, no
-una convención alternativa a soportar.
+Convención de branch: `<tipo>/<change-name>` — el prefijo de tipo (`feature/`, `fix/`,
+`hotfix/`, `refactor/`, `chore/`, `docs/`, `release/`) se elige por trabajo y se confirma
+(ver `_base.md`); **nunca `sdd/`**. El sufijo `<change-name>` es único e igual pase lo que
+pase con el prefijo — por eso **localizá la rama por el sufijo, no por prefijo fijo**:
+1. Si tenés el kickoff, usá su `branch:` del frontmatter (nombre exacto ya confirmado).
+2. Si no, buscá por sufijo: `git branch -r --list '*/<change-name>'` (matchea cualquier
+   prefijo convencional). Si aparece bajo `sdd/...`, es una rama LEGACY fuera de convención —
+   marcala con flag "rama legacy sdd/ — renombrar" en la evidencia (los skills nuevos ya no
+   generan `sdd/`).
+   Nota: `<change-name>` es único → el sufijo no colisiona entre SDDs.
 
-- ¿Branch existe en remoto? `git branch -r --list 'origin/feature/<change>'`
+Con `<branch>` resuelto (llamalo así abajo):
+- ¿Branch existe en remoto? `git branch -r --list 'origin/<branch>'` (o el resultado del punto 2).
 - ¿Mergeado a integración? Confirmá por CONTENIDO/commits, no por `--merged`
   solo (el squash no aparece como merged). Dos señales fuertes:
   - `git log origin/<integr> --oneline | grep -i '<change o PR#>'`
   - un archivo/símbolo distintivo del SDD presente en `origin/<integr>`
     (`git grep <símbolo> origin/<integr> -- <path>`).
-- Stale: `git rev-list --left-right --count origin/<integr>...origin/feature/<change>`
+- Stale: `git rev-list --left-right --count origin/<integr>...origin/<branch>`
   → `A` (integr adelante) `B` (branch adelante). `A` grande = branch vieja.
-- ¿Worktree/branch local vivos? `git worktree list`, `git branch --list`.
+- ¿Worktree/branch local vivos? `git worktree list`, `git branch --list` (el worktree dir
+  sigue siendo `<change-name>` sin prefijo).
 
 ## Paso D — Máquina de estados (primer match gana, de arriba a abajo)
 

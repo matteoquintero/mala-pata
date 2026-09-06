@@ -29,8 +29,8 @@ Aplican a **todos los perfiles** (FULL / STANDARD / LITE / MINIMAL) y a **todos 
 ### Nombres
 
 - **`change-name`**: kebab-case, conciso, prefijo de dominio/BC cuando ayude. **Sin** sufijos de versión (`-v2`, `-nuevo` → dejan dead code huérfano). Máx ~40 chars.
-- **Branch**: `feature/<change-name>` — **convención ÚNICA, sin excepciones por repo**. No es estética: el radar (Fase B) localiza las ramas con `git branch -r --list 'origin/feature/<change>'` — una rama nombrada distinto se vuelve INVISIBLE para el diagnóstico. Si un pedido implica otro patrón de branch, PARÁ y consultá; no lo registres como excepción silenciosa.
-- **Worktree**: un worktree **por SDD** para aislamiento. **Ruta ÚNICA, sin excepciones**: `<ABS-repo>/.claude/worktrees/<change-name>`. Mismo motivo: radar y limpieza dependen de encontrarlos ahí.
+- **Branch**: `<tipo>/<change-name>` — el **tipo se aconseja según el trabajo y el humano lo confirma** (igual que la branch base). Tipos convencionales (Conventional Branch / git-flow): `feature/` (funcionalidad nueva), `fix/` o `bugfix/` (corrección), `hotfix/` (urgencia en prod), `refactor/` (refactor sin cambio de comportamiento), `chore/` (tooling/build/deps), `docs/` (documentación), `release/` (preparar release). lowercase + guiones, corto y descriptivo. **PROHIBIDO `sdd/...`** como prefijo de rama o worktree — es la convención de topic_keys de engram, NO de git. El `<change-name>` (sufijo) es único e igual pase lo que pase con el prefijo — por eso el radar puede localizar la rama por el `branch:` registrado en el kickoff o por sufijo `*/<change-name>`, sin depender del prefijo.
+- **Worktree**: un worktree **por SDD** para aislamiento. **Ruta ÚNICA**: `<ABS-repo>/.claude/worktrees/<change-name>` — el dir es solo `<change-name>` (sin prefijo de tipo, sin `sdd/`), estable para que radar y limpieza lo encuentren.
 - **Engram topic keys**: `sdd/<change-name>/{kickoff,explore,proposal,spec,design,tasks,apply-progress,verify-report,archive-report}`.
 
 ### Commits

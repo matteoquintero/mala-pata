@@ -99,9 +99,10 @@ las demás sesiones **esperan en su gate previo a Apply** y rebasan sobre `origi
   el objetivo; el conflicto se maneja serializando el Apply, no el lanzamiento.
 - **Anti-stale SIEMPRE** (Paso 2): ningún worktree se lanza sin estar en `origin/<base>`.
 - **Colisión de migraciones**: si ≥2 kickoffs de la ola seedean migración, recordales (en el reporte)
-  que la reserva de número vive en engram (`topic_key: migrations/registry`, el mecanismo del Paso 3
-  de `/mala-pata-loop`) — nunca por el número de archivo. Los kickoffs ya traen su reserva en el
-  frontmatter (`migrations_reserved`).
+  que el número es **provisional, no una reserva**: el primero que mergea se lo queda y los demás
+  renumeran al integrar (ver `/mala-pata-loop-start`, Paso 4.1-bis). La verdad de los números tomados
+  es **git** (medí las ramas), NO un registry en engram; los kickoffs traen su número provisional en el
+  frontmatter (`migrations_reserved`). Nunca por el número de archivo.
 - NO auto-lances kickoffs con **dependencia dura sin resolver** (el proveedor no cerró design): esos
   quedan para una ola posterior; el resto de la ola sí va.
 - `ff-only` y `fetch` son las únicas mutaciones de git; nunca `reset --hard`/`rebase` forzado acá.

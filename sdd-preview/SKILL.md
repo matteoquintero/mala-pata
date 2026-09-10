@@ -157,6 +157,18 @@ Preview está diseñado para correr **UNA vez** y ser lo bastante completo como 
 
 Backstop duro: **nunca hay una tercera interacción de preview** para el mismo change. Pasada 1 (completa) → a lo sumo un re-gate de delta → apply o stop. Un change no puede quedar rebotando entre preview y design/tasks.
 
+## Hallazgo de nivel-objetivo vs nivel-plan (clasificá antes de disponer)
+
+Preview revisa **el plan**, no **el objetivo** — el QUÉ ya tuvo que quedar cerrado en explore/propose/spec (ver `mala-pata-loop-start`, Regla dura #4). Por eso, antes de meter cualquier hallazgo en la tabla de disposición, clasificá su **nivel**:
+
+- **Nivel-plan** (duplicación, over-engineering, flujo hardcodeado, mala capa, reuse ignorado, task mal pensada) → es lo que preview SÍ dispone: REUSAR / REFACTOR / IGNORAR, o va por "Ajustar" si necesita un arreglo de plan puntual. Camino normal.
+- **Nivel-objetivo** (el hallazgo no es "el plan está mal" sino "el plan resuelve el objetivo equivocado / el objetivo no está definido / falta la mitad del alcance / el DoD no es testeable y no es un simple reword") → **NO lo dispongas** (no es REUSAR/REFACTOR/IGNORAR) y **NO lo mandes por "Ajustar"** (Ajustar es para plan o para reword de DoD, nunca para redefinir el QUÉ). Un defecto de objetivo que llega hasta acá significa que se coló por el gate de origen. La disposición correcta es **frenar y devolverlo atrás**:
+  - El gate ofrece **🛑 Detener** con motivo explícito `objetivo-no-listo → explore/propose`.
+  - El orchestrator marca `sdd/<change>/state = "objective-not-ready-at-preview"` (con la ruta absoluta del worktree vivo, igual que el pause normal) y el ciclo vuelve a **explore o propose** a redefinir el QUÉ.
+  - NO se re-audita el plan, NO se re-gatea el preview. Es un **escape hacia atrás**, no un round-trip: no viola "una sola pasada" (el preview termina acá; lo que sigue es planeación desde más atrás, no otra vuelta de preview).
+
+Regla de oro: **si te encontrás debatiendo con el humano si el objetivo está bien, ese debate NO va en preview.** Cortalo y devolvé a explore/propose. Preview asume objetivo definido; su trabajo empieza donde el objetivo termina.
+
 ## The GATE — DURO, siempre corre, siempre frena
 
 El gate corre **SIEMPRE**, tenga o no audit activo. Es **inmune a cualquier modo "auto"** del resto del SDD — esta fase FRENA independientemente. El artefacto DEBE incluir el gate payload listo para la función de preguntas interactiva disponible en el CLI.
@@ -174,7 +186,8 @@ El gate corre **SIEMPRE**, tenga o no audit activo. Es **inmune a cualquier modo
 - **Ruta según el TIPO de ajuste — NO todo ajuste regenera el plan** (esto es lo que evita el loop):
   - **DoD stale / criterio incomprobable u obsoleto** → el orchestrator edita SOLO la sección Definition of Done del archivo de kickoff y **vuelve DIRECTO al gate de preview**. NO reejecuta design/tasks — un ajuste de criterio no es un defecto de plan.
   - **Defecto real de plan** (duplicación, mala arquitectura, flujo hardcodeado, task mal pensada) → ahí sí vuelve a `sdd-tasks` o `sdd-design` según el feedback.
-  - Ante la duda, es DoD/gate (camino barato), no regeneración.
+  - **Defecto de objetivo** (el QUÉ está mal/incompleto, no el plan ni el wording del DoD) → NO es "Ajustar": es **Detener con motivo `objetivo-no-listo`** y volver a explore/propose (ver "Hallazgo de nivel-objetivo vs nivel-plan"). Ajustar nunca redefine el objetivo.
+  - Ante la duda entre DoD y plan, es DoD/gate (camino barato), no regeneración.
 - Estado en engram: `sdd/<change>/state = "adjustment-requested-at-preview"` con feedback + el tipo de ruta tomada.
 
 **🛑 Detener (pausa retomable, Opción A)**
@@ -182,6 +195,7 @@ El gate corre **SIEMPRE**, tenga o no audit activo. Es **inmune a cualquier modo
 - **NO borra** artefactos previos (explore/proposal/spec/design/tasks quedan en engram).
 - **Retomable con `/mala-pata-loop-start <ruta-del-kickoff>`** — al retomar, loop-start detecta el `paused-at-preview` y salta directo a este mismo gate (NO uses `/sdd-continue`: es de gentle-ai y no conoce la fase preview — rutea por encima del gate).
 - Estado registrado para memoria futura (si vuelve en 2 semanas sabe por qué frenó).
+- **Variante objetivo-no-listo**: si el motivo de detener es un defecto de **nivel-objetivo** (ver la sección de clasificación), el estado es `sdd/<change>/state = "objective-not-ready-at-preview"` en vez de `paused-at-preview`, y el retome NO es en el gate de preview sino en **explore/propose** (hay que redefinir el QUÉ primero). El resto es igual: worktree vivo registrado, artefactos previos intactos.
 
 ### Reglas del gate
 

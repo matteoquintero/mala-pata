@@ -29,15 +29,29 @@ Este skill se apoya en dos capas de reglas — el kickoff generado **DEBE** inye
 
 ---
 
-## Paso 0 — Gate de vaguedad
+## Paso 0 — Gate de vaguedad + Definition of Ready (DoR liviano)
 
-Medí qué tan accionable es la solicitud. Le falta lo mínimo si no podés inferir **(a)** qué se quiere lograr, **(b)** dónde/qué módulo/dominio toca, **(c)** cómo se sabe que está "listo".
+Antes de reinterpretar nada, medí si la solicitud está **lista para entrar al ciclo** (Definition of Ready). No es una fase nueva ni un artefacto aparte — es este mismo gate, afilado. La idea, tomada de prácticas probadas (Example Mapping / "Three Amigos" y el criterio *Testable* de INVEST), es simple: **un objetivo mal definido NUNCA debe arrancar el ciclo** — es infinitamente más barato pararlo acá que descubrirlo en preview.
 
-- **Accionable** (falta a lo sumo 1 dato menor) → procedé directo.
-- **Recuperable** (falta 1–2 datos) → hacé **1–2 preguntas concretas** y esperá; no inventes alcance.
-- **Demasiado vaga** (falta el objeto mismo: "mejorá la app", "hacelo mejor", sin qué/dónde) → **NO generes contexto.** Respondé exactamente:
+### Dos chequeos de readiness
 
-  > **trabaje vago 🛠️** — necesito al menos: *qué* querés lograr, *dónde* (módulo/feature) y *cuándo está listo*. Con eso te armo el contexto.
+**1. Tarjetas rojas (preguntas del QUÉ sin responder).** Una tarjeta roja es cualquier pregunta abierta sobre *qué se quiere* — NO sobre *cómo se implementa* (eso se resuelve en Design, no acá). Ejemplos de rojas: "¿esto incluye también X?", "¿el objetivo es A o B?", "¿qué pasa con el caso Y?". Regla:
+- **0 rojas** → el QUÉ está claro, seguí.
+- **1–2 rojas** → hacé esas preguntas concretas y esperá (nivel "Recuperable" de abajo). No inventes la respuesta.
+- **3+ rojas, o una sola roja que cambia el objetivo entero** → el objetivo NO está definido. NO generes contexto: devolvé el pedido a definición (respondé como "Demasiado vaga", listando las rojas). Meter esto al ciclo con las rojas abiertas es exactamente lo que después hace que el humano y el preview terminen debatiendo el objetivo en la fase equivocada.
+
+**2. DoD testeable (criterio *Testable* de INVEST).** El "cuándo está listo" tiene que poder escribirse como algo **verificable**, no como un deseo. Test rápido de cada criterio: *¿alguien que no seas vos podría decir objetivamente si se cumplió o no?*
+- "que funcione bien", "que quede prolijo", "que sea rápido" → NO testeable → es una tarjeta roja (falta el criterio real).
+- "que el endpoint responda <200ms en p95", "que el usuario pueda filtrar por fecha y vea el resultado sin recargar" → testeable → OK.
+- Si el "listo" no se puede volver testeable ni preguntando 1–2 cosas → tratalo como objetivo no definido (Demasiado vaga).
+
+### Resolución (los tres niveles de siempre, ahora con los dos chequeos adentro)
+
+- **Accionable** — 0 rojas y DoD testeable (o falta a lo sumo 1 dato menor) → procedé directo al Paso 1.
+- **Recuperable** — 1–2 rojas, o el DoD se vuelve testeable con 1–2 preguntas → hacé **esas preguntas concretas** y esperá. No inventes alcance.
+- **Demasiado vaga** — falta el objeto mismo ("mejorá la app", "hacelo mejor"), o 3+ rojas, o el "listo" no se puede volver testeable → **NO generes contexto.** Respondé exactamente:
+
+  > **trabaje vago 🛠️** — necesito al menos: *qué* querés lograr, *dónde* (módulo/feature) y *cuándo está listo* (en criterios verificables, no "que quede bien"). [Si hay tarjetas rojas concretas, listalas acá como bullets.] Con eso te armo el contexto.
 
   Y parás ahí. No reinterpretes ni adivines.
 
@@ -100,14 +114,14 @@ Las reglas transversales del método (Clean Architecture, DDD, SOLID, etc.) YA e
 
 ---
 
-## Paso 3 — Reservar migraciones en engram (si aplica)
+## Paso 3 — Número de migración: provisional al autor, final al merge (si aplica)
 
-Si el change necesita migraciones de DB:
+Si el change necesita migraciones de DB, **NO reserves un número como lock**. La fuente de verdad de los números YA tomados es **git, no engram** — un registry de reserva es un lock que las ramas largas no respetan y que además driftea (se lo vio decir "próximo libre 0071" cuando el real era 0003). En cambio:
 
-1. `mem_search("migrations/registry")` scope proyecto → `mem_get_observation`.
-2. Si NO existe registry → bootstrap (leé el último identificador de migración del proyecto y arrancá desde ahí).
-3. **Reservá** el/los próximo(s) identificador(es) para este change con `mem_save` topic_key `migrations/registry` (upsert).
-4. Registrá el/los identificador(es) reservado(s) en el kickoff.
+1. **Medí git, no un registry**: mirá qué números ocupan la rama base Y las ramas hermanas en vuelo — con el comando del proyecto para listar migraciones (ej. `git ls-tree -r --name-only <rama> -- <carpeta-de-migraciones>`; la carpeta y el esquema exactos los sabe `sdd-init`). **Nunca infieras el próximo contando archivos en disco** (la numeración puede no ser contigua).
+2. **Tomá el próximo libre como PROVISIONAL**: es el número con el que vas a escribir el archivo y correr el round-trip, pero **no es final** — si otra rama hermana mergea antes, este change renumera al integrar (ver `/mala-pata-loop-start`, Paso 4.1-bis). Regla del proyecto: "el primero que mergea se lo queda".
+3. **Registralo en el kickoff como provisional-en-disputa, no como reserva**: en `migrations_reserved` del frontmatter poné el número provisional + la nota "final al merge; 1° que mergea se lo queda; re-verificar contra hermanas justo antes del merge". Si hay varias ramas peleando el mismo número, listalas.
+4. **El CÓMO renumerar es del stack, no de acá**: si el proyecto usa un migrador con estado encadenado (journal/snapshots, ej. drizzle-kit), renumerar **NO es renombrar archivos — es regenerar**. Ese detalle vive en `sdd-init/<project>` / el `CLAUDE.md` del repo, no en estas reglas.
 
 Si no necesita migraciones, dejalo explícito ("no aplica") en el kickoff.
 
@@ -129,7 +143,7 @@ branch_base: main|development
 worktree: <ruta absoluta sugerida>
 depends_on: <change-name(s)|ninguno>
 paralelizable_con: <change-name(s)|ninguno>
-migrations_reserved: <identificador(es)|no aplica>
+migrations_reserved: <número(s) provisional(es) + "final al merge; 1° que mergea se lo queda"|no aplica>
 created_at: <ISO 8601>
 ---
 

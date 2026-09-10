@@ -48,9 +48,11 @@ De cada kickoff sacá:
 2. **Conflicto por archivo compartido**: intersectá las áreas afectadas. Dos kickoffs que editan
    el MISMO archivo **no pueden hacer Apply en paralelo** (conflicto de merge) → serializá su Apply
    o escaloná. La **planeación** (explore→design) SÍ puede ir en paralelo (no escribe código).
-3. **Colisión de migraciones**: si ≥2 seedean migración y van en paralelo → recordá que la reserva de
-   número vive en engram (`topic_key: migrations/registry`, mecanismo del Paso 3 de `/mala-pata-loop`;
-   los kickoffs la traen en el frontmatter `migrations_reserved`); nunca confiar en el número de archivo.
+3. **Colisión de migraciones**: si ≥2 seedean migración y van en paralelo → el número es **provisional,
+   no una reserva**: el primero que mergea se lo queda y los demás renumeran al integrar (ver
+   `/mala-pata-loop-start`, Paso 4.1-bis). La verdad de los números tomados es **git** (medí las ramas),
+   NO un registry en engram; los kickoffs traen su número provisional en el frontmatter
+   `migrations_reserved`. Nunca confiar en el número de archivo ni en un registry.
 4. **Triage por valor**: los marcados "evaluar si amerita"/baja severidad → **diferilos** fuera del
    primer lote (o cerralos en propose sin código). No los metas en la ola 1.
 5. **Split (SOLO recomendar)**: si un kickoff mezcla 2 concerns independientes o es size L con dos

@@ -39,7 +39,7 @@ contexto y sus propios gates. Este skill solo **prepara y abre** esas sesiones.
 ## Paso 1 — Un worktree por kickoff (§18, aislamiento real)
 Por cada `change-name`, secuencial (para no lockear el índice de git):
 ```
-git -C /ABS worktree add /ABS/.claude/worktrees/<change-name> -b feature/<change-name> <branch-base>
+git -C /ABS worktree add /ABS-worktrees/<change-name> -b feature/<change-name> <branch-base>
 ```
 Después symlinkeá los untracked que el stack necesite (`.env`/`node_modules` o equivalente), igual que
 hace el comando de arranque de un kickoff individual. ⚠️ Para verificar el symlink de `.env` NUNCA lo
@@ -52,7 +52,7 @@ de las sesiones concluyen sobre código stale. Por eso, ANTES de abrir las tabs:
 ```
 git -C /ABS fetch origin <base>
 # por cada worktree recién creado (branches sin commits → ff limpio, sin tocar historia):
-git -C /ABS/.claude/worktrees/<change-name> merge --ff-only origin/<base>
+git -C /ABS-worktrees/<change-name> merge --ff-only origin/<base>
 ```
 Verificá que cada worktree quede en `origin/<base>` (`git -C <wt> rev-parse --short HEAD`). Si un
 worktree ya tuviera commits y el ff fallara, PARÁ y avisá (no forces): ese worktree no nace limpio.
@@ -71,13 +71,13 @@ worktree ya tuviera commits y el ff fallara, PARÁ y avisá (no forces): ese wor
           - title: <change-name>
             color: blue
             layout:
-              cwd: /ABS/.claude/worktrees/<change-name>
+              cwd: /ABS-worktrees/<change-name>
               commands:
                 - exec: claude "/mala-pata-loop-start <ruta-absoluta-del-kickoff-1.md>"
           - title: <change-name-2>
             color: green
             layout:
-              cwd: /ABS/.claude/worktrees/<change-name-2>
+              cwd: /ABS-worktrees/<change-name-2>
               commands:
                 - exec: claude "/mala-pata-loop-start <ruta-absoluta-del-kickoff-2.md>"
           # ... una tab por kickoff de la ola

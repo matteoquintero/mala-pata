@@ -163,8 +163,8 @@ El comando COMPLETO y ejecutable que crea el entorno (worktree off la branch bas
 
 ```bash
 # Branch = el <tipo>/<change-name> confirmado (frontmatter `branch:`) · worktree dir = <change-name> (sin prefijo) · nunca sdd/
-git -C <ABS-repo> worktree add <ABS-repo>/.claude/worktrees/<change-name> -b <branch> <branch_base>
-ln -s <ABS-repo>/.env <ABS-repo>/.claude/worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>/.claude/worktrees/<change-name>/node_modules
+git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <branch> <branch_base>
+ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>-worktrees/<change-name>/node_modules
 # (ajustar symlinks al stack real del proyecto)
 ```
 

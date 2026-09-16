@@ -13,6 +13,7 @@ Skills propias del sistema **mala-pata** (capa de orquestación SDD sobre Claude
 | `mala-pata-radar` | Descubre (engram) y diagnostica (git) los SDD por proyecto o `global` — read-only. |
 | `mala-pata-organic` | Fast-lane para cambios chicos ya entendidos, sin ciclo SDD completo. |
 | `mala-pata-roadmap` | Capa por encima del loop: objetivo grande → DAG de fases loop-sized → roadmap `.md` en `docs/planning/roadmaps/`. |
+| `mala-pata-walkthrough` | De un PR/change o un roadmap: recorrido de prueba en Given/When/Then → dos carriles (QA/UAT interno + doc how-to para cliente final), sin mezclarlos (Diátaxis + BDD). |
 | `sdd-preview` | Override custom de la fase preview: resumen en cristiano + self-assessment 0/1/2 reviewers + gate anti-sello (una sola pasada). |
 
 ## Relación con la instalación viva
@@ -24,7 +25,7 @@ Este repo **no está symlinkeado** — puede quedar desactualizado respecto a `~
 ```bash
 for s in mala-pata-loop mala-pata-loop-start mala-pata-loop-orchestrate \
          mala-pata-loop-orchestrate-start mala-pata-radar mala-pata-organic \
-         mala-pata-roadmap sdd-preview; do
+         mala-pata-roadmap mala-pata-walkthrough sdd-preview; do
   rm -rf "$s" && cp -R "$HOME/.agent-skills/$s" "$s"
 done
 git add -A && git commit -m "sync: snapshot de ~/.agent-skills"

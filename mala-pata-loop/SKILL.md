@@ -173,6 +173,10 @@ worktree: <ruta absoluta sugerida>
 depends_on: <change-name(s)|ninguno>
 paralelizable_con: <change-name(s)|ninguno>
 migrations_reserved: <número(s) provisional(es) + "final al merge; 1° que mergea se lo queda"|no aplica>
+sdd_preflight:              # recomendaciones que el runner (loop-start) usa como default de la pregunta canónica del hook
+  pace: interactive        # interactive|automatic — FULL/STANDARD => interactive; LITE/MINIMAL pueden ser automatic
+  artifacts: engram        # engram|openspec|both — default engram para este usuario
+  pr_strategy: ask-on-risk # ask-on-risk|single-pr|auto-chain — default ask-on-risk
 created_at: <ISO 8601>
 ---
 
@@ -234,6 +238,8 @@ Criterios verificables, no bullets vagos — usá Given/When/Then para el compor
 ```
 
 El kickoff DEBE incluir el frontmatter completo y el bloque "Reglas del método" con las rutas a los MDs — el ejecutor los lee al arrancar. No comprimas la Definition of Done para que "quepa": ya no hay presupuesto de caracteres, usá el espacio que el change necesite.
+
+`sdd_preflight` son solo RECOMENDACIONES — NO satisfacen el hook de preflight de gentle-ai (que exige un `AskUserQuestion` real y en vivo en la sesión del runner); `mala-pata-loop-start` las lee para pre-llenar el texto de recomendación de la pregunta canónica obligatoria del hook. Derivá `pace` del perfil: FULL/STANDARD → `interactive`; LITE/MINIMAL pueden ir `automatic`.
 
 ---
 

@@ -22,7 +22,7 @@ Tu trabajo: leer el *kickoff* que dejó `/mala-pata-loop` y **correr el CICLO SD
 
 > 🌐 **Agnóstico de stack.** Los ejemplos concretos de este comando (`.env`, `node_modules`, `npm`, `TEST_DB_URL`, Storybook, `gh`) son del stack Node/Postgres/GitHub. **Mapealos al stack real del proyecto** (entorno/DB de pruebas, gestor de deps, archivos de config/secrets, workshop de componentes, host de PRs según lo que el proyecto use). La convención del proyecto manda sobre cualquier ejemplo.
 
-> ⛔ **Regla dura #3 — únicas preguntas interactivas válidas de todo el ciclo: confirmación de branch base (Paso 2.2) y destino del PR/merge (Paso 4).** Nada más se pregunta como gate/menú. **RDD NO corre en el ciclo SDD** — es del carril organic/ODD (ver `mala-pata-organic`), así que acá no hay gate de receipt. En particular: **NUNCA preguntes "ritmo"** (interactivo/automático) — el ritmo siempre es interactivo fase-por-fase, ya definido por el perfil del kickoff (ver `_base.md`); un modo automático solo existe si el humano lo pide él mismo, explícito, sin que se lo ofrezcas como opción, **y aun pedido tiene techo por tamaño: solo LITE/MINIMAL; en FULL/STANDARD el ciclo va interactivo sí o sí** (ver `_base.md`, "techo de automático por tamaño de objetivo"). **NUNCA preguntes "artifact store"** — siempre es `engram` para este usuario, no se ofrece como elección. Si en algún punto se te ocurre armar un gate de selección (tabs, menú de "Ritmo/Artefactos/PRs/Revisión" o similar) antes de arrancar el ciclo, es una señal de que estás inventando fuera de este skill — no lo hagas: andá directo del preflight (Paso 2) a la fase Explore (Paso 3).
+> ⛔ **Regla dura #3 — hay EXACTAMENTE UN gate de preflight obligatorio: el preflight canónico de gentle-ai SDD (3 preguntas), preguntado UNA sola vez en el Paso 2 (sub-paso nuevo, ver Paso 2.9), en la sesión raíz/padre interactiva, ANTES del primer dispatch de un Agent `sdd-*`.** No es opcional ni discrecional de este skill: desde gentle-ai 3.7, el hook `PreToolUse:Agent` (`gentle-ai sdd-preflight-hook`) **rechaza todo dispatch `sdd-*`** si no encuentra, en el transcript en vivo de la sesión actual, un `AskUserQuestion` real y byte-exacto ya respondido por el humano — ni el kickoff, ni engram, ni ningún estado en disco lo satisfacen. Las preferencias opinionadas de mala-pata (ritmo interactivo, artefactos en engram, PR ask-on-risk) se siguen llevando, pero ahora como la **recomendación** dentro del texto de cada pregunta (tomada del bloque `sdd_preflight` del kickoff) — el humano sigue eligiendo, porque el hook exige una respuesta real y las labels/orden de las opciones las fija gentle-ai (no se pueden anotar ni reordenar, ver Paso 2.9). Las otras interacciones humanas del ciclo se mantienen igual: confirmación de branch base (Paso 2.2) y destino del PR/merge (Paso 4). **RDD sigue sin correr en el ciclo SDD** — es del carril organic/ODD (ver `mala-pata-organic`), así que acá no hay gate de receipt. Fuera de estos tres puntos (preflight canónico, branch base, destino de PR/merge) no inventes gates nuevos — si se te ocurre armar un menú adicional de selección antes de arrancar el ciclo, es señal de que estás agregando algo fuera de este skill.
 
 > ⛔ **Regla dura #4 — el objetivo se define ANTES de preview, nunca EN preview. Alarma de debate.** El preview existe para revisar **si lo que se va a hacer está bien**, NO para discutir **si el objetivo está bien** — el QUÉ ya tuvo que quedar cerrado en explore/propose/spec. Durante las fases de planeación (explore→spec), si notás que se está **debatiendo mucho el QUÉ** — vuelven preguntas sobre el objetivo, el alcance se mueve, aparecen "¿y esto también?" que no cierran, o la misma decisión se re-discute más de una vez — eso es la señal de que **el objetivo no quedó bien definido** (tarjetas rojas que se colaron por el gate de `/mala-pata-loop`, ver su Paso 0). NO sigas empujando hacia adelante: **devolvé el ciclo a explore o propose** para volver a fijar el QUÉ, y recién cuando esté cerrado seguís. Un objetivo con el QUÉ todavía en discusión **NO puede llegar a preview**. Esto no es re-correr fases por gusto — planear sobre un objetivo movedizo garantiza tirar el plan después.
 
@@ -53,6 +53,76 @@ Tu trabajo: leer el *kickoff* que dejó `/mala-pata-loop` y **correr el CICLO SD
 6. **Init ya hecho** (lo garantiza `/mala-pata-loop`, una vez por proyecto) — chequeo de EXISTENCIA EXACTA, no exploración: `mem_search(query: "sdd-init/{project}")` devuelve varios resultados por ranking difuso (otros kickoffs/artefactos del proyecto). **Quedate ÚNICAMENTE con el ítem cuyo título/topic_key sea EXACTAMENTE `sdd-init/{project}`; el resto son falsos positivos del ranking — NO los leas ni los consideres contexto de esta tarea.** Con ese ítem exacto: `mem_get_observation` y leé `strict_tdd` (si `true`, NO NEGOCIABLE). Si el ítem exacto NO aparece → avisá al orquestador; no corras el init.
 7. **Cargá EXACTAMENTE los skills que el kickoff eligió por objetivo (Paso 2 de `/mala-pata-loop`), ni más ni menos.** Base: `clean-architecture` y `solid` siempre; `clean-ddd-hexagonal` + `design-patterns` solo si el objetivo toca backend/dominio. Condicionales: los de la sección "Skills condicionales" del kickoff (ej. `database-design`, `ui-ux-pro-max`, `heuristic-evaluation`, `rag-*`, etc. — según lo que el kickoff listó para ESTE objetivo). Vía el tool **Skill**, uno por nombre (no todos en una llamada); los de plugin usan el nombre `plugin:skill` del listado. **No agregues skills que el kickoff no eligió** — la selección enfocada ya se hizo al generar el brief; cargar de más solo hace ruido.
 8. **No explores el código para "ir resolviendo"** — solo lo mínimo que necesite la fase de Spec/Design.
+
+### Paso 2.9 — Gate de preflight canónico de gentle-ai (OBLIGATORIO, una sola vez)
+
+Antes del **primer** dispatch de un Agent `sdd-*` (o sea, antes de la fase Explore del Paso 3), hacé **UNA sola llamada** a `AskUserQuestion` con exactamente 3 preguntas single-select, en la sesión raíz/padre (nunca desde un subagente — un subagente jamás puede portar esta autoridad, el hook lee el transcript de la sesión que dispara el Agent). Sin esto, `gentle-ai sdd-preflight-hook` va a rechazar el dispatch de `sdd-explore`.
+
+**Forma exacta, byte-exacta — no la alteres:**
+
+- Los textos de pregunta empiezan literalmente con `Gentle AI SDD preflight 1/3:`, `Gentle AI SDD preflight 2/3:` y `Gentle AI SDD preflight 3/3:` (el validador usa el regex `/^Gentle AI SDD preflight \d\/3:\s*/`). Lo que va DESPUÉS del marcador es libre — ahí metés la recomendación del kickoff.
+- Los `header` de cada grupo son EXACTAMENTE: `Pace`, `Artifacts`, `PR strategy`.
+- Las labels de las opciones son EXACTAS y van EN ESTE ORDEN — el validador compara por índice, así que NO reordenes ni le agregues sufijos tipo "(Recomendado)":
+  - Q1 Pace: `Interactive`, luego `Automatic`.
+  - Q2 Artifacts: `OpenSpec`, luego `Engram`, luego `Both`.
+  - Q3 PR strategy: `Ask me`, luego `Single PR`, luego `Auto`.
+- Descripciones canónicas (usalas tal cual):
+  - Interactive: `Confirm before each SDD phase advances.`
+  - Automatic: `Advance through SDD phases without per-phase confirmation.`
+  - OpenSpec: `Track this change with OpenSpec proposal, spec, design, and task files.`
+  - Engram: `Track this change with Engram memory topics.`
+  - Both: `Track this change with OpenSpec files and Engram memory together.`
+  - Ask me: `Ask before opening a pull request when review risk is high.`
+  - Single PR: `Deliver the change as a single pull request.`
+  - Auto: `Chain pull requests automatically as work completes.`
+
+**Plantilla literal del payload** (copiala tal cual, solo completando la recomendación entre `<>` en cada texto de pregunta):
+
+```
+AskUserQuestion({
+  questions: [
+    {
+      question: "Gentle AI SDD preflight 1/3: Ritmo del ciclo — el kickoff recomienda: <Interactive|Automatic>",
+      header: "Pace",
+      multiSelect: false,
+      options: [
+        { label: "Interactive", description: "Confirm before each SDD phase advances." },
+        { label: "Automatic", description: "Advance through SDD phases without per-phase confirmation." }
+      ]
+    },
+    {
+      question: "Gentle AI SDD preflight 2/3: Artefactos de tracking — el kickoff recomienda: <OpenSpec|Engram|Both>",
+      header: "Artifacts",
+      multiSelect: false,
+      options: [
+        { label: "OpenSpec", description: "Track this change with OpenSpec proposal, spec, design, and task files." },
+        { label: "Engram", description: "Track this change with Engram memory topics." },
+        { label: "Both", description: "Track this change with OpenSpec files and Engram memory together." }
+      ]
+    },
+    {
+      question: "Gentle AI SDD preflight 3/3: Estrategia de PR — el kickoff recomienda: <Ask me|Single PR|Auto>",
+      header: "PR strategy",
+      multiSelect: false,
+      options: [
+        { label: "Ask me", description: "Ask before opening a pull request when review risk is high." },
+        { label: "Single PR", description: "Deliver the change as a single pull request." },
+        { label: "Auto", description: "Chain pull requests automatically as work completes." }
+      ]
+    }
+  ]
+})
+```
+
+**De dónde sale la recomendación**: leé el frontmatter del kickoff, bloque `sdd_preflight:` (`pace` / `artifacts` / `pr_strategy` — ver `/mala-pata-loop`, Paso 4). Mapeo de tokens a labels: Pace → `interactive`→`Interactive`, `automatic`→`Automatic`; Artifacts → `openspec`→`OpenSpec`, `engram`→`Engram`, `hybrid`→`Both`; PR strategy → `ask-on-risk`→`Ask me`, `single-pr`→`Single PR`, `auto-chain`→`Auto`. Inyectá esa label como recomendación en el texto de la pregunta correspondiente (ej.: `... — el kickoff recomienda: Engram`). **Si el kickoff NO trae bloque `sdd_preflight`** (kickoff legacy), recomendá los defaults de mala-pata: `Interactive` / `Engram` / `Ask me`.
+
+**Reglas duras de este gate:**
+- Exactamente 3 preguntas, en UNA sola llamada — nunca 3 llamadas separadas ni más/menos preguntas.
+- Labels byte-exactas y en el orden canónico de arriba — nunca reordenar, nunca agregar sufijos ("(Recomendado)" u otro) a una label. La recomendación va SOLO en el texto de la pregunta, después del marcador.
+- Tiene que correr en la sesión raíz/padre — un subagente nunca puede satisfacer este gate.
+- **NUNCA escribas ni dupliques manualmente el bloque `## SDD Session Preflight`** — el runtime lo antepone automáticamente al prompt del hijo cuando el preflight se resuelve con éxito.
+
+Con la respuesta del humano, el hook ya tiene lo que necesita: seguí directo al Paso 3 (dispatch de `sdd-explore`).
 
 ## Paso 3 — CICLO SDD, una fase por vez (cada fase: resumen + PAUSA + OK)
 Corré las fases EN ORDEN, **una por una** (nunca dos juntas, nunca spec y design en paralelo), reusando los skills `sdd-*` del proyecto y persistiendo cada artefacto en engram (`sdd/<change-name>/<artefacto>`). No avances de fase sin el OK del usuario.

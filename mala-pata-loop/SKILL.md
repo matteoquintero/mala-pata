@@ -103,14 +103,43 @@ Presentá la propuesta al humano con **la función de preguntas interactiva disp
 
 ---
 
-## Paso 2 — Clasificar dominio (skills condicionales adicionales)
+## Paso 2 — Elegir skills SEGÚN EL OBJETIVO (enfocado, no una lista fija)
 
-Las reglas transversales del método (Clean Architecture, DDD, SOLID, etc.) YA están en `_base.md`. Este paso identifica **skills adicionales condicionales** según el dominio del change:
+El ejecutor va a cargar exactamente los skills que este kickoff liste — así que elegilos **por el Alcance IN del objetivo**, no "por si acaso". Menos y precisos > muchos y genéricos (un set inflado hace al agente más lento y gasta tokens sin mejorar el resultado).
 
-- Si toca **UI/frontend** → cargar `heuristic-evaluation` (Nielsen) además de lo base.
-- Si toca **RAG / LLM / búsqueda / embeddings** → cargar `rag-architect`, `rag-retrieval`, `hybrid-search-implementation`, `llm-app-patterns`, `prompt-engineering-patterns`, `evolutionary-metric-ranking` según corresponda.
+### Base del método (motor de ingeniería)
 
-**Init guard**: `mem_search("sdd-init/<project>")`. Si NO existe → correr `sdd-init` para detectar stack, convenciones, testing, `strict_tdd`. Si ya existe → reusá.
+- **Siempre** (aplican a cualquier código): `clean-architecture`, `solid`.
+- **Si el objetivo toca lógica de backend/dominio** (no para un cambio puramente visual/estático): + `clean-ddd-hexagonal`, `design-patterns`.
+
+### Condicionales por dominio — elegí SOLO las señaladas por el objetivo
+
+| Señal en el objetivo (Alcance IN) | Skills a cargar |
+|---|---|
+| **DB**: schema, migración, query, modelo de datos, índices | `database-design` |
+| **UI/frontend**: pantalla, componente, formulario, flujo de usuario | `ui-ux-pro-max`, `heuristic-evaluation` |
+| **Diseño visual** nuevo / rediseño / branding / "que no parezca IA" | `frontend-design`, `impeccable` |
+| **Color / tokens / paletas** | `color-expert` |
+| **Animación / micro-interacción / transición / scroll** | `motion-design` (+ `gsap-*` / `threejs-*` **solo si el stack los usa**) |
+| **Diagramas** de arquitectura/flujo/estados | `archify` o `diagram-design` |
+| **Charts / dashboards / data viz** | `dataviz` |
+| **Docs** para humanos (runbook, guía) / doc de prueba o de cliente | `cognitive-doc-design` / `mala-pata-walkthrough` |
+| **RAG / búsqueda / embeddings** | `rag-architect`, `rag-retrieval`, `hybrid-search-implementation` |
+| **App LLM / agentes / prompts / tools** | `llm-app-patterns`, `prompt-engineering-patterns`, `ai-engineer`, `multi-agent-patterns`, `tool-design` |
+| **Evaluación de modelos / LLM-judge / métricas** | `advanced-evaluation`, `evaluation`, `evolutionary-metric-ranking` |
+| **Memoria de agentes / persistencia cross-sesión** | `memory-systems` |
+| **Diseño de sistema grande / build-vs-buy / descomposición** | `software-architect` |
+| **Seguridad / revisión de vulnerabilidades** | `security-review` |
+| **Librería/framework/API** (setup, versión, sintaxis) | `context7` (ya es regla global — nombralo en el kickoff si es central al objetivo) |
+
+### Reglas de selección (no negociables)
+
+1. **Por objetivo, no por reflejo**: si el Alcance IN no lo menciona, no lo cargues. Ej.: un fix de query NO carga `ui-ux-pro-max`; un rediseño de pantalla NO carga `rag-*`.
+2. **Techo ~3-4 condicionales.** Si te salen más, probablemente el objetivo es demasiado grande → trocealo (Paso 1.6), no cargues de todo.
+3. **Cada skill elegido va en el kickoff** (sección "Skills condicionales") **con UNA línea de por qué** (qué parte del objetivo lo justifica). El ejecutor carga esa lista literal.
+4. **Solo skills que EXISTAN** en la sesión (mirá `<available_skills>`); nunca inventes un nombre. Algunos son de plugin → usá el nombre `plugin:skill` tal como aparece en el listado. Los stack-specific (`gsap-*`, `threejs-*`, `go-testing`, `neon-postgres`) solo si `sdd-init` confirma que el stack los usa.
+
+**Init guard**: `mem_search("sdd-init/<project>")`. Si NO existe → correr `sdd-init` para detectar stack, convenciones, testing, `strict_tdd`. Si ya existe → reusá (es lo que te dice qué stack-specific aplican).
 
 ---
 

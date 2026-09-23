@@ -82,6 +82,8 @@ worktree ya tuviera commits y el ff fallara, PARÁ y avisá (no forces): ese wor
                 - exec: claude "/mala-pata-loop-start <ruta-absoluta-del-kickoff-2.md>"
           # ... una tab por kickoff de la ola
     ```
+- ⛔ **El `cwd` de cada tab DEBE ser la ruta ABSOLUTA del worktree** (`<ABS-repo>-worktrees/<change-name>`), NUNCA el repo principal. Ese `cwd` fija el directorio base de la sesión — al que la cwd del shell **vuelve tras cada comando** (ver `mala-pata-loop-start`, Paso 2.4). Si apunta al main, cada comando "pelado" de esa sesión opera sobre el main y termina mezclando trabajos o barriendo archivos sueltos del working tree principal. Verificá que cada `cwd:` del YAML sea el worktree correcto antes de abrir.
+- ⚠️ **Worktree movido/renombrado = relanzar, no arreglar en caliente.** Si un worktree se reubica (ej. la migración de `.claude/worktrees/` a `<repo>-worktrees/`) mientras hay sesiones en vuelo, esas sesiones quedan ancladas a la ruta vieja y caen al main en cada reset de cwd. Hay que cerrarlas y relanzarlas con el `cwd` nuevo; no se corrige dentro de la sesión.
 - Abrir: `open "warp://launch/mpl-orchestrate-<slug-lote>"`.
   Si el URI no dispara en esta versión de Warp → decile al usuario que la abra desde el
   **Command Palette → "Launch Configuration" → mpl-orchestrate-<slug-lote>** (el YAML ya quedó escrito).

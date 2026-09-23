@@ -1,92 +1,79 @@
 ---
 name: mala-pata-organic
-description: Corre un cambio chico y ya entendido de punta a punta en UNA sola pasada — worktree → Organic Implementation Routing (direct inline / delegated direct) → apply (TDD) → verify liviano → PR → limpieza. Sin ciclo SDD completo (sin explore/propose/spec/design/preview, sin kickoff separado). Si en el camino se descubre que el alcance no era chico, escala a /mala-pata-loop. Trigger: pedido puntual ya entendido, pocos archivos, sin decisión de arquitectura pendiente.
+description: Envuelve el ODD nativo de gentle-ai (Organic Driven Development) y lo organiza en el flujo mala-pata — autorizar → worktree aislado → explorar → clasificar → (feature-doc si es substancial) → implementar task-by-task (work-unit commit + RDD por commit) → cerrar (PR/CI/limpieza) → tabla. RDD vive ACÁ (por commit), NO en el loop/SDD. Si el trabajo necesita spec/design formal, escala a /mala-pata-loop. Trigger: cambio directo ya entendido, o trabajo substancial sin decisión de arquitectura pendiente.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
-# /mala-pata-organic — cambio directo, sin ciclo SDD completo
+# /mala-pata-organic — el carril ODD, organizado en tu flujo
 
 Pedido del usuario: **entrada entregada por el CLI**
 
-Tu trabajo: interpretar el pedido YA (nada de kickoff separado, nada de explore/propose/spec/design/preview) y correrlo de punta a punta en UNA sola pasada: worktree → ruta orgánica → apply → verify → PR → limpieza. Es el camino rápido — si el pedido no entra en ese molde, este skill tiene que frenar y mandarte a `/mala-pata-loop`, no forzarlo.
+Tu trabajo: correr el cambio por el **carril ODD** (Organic Driven Development) de gentle-ai, pero **organizado en el flujo mala-pata** (worktree aislado, gates humanos, tabla final). Es a ODD lo que `/mala-pata-loop` es al SDD: **no reimplementás ODD — lo orquestás.**
 
-> ⛔ **Regla dura #1 — esto es para cambios CHICOS y ya entendidos.** Si en cualquier punto descubrís que en realidad toca muchos archivos, hay una decisión de arquitectura sin resolver, o el alcance no está claro — **PARÁ** y decíselo al usuario: "esto no es un `/mala-pata-organic`, hace falta `/mala-pata-loop`". No fuerces un cambio grande por acá — es exactamente el error que este skill existe para evitar.
->
-> ⛔ **Regla dura #2 — la base sale de DONDE VIVE el código que se toca, y SIEMPRE se confirma con el humano antes de crear/tocar nada.** A diferencia del ciclo SDD completo (que sí exige `main`/`development`), organic puede salir de **cualquier rama** — un fix sobre código que solo existe en una feature en curso se hace SOBRE esa feature (commits incrementales en su worktree existente, o worktree nuevo off esa rama), no off main. Lo no negociable acá no es la rama: es la **pregunta** — proponé la base con tu razón ("el código que toco vive en X") y esperá el OK. Nunca asumas la base en silencio, ni bloquees por no ser main.
->
-> ⛔ **Regla dura #3 — únicas preguntas interactivas válidas: confirmación de la base (Regla #2), destino del PR/merge y consent de Revisión/RDD** (estas dos últimas con el mismo mecanismo que el ciclo completo, ver Paso 5). Nada de "ritmo" ni "artifact store" — igual que en `/mala-pata-loop-start`.
+> 📖 **El protocolo ODD es la fuente de verdad.** Sus 7 pasos (Authorize → Explore → Resolve → Classify → Track → Implement → Close), el modelo de feature-doc (`odd/tasks/<feature>.md` + mirror en engram `odd/<feature>/tasks`), los work-unit commits, la evaluación RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill NO los duplica: los sigue y les suma la capa mala-pata. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
 
-## Paso 0 — Gate de tamaño (antes de tocar nada)
+## Reglas duras
 
-Medí si el pedido entra en el molde:
-- **(a)** ¿Ya sabés exactamente qué archivo(s) tocar y cómo, sin necesitar investigar el "por qué" del negocio?
-- **(b)** ¿Son pocos archivos (orientativo: 1-5), sin componente UI nuevo genuino, sin endpoint/contrato nuevo?
-- **(c)** ¿No hay ninguna decisión de arquitectura pendiente por resolver con el humano?
+> ⛔ **#1 — Escalá a `/mala-pata-loop` (SDD) SOLO si el trabajo necesita spec/design FORMAL**: decisión de arquitectura sin resolver, contrato/endpoint nuevo, o riesgo que amerite el ciclo completo con preview. ODD maneja tanto lo chico como lo **substancial** (con feature-doc); "substancial" NO significa "hace falta SDD". No fuerces SDD por tamaño ni por conteo de archivos.
+> ⛔ **#2 — Worktree + base: proponé y confirmá.** La base sale de DONDE VIVE el código que tocás (`main`/`development`, o una feature en curso). Proponé con tu razón en una línea ("el código vive en X") y esperá el OK antes de crear/tocar nada. Nunca asumas la base en silencio ni bloquees por no ser main.
+> ⛔ **#3 — RDD vive acá, por work-unit commit.** Tras cada commit, si RDD está on, corré `gentle-ai review assess` y seguí el plan nativo (ver ODD protocol). NO es un gate al final — es **per-commit**. RDD ya NO corre en el loop/SDD.
+> ⛔ **#4 — Rutas absolutas SIEMPRE** (la cwd se resetea entre comandos a tu dir base, que suele ser el repo principal): `git -C <ABS-worktree> …`, nunca comandos pelados; antes de CUALQUIER escritura/commit, `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main.
 
-- Las 3 son sí → seguís al Paso 1.
-- Falta claridad en 1-2 → hacé 1-2 preguntas concretas puntuales y esperá la respuesta. No inventes alcance.
-- No entra en el molde (grande, ambiguo, con decisión de diseño real) → **PARÁ** y proponé `/mala-pata-loop` en su lugar. No sigas con este skill.
+## Fase 0 — Autorizar (ODD paso 1)
 
-> **Organic ≠ perfil MINIMAL del ciclo** (decisión deliberada): organic NO hace SDD — cero artefactos de planeación, una sola pasada. Si el cambio es chico pero amerita rastro SDD (spec/design/trazabilidad en engram), eso es `/mala-pata-loop` con perfil MINIMAL, no este skill.
+¿El pedido autoriza un **cambio**? Investigación, explicación, review, auditoría, comparación, o propuesta/planeación = **read-only** salvo que el humano pida implementar u otra mutación explícita.
+- Read-only → inspeccioná/explicá/recomendá, pero **NO** escribas, NO delegues un writer, NO invoques apply, NO crees artefactos de implementación.
+- Intención ambigua o condicional → 1 pregunta y quedate read-only hasta la respuesta.
 
-## Paso 1 — Worktree (mismo mecanismo que `/mala-pata-loop-start`, Paso 2)
+## Fase 1 — Worktree + base (capa mala-pata — lo que ODD nativo no hace)
 
-1. Derivá un `change-name` corto en kebab-case a partir del pedido.
-2. **Base — proponé y confirmá (Regla dura #2)**: determiná DÓNDE vive el código que vas a tocar:
-   - Vive en `main`/`development` → proponé esa como base (worktree nuevo, convención única).
-   - Vive solo en una **feature en curso** (un SDD in-flight u otra rama de trabajo) → proponé ESA rama: commits incrementales en su worktree existente si está vivo, o worktree nuevo off esa rama si hace falta aislamiento.
-   Presentale la propuesta al humano con tu razón en una línea ("el código que toco vive en X") y **esperá el OK antes de crear/tocar nada**. Nunca bloquees por "no es main" — esa regla es del ciclo SDD completo, no de organic.
-3. **Aconsejá el tipo de rama y confirmalo** (igual que la base): prefijo convencional según qué es el cambio — `feature/` nuevo, `fix/`/`bugfix/` corrección, `hotfix/` urgencia, `refactor/`, `chore/`, `docs/` — nombre completo `<tipo>/<change-name>`. **Nunca `sdd/...`**. Con la base y el tipo confirmados, creá el worktree: `git worktree add <ABS-repo>-worktrees/<change-name> -b <tipo>/<change-name> <base>`. Ruta del worktree = `<change-name>` sin prefijo (estable para el radar). Symlinkeá `.env`/`node_modules` o el equivalente untracked del stack. (Si trabajás sobre el worktree existente de una feature en curso, no creás rama nueva.)
-4. Confirmá que el init del proyecto ya existe (`mem_search("sdd-init/{project}")`, quedate solo con el ítem EXACTO). Si no existe → corré `sdd-init` primero, no lo saltees.
-5. Trabajá el worktree con rutas ABSOLUTAS siempre — la cwd se resetea entre comandos.
+1. Derivá un `change-name` corto en kebab-case.
+2. **Base — proponé y confirmá (Regla #2)**: dónde vive el código (`main`/`development` o una feature en curso). Esperá el OK.
+3. **Tipo de rama — aconsejá y confirmá**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — nunca `sdd/`. Creá el worktree: `git worktree add <ABS-repo>-worktrees/<change-name> -b <tipo>/<change-name> <base>`; symlinkeá `.env`/`node_modules` o el equivalente del stack.
+4. Init guard: `mem_search("sdd-init/{project}")` (solo el ítem EXACTO). Si no existe → `sdd-init` primero.
+5. Rutas absolutas siempre (Regla #4). (Si trabajás sobre el worktree existente de una feature en curso, no creás rama nueva.)
 
-## Paso 2 — Ruta orgánica (Organic Implementation Routing del CLAUDE.md global)
+## Fase 2 — Explorar + resolver incertidumbre (ODD 2-3)
 
-Con el worktree listo, aplicá el routing orgánico tal cual está definido en las reglas globales — no reinventes un mecanismo propio acá:
+Explorá el código y los requisitos **proporcional al pedido** antes de escribir. Research opcional solo para una **incertidumbre nombrada**; 1 pregunta al humano solo para una **decisión de producto real** (después pará y esperá); a lo sumo **un** assumption-challenge read-only para una premisa de alto impacto. No inventes alcance.
 
-- **Entender 1-3 archivos, o un cambio mecánico ya entendido** → directo inline: escribilo vos mismo, sin lista de tasks separada ni sub-agente.
-- **Entender necesita 4+ archivos, o escribir 2+ archivos no triviales** → delegated direct: UN agente de exploración O UN agente escritor (lo que haga falta, no ambos si no corresponde), con instrucciones puntuales derivadas del pedido — nunca dispares un `sdd-tasks`/`sdd-apply` completo, eso es del ciclo SDD, no de este skill.
+## Fase 3 — Clasificar (ODD 4)
 
-Si en este paso el alcance real resulta más grande de lo que parecía al entrar → volvé a la Regla dura #1 y escalá a `/mala-pata-loop`. No es un fallo, es el diseño funcionando.
+**Substancial** = 2+ pasos de implementación con sentido, o progreso que valga recuperar tras una interrupción. **Chico y entendido** = queda chico, sin artefactos durables.
 
-## Paso 3 — Apply (según el modo del proyecto)
+## Fase 4 — Track (ODD 5 — solo si substancial)
 
-Leé `strict_tdd` de `sdd-init/{project}` (Paso 1) y seguí el modo real, igual que `/sdd-apply`:
+Antes del primer write: creá `odd/tasks/<feature>.md` + su mirror en engram `odd/<feature>/tasks` (automático, sin pedir permiso de tasks/storage). Avisá en **1 línea** qué feature-doc creaste y cuántas tasks tiene. (Contenido y contrato del doc: ODD protocol del CLAUDE.md.)
 
-- **`strict_tdd: true` → Strict TDD Mode, NO NEGOCIABLE**: Red → Green → Refactor para el cambio, aunque sea chico. Escribí el test que falla primero, hacelo pasar con lo mínimo, después refactorizá.
-- **`strict_tdd: false` → Standard Workflow**: implementá directo, matcheando el estilo/patrones existentes del proyecto. Esto NO es un atajo degradado — es el modo oficial para proyectos que deliberadamente no fuerzan esa disciplina, tengan o no test runner. No inventes tests que el proyecto no pide.
+## Fase 5 — Implementar task-by-task (ODD 6)
 
-En ambos modos: corré la suite existente antes de dar por hecho. Nunca dejes tests rotos ni los borres/skippees para que pasen.
+Por cada task: la **topología más chica** — direct inline (1-3 archivos ya entendidos) / delegated direct (entender 4+ o escribir 2+ no triviales) — con el **modo TDD del proyecto** (`strict_tdd` de sdd-init) y los checks aplicables. Marcá la task solo tras **observar** su resultado + checks; actualizá el feature-doc y el mirror.
+- **Cada task cierra con ≥1 work-unit commit en la feature branch** (branch first si estás en la default), con tests+docs junto al comportamiento, Conventional Commit; registrá el commit en el feature-doc como evidencia.
+- **RDD por commit**: tras cada work-unit commit, si RDD on → `gentle-ai review assess --cwd <ABS-worktree> --agent claude-code --base-ref <último boundary revisado> --committed-only --json`; leé `review_due`; si es true, ejecutá **verbatim** el `next_transition.command` que devuelve; el boundary avanza al acknowledgear. `false` → registrá `review_due_reason` y seguí. **El detalle completo (tiers, consent medio/alto, continuaciones) vive en el ODD protocol del CLAUDE.md — no lo reimplementes.**
+- **Delivery slicing**: forecast ~400 líneas autoradas; estrategia `ask-on-risk` (default) / `auto-chain` / `single-pr`; resolvé los skills `work-unit-commits` y `chained-pr` por nombre de registro antes de armar PRs.
 
-## Paso 4 — Verify liviano
+## Fase 6 — Cerrar (ODD 7 + cierre mala-pata)
 
-No hay spec formal en este camino — verificá contra lo que el usuario pidió explícitamente, no inventes criterios nuevos:
-- Build limpio + suite de tests en verde.
-- Smoke live si el cambio toca algo visible/ejecutable (UI, endpoint, comando).
-- Si algo no pasa → arreglalo antes de seguir. No marques "listo" con algo en rojo.
+Reportá el **resultado verificado** + todo check fallado/skippeado/pendiente + próximo paso. Después, el cierre mala-pata: reusá de `/mala-pata-loop-start` las sub-fases **4.1 (reporte), 4.1-bis (re-verificar/renumerar migración si tocaste una), 4.2 (destino PR/merge con GATE), 4.4 (CI proactivo), 4.5 (limpieza con GATE)** — **NO la 4.3** (esa ya no existe; RDD corrió por commit en la Fase 5).
+**Excepción de limpieza** si trabajaste con commits incrementales DENTRO del worktree de una feature en curso: esa rama/worktree la cierra su propio ciclo, no organic — solo limpiás lo que organic creó.
 
-## Paso 5 — Cierre: PR, Gate RDD, CI y limpieza
+## Fase 7 — Tabla final (OBLIGATORIO)
 
-Reusá **exactamente** el Paso 4 de `/mala-pata-loop-start` (sub-fases 4.1 a 4.5: reporte de cierre → destino del PR/merge con GATE → Gate RDD con GATE, se dispara solo → revisión de CI proactiva → limpieza con GATE proactivo, nunca esperes a que te lo pidan). Mismo mecanismo, mismas reglas — no lo reinventes acá, es exactamente el mismo skill al que le arreglamos la limpieza pasiva.
-
-**Excepción de limpieza (4.5) cuando la base fue una feature en curso**: si trabajaste con commits incrementales DENTRO del worktree existente de esa feature, la limpieza **NO aplica** — ese worktree y esa rama pertenecen al ciclo de la feature, los cierra SU propio SDD, no organic. Solo limpiás lo que organic mismo creó.
-
-## Paso 6 — Resumen final en tabla (OBLIGATORIO)
-
-Mismo formato que el Paso 5 de `/mala-pata-loop-start`: tabla Markdown, un hito por fila, emoji + evidencia concreta. Filas típicas de este camino (incluí solo las que apliquen):
+Mismo formato que `/mala-pata-loop-start` Paso 5: tabla Markdown, un hito por fila, emoji + evidencia concreta. Filas típicas (solo las que apliquen):
 
 | Hito | Estado |
 |---|---|
+| Autorización | ✅ cambio autorizado / read-only |
+| Feature-doc (si substancial) | ✅ `odd/tasks/<feature>.md` · `<n>` tasks |
 | Apply (TDD si aplica) | ✅ Red-Green-Refactor, `<n>` tests |
-| Verify | ✅ build + suite en verde |
-| Gate RDD (pre-pr) | ✅ receipt `<target_identity corto>` · lentes: `<0\|1\|4>` |
+| Work-unit commits | ✅ `<n>` commits · RDD assess: `<granted/passive/…>` |
 | PR `#<n>` → `<branch>` | ✅ MERGEADO (merge commit `<sha>`) |
 | CI post-merge | ✅ VERDE |
 | Cleanup (worktree + rama) | ✅ Hecho |
 
-## Persistencia (liviana, no fase-por-fase)
+## Persistencia
 
-A diferencia del ciclo completo, acá **no** se persiste un artefacto por fase. Al cerrar (después del Paso 6), un solo `mem_save` con `topic_key: "sdd/<change-name>/organic"`, `type: "architecture"`, resumiendo: qué se pidió, qué se tocó (archivos), cómo se verificó, y el resultado del cierre (PR/merge + gate RDD). Esto le da continuidad futura sin la ceremonia de 9 artefactos separados.
+Para trabajo **substancial**, el **feature-doc** (`odd/tasks/<feature>.md` + mirror engram `odd/<feature>/tasks`) ES la persistencia de ODD — reemplaza el viejo "un solo mem_save al cierre". Para trabajo **chico** sin feature-doc, un cierre liviano opcional (`mem_save` topic `sdd/<change>/organic`) si querés continuidad futura.

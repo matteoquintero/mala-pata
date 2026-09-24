@@ -26,7 +26,8 @@ Hoy mala-pata es esa capa — más una pieza que sigue siendo **100% mía y que 
 |---|---|---|
 | `mala-pata-loop` | Toma el **SDD** de gentle-ai y arma el kickoff (contexto técnico completo) en tu flujo. | mala-pata |
 | `mala-pata-loop-start` | Corre el ciclo SDD desde el kickoff (explore → … → archive), con gate por fase. | mala-pata |
-| `mala-pata-organic` | Toma el **ODD** de gentle-ai (cambios chicos) y lo organiza por fases. | mala-pata |
+| `mala-pata-organic` | Genera el kickoff de un cambio **ODD** con gate de formato estricto (Qué/Why/Done/Decisiones); rutea a loop/roadmap si no pasa. NO ejecuta. | mala-pata |
+| `mala-pata-organic-start` | Corre el ciclo **ODD** desde el kickoff de organic (worktree → explorar → task-by-task + RDD → cerrar). | mala-pata |
 | `mala-pata-loop-orchestrate` | Planifica un lote de kickoffs (olas, conflictos, splits) — read-only. | mala-pata |
 | `mala-pata-loop-orchestrate-start` | Lanza el lote en paralelo (un worktree + una sesión por kickoff). | mala-pata |
 | `mala-pata-radar` | Descubre (engram) y diagnostica (git) los SDD por proyecto o `global` — read-only. | mala-pata |
@@ -45,7 +46,7 @@ Este repo **no está symlinkeado** — puede quedar desactualizado respecto a `~
 ```bash
 for s in mala-pata-loop mala-pata-loop-start mala-pata-loop-orchestrate \
          mala-pata-loop-orchestrate-start mala-pata-radar mala-pata-organic \
-         mala-pata-roadmap mala-pata-walkthrough sdd-preview; do
+         mala-pata-organic-start mala-pata-roadmap mala-pata-walkthrough sdd-preview; do
   rm -rf "$s" && cp -R "$HOME/.agent-skills/$s" "$s"
 done
 git add -A && git commit -m "sync: snapshot de ~/.agent-skills"

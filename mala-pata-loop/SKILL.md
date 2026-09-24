@@ -16,6 +16,8 @@ Tu único trabajo es convertir esa solicitud en un **CONTEXTO TÉCNICO COMPLETO 
 > 🚫 **NO inicias el SDD. NO escribís código. NO creás specs/tasks/migraciones reales. NO corrés tests.**
 > ✅ Solo producís el *brief* (contexto) y lo persistís en un archivo (con un puntero de una línea en engram para que se pueda buscar). Al terminar, el SDD queda **listo para arrancar**, no arrancado.
 
+> 🧭 **Cuándo estás en el carril correcto (frontera con organic).** Llegás a `/mala-pata-loop` cuando **no podés empezar a codear todavía porque falta DISEÑAR** — típicamente porque el gate de `/mala-pata-organic` diagnosticó `Decisiones ya tomadas` sin resolver (fork de arquitectura, contrato/endpoint cuya *forma* hay que decidir, requisitos en disputa). **El tamaño por sí solo NUNCA te manda acá**: un cambio grande pero especificable (podés llenar Qué + Done + Decisiones) va a `/mala-pata-organic`; uno más grande que un solo ciclo va a `/mala-pata-roadmap`. Si al leer el pedido ya sabés qué construir y la arquitectura está decidida, esto NO es loop — devolvelo a `/mala-pata-organic`.
+
 ---
 
 ## Reglas base y perfiles

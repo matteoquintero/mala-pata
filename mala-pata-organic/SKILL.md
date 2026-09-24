@@ -1,20 +1,21 @@
 ---
 name: mala-pata-organic
-description: Genera el kickoff de un cambio ODD (Organic Driven Development). Aplica el gate del formato estricto — Qué + Done + Decisiones ya tomadas BLOQUEAN si están vagos; Why se pide siempre pero no bloquea; Riesgo es opcional — para decidir si el cambio entra al carril organic. Si pasa el gate, escribe el kickoff en una carpeta hermana del proyecto (fuera del repo) con un puntero de una línea en engram. NO ejecuta el ciclo ODD — el ejecutor es `/mala-pata-organic-start <ruta-al-kickoff>`. Decisiones sin resolver → escala a `/mala-pata-loop` (SDD); Qué/Done claros pero alcance enorme/multi-loop → `/mala-pata-roadmap`. Trigger: cualquier pedido de cambio, ANTES de tocar código — este skill decide si es organic, loop o roadmap.
+description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se invoca DESPUÉS de que el carril ya fue decidido — normalmente vía `/mala-pata-triage`, o directo cuando el humano ya sabe que es organic. Asume route=organic y captura/confirma el formato estricto (Qué, Why, Done, Decisiones, Riesgo) — si triage pasó un borrador, lo confirma/completa en vez de arrancar de cero. Si el formato queda completo, escribe el kickoff en una carpeta hermana del proyecto (fuera del repo) con un puntero de una línea en engram. NO ejecuta el ciclo ODD — el ejecutor es `/mala-pata-organic-start <ruta-al-kickoff>`. Red de seguridad: si al capturar los campos aparece que `Decisiones` está sin resolver, rebota a `/mala-pata-loop` — pero decidir el carril ya no es su trabajo primario.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.0.0"
+  version: "3.1.0"
 ---
 
-# /mala-pata-organic — Generador de kickoff ODD (el gate que enruta)
+# /mala-pata-organic — Generador de kickoff ODD (route ya decidido)
 
-Pedido del usuario: **entrada entregada por el CLI**
+Pedido del usuario: **entrada entregada por el CLI** (o el borrador de campos que pasó `/mala-pata-triage` al decidir organic)
 
 Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo markdown, guardado fuera del repo, que otro agente (`/mala-pata-organic-start`) va a consumir para CORRER el ciclo. Es a ODD lo que `/mala-pata-loop` es al SDD: generás el contexto, no lo ejecutás.
 
-> 🚫 **NO ejecutás nada.** NO creás el worktree, NO explorás el código, NO escribís código, NO abrís PRs. Solo aplicás el gate y, si pasa, escribís el kickoff.
-> ✅ El resultado es: (a) el kickoff listo para `/mala-pata-organic-start`, o (b) un rebote explícito a `/mala-pata-loop` o `/mala-pata-roadmap`, o (c) preguntas puntuales si falta un campo bloqueante.
+> 🧭 **Asumís route=organic.** La decisión de carril (organic vs loop vs roadmap) la toma `/mala-pata-triage` ANTES de llegar acá. Si venís de triage, ya tenés un borrador de Qué/Why/Done/Decisiones/Riesgo — tu trabajo es **confirmarlo o completarlo**, no re-derivarlo desde cero. Si te invocaron directo (el humano ya sabía que era organic), hacé la misma captura desde el pedido crudo.
+> 🚫 **NO ejecutás nada.** NO creás el worktree, NO explorás el código, NO escribís código, NO abrís PRs. Solo capturás/confirmás el formato y, si queda completo, escribís el kickoff.
+> ✅ El resultado es: (a) el kickoff listo para `/mala-pata-organic-start`, o (b) el rebote de red-de-seguridad a `/mala-pata-loop` si aparece que Decisiones no estaba resuelto, o (c) preguntas puntuales si falta un campo bloqueante.
 
 > 📖 **El protocolo ODD es la fuente de verdad.** Sus 7 pasos, el feature-doc, los work-unit commits, RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill no los duplica — el kickoff que generás es el insumo que `/mala-pata-organic-start` usa para seguirlos. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
 
@@ -22,7 +23,7 @@ Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo m
 
 ## Reglas duras
 
-> ⛔ **#1 — Escalá a `/mala-pata-loop` (SDD) SOLO si `Decisiones ya tomadas` falla el gate** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview). El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**.
+> ⛔ **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**.
 > ⛔ **#2 — Base: proponé y confirmá, no crees nada.** La base sale de DONDE VIVE el código que se va a tocar (`main`/`development`, o una feature en curso). Proponé con tu razón en una línea ("el código vive en X") y esperá el OK antes de fijarla en el kickoff. Este skill NO crea el worktree — eso lo hace `/mala-pata-organic-start` con la base ya confirmada acá.
 > ⛔ **#3 — El gate es sobre el formato, no sobre el tamaño.** Un cambio de 5 líneas con Qué/Done/Decisiones concretos pasa en una interacción de 10 segundos — una línea por campo alcanza. El gate rechaza lo SUB-especificado, no lo corto. Si estás pidiendo más de una línea por campo para un cambio chico, estás rearmando SDD adentro de organic: pará.
 > ⛔ **#4 — Rutas absolutas SIEMPRE** en cualquier comando que muestres o dejes en el kickoff (`worktree:` es una ruta absoluta propuesta, nunca relativa).
@@ -35,24 +36,24 @@ Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo m
 
 Si el pedido autoriza cambio, seguí al gate.
 
-## Fase 1 — Gate del formato estricto (el discriminador organic/loop/roadmap)
+## Fase 1 — Capturar/confirmar el formato estricto (insumo del kickoff, no el ruteo)
 
-Recolectá estos campos — podés inferir un borrador del pedido, pero el humano confirma o corrige antes de que algo bloquee:
+El carril ya está decidido (route=organic) — esto no es más el gate que elige entre organic/loop/roadmap, eso ya lo hizo `/mala-pata-triage`. Acá **recolectás/confirmás** los campos que van a quedar en el kickoff. Si `/mala-pata-triage` te pasó un borrador, arrancás de ahí y confirmás con el humano en vez de inferir desde cero:
 
 | Campo | Bloquea | Qué prueba |
 |---|---|---|
 | **Qué** | ✅ SÍ | Objetivo = comportamiento/resultado observable y concreto. "Mejorar X" sin blanco concreto → FALLA. |
 | **Why** | ❌ NO | Motivación en 1 línea. Siempre se pide, nunca bloquea — pero FLUYE al feature-doc y al body del PR. |
 | **Done** | ✅ SÍ | Definición testeable = el CUÁNDO: "cuando X, pasa Y" o el check que lo prueba. |
-| **Decisiones ya tomadas** | ✅ SÍ | El approach/arquitectura está DECIDIDO o es obvio. Es EL discriminador del loop. |
+| **Decisiones ya tomadas** | ✅ SÍ | El approach/arquitectura está DECIDIDO o es obvio. |
 | **Riesgo** | ❌ NO (opcional) | Blast radius en una línea. |
-| **Dónde** | ❌ NUNCA es gate | Es un OUTPUT de la fase Explore de `/mala-pata-organic-start`, no una precondición — en ODD explorás primero. El humano puede dejar una pista opcional, pero jamás bloquea. |
+| **Dónde** | ❌ NUNCA bloquea | Es un OUTPUT de la fase Explore de `/mala-pata-organic-start`, no una precondición — en ODD explorás primero. El humano puede dejar una pista opcional, pero jamás bloquea. |
 
-### Regla del gate
+### Qué hacer con el resultado
 
-- **Qué + Done + Decisiones concretos** → generá el kickoff organic (Fase 2).
-- **Cualquiera de los tres en "no sé"** → NO generes kickoff. Reportá cuál falló y enrutá:
-  - **Decisiones falla** → arquitectura sin resolver → recomendá **`/mala-pata-loop`** (SDD, con preview y design formal).
+- **Qué + Done + Decisiones concretos (confirmados)** → generá el kickoff organic (Fase 2).
+- **Cualquiera de los tres sigue en "no sé" al confirmar** → NO generes kickoff:
+  - **Decisiones falla** (recién se descubre acá que la arquitectura no estaba resuelta) → red de seguridad, Regla dura #1 → rebotá a **`/mala-pata-loop`** (SDD, con preview y design formal).
   - **Qué/Done están claros pero el alcance es enorme o cruza varios loops** → recomendá **`/mala-pata-roadmap`** (descomponer primero).
   - **Solo Dónde es "no sé" y el resto está claro** → NO es motivo de rebote — es organic normal, vas a explorar en `/mala-pata-organic-start`.
 
@@ -60,7 +61,7 @@ Recolectá estos campos — podés inferir un borrador del pedido, pero el human
 
 Un cambio chico = una línea por campo, ~10 segundos de llenar. El gate no pide un párrafo por campo — pide que cada campo bloqueante tenga un **contenido concreto**, sea largo o corto. No infles el kickoff de un fix de 5 líneas con secciones que no aportan: eso reconstruye SDD adentro de organic y le mata el carril rápido.
 
-## Fase 2 — Generar el kickoff de organic (si el gate pasó)
+## Fase 2 — Generar el kickoff de organic (si la captura quedó completa)
 
 1. Derivá un `change-name` corto en kebab-case.
 2. **Base — proponé y confirmá (Regla dura #2)**: de dónde vive el código (`main`/`development` o una feature en curso). Esperá el OK.
@@ -93,7 +94,7 @@ created_at: <ISO 8601>
 <definición testeable — "cuando X, pasa Y" o el check que lo prueba>
 
 ## Decisiones ya tomadas
-<approach/arquitectura decidido u obvio — el discriminador del gate>
+<approach/arquitectura decidido u obvio — confirmalo, no lo redecidas>
 
 ## Riesgo
 <blast radius en 1 línea — opcional, "N/A" si no aplica>
@@ -123,5 +124,5 @@ Corré /mala-pata-organic-start <ruta absoluta> para arrancar el ciclo.
 
 **Únicas excepciones** (cuando la respuesta no es solo eso):
 - Fase 0 read-only → quedate en modo lectura, sin kickoff.
-- Gate falló → una línea con el campo que falló + la recomendación (`/mala-pata-loop` o `/mala-pata-roadmap`), sin crear kickoff.
+- Campo bloqueante sigue sin resolver al confirmar → una línea con el campo que falló + la recomendación (`/mala-pata-loop` o `/mala-pata-roadmap`), sin crear kickoff.
 - Confirmación de base/tipo de rama (Fase 2, puntos 2-3) → única pregunta permitida antes de escribir el kickoff.

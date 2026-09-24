@@ -4,7 +4,7 @@ description: Reinterpreta una solicitud a términos técnicos, elige perfil de e
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-loop — Generador de contexto para iniciar un SDD
@@ -245,7 +245,7 @@ El kickoff DEBE incluir el frontmatter completo y el bloque "Reglas del método"
 
 ---
 
-## Paso 5 — Persistir y responder (SOLO la ruta del archivo)
+## Paso 5 — Persistir y responder (cierre obligatorio: resumen + kickoff)
 
 El kickoff vive en un **archivo, no en engram** — así nunca se sube al repo del proyecto por accidente, y no tiene el límite práctico de longitud de una observación de engram. Esto es específico del kickoff: el resto del ciclo (explore, propose, spec, design, tasks, preview, apply-progress, verify-report, archive-report) sigue persistiendo en engram exactamente como siempre — no lo toques.
 
@@ -253,15 +253,26 @@ El kickoff vive en un **archivo, no en engram** — así nunca se sube al repo d
 2. Escribí el kickoff completo del Paso 4 en `<carpeta-hermana>/<change-name>.md`.
 3. **Puntero liviano en engram** (solo para que `mem_search`/radar lo sigan encontrando — la idempotencia del Paso 1 punto 5 depende de esto): `mem_save` con `topic_key: "sdd/<change-name>/kickoff"`, `type: "architecture"`, contenido de **una sola línea**: `Kickoff en archivo: <ruta absoluta>`. No dupliques el contenido del kickoff acá — el archivo es la única fuente de verdad.
 4. Si reservaste migraciones, confirmá que el registry quedó actualizado.
-5. **Tu respuesta al humano es ÚNICAMENTE la ruta absoluta del archivo** — sin resumen, sin prosa, sin checklist. Formato exacto:
+5. **Tu respuesta al humano es un cierre OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura:
 
-   ```
-   <ruta absoluta del archivo .md>
-   ```
+   - Título: `**✅ Kickoff listo — <change-name>**`
+   - Resumen (una línea por ítem):
+     - **Qué:** <una línea>
+     - **Perfil:** <FULL/STANDARD/LITE/MINIMAL>
+     - **Base → rama:** <base> → <tipo>/<change-name>
+     - **Worktree:** <ruta absoluta>
+     - **DoD:** <criterio testeable, una línea>
+     - **Migración / Fases:** <migración reservada si aplica> · <n> fases
+   - **Kickoff:** `<ruta absoluta del .md>`
+   - **Siguiente paso** (en bloque de código, copy-paste):
 
-   Una sola línea. Punto.
+     ```
+     /mala-pata-loop-start <ruta absoluta del .md>
+     ```
 
-**Únicas excepciones** (cuando la respuesta NO es solo la ruta):
+   Este bloque es la ÚNICA forma de cerrar en el happy path.
+
+**Únicas excepciones** (cuando la respuesta NO es el bloque de cierre):
 - Gate de vaguedad → responder `trabaje vago 🛠️` (Paso 0).
 - Idempotencia / conflicto en vuelo → una línea de aviso + la pregunta, antes de crear.
 - Paso 1.5 y Paso 1.8 → la función de preguntas interactiva disponible en el CLI para elegir perfil y confirmar la branch base (idealmente en UNA sola interacción; son las únicas preguntas permitidas antes del kickoff).

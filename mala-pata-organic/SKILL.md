@@ -4,7 +4,7 @@ description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.1.0"
+  version: "3.2.0"
 ---
 
 # /mala-pata-organic — Generador de kickoff ODD (route ya decidido)
@@ -112,15 +112,25 @@ Igual que `/mala-pata-loop` (Paso 5): el kickoff vive en un **archivo**, no en e
 3. **Puntero liviano en engram**: `mem_save` con `topic_key: "odd/<change-name>/kickoff"`, `type: "architecture"`, contenido de **una sola línea**: `Kickoff ODD en archivo: <ruta absoluta>`. No dupliques el contenido acá — el archivo es la única fuente de verdad.
 4. Si engram no está disponible, el archivo sigue siendo la fuente de verdad — avisá en una línea que el puntero no quedó guardado (afecta la idempotencia futura, no el kickoff en sí).
 
-## Fase 4 — NO ejecuta
+## Fase 4 — NO ejecuta · cierre obligatorio (resumen + kickoff)
 
-Tu respuesta al humano es la ruta absoluta del archivo, más una línea indicando el siguiente paso:
+Tu respuesta al humano es un cierre **OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura (mismo formato que `/mala-pata-loop` Paso 5):
 
-```
-<ruta absoluta del archivo .md>
+- Título: `**✅ Kickoff listo — <change-name>**`
+- Resumen (una línea por ítem):
+  - **Qué:** <una línea>
+  - **Carril:** organic
+  - **Base → rama:** <base> → <tipo>/<change-name>
+  - **Worktree:** <ruta absoluta>
+  - **DoD:** <criterio testeable, una línea>
+- **Kickoff:** `<ruta absoluta del .md>`
+- **Siguiente paso** (en bloque de código, copy-paste):
 
-Corré /mala-pata-organic-start <ruta absoluta> para arrancar el ciclo.
-```
+  ```
+  /mala-pata-organic-start <ruta absoluta del .md>
+  ```
+
+Este bloque es la ÚNICA forma de cerrar en el happy path.
 
 **Únicas excepciones** (cuando la respuesta no es solo eso):
 - Fase 0 read-only → quedate en modo lectura, sin kickoff.

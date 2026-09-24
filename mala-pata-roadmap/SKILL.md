@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -51,27 +51,40 @@ se la pasa a `/mala-pata-triage`, que decide el carril final con la info del mom
   app") → pedí lo mínimo y esperá; no inventes alcance.
 - Recuperable (falta 1-2 datos) → hacé preguntas concretas y esperá. Este es el gate de preguntas.
 
-## Paso 1 — Enumerar las DIMENSIONES del objetivo (ANTES de inventariar nada)
+## Paso 1 — Definir el ESTADO DESEADO: las dimensiones del objetivo completo
 
-⛔ **El error más peligroso de este skill: encoger el objetivo a lo que es fácil de medir.** Un
-objetivo grande casi siempre tiene VARIAS dimensiones/facetas; si te anclás al primer inventario que
-el código te deja contar fácil (una métrica, un grep, un report de higiene), vas a planificar solo
-esa faceta y dejar el resto afuera EN SILENCIO. Eso es un roadmap incompleto disfrazado de completo.
+El objetivo del roadmap NO es cubrir lo que el humano LISTÓ — es cubrir lo que el objetivo NECESITA.
+La solicitud casi siempre queda incompleta; tu trabajo es cerrar el hueco. **Sesgo: mejor que sobre,
+no que falte.** Hay dos errores simétricos a evitar:
 
-Antes de tocar el código o cualquier métrica:
+⛔ **Encoger a lo fácil de medir** — anclarte al primer inventario que el código deja grepear (una
+métrica, un report) y planificar solo esa faceta.
+⛔ **Cubrir solo lo que el humano dijo** — la solicitud es incompleta por default; si no buscás lo que
+falta, el humano lo termina descubriendo en producción.
 
-1. **Descomponé el objetivo en sus dimensiones, derivadas de lo que el HUMANO dijo — no de lo que
-   se puede grepear.** Releé el objetivo literal y listá todas sus facetas. Ejemplos del tipo de
-   pregunta (agnósticos): ¿cuántos "tipos de cosa" abarca? ¿qué categorías nombró explícita o
-   implícitamente? ¿qué queda incluido por la frase "todo / cualquier / completo"? Escribí esa lista
-   de dimensiones — es el contrato de cobertura contra el que se mide el DAG después.
-2. **Marcá cuáles dimensiones son fáciles de medir y cuáles no.** Las difíciles de contar son
-   justamente las que se suelen dejar afuera — no las descartes por eso; hay que inventariarlas
-   igual (Paso 2), aunque cueste más.
+Definí el **estado deseado** (el objetivo COMPLETO) uniendo TRES fuentes:
 
-Si el objetivo resulta enorme (varias dimensiones, cada una grande de por sí), NO asumas que va todo
-en un roadmap: en el gate de cobertura (Paso 5) le ofrecés al humano scope (un roadmap
-multi-dimensión, o acotar este a una dimensión y las otras aparte). Vos no acotás en silencio.
+1. **Lo que el humano dijo** — releé el objetivo literal, listá cada faceta. ¿Qué "tipos de cosa"
+   abarca? ¿Qué implica "todo / cualquier / completo"?
+2. **Lo que el DOMINIO necesita** (investigación externa, Paso 2.3) — el **feature-set canónico** de
+   cómo equipos maduros resuelven este tipo de objetivo. Es la red anti-olvido (checklist de dominio,
+   estilo ISO/IEC 25010 para software). En **dos niveles** (ver Paso 4-ter): *adyacente-implicado* (lo
+   que completa o implica directamente lo pedido) vs *dominio amplio* (el resto del universo del dominio).
+3. **Lo que la doc de intención del repo YA anticipa** — leé la documentación de arquitectura/intención
+   que exista, **esté donde esté** (`CLAUDE.md`, `ARCHITECTURE.md`, READMEs, RFCs, notas de diseño). NO
+   asumas una carpeta fija; si el repo tiene pendientes documentados, suelen ser huecos que el humano olvidó.
+
+Expresá el objetivo también como **jobs-to-be-done** ("como <usuario>, necesito <trabajo> para <beneficio>"):
+cacha huecos de cara al usuario que la lista de features no muestra (p.ej. una pantalla que hace falta y
+nadie nombró).
+
+**Chequeo MECE + regla del 100%**: el set de dimensiones debe ser *mutuamente excluyente* (sin solape) y
+*colectivamente exhaustivo* (cubre TODO el objetivo, sin huecos). Si no es exhaustivo, faltan dimensiones
+— seguí buscando. Este es el chequeo que fuerza completitud.
+
+Esta lista de dimensiones es el **contrato de cobertura** contra el que se mide el DAG (Paso 5). Si el
+objetivo resulta enorme, NO asumas que va todo en un roadmap: en el gate (Paso 5) ofrecés scope. Vos no
+acotás en silencio.
 
 ## Paso 2 — Inventariar CADA dimensión + investigar + anclar al código real
 
@@ -85,9 +98,10 @@ En paralelo, sin escribir nada. **Inventariá TODAS las dimensiones del Paso 1, 
    que grepeás en un comando. Si una dimensión no se deja medir por código (p.ej. inventario de un
    tipo de artefacto que no tiene marca única), decilo explícito y estimá — no la borres del mapa.
    Si no hay `.codegraph/`, mapeá con Read/Grep/Glob lo mínimo para entender las costuras reales.
-3. **Investigación externa** (WebSearch/WebFetch): cómo se resuelve este tipo de objetivo, cómo lo
-   hacen equipos maduros, qué patrones/errores conocidos hay. **Anclá lo que traés a TU código** —
-   la best-practice que ignora lo que ya existe no sirve (reuse-first, igual que preview).
+3. **Investigación externa** (WebSearch/WebFetch): el **feature-set canónico** del dominio — cómo lo
+   resuelven equipos maduros, qué patrones/errores conocidos hay. Separalo en **dos niveles**:
+   *adyacente-implicado* (completa/implica lo pedido) y *dominio amplio* (el resto). **Anclá lo que traés
+   a TU código** — la best-practice que ignora lo que ya existe no sirve (reuse-first, igual que preview).
 4. **Preguntas**: si después de esto quedan decisiones abiertas que cambian la forma del DAG —
    incluida cualquier dimensión que no pudiste inventariar bien — preguntá ANTES de descomponer
    (no la resuelvas adivinando).
@@ -147,18 +161,46 @@ compromiso. La verdad se decide al EJECUTAR:
 - **El roadmap pronostica; triage manda.** No trates la ruta tentativa como fija ni saltees triage
   "porque el roadmap ya dijo loop".
 
+## Paso 4-ter — Gap analysis: validar que el DAG cubre el objetivo completo
+
+El roadmap **SOBRE-descubre y propone; el humano RECORTA** en el gate. Nunca al revés (que el humano
+descubra lo que faltó). Hacé el análisis de brecha:
+
+- **Estado deseado** (Paso 1: humano + dominio + doc de intención, MECE) **vs estado actual** (lo que el
+  código ya resuelve, medido en Paso 2 con codegraph) = **el gap**. El gap es lo que el roadmap tiene que
+  cubrir con fases.
+- Toda dimensión del estado deseado que el humano **NO pidió** pero el objetivo implica → va marcada como
+  **propuesta-extra** (no como algo que decidiste solo). **Nunca la agregues en silencio ni la descartes en
+  silencio**: va al gate marcada.
+- **Dos niveles de propuesta** (amplitud de la fuente de dominio, resuelta):
+  - **Nivel 1 — núcleo + adyacente-implicado**: dimensiones que el objetivo NECESITA o implica
+    directamente → se vuelven **fases candidatas** en el DAG (marcadas propuesta-extra si el humano no las
+    pidió).
+  - **Nivel 2 — dominio amplio**: el resto del feature-set canónico del dominio → **NO infla el DAG**; se
+    lista **compacto como checklist** ("existe en el dominio, este roadmap NO lo cubre") para que el humano
+    marque si algo sube a fase. No se esconde nada, pero no se vuelve fase por default.
+- Aprovechá lo que el código YA tiene para habilitar más de lo que el humano imaginó (p.ej. infra ya
+  instalada que abre una capacidad): eso también es gap que vale proponer.
+
 ## Paso 5 — Gate de cobertura + gate humano del DAG
 
-Antes de pedir OK, mostrá la **tabla de cobertura**: cada dimensión del Paso 1 y qué fase(s) la
-cubren (o "DIFERIDA / FUERA DE SCOPE" con el motivo). Esto es lo que impide encoger el objetivo en
-silencio — el humano VE qué queda dentro y qué afuera, y lo firma.
+Antes de pedir OK, validá **MECE** sobre la tabla (sin solapes, sin huecos) y mostrá la **tabla de
+cobertura** con TRES estados por dimensión — es lo que impide encoger el objetivo en silencio Y lo que
+te obliga a mostrar lo que descubriste de más:
 
 ```
-Cobertura del objetivo:
-- <dimensión A> → Fases 1, 3
-- <dimensión B> → Fase 4
-- <dimensión C> → DIFERIDA (motivo) / o "roadmap aparte"
+Cobertura del objetivo (estado deseado → DAG):
+- <dimensión A> → Fases 1, 3    [cubierta]
+- <dimensión B> → Fase 4        [cubierta]
+- <dimensión C> → Fase 7        [PROPUESTA-EXTRA — no la pediste; el objetivo la implica]
+- <dimensión D> → DIFERIDA (motivo) / roadmap aparte
+
+Nivel 2 — dominio amplio NO cubierto (checklist, marcá si algo sube a fase):
+- [ ] <capacidad del dominio 1>   - [ ] <capacidad del dominio 2>   - [ ] …
 ```
+
+El humano firma qué queda dentro (incluidas las propuestas-extra), qué se difiere, y si algo del Nivel 2
+sube a fase. **Vos proponés de más; el humano recorta.**
 
 Si el objetivo es enorme (varias dimensiones grandes), ofrecé explícitamente la decisión de scope:
 **(a)** un roadmap multi-dimensión (todas), o **(b)** acotar este roadmap a una/unas dimensiones y
@@ -233,6 +275,8 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 
 ## Reglas
 
+- **Completitud > lo pedido**: el roadmap cubre el objetivo COMPLETO (estado deseado MECE), no solo lo
+  que el humano listó. Sobre-descubrí y proponé; el humano recorta en el gate. Mejor que sobre, no que falte.
 - **NO ejecutás**: ni triage, ni loop, ni organic, ni código. Solo el roadmap.
 - **Rutas absolutas** en comandos; relativas al hablarle al humano.
 - **Únicas preguntas válidas**: las del gate de vaguedad (Paso 0), las decisiones abiertas que

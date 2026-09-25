@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -184,23 +184,34 @@ descubra lo que faltó). Hacé el análisis de brecha:
 
 ## Paso 5 — Gate de cobertura + gate humano del DAG
 
-Antes de pedir OK, validá **MECE** sobre la tabla (sin solapes, sin huecos) y mostrá la **tabla de
-cobertura** con TRES estados por dimensión — es lo que impide encoger el objetivo en silencio Y lo que
-te obliga a mostrar lo que descubriste de más:
+Antes de pedir OK, validá **MECE** sobre las dimensiones (sin solapes, sin huecos) y mostrá la **tabla de
+cobertura OBLIGATORIA**: **cada eje del estado deseado (Paso 1) aparece en la tabla con EXACTAMENTE UN
+estado.** Ningún eje puede faltar ni "colarse" a Nivel 2 sin quedar mapeado primero — un eje del deseado
+que no está en la tabla es un **drop silencioso** (falla el gate). **Chequeo duro: nº de ejes en la tabla
+== nº de ejes del Paso 1.**
+
+Estados posibles por eje:
+- **cubierta** → la(s) fase(s) que la cubren.
+- **propuesta-extra** → la(s) fase(s); el humano no la pidió pero el objetivo la implica.
+- **diferida** → con motivo (o "roadmap aparte").
+- **→ Nivel 2** → con motivo: es un eje del deseado que se decide dejar en el checklist de dominio amplio,
+  NO que desaparece. Debe figurar acá **Y** en la lista Nivel 2 de abajo.
 
 ```
-Cobertura del objetivo (estado deseado → DAG):
-- <dimensión A> → Fases 1, 3    [cubierta]
-- <dimensión B> → Fase 4        [cubierta]
-- <dimensión C> → Fase 7        [PROPUESTA-EXTRA — no la pediste; el objetivo la implica]
-- <dimensión D> → DIFERIDA (motivo) / roadmap aparte
+Cobertura del objetivo (estado deseado → DAG) — TODOS los ejes del Paso 1, uno por renglón:
+- Eje 1 <nombre> → Fases 1, 3        [cubierta]
+- Eje 2 <nombre> → Fase 4            [cubierta]
+- Eje 3 <nombre> → Fase 7            [PROPUESTA-EXTRA — no la pediste; el objetivo la implica]
+- Eje 4 <nombre> → DIFERIDA (motivo) / roadmap aparte
+- Eje 5 <nombre> → Nivel 2 (motivo)  [queda como checklist, no como fase]
+(… un renglón por CADA eje del Paso 1, sin excepción — el conteo debe coincidir)
 
 Nivel 2 — dominio amplio NO cubierto (checklist, marcá si algo sube a fase):
 - [ ] <capacidad del dominio 1>   - [ ] <capacidad del dominio 2>   - [ ] …
 ```
 
 El humano firma qué queda dentro (incluidas las propuestas-extra), qué se difiere, y si algo del Nivel 2
-sube a fase. **Vos proponés de más; el humano recorta.**
+(o un eje mandado a Nivel 2) sube a fase. **Vos proponés de más; el humano recorta.**
 
 Si el objetivo es enorme (varias dimensiones grandes), ofrecé explícitamente la decisión de scope:
 **(a)** un roadmap multi-dimensión (todas), o **(b)** acotar este roadmap a una/unas dimensiones y

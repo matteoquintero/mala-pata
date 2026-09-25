@@ -139,14 +139,14 @@ en vez de un sí/no. Upgrade, no base.
 
 | Decisión | Estado |
 |---|---|
-| Frontera = certeza de forma, no tamaño | ✅ acordado |
-| Formato estricto = router (fill→organic, no→loop) | ✅ acordado |
-| organic gana kickoff + `organic-start` (simetría con loop) | ✅ acordado |
-| kickoff = artefacto universal, motor enchufable | ✅ acordado |
-| mala-pata = capa de decisión + orquestador | ✅ acordado |
-| laya parkeado | ✅ acordado |
-| Contrato/endpoint NO es criterio de loop | ✅ acordado (corrección del usuario) |
-| Front door `mala-pata-triage` decide el carril; organic solo genera | ✅ acordado + implementado |
+| Frontera = certeza de forma, no tamaño | acordado |
+| Formato estricto = router (fill→organic, no→loop) | acordado |
+| organic gana kickoff + `organic-start` (simetría con loop) | acordado |
+| kickoff = artefacto universal, motor enchufable | acordado |
+| mala-pata = capa de decisión + orquestador | acordado |
+| laya parkeado | acordado |
+| Contrato/endpoint NO es criterio de loop | acordado (corrección del usuario) |
+| Front door `mala-pata-triage` decide el carril; organic solo genera | acordado + implementado |
 
 ## 11. Adición — front door `mala-pata-triage`
 
@@ -157,7 +157,7 @@ El router quedó fuera de `mala-pata-organic` (antes v3.0.0 hacía de gate + rut
   por dónde va (los 3 carriles siguen invocables directo si ya lo sabés).
 - Lee el pedido, aplica el gate de forma (Qué + Done + Decisiones), y **RESPONDE** el carril:
   `→ /mala-pata-organic` (con borrador de campos), `→ /mala-pata-loop`, `→ /mala-pata-roadmap`, o
-  `trabajo vago 🛠️` si ni una pregunta alcanza.
+  `trabajo vago ` si ni una pregunta alcanza.
 - **NO genera archivos, NO crea worktrees, NO ejecuta.** Es un skill de decisión pura; no despacha
   `sdd-*`, así que el preflight hook no aplica.
 - `mala-pata-organic` bajó a **v3.1.0**: asume `route=organic`, la tabla de campos pasa a ser

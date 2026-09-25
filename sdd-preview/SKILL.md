@@ -163,7 +163,7 @@ Preview revisa **el plan**, no **el objetivo** — el QUÉ ya tuvo que quedar ce
 
 - **Nivel-plan** (duplicación, over-engineering, flujo hardcodeado, mala capa, reuse ignorado, task mal pensada) → es lo que preview SÍ dispone: REUSAR / REFACTOR / IGNORAR, o va por "Ajustar" si necesita un arreglo de plan puntual. Camino normal.
 - **Nivel-objetivo** (el hallazgo no es "el plan está mal" sino "el plan resuelve el objetivo equivocado / el objetivo no está definido / falta la mitad del alcance / el DoD no es testeable y no es un simple reword") → **NO lo dispongas** (no es REUSAR/REFACTOR/IGNORAR) y **NO lo mandes por "Ajustar"** (Ajustar es para plan o para reword de DoD, nunca para redefinir el QUÉ). Un defecto de objetivo que llega hasta acá significa que se coló por el gate de origen. La disposición correcta es **frenar y devolverlo atrás**:
-  - El gate ofrece **🛑 Detener** con motivo explícito `objetivo-no-listo → explore/propose`.
+  - El gate ofrece **Detener** con motivo explícito `objetivo-no-listo → explore/propose`.
   - El orchestrator marca `sdd/<change>/state = "objective-not-ready-at-preview"` (con la ruta absoluta del worktree vivo, igual que el pause normal) y el ciclo vuelve a **explore o propose** a redefinir el QUÉ.
   - NO se re-audita el plan, NO se re-gatea el preview. Es un **escape hacia atrás**, no un round-trip: no viola "una sola pasada" (el preview termina acá; lo que sigue es planeación desde más atrás, no otra vuelta de preview).
 
@@ -175,13 +175,13 @@ El gate corre **SIEMPRE**, tenga o no audit activo. Es **inmune a cualquier modo
 
 ### Opciones del gate (3 en la pasada única; si hubo "Ajustar", el re-gate del delta trae solo 2: Aprobar / Detener — ver ANTI-LOOP)
 
-**✅ Aprobar (requiere autotest de comprensión)**
+**Aprobar (requiere autotest de comprensión)**
 - El humano escribe en 1 línea qué entendió que se va a hacer.
 - Sin esa línea, no se aprueba. **Micro-forcing-function** contra rubber-stamp.
 - Si la respuesta no coincide razonablemente con "Voy a hacer" del resumen, el orchestrator pide re-lectura y reformulación.
 - Al aprobar → `next_recommended: sdd-apply`.
 
-**⚠️ Ajustar antes (textarea libre)** — *escape raro; al volver es un re-gate de delta (Aprobar/Detener), NO otra pasada de preview (ver ANTI-LOOP).*
+**Ajustar antes (textarea libre)** — *escape raro; al volver es un re-gate de delta (Aprobar/Detener), NO otra pasada de preview (ver ANTI-LOOP).*
 - El humano escribe feedback: qué cambiar, qué falta, qué está mal.
 - **Ruta según el TIPO de ajuste — NO todo ajuste regenera el plan** (esto es lo que evita el loop):
   - **DoD stale / criterio incomprobable u obsoleto** → el orchestrator edita SOLO la sección Definition of Done del archivo de kickoff y **vuelve DIRECTO al gate de preview**. NO reejecuta design/tasks — un ajuste de criterio no es un defecto de plan.
@@ -190,7 +190,7 @@ El gate corre **SIEMPRE**, tenga o no audit activo. Es **inmune a cualquier modo
   - Ante la duda entre DoD y plan, es DoD/gate (camino barato), no regeneración.
 - Estado en engram: `sdd/<change>/state = "adjustment-requested-at-preview"` con feedback + el tipo de ruta tomada.
 
-**🛑 Detener (pausa retomable, Opción A)**
+**Detener (pausa retomable, Opción A)**
 - Marca `sdd/<change>/state = "paused-at-preview"` en engram, con motivo opcional del humano, **y la ruta absoluta del worktree que queda VIVO** — un SDD pausado es el candidato #1 a filtrar worktrees huérfanos; registrarlo es lo que permite que el radar lo liste para limpieza futura.
 - **NO borra** artefactos previos (explore/proposal/spec/design/tasks quedan en engram).
 - **Retomable con `/mala-pata-loop-start <ruta-del-kickoff>`** — al retomar, loop-start detecta el `paused-at-preview` y salta directo a este mismo gate (NO uses `/sdd-continue`: es de gentle-ai y no conoce la fase preview — rutea por encima del gate).

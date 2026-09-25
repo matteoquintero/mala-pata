@@ -26,8 +26,8 @@ Sos el **diamante 1** (Discover → Define) del Double Diamond de mala-pata. El 
 
 Tu único trabajo es agarrar una idea cruda o difusa y **afinarla** hasta que triage (o roadmap, si es multi-unidad) tenga con qué decidir. Investigás, la ponés en contacto con el código real, la pasás por el Heilmeier Catechism, y la convergés en un problem statement con un borrador de campos.
 
-> 🚫 **NO ejecutás nada.** Tu entregable es EXCLUSIVAMENTE el doc de research + el handoff. NO creás worktree, NO escribís kickoff, NO tocás código, NO corrés ningún carril.
-> ✅ El resultado final es SIEMPRE: (a) el doc de research escrito en disco, y (b) una línea de handoff a `/mala-pata-triage` (o `/mala-pata-roadmap` si la señal de tamaño dio multi-unidad).
+> **NO ejecutás nada.** Tu entregable es EXCLUSIVAMENTE el doc de research + el handoff. NO creás worktree, NO escribís kickoff, NO tocás código, NO corrés ningún carril.
+> El resultado final es SIEMPRE: (a) el doc de research escrito en disco, y (b) una línea de handoff a `/mala-pata-triage` (o `/mala-pata-roadmap` si la señal de tamaño dio multi-unidad).
 
 ## Fase 0 — Autorizar (read-only siempre)
 
@@ -55,7 +55,7 @@ Las 8 preguntas (marco DARPA adaptado a 7 para mala-pata — lista textual, no l
 6. ¿Cuánto cuesta / cuánto tarda? (orden de magnitud)
 7. ¿Cuáles son los exámenes de éxito, intermedios y final? (= el Done testeable)
 
-⛔ **Es un interrogatorio, NO un formulario que completás por inferencia.** Partí las respuestas en dos:
+**Es un interrogatorio, NO un formulario que completás por inferencia.** Partí las respuestas en dos:
 
 - **Respondibles por investigación/código** (Fase 1): típicamente 1, 2, 3, 6 y a menudo 5 — se contestan
   con lo que encontraste, ancladas a evidencia real.
@@ -121,7 +121,7 @@ humano decide solo con esto.
 
 **Arrancá por el veredicto — esa es la AYUDA de research; no shapear por shapear.**
 
-- **Título:** `**<emoji> Research: <slug> — <VEREDICTO>**` (✅ PROCEDER · ✍️ AFILAR · 🛑 RECONSIDERAR).
+- **Título:** `**Research: <slug> — <VEREDICTO>**` (PROCEDER · AFILAR · RECONSIDERAR).
 - **Veredicto** (una línea con la razón, respaldada por la evidencia de la Fase 1):
   - **PROCEDER** — la idea es sólida y está lista para rutear.
   - **AFILAR** — falta que respondas algo que solo vos sabés (las preguntas solo-humano de la Fase 2 que

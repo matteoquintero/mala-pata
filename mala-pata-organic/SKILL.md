@@ -13,20 +13,20 @@ Pedido del usuario: **entrada entregada por el CLI** (o el borrador de campos qu
 
 Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo markdown, guardado fuera del repo, que otro agente (`/mala-pata-organic-start`) va a consumir para CORRER el ciclo. Es a ODD lo que `/mala-pata-loop` es al SDD: generás el contexto, no lo ejecutás.
 
-> 🧭 **Asumís route=organic.** La decisión de carril (organic vs loop vs roadmap) la toma `/mala-pata-triage` ANTES de llegar acá. Si venís de triage, ya tenés un borrador de Qué/Why/Done/Decisiones/Riesgo — tu trabajo es **confirmarlo o completarlo**, no re-derivarlo desde cero. Si te invocaron directo (el humano ya sabía que era organic), hacé la misma captura desde el pedido crudo.
-> 🚫 **NO ejecutás nada.** NO creás el worktree, NO explorás el código, NO escribís código, NO abrís PRs. Solo capturás/confirmás el formato y, si queda completo, escribís el kickoff.
-> ✅ El resultado es: (a) el kickoff listo para `/mala-pata-organic-start`, o (b) el rebote de red-de-seguridad a `/mala-pata-loop` si aparece que Decisiones no estaba resuelto, o (c) preguntas puntuales si falta un campo bloqueante.
+> **Asumís route=organic.** La decisión de carril (organic vs loop vs roadmap) la toma `/mala-pata-triage` ANTES de llegar acá. Si venís de triage, ya tenés un borrador de Qué/Why/Done/Decisiones/Riesgo — tu trabajo es **confirmarlo o completarlo**, no re-derivarlo desde cero. Si te invocaron directo (el humano ya sabía que era organic), hacé la misma captura desde el pedido crudo.
+> **NO ejecutás nada.** NO creás el worktree, NO explorás el código, NO escribís código, NO abrís PRs. Solo capturás/confirmás el formato y, si queda completo, escribís el kickoff.
+> El resultado es: (a) el kickoff listo para `/mala-pata-organic-start`, o (b) el rebote de red-de-seguridad a `/mala-pata-loop` si aparece que Decisiones no estaba resuelto, o (c) preguntas puntuales si falta un campo bloqueante.
 
-> 📖 **El protocolo ODD es la fuente de verdad.** Sus 7 pasos, el feature-doc, los work-unit commits, RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill no los duplica — el kickoff que generás es el insumo que `/mala-pata-organic-start` usa para seguirlos. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
+> **El protocolo ODD es la fuente de verdad.** Sus 7 pasos, el feature-doc, los work-unit commits, RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill no los duplica — el kickoff que generás es el insumo que `/mala-pata-organic-start` usa para seguirlos. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
 
-> ⚠️ **Organic usa workers de ODD (direct/delegated), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica ni a este skill ni a `/mala-pata-organic-start`. No inventes un gate de preflight acá: no existe para este carril.
+> **Organic usa workers de ODD (direct/delegated), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica ni a este skill ni a `/mala-pata-organic-start`. No inventes un gate de preflight acá: no existe para este carril.
 
 ## Reglas duras
 
-> ⛔ **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**.
-> ⛔ **#2 — Base: proponé y confirmá, no crees nada.** La base sale de DONDE VIVE el código que se va a tocar (`main`/`development`, o una feature en curso). Proponé con tu razón en una línea ("el código vive en X") y esperá el OK antes de fijarla en el kickoff. Este skill NO crea el worktree — eso lo hace `/mala-pata-organic-start` con la base ya confirmada acá.
-> ⛔ **#3 — El gate es sobre el formato, no sobre el tamaño.** Un cambio de 5 líneas con Qué/Done/Decisiones concretos pasa en una interacción de 10 segundos — una línea por campo alcanza. El gate rechaza lo SUB-especificado, no lo corto. Si estás pidiendo más de una línea por campo para un cambio chico, estás rearmando SDD adentro de organic: pará.
-> ⛔ **#4 — Rutas absolutas SIEMPRE** en cualquier comando que muestres o dejes en el kickoff (`worktree:` es una ruta absoluta propuesta, nunca relativa).
+> **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**.
+> **#2 — Base: proponé y confirmá, no crees nada.** La base sale de DONDE VIVE el código que se va a tocar (`main`/`development`, o una feature en curso). Proponé con tu razón en una línea ("el código vive en X") y esperá el OK antes de fijarla en el kickoff. Este skill NO crea el worktree — eso lo hace `/mala-pata-organic-start` con la base ya confirmada acá.
+> **#3 — El gate es sobre el formato, no sobre el tamaño.** Un cambio de 5 líneas con Qué/Done/Decisiones concretos pasa en una interacción de 10 segundos — una línea por campo alcanza. El gate rechaza lo SUB-especificado, no lo corto. Si estás pidiendo más de una línea por campo para un cambio chico, estás rearmando SDD adentro de organic: pará.
+> **#4 — Rutas absolutas SIEMPRE** en cualquier comando que muestres o dejes en el kickoff (`worktree:` es una ruta absoluta propuesta, nunca relativa).
 
 ## Fase 0 — Autorizar (ODD paso 1, read-only guard)
 
@@ -42,12 +42,12 @@ El carril ya está decidido (route=organic) — esto no es más el gate que elig
 
 | Campo | Bloquea | Qué prueba |
 |---|---|---|
-| **Qué** | ✅ SÍ | Objetivo = comportamiento/resultado observable y concreto. "Mejorar X" sin blanco concreto → FALLA. |
-| **Why** | ❌ NO | Motivación en 1 línea. Siempre se pide, nunca bloquea — pero FLUYE al feature-doc y al body del PR. |
-| **Done** | ✅ SÍ | Definición testeable = el CUÁNDO: "cuando X, pasa Y" o el check que lo prueba. |
-| **Decisiones ya tomadas** | ✅ SÍ | El approach/arquitectura está DECIDIDO o es obvio. |
-| **Riesgo** | ❌ NO (opcional) | Blast radius en una línea. |
-| **Dónde** | ❌ NUNCA bloquea | Es un OUTPUT de la fase Explore de `/mala-pata-organic-start`, no una precondición — en ODD explorás primero. El humano puede dejar una pista opcional, pero jamás bloquea. |
+| **Qué** | SÍ | Objetivo = comportamiento/resultado observable y concreto. "Mejorar X" sin blanco concreto → FALLA. |
+| **Why** | NO | Motivación en 1 línea. Siempre se pide, nunca bloquea — pero FLUYE al feature-doc y al body del PR. |
+| **Done** | SÍ | Definición testeable = el CUÁNDO: "cuando X, pasa Y" o el check que lo prueba. |
+| **Decisiones ya tomadas** | SÍ | El approach/arquitectura está DECIDIDO o es obvio. |
+| **Riesgo** | NO (opcional) | Blast radius en una línea. |
+| **Dónde** | NUNCA bloquea | Es un OUTPUT de la fase Explore de `/mala-pata-organic-start`, no una precondición — en ODD explorás primero. El humano puede dejar una pista opcional, pero jamás bloquea. |
 
 ### Qué hacer con el resultado
 
@@ -116,7 +116,7 @@ Igual que `/mala-pata-loop` (Paso 5): el kickoff vive en un **archivo**, no en e
 
 Tu respuesta al humano es un cierre **OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura (mismo formato que `/mala-pata-loop` Paso 5):
 
-- Título: `**✅ Kickoff listo — <change-name>**`
+- Título: `**Kickoff listo — <change-name>**`
 - Resumen (una línea por ítem):
   - **Qué:** <una línea>
   - **Carril:** organic

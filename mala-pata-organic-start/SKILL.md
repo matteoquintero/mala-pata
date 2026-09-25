@@ -13,18 +13,18 @@ Kickoff: **entrada entregada por el CLI** (ruta absoluta al archivo `.md` que de
 
 Tu trabajo: leer el kickoff y correr el **ciclo ODD nativo de gentle-ai**, organizado en el flujo mala-pata — worktree aislado, gates humanos donde corresponde, tabla final. Es a ODD lo que `/mala-pata-loop-start` es al SDD: **no reimplementás ODD — lo orquestás.**
 
-> 📖 **El protocolo ODD es la fuente de verdad.** Sus 7 pasos (Authorize → Explore → Resolve → Classify → Track → Implement → Close), el feature-doc, los work-unit commits, la evaluación RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill los sigue y les suma la capa mala-pata. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
+> **El protocolo ODD es la fuente de verdad.** Sus 7 pasos (Authorize → Explore → Resolve → Classify → Track → Implement → Close), el feature-doc, los work-unit commits, la evaluación RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill los sigue y les suma la capa mala-pata. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
 
-> ⚠️ **Usa workers de ODD (direct inline / delegated direct), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica a este skill. No preguntes el preflight canónico de 3 preguntas acá: no existe para este carril.
+> **Usa workers de ODD (direct inline / delegated direct), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica a este skill. No preguntes el preflight canónico de 3 preguntas acá: no existe para este carril.
 
-> 🪶 **Proporcionalidad**: para un cambio chico y ya entendido, las fases de abajo corren en una sola pasada (explorá → implementá → cerrá) sin pausas ceremoniales — la separación kickoff/start existe para dar un punto de review/handoff entre "qué se va a hacer" y "hacerlo", igual que en el par `mala-pata-loop`/`mala-pata-loop-start`, no para forzar burocracia en lo chico.
+> **Proporcionalidad**: para un cambio chico y ya entendido, las fases de abajo corren en una sola pasada (explorá → implementá → cerrá) sin pausas ceremoniales — la separación kickoff/start existe para dar un punto de review/handoff entre "qué se va a hacer" y "hacerlo", igual que en el par `mala-pata-loop`/`mala-pata-loop-start`, no para forzar burocracia en lo chico.
 
 ## Reglas duras
 
-> ⛔ **#1 — Worktree + base: EJECUTÁ lo que el kickoff ya confirmó, no decidas de nuevo.** El kickoff trae `base` y `branch` ya confirmados con el humano en `/mala-pata-organic`. Creá el worktree con esos valores tal cual — no propongas otra base ni la cambies en silencio. Si el kickoff no trae `base`/`branch`/`worktree` completos, PARÁ y pedilo al orquestador.
-> ⛔ **#2 — RDD vive acá, por work-unit commit.** Tras cada commit, si RDD está on, corré `gentle-ai review assess` y seguí el plan nativo (ver ODD protocol). NO es un gate al final — es **per-commit**.
-> ⛔ **#3 — Rutas absolutas SIEMPRE** (la cwd se resetea entre comandos a tu dir base, que suele ser el repo principal): `git -C <ABS-worktree> …`, nunca comandos pelados; antes de CUALQUIER escritura/commit, `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main.
-> ⛔ **#4 — No implementes antes de Explorar y Clasificar.** El plan de fases de abajo va en orden: worktree → explorar → clasificar → (track si substancial) → implementar. No saltes a escribir código "para ir resolviendo" antes de esos pasos, aunque el cambio te parezca chico y obvio.
+> **#1 — Worktree + base: EJECUTÁ lo que el kickoff ya confirmó, no decidas de nuevo.** El kickoff trae `base` y `branch` ya confirmados con el humano en `/mala-pata-organic`. Creá el worktree con esos valores tal cual — no propongas otra base ni la cambies en silencio. Si el kickoff no trae `base`/`branch`/`worktree` completos, PARÁ y pedilo al orquestador.
+> **#2 — RDD vive acá, por work-unit commit.** Tras cada commit, si RDD está on, corré `gentle-ai review assess` y seguí el plan nativo (ver ODD protocol). NO es un gate al final — es **per-commit**.
+> **#3 — Rutas absolutas SIEMPRE** (la cwd se resetea entre comandos a tu dir base, que suele ser el repo principal): `git -C <ABS-worktree> …`, nunca comandos pelados; antes de CUALQUIER escritura/commit, `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main.
+> **#4 — No implementes antes de Explorar y Clasificar.** El plan de fases de abajo va en orden: worktree → explorar → clasificar → (track si substancial) → implementar. No saltes a escribir código "para ir resolviendo" antes de esos pasos, aunque el cambio te parezca chico y obvio.
 
 ## Paso 1 — Cargar el kickoff + contexto de engram
 
@@ -77,15 +77,15 @@ Mismo formato que `/mala-pata-loop-start` Paso 5: tabla Markdown, un hito por fi
 
 | Hito | Estado |
 |---|---|
-| Autorización | ✅ cambio autorizado / read-only |
-| Worktree + base | ✅ `<branch>` off `<base>` |
-| Explore (Dónde) | ✅ `<n>` archivos/módulos tocados |
-| Feature-doc (si substancial) | ✅ `odd/tasks/<change_name>.md` · `<n>` tasks |
-| Apply (TDD si aplica) | ✅ Red-Green-Refactor, `<n>` tests |
-| Work-unit commits | ✅ `<n>` commits · RDD assess: `<granted/passive/…>` |
-| PR `#<n>` → `<branch>` | ✅ MERGEADO (merge commit `<sha>`) |
-| CI post-merge | ✅ VERDE |
-| Cleanup (worktree + rama) | ✅ Hecho |
+| Autorización | cambio autorizado / read-only |
+| Worktree + base | `<branch>` off `<base>` |
+| Explore (Dónde) | `<n>` archivos/módulos tocados |
+| Feature-doc (si substancial) | `odd/tasks/<change_name>.md` · `<n>` tasks |
+| Apply (TDD si aplica) | Red-Green-Refactor, `<n>` tests |
+| Work-unit commits | `<n>` commits · RDD assess: `<granted/passive/…>` |
+| PR `#<n>` → `<branch>` | MERGEADO (merge commit `<sha>`) |
+| CI post-merge | VERDE |
+| Cleanup (worktree + rama) | Hecho |
 
 ## Persistencia
 

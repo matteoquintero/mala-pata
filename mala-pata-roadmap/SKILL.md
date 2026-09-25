@@ -28,16 +28,16 @@ entra en **UNA unidad** — un `/mala-pata-organic` o un `/mala-pata-loop`. A ca
 más** — no escribís código, no corrés ningún carril, no aplicás. Después el humano toma cada fase y
 se la pasa a `/mala-pata-triage`, que decide el carril final con la info del momento.
 
-> ⛔ **Regla dura #1 — NO ejecutás nada.** Ni código, ni migraciones, ni corrés `/mala-pata-triage`,
+> **Regla dura #1 — NO ejecutás nada.** Ni código, ni migraciones, ni corrés `/mala-pata-triage`,
 > `/mala-pata-loop` ni `/mala-pata-organic`. Tu único entregable es el roadmap `.md` (+ un puntero en
 > engram). El DAG es un plan, no una orden de implementar.
 >
-> ⛔ **Regla dura #2 — si el objetivo YA entra en UNA unidad, NO inventes fases.** Si al analizarlo
+> **Regla dura #2 — si el objetivo YA entra en UNA unidad, NO inventes fases.** Si al analizarlo
 > ves que es un cambio que cabe en un solo organic o un solo loop, **PARÁ y redirigí a
 > `/mala-pata-triage`** — él decide el carril. Este skill es solo para objetivos que NO caben en una
 > sola unidad. Sobre-descomponer algo chico es el anti-patrón que este skill debe evitar.
 >
-> 🧭 **Regla dura #3 — la ruta por fase es un PRONÓSTICO, no un compromiso.** Clasificás cada fase
+> **Regla dura #3 — la ruta por fase es un PRONÓSTICO, no un compromiso.** Clasificás cada fase
 > como organic o loop con tu mejor lectura de HOY, pero **triage re-decide al llegar** (ver Paso 4-bis):
 > las fases previas resuelven incógnitas, así que una fase pronosticada loop puede volverse organic
 > (o al revés). Vos pronosticás; triage manda.
@@ -57,9 +57,9 @@ El objetivo del roadmap NO es cubrir lo que el humano LISTÓ — es cubrir lo qu
 La solicitud casi siempre queda incompleta; tu trabajo es cerrar el hueco. **Sesgo: mejor que sobre,
 no que falte.** Hay dos errores simétricos a evitar:
 
-⛔ **Encoger a lo fácil de medir** — anclarte al primer inventario que el código deja grepear (una
+**Encoger a lo fácil de medir** — anclarte al primer inventario que el código deja grepear (una
 métrica, un report) y planificar solo esa faceta.
-⛔ **Cubrir solo lo que el humano dijo** — la solicitud es incompleta por default; si no buscás lo que
+**Cubrir solo lo que el humano dijo** — la solicitud es incompleta por default; si no buscás lo que
 falta, el humano lo termina descubriendo en producción.
 
 Definí el **estado deseado** (el objetivo COMPLETO) uniendo TRES fuentes:

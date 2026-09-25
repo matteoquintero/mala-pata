@@ -59,7 +59,7 @@ El motor (SDD/ODD/RDD/engram) es de gentle-ai; los frameworks son estándar de l
 
 ## Relación con la instalación viva
 
-⚠️ **Esto es una COPIA para versionar, no la fuente viva.** Los skills que Claude Code / Codex ejecutan viven en `~/.agent-skills/<skill>` y están symlinkeados desde `~/.claude/skills/` y `~/.codex/skills/`.
+**Esto es una COPIA para versionar, no la fuente viva.** Los skills que Claude Code / Codex ejecutan viven en `~/.agent-skills/<skill>` y están symlinkeados desde `~/.claude/skills/` y `~/.codex/skills/`.
 
 Este repo **no está symlinkeado** — puede quedar desactualizado respecto a `~/.agent-skills`. Para sincronizar la copia con lo vivo:
 

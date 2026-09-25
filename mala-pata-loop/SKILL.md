@@ -13,10 +13,10 @@ Solicitud del usuario: **entrada entregada por el CLI**
 
 Tu único trabajo es convertir esa solicitud en un **CONTEXTO TÉCNICO COMPLETO guardado en un archivo markdown** (fuera del repo, ver Paso 5) que otro agente consumirá para EJECUTAR un SDD.
 
-> 🚫 **NO inicias el SDD. NO escribís código. NO creás specs/tasks/migraciones reales. NO corrés tests.**
-> ✅ Solo producís el *brief* (contexto) y lo persistís en un archivo (con un puntero de una línea en engram para que se pueda buscar). Al terminar, el SDD queda **listo para arrancar**, no arrancado.
+> **NO inicias el SDD. NO escribís código. NO creás specs/tasks/migraciones reales. NO corrés tests.**
+> Solo producís el *brief* (contexto) y lo persistís en un archivo (con un puntero de una línea en engram para que se pueda buscar). Al terminar, el SDD queda **listo para arrancar**, no arrancado.
 
-> 🧭 **Cuándo estás en el carril correcto (frontera con organic).** Llegás a `/mala-pata-loop` cuando **no podés empezar a codear todavía porque falta DISEÑAR** — típicamente porque el gate de `/mala-pata-organic` diagnosticó `Decisiones ya tomadas` sin resolver (fork de arquitectura, contrato/endpoint cuya *forma* hay que decidir, requisitos en disputa). **El tamaño por sí solo NUNCA te manda acá**: un cambio grande pero especificable (podés llenar Qué + Done + Decisiones) va a `/mala-pata-organic`; uno más grande que un solo ciclo va a `/mala-pata-roadmap`. Si al leer el pedido ya sabés qué construir y la arquitectura está decidida, esto NO es loop — devolvelo a `/mala-pata-organic`.
+> **Cuándo estás en el carril correcto (frontera con organic).** Llegás a `/mala-pata-loop` cuando **no podés empezar a codear todavía porque falta DISEÑAR** — típicamente porque el gate de `/mala-pata-organic` diagnosticó `Decisiones ya tomadas` sin resolver (fork de arquitectura, contrato/endpoint cuya *forma* hay que decidir, requisitos en disputa). **El tamaño por sí solo NUNCA te manda acá**: un cambio grande pero especificable (podés llenar Qué + Done + Decisiones) va a `/mala-pata-organic`; uno más grande que un solo ciclo va a `/mala-pata-roadmap`. Si al leer el pedido ya sabés qué construir y la arquitectura está decidida, esto NO es loop — devolvelo a `/mala-pata-organic`.
 
 ---
 
@@ -53,7 +53,7 @@ Antes de reinterpretar nada, medí si la solicitud está **lista para entrar al 
 - **Recuperable** — 1–2 rojas, o el DoD se vuelve testeable con 1–2 preguntas → hacé **esas preguntas concretas** y esperá. No inventes alcance.
 - **Demasiado vaga** — falta el objeto mismo ("mejorá la app", "hacelo mejor"), o 3+ rojas, o el "listo" no se puede volver testeable → **NO generes contexto.** Respondé exactamente:
 
-  > **trabaje vago 🛠️** — necesito al menos: *qué* querés lograr, *dónde* (módulo/feature) y *cuándo está listo* (en criterios verificables, no "que quede bien"). [Si hay tarjetas rojas concretas, listalas acá como bullets.] Con eso te armo el contexto.
+  > **trabaje vago ** — necesito al menos: *qué* querés lograr, *dónde* (módulo/feature) y *cuándo está listo* (en criterios verificables, no "que quede bien"). [Si hay tarjetas rojas concretas, listalas acá como bullets.] Con eso te armo el contexto.
 
   Y parás ahí. No reinterpretes ni adivines.
 
@@ -255,7 +255,7 @@ El kickoff vive en un **archivo, no en engram** — así nunca se sube al repo d
 4. Si reservaste migraciones, confirmá que el registry quedó actualizado.
 5. **Tu respuesta al humano es un cierre OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura:
 
-   - Título: `**✅ Kickoff listo — <change-name>**`
+   - Título: `**Kickoff listo — <change-name>**`
    - Resumen (una línea por ítem):
      - **Qué:** <una línea>
      - **Perfil:** <FULL/STANDARD/LITE/MINIMAL>
@@ -273,7 +273,7 @@ El kickoff vive en un **archivo, no en engram** — así nunca se sube al repo d
    Este bloque es la ÚNICA forma de cerrar en el happy path.
 
 **Únicas excepciones** (cuando la respuesta NO es el bloque de cierre):
-- Gate de vaguedad → responder `trabaje vago 🛠️` (Paso 0).
+- Gate de vaguedad → responder `trabaje vago ` (Paso 0).
 - Idempotencia / conflicto en vuelo → una línea de aviso + la pregunta, antes de crear.
 - Paso 1.5 y Paso 1.8 → la función de preguntas interactiva disponible en el CLI para elegir perfil y confirmar la branch base (idealmente en UNA sola interacción; son las únicas preguntas permitidas antes del kickoff).
 - Engram no disponible para el puntero → el archivo ya es la fuente de verdad, seguí igual; avisá en una línea que el puntero no quedó guardado (afecta la idempotencia futura, no el kickoff en sí).

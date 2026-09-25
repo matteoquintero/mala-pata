@@ -14,7 +14,7 @@ qué **olas** correrlos, qué **paralelizar** y qué **NO**, dónde hay **confli
 qué kickoff **conviene partir en dos**, cuáles **diferir** por bajo valor, y los comandos listos para
 pegar.
 
-> 🚫 **Este skill NO ejecuta nada**: no crea worktrees, no adelanta branches, no escribe launch configs,
+> **Este skill NO ejecuta nada**: no crea worktrees, no adelanta branches, no escribe launch configs,
 > no abre sesiones. Es SOLO análisis + plan. Para **lanzar** el lote usá `/mala-pata-loop-orchestrate-start`
 > (separación de responsabilidades, igual que `loop` vs `loop-start`).
 
@@ -63,7 +63,7 @@ De cada kickoff sacá:
    paraleliza a ciegas (no mergear con CI en rojo; un solo PR activo por trabajo).
 7. **Frescura de la branch base (solo DETECTAR y AVISAR — no arreglar acá)**: por cada branch base
    distinta del lote, `git fetch origin <base>` y comparar `git rev-parse <base>` vs
-   `origin/<base>`. Si el local está ATRÁS, marcalo en el plan: "⚠️ `<base>` local atrás de origin —
+   `origin/<base>`. Si el local está ATRÁS, marcalo en el plan: "`<base>` local atrás de origin —
    `/mala-pata-loop-orchestrate-start` va a adelantar los worktrees antes de lanzar". El arreglo real
    (ff/rebase de los worktrees) lo hace el skill de start; acá solo se reporta para que el usuario lo
    sepa antes de lanzar.

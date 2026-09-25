@@ -13,7 +13,7 @@ Sos el **ejecutor del lote**. Te pasan los kickoffs de una **ola** y los **lanz�
 un worktree por kickoff + una sesión de Claude por kickoff (una tab de Warp cada una). El plan
 (olas/conflictos/orden de Apply) lo produce `/mala-pata-loop-orchestrate` — este skill EJECUTA.
 
-> ✅ **El propósito es el paralelismo.** Lanzá TODOS los kickoffs de la ola que te den, aunque
+> **El propósito es el paralelismo.** Lanzá TODOS los kickoffs de la ola que te den, aunque
 > compartan archivos. Los worktrees aíslan el trabajo (dirs/índices distintos) → las sesiones
 > **planean en paralelo** sin pisarse. El conflicto por archivo compartido se resuelve **serializando
 > el APPLY** (cada `/mala-pata-loop-start` frena en su gate previo a Apply; el humano/kickoff decide el
@@ -42,7 +42,7 @@ Por cada `change-name`, secuencial (para no lockear el índice de git):
 git -C /ABS worktree add /ABS-worktrees/<change-name> -b feature/<change-name> <branch-base>
 ```
 Después symlinkeá los untracked que el stack necesite (`.env`/`node_modules` o equivalente), igual que
-hace el comando de arranque de un kickoff individual. ⚠️ Para verificar el symlink de `.env` NUNCA lo
+hace el comando de arranque de un kickoff individual. Para verificar el symlink de `.env` NUNCA lo
 nombres como argumento directo (`ls -la <wt> | grep '\.env'` — ver la regla en loop-start).
 
 ## Paso 2 — Anti-stale: adelantar los worktrees a origin/<base> (OBLIGATORIO)
@@ -82,8 +82,8 @@ worktree ya tuviera commits y el ff fallara, PARÁ y avisá (no forces): ese wor
                 - exec: claude "/mala-pata-loop-start <ruta-absoluta-del-kickoff-2.md>"
           # ... una tab por kickoff de la ola
     ```
-- ⛔ **El `cwd` de cada tab DEBE ser la ruta ABSOLUTA del worktree** (`<ABS-repo>-worktrees/<change-name>`), NUNCA el repo principal. Ese `cwd` fija el directorio base de la sesión — al que la cwd del shell **vuelve tras cada comando** (ver `mala-pata-loop-start`, Paso 2.4). Si apunta al main, cada comando "pelado" de esa sesión opera sobre el main y termina mezclando trabajos o barriendo archivos sueltos del working tree principal. Verificá que cada `cwd:` del YAML sea el worktree correcto antes de abrir.
-- ⚠️ **Worktree movido/renombrado = relanzar, no arreglar en caliente.** Si un worktree se reubica (ej. la migración de `.claude/worktrees/` a `<repo>-worktrees/`) mientras hay sesiones en vuelo, esas sesiones quedan ancladas a la ruta vieja y caen al main en cada reset de cwd. Hay que cerrarlas y relanzarlas con el `cwd` nuevo; no se corrige dentro de la sesión.
+- **El `cwd` de cada tab DEBE ser la ruta ABSOLUTA del worktree** (`<ABS-repo>-worktrees/<change-name>`), NUNCA el repo principal. Ese `cwd` fija el directorio base de la sesión — al que la cwd del shell **vuelve tras cada comando** (ver `mala-pata-loop-start`, Paso 2.4). Si apunta al main, cada comando "pelado" de esa sesión opera sobre el main y termina mezclando trabajos o barriendo archivos sueltos del working tree principal. Verificá que cada `cwd:` del YAML sea el worktree correcto antes de abrir.
+- **Worktree movido/renombrado = relanzar, no arreglar en caliente.** Si un worktree se reubica (ej. la migración de `.claude/worktrees/` a `<repo>-worktrees/`) mientras hay sesiones en vuelo, esas sesiones quedan ancladas a la ruta vieja y caen al main en cada reset de cwd. Hay que cerrarlas y relanzarlas con el `cwd` nuevo; no se corrige dentro de la sesión.
 - Abrir: `open "warp://launch/mpl-orchestrate-<slug-lote>"`.
   Si el URI no dispara en esta versión de Warp → decile al usuario que la abra desde el
   **Command Palette → "Launch Configuration" → mpl-orchestrate-<slug-lote>** (el YAML ya quedó escrito).
@@ -93,7 +93,7 @@ worktree ya tuviera commits y el ff fallara, PARÁ y avisá (no forces): ese wor
 Devolvé: worktrees creados (+ que quedaron en `origin/<base>`), path del launch config, y qué tabs
 quedaron (una por kickoff). Recordá el **orden de Apply** que dio el plan (qué mergea primero) y que
 las demás sesiones **esperan en su gate previo a Apply** y rebasan sobre `origin/<base>` al integrar.
-⚠️ El orquestador (esta sesión) NO sigue esos ciclos; el seguimiento/gates ocurren en cada tab. Ofrecé
+El orquestador (esta sesión) NO sigue esos ciclos; el seguimiento/gates ocurren en cada tab. Ofrecé
 `mala-pata-radar` para ver el avance del lote (descubre y confirma con git en una sola corrida).
 
 ## Reglas duras

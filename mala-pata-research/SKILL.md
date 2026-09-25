@@ -12,7 +12,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-research — afinador de ideas crudas (pre-triage)
@@ -97,17 +97,22 @@ size_signal: una-unidad | multi-unidad
 ## Handoff
 ```
 
-## Fase 5 — Cierre obligatorio (resumen + doc)
+## Fase 5 — Cierre obligatorio: resumen EN CRISTIANO + doc
 
-Mismo estilo que el cierre de `/mala-pata-organic` (Fase 4) y `/mala-pata-loop` (Paso 5): un bloque estándar, no opcional, que sale del doc que acabás de escribir sin inventar nada.
+Mismo espíritu que `/sdd-preview` (tu invención): un resumen **escaneable en ~30 segundos que deja
+entender QUÉ hará sin abrir el md**. No es opcional, sale del doc que acabás de escribir sin inventar
+nada, y **NO es el doc entero pegado** — eso ya vive en el archivo; acá va la capa que se entiende de un
+vistazo. El humano tiene que poder decidir si manda esto a roadmap/triage **solo con este resumen**.
 
 - Título: `**✅ Research listo — <slug>**`
-- Resumen (una línea por ítem):
-  - **Qué:** <una línea>
-  - **Novedad:** <qué hay de nuevo en el enfoque>
-  - **A quién le importa:** <impacto si tiene éxito>
-  - **Riesgo principal:** <una línea>
-  - **Señal de tamaño:** una-unidad | multi-unidad
+- **Qué propone** — una frase clara, sin jerga.
+- **Por qué** — los 2-4 hallazgos clave que lo sostienen, en cristiano (cómo se hace hoy y su límite, qué
+  descubriste en el código). Es lo que convence, no relleno.
+- **Qué hará** — la forma de lo propuesto a alto nivel: si hay tiers/piezas/fases, listalas compactas
+  (una línea cada una) para que se vea el shape completo de un vistazo.
+- **Lo que importa** — el riesgo principal + las decisiones abiertas que definen el siguiente paso (las
+  que el carril/roadmap va a tener que resolver).
+- **Señal de tamaño:** una-unidad | multi-unidad.
 - **Doc:** `<ruta absoluta del .md>`
 - **Siguiente paso** (bloque de código, copy-paste):
 
@@ -116,6 +121,7 @@ Mismo estilo que el cierre de `/mala-pata-organic` (Fase 4) y `/mala-pata-loop` 
   ```
 
   (o `/mala-pata-roadmap <slug>` si la señal de tamaño dio multi-unidad) — pasále al carril elegido el borrador de campos ya redactado en la Fase 3, para que confirme en vez de arrancar de cero.
+- Cerrá con **una línea "en cristiano"** de qué resuelve, para el que solo lee lo último.
 
 Este bloque es la ÚNICA forma de cerrar en el happy path.
 

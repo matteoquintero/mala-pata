@@ -1,5 +1,7 @@
 # mala-pata
 
+*No inventamos la rueda — la orquestamos.*
+
 Capa de orquestación para desarrollo asistido por IA (Claude Code / Codex): toma el motor de **gentle-ai** y lo organiza en un flujo de trabajo propio — por fases, con gates humanos y aislamiento por worktree.
 
 ## Origen
@@ -24,6 +26,7 @@ Hoy mala-pata es esa capa — más una pieza que sigue siendo **100% mía y que 
 
 | Skill | Qué hace | Origen |
 |---|---|---|
+| `mala-pata-research` | Prepara una idea cruda (Heilmeier + Double Diamond + JTBD), escribe un doc de research y hace handoff a triage/roadmap. Read-only. | mala-pata |
 | `mala-pata-triage` | **Puerta de entrada.** Lee cualquier pedido, aplica el gate de forma y responde qué carril correr (organic/loop/roadmap). No genera ni ejecuta. | mala-pata |
 | `mala-pata-loop` | Toma el **SDD** de gentle-ai y arma el kickoff (contexto técnico completo) en tu flujo. | mala-pata |
 | `mala-pata-loop-start` | Corre el ciclo SDD desde el kickoff (explore → … → archive), con gate por fase. | mala-pata |
@@ -38,6 +41,22 @@ Hoy mala-pata es esa capa — más una pieza que sigue siendo **100% mía y que 
 
 > El motor `sdd-*` / `engram` / RDD / ODD **no está en este repo**: lo provee gentle-ai. Estos skills lo orquestan.
 
+## En qué nos paramos (no inventamos la rueda)
+
+Cada skill se apoya en un marco estándar de la industria, no en un criterio inventado:
+
+| Skill | Framework en el que se para |
+|---|---|
+| `mala-pata-research` | Heilmeier Catechism (DARPA) + Double Diamond (Discover/Define) + Jobs-to-be-Done. |
+| `mala-pata-triage` / gate de `mala-pata-organic` | Gate de forma Qué/Why/Done(=when)/Decisiones + INVEST (Testable). |
+| `mala-pata-loop` (Paso 0 DoR) | Example Mapping / Three Amigos + INVEST. |
+| `mala-pata-roadmap` | MECE + regla del 100% + Gap Analysis + JTBD + checklist de dominio (estilo ISO/IEC 25010). |
+| `mala-pata-walkthrough` | Diátaxis + BDD living documentation (Given/When/Then). |
+| Estructura del kickoff | Best-practice de prompts largos de Anthropic (contexto primero, instrucción al final). |
+| Entrega | Work-unit commits / chained PRs (presupuesto de review ~400 líneas). |
+
+El motor (SDD/ODD/RDD/engram) es de gentle-ai; los frameworks son estándar de la industria; mala-pata pone el FLUJO que los une.
+
 ## Relación con la instalación viva
 
 ⚠️ **Esto es una COPIA para versionar, no la fuente viva.** Los skills que Claude Code / Codex ejecutan viven en `~/.agent-skills/<skill>` y están symlinkeados desde `~/.claude/skills/` y `~/.codex/skills/`.
@@ -45,7 +64,7 @@ Hoy mala-pata es esa capa — más una pieza que sigue siendo **100% mía y que 
 Este repo **no está symlinkeado** — puede quedar desactualizado respecto a `~/.agent-skills`. Para sincronizar la copia con lo vivo:
 
 ```bash
-for s in mala-pata-triage mala-pata-loop mala-pata-loop-start mala-pata-loop-orchestrate \
+for s in mala-pata-research mala-pata-triage mala-pata-loop mala-pata-loop-start mala-pata-loop-orchestrate \
          mala-pata-loop-orchestrate-start mala-pata-radar mala-pata-organic \
          mala-pata-organic-start mala-pata-roadmap mala-pata-walkthrough sdd-preview; do
   rm -rf "$s" && cp -R "$HOME/.agent-skills/$s" "$s"

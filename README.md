@@ -27,6 +27,7 @@ Hoy mala-pata es esa capa — más una pieza que sigue siendo **100% mía y que 
 | Skill | Qué hace | Origen |
 |---|---|---|
 | `mala-pata-research` | Prepara una idea cruda (Heilmeier + Double Diamond + JTBD), escribe un doc de research y hace handoff a triage/roadmap. Read-only. | mala-pata |
+| `mala-pata-states` | Dado un feature, extrae del código su máquina de estados (enum + guards) y la dibuja con archify (lifecycle) como HTML fiel, para detectar transiciones rotas visualmente. Read-only. | mala-pata |
 | `mala-pata-triage` | **Puerta de entrada.** Lee cualquier pedido, aplica el gate de forma y responde qué carril correr (organic/loop/roadmap). No genera ni ejecuta. | mala-pata |
 | `mala-pata-loop` | Toma el **SDD** de gentle-ai y arma el kickoff (contexto técnico completo) en tu flujo. | mala-pata |
 | `mala-pata-loop-start` | Corre el ciclo SDD desde el kickoff (explore → … → archive), con gate por fase. | mala-pata |
@@ -64,7 +65,7 @@ El motor (SDD/ODD/RDD/engram) es de gentle-ai; los frameworks son estándar de l
 Este repo **no está symlinkeado** — puede quedar desactualizado respecto a `~/.agent-skills`. Para sincronizar la copia con lo vivo:
 
 ```bash
-for s in mala-pata-research mala-pata-triage mala-pata-loop mala-pata-loop-start mala-pata-loop-orchestrate \
+for s in mala-pata-research mala-pata-states mala-pata-triage mala-pata-loop mala-pata-loop-start mala-pata-loop-orchestrate \
          mala-pata-loop-orchestrate-start mala-pata-radar mala-pata-organic \
          mala-pata-organic-start mala-pata-roadmap mala-pata-walkthrough sdd-preview; do
   rm -rf "$s" && cp -R "$HOME/.agent-skills/$s" "$s"

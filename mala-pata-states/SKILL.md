@@ -4,7 +4,7 @@ description: Dado un feature por nombre, extrae del código su(s) máquina(s) de
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # mala-pata-states — Diagrama fiel de máquina de estados
@@ -61,6 +61,16 @@ Mapeá el resultado de las fases 1-2 al esquema `lifecycle` de archify (`schema_
 
 Respetá los gotchas documentados por archify para `lifecycle`: las columnas de fase `0..4` ocupan el riel principal; una columna de evento/terminal `N` en `0..2` se alinea exactamente debajo de la columna principal `N + 2`; un estado recuperable usa `type: "failure"` más una transición real de vuelta al estado activo (no un estado terminal fantasma).
 
+### Sobre conocido-bueno de archify (construí ADENTRO, no thrashees)
+
+El viewport que aprieta es **1440x900** (los demás — 1600/1920/2048 — entran solos). Construí dentro de este sobre para que `visual-check` pase en la PRIMERA render, en vez de iterar a ciegas:
+
+- **`viewBox` alto = 566 fijo.** Es el piso duro de archify (rechaza cualquier valor menor con `viewBox/1 must be >= 566`). No es una palanca — no intentes bajarlo.
+- **`viewBox` ancho ~1040-1100 (default 1080).** archify escala la fuente con `930 / viewBoxWidth`; anchos en esa banda mantienen la fuente proyectada `>= 6px`. Ensanchar de más baja la fuente por debajo de 6px y falla readability.
+- **Máximo 3 cards.** La 4a card envuelve a una segunda fila (~+62px) y overflowea 1440x900 (`scrollHeight` 962 > 900). Si tenés más de 3 hallazgos, **fusionálos en 3 cards** (varios items por card), no agregues una 4a.
+- **Presupuesto de altura:** a 1440 de ancho, `alto_SVG = 1440 x 566 / viewBoxW` (~754px con 1080) + chrome (título/toolbar/cards, ~146px) tiene que quedar `<= 900`.
+- **Overflow = señal de SPLIT (principio ORTOGONAL).** Si una sola máquina no entra ni en el sobre, es evidencia de god-machine → partila en varias máquinas/diagramas (Fase 2), no la encajes a la fuerza. El fix del overflow ES el principio del skill, no una excepción.
+
 ## Fase 4 — Validar y entregar con archify
 
 Corré estos comandos con rutas absolutas, desde el directorio de la skill archify (`/Users/matteoquintero/.agents/skills/archify`):
@@ -82,6 +92,15 @@ node bin/archify.mjs visual-check <ruta-absoluta-html>
 ```
 
 Debe pasar — es evidencia de navegador real sobre el HTML entregado, sin volver a renderizar.
+
+### Playbook de remediación (si `visual-check` da `containment fail` — ordenado, sin loops ciegos)
+
+archify solo detecta el overflow de altura en este paso lento (Chrome), no en `validate`. Si falla containment, seguí este orden exacto (no tunees al azar):
+
+1. **Primero achicá el chrome:** fusioná a `<= 3` cards y acortá los items. Es la causa más común (la card que envuelve a una 2a fila) y no toca ni fuente ni geometría. Re-entregá y re-chequeá.
+2. Si sigue y el que no entra es el SVG: **ensanchá `viewBoxW`** (baja el alto proyectado a 1440). NUNCA bajes el alto de 566 (piso duro) ni la fuente de 6px.
+3. Si aún no entra en el sobre: es god-machine → **partí la máquina** (Fase 2, principio ortogonal), no sigas tuneando geometría.
+4. **Una sola corrida de `visual-check` por cambio** — nunca loops a ciegas. Leé `scrollHeight` vs `innerHeight` en el `.visual-check.json` para saber cuántos px sobran antes de tocar nada.
 
 Default de salida (si el usuario no pide otra ruta): `<project-root>/docs/diagrams/<feature>-states.{json,html}` (mismo patrón que `bodega-ferreteria-colombia/docs/diagrams/lifecycle.json`). El `.json` es versionable y editable; el `.html` es el entregable.
 

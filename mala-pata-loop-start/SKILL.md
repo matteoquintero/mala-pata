@@ -26,6 +26,19 @@ Tu trabajo: leer el *kickoff* que dejó `/mala-pata-loop` y **correr el CICLO SD
 
 > **Regla dura #4 — el objetivo se define ANTES de preview, nunca EN preview. Alarma de debate.** El preview existe para revisar **si lo que se va a hacer está bien**, NO para discutir **si el objetivo está bien** — el QUÉ ya tuvo que quedar cerrado en explore/propose/spec. Durante las fases de planeación (explore→spec), si notás que se está **debatiendo mucho el QUÉ** — vuelven preguntas sobre el objetivo, el alcance se mueve, aparecen "¿y esto también?" que no cierran, o la misma decisión se re-discute más de una vez — eso es la señal de que **el objetivo no quedó bien definido** (tarjetas rojas que se colaron por el gate de `/mala-pata-loop`, ver su Paso 0). NO sigas empujando hacia adelante: **devolvé el ciclo a explore o propose** para volver a fijar el QUÉ, y recién cuando esté cerrado seguís. Un objetivo con el QUÉ todavía en discusión **NO puede llegar a preview**. Esto no es re-correr fases por gusto — planear sobre un objetivo movedizo garantiza tirar el plan después.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `gentle-ai` — agentes `sdd-*`. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — navegación y edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el brief en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Paso 1 — Cargar el brief
 
 **Formato actual (default)**: `entrada entregada por el CLI` es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-loop` escribe en `<carpeta-del-proyecto>-mala-pata/<change-name>.md`, fuera del repo).

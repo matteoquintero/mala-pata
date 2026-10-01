@@ -21,6 +21,18 @@ pegar.
 NO corrés los ciclos SDD acá (eso lo hace `/mala-pata-loop-start` por kickoff). Este comando
 **planifica el lote**; el lanzamiento vive en el skill hermano.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `git` — lectura de ramas y detección de conflictos. Instalar: siempre presente; no requiere instalación.
+  - `gentle-ai` — motor SDD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir con la lista explícita de kickoffs. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Paso 1 — Cargar los kickoffs
 Input (acepta cualquiera de estas formas):
 - **Lista explícita de rutas** (formato actual): rutas absolutas a los `.md` de kickoff que dejó `/mala-pata-loop` en `<carpeta-proyecto>-mala-pata/`.

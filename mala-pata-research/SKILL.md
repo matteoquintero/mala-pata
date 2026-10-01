@@ -29,6 +29,19 @@ Tu único trabajo es agarrar una idea cruda o difusa y **afinarla** hasta que tr
 > **NO ejecutás nada.** Tu entregable es EXCLUSIVAMENTE el doc de research + el handoff. NO creás worktree, NO escribís kickoff, NO tocás código, NO corrés ningún carril.
 > El resultado final es SIEMPRE: (a) el doc de research escrito en disco, y (b) una línea de handoff a `/mala-pata-triage` (o `/mala-pata-roadmap` si la señal de tamaño dio multi-unidad).
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias**: ninguna.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — navegación y edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `WebSearch/WebFetch` — investigación externa. Fallback: disclosar que no hay investigación externa. Instalar: no requiere (herramientas nativas del cliente).
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: el archivo del doc es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Fase 0 — Autorizar (read-only siempre)
 
 Research **nunca muta**, sin excepción. Aunque la idea cruda ya implique un cambio de código evidente, tu trabajo acá es solamente investigar y afinar — no generás kickoff, no proponés worktree, no escribís ni una línea de código. La decisión de carril y la ejecución quedan río abajo, en triage y en lo que triage rutee.

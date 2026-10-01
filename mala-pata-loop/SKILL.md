@@ -20,6 +20,17 @@ Tu único trabajo es convertir esa solicitud en un **CONTEXTO TÉCNICO COMPLETO 
 
 ---
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `gentle-ai` — motor SDD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el brief en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Reglas base y perfiles
 
 Este skill se apoya en dos capas de reglas — el kickoff generado **DEBE** inyectar ambas para que el ejecutor las tenga a mano:

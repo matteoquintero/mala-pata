@@ -13,6 +13,18 @@ Trigger: "máquina de estados de \<feature\>", "diagramá los estados de X", "ma
 
 Este skill produce un diagrama, no un análisis. Es read-only sobre el código del proyecto objetivo: lee el enum de estados y las transiciones reales, y las dibuja — no modifica ni una línea del código que inspecciona. Usa workers de ODD (direct/delegated) para su propia ejecución; NO despacha agentes `sdd-*` — el preflight hook de gentle-ai no aplica acá. Rutas absolutas siempre, tanto para leer el proyecto objetivo como para invocar archify.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `archify` — renderer del diagrama (es una skill, no un binario), sin fallback. Instalar: `npx skills add tt-a1i/archify -g`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — extraer enum y transiciones. Fallback: grep/Read. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Principios duros (no negociables)
 
 - **FIDELIDAD sobre prolijidad**: se dibuja lo que el código HACE, no lo que debería hacer. Si una transición falta en el código, falta en el diagrama — nunca se inventan estados ni transiciones para que se vea completo. Un diagrama que miente es peor que no tener diagrama.

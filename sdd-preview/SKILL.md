@@ -12,6 +12,17 @@ metadata:
   version: "3.0"
 ---
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `gentle-ai` — parte del ciclo SDD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; los artefactos en archivo son la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Purpose
 
 Producir un **resumen ejecutivo corto** de qué va a hacer `sdd-apply`, en lenguaje llano ("en cristiano"), para que el humano lo lea en ≤30 segundos y decida si el plan sigue en pie o se salió del camino.

@@ -21,6 +21,17 @@ Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo m
 
 > **Organic usa workers de ODD (direct/delegated), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica ni a este skill ni a `/mala-pata-organic-start`. No inventes un gate de preflight acá: no existe para este carril.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `gentle-ai` — motor ODD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el kickoff en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Reglas duras
 
 > **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**.

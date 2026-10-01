@@ -42,6 +42,18 @@ se la pasa a `/mala-pata-triage`, que decide el carril final con la info del mom
 > las fases previas resuelven incógnitas, así que una fase pronosticada loop puede volverse organic
 > (o al revés). Vos pronosticás; triage manda.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias**: ninguna.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — navegación y edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `WebSearch/WebFetch` — investigación externa. Fallback: disclosar que no hay investigación externa. Instalar: no requiere (herramientas nativas del cliente).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Paso 0 — ¿Amerita roadmap? (gate de tamaño + vaguedad)
 
 - **¿Es lo bastante grande?** Si el objetivo cabe en UNA unidad (un organic o un loop) → Regla dura

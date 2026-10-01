@@ -19,6 +19,10 @@ Tu único trabajo es **leer el pedido y decidir el carril**, después **responde
 > **Triage no despacha agentes `sdd-*`.** Es un skill de decisión puro — el preflight `PreToolUse:Agent` de gentle-ai no aplica acá, igual que no aplica a `/mala-pata-organic`.
 > **Los tres carriles siguen invocables directo** si el humano ya sabe cuál es (`/mala-pata-organic`, `/mala-pata-loop`, `/mala-pata-roadmap`). Triage es la entrada recomendada cuando NO sabés por dónde va — no un paso obligatorio.
 
+## Requisitos (orquestar, no reinventar)
+
+Este skill no orquesta herramientas duras: solo decide el carril. No tiene requisitos de instalación.
+
 ## Fase 0 — Autorizar (read-only guard)
 
 ¿El pedido es un **CAMBIO**? Investigación, explicación, review, auditoría o comparación son **read-only** — no hay carril que decidir, respondé directo desde tu propio conocimiento/exploración y listo (no es un carril de mala-pata).

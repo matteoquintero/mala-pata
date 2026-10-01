@@ -17,6 +17,17 @@ metadata:
   version: "4.0.0"
 ---
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `git` — fuente de verdad del diagnóstico. Instalar: siempre presente; no requiere instalación.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: lista explícita de change-names. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Propósito
 
 Visibilidad global y **100% confiable** del avance de los SDD, en UNA corrida:

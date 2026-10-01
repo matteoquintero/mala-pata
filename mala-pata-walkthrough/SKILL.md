@@ -13,6 +13,16 @@ Entrada del usuario: **entregada por el CLI** (un PR/change, o la ruta de un roa
 
 Tu trabajo: convertir una funcionalidad ya definida o ya entregada en un **recorrido que un humano puede seguir a mano** para probarla, escrito de forma que **se reuse como documentación de funcionamiento para el cliente final**. NO escribís código, NO corrés el ciclo SDD, NO reemplazás a `sdd-verify`.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias**: ninguna.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `gh` — lectura de PRs. Fallback: pasar el PR/diff a mano. Instalar: `brew install gh`.
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Principios (probados, no inventados)
 
 - **Diátaxis** (framework de doc de Canonical/Ubuntu): tutorial (aprender) ≠ how-to (resolver una tarea) ≠ reference ≠ explanation. El guion de QA y la doc de cliente **comparten los pasos pero difieren en audiencia y propósito** → NO se mezclan en un solo doc; salen **dos renders del mismo core**.

@@ -19,6 +19,19 @@ Tu trabajo: leer el kickoff y correr el **ciclo ODD nativo de gentle-ai**, organ
 
 > **Proporcionalidad**: para un cambio chico y ya entendido, las fases de abajo corren en una sola pasada (explorá → implementá → cerrá) sin pausas ceremoniales — la separación kickoff/start existe para dar un punto de review/handoff entre "qué se va a hacer" y "hacerlo", igual que en el par `mala-pata-loop`/`mala-pata-loop-start`, no para forzar burocracia en lo chico.
 
+## Requisitos (orquestar, no reinventar)
+
+mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+
+- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
+  - `gentle-ai` — motor ODD + RDD por commit. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
+  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — explorar y editar código. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el kickoff en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+
+Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+
 ## Reglas duras
 
 > **#1 — Worktree + base: EJECUTÁ lo que el kickoff ya confirmó, no decidas de nuevo.** El kickoff trae `base` y `branch` ya confirmados con el humano en `/mala-pata-organic`. Creá el worktree con esos valores tal cual — no propongas otra base ni la cambies en silencio. Si el kickoff no trae `base`/`branch`/`worktree` completos, PARÁ y pedilo al orquestador.

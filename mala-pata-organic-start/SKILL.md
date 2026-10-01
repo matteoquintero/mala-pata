@@ -4,7 +4,7 @@ description: Corre el CICLO ODD (Organic Driven Development) a partir de la ruta
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-organic-start — Corre el CICLO ODD desde un archivo de kickoff
@@ -81,7 +81,7 @@ Por cada task: la **topología más chica** — direct inline (1-3 archivos ya e
 
 ## Paso 7 — Cerrar (ODD 7 + cierre mala-pata)
 
-Reportá el **resultado verificado** + todo check fallado/skippeado/pendiente + próximo paso. Después, el cierre mala-pata: reusá de `/mala-pata-loop-start` las sub-fases **4.1 (reporte), 4.1-bis (re-verificar/renumerar migración si tocaste una), 4.2 (destino PR/merge con GATE), 4.4 (CI proactivo), 4.5 (limpieza con GATE)** — **NO la 4.3** (esa ya no existe en el ciclo SDD; RDD ya corrió por commit acá, en el Paso 6). **El `Why` del kickoff FLUYE al body del PR** (sección de motivación).
+Reportá el **resultado verificado** + todo check fallado/skippeado/pendiente + próximo paso. Después, el cierre mala-pata: reusá de `/mala-pata-loop-start` las sub-fases **4.1 (reporte), 4.1-bis (re-verificar/renumerar migración si tocaste una), **4.1-ter (smoke test con datos sembrados — GATE, solo si aplica)**, 4.2 (destino PR/merge con GATE), 4.4 (CI proactivo), 4.5 (limpieza con GATE)** — **NO la 4.3** (esa ya no existe en el ciclo SDD; RDD ya corrió por commit acá, en el Paso 6). **El `Why` del kickoff FLUYE al body del PR** (sección de motivación).
 **Excepción de limpieza** si trabajaste con commits incrementales DENTRO del worktree de una feature en curso: esa rama/worktree la cierra su propio ciclo, no organic-start — solo limpiás lo que este skill creó.
 
 ## Paso 8 — Tabla final (OBLIGATORIO)
@@ -95,6 +95,7 @@ Mismo formato que `/mala-pata-loop-start` Paso 5: tabla Markdown, un hito por fi
 | Explore (Dónde) | `<n>` archivos/módulos tocados |
 | Feature-doc (si substancial) | `odd/tasks/<change_name>.md` · `<n>` tasks |
 | Apply (TDD si aplica) | Red-Green-Refactor, `<n>` tests |
+| Smoke test (fixtures + confirmación) | funcionalidad OK · o `N/A (no aplicó)` |
 | Work-unit commits | `<n>` commits · RDD assess: `<granted/passive/…>` |
 | PR `#<n>` → `<branch>` | MERGEADO (merge commit `<sha>`) |
 | CI post-merge | VERDE |

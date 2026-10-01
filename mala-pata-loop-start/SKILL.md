@@ -4,7 +4,7 @@ description: Inicia y corre el CICLO SDD a partir de la ruta del archivo de kick
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-loop-start — Corre el CICLO SDD desde un archivo de kickoff
@@ -186,6 +186,26 @@ Si este change creó una migración, su número era **provisional** (ver Paso 3 
 4. Si el PR queda abierto esperando merge humano y mientras tanto mergea una hermana → **repetí este chequeo antes del merge final**. Dejalo anotado en el PR body.
 No sigas a 4.2 sin el número de migración confirmado (o renumerado + round-trip verde).
 
+### 4.1-ter — Smoke test con datos sembrados → GATE OBLIGATORIO (solo si aplica)
+Prueba manual rápida de que la funcionalidad REAL se cumple, con datos ya sembrados — para que el humano no tenga que construir el fixture a mano. Es el gate de aceptación HUMANA que falta entre la prueba de máquina (verify) y el PR. Corre entre 4.1-bis y 4.2.
+
+1. **Gate de aplicabilidad — proponé vos, confirma el humano (una línea).** Derivá la propuesta de la forma del cambio y del campo `smoke_test` del kickoff:
+   - **Se SALTA** (proponé "no"): refactor puro, config, docs, chore, util interno sin superficie que un humano ejercite, o cuando verify ya cubre el caso end-to-end con datos.
+   - **Corre** (proponé "sí"): el change agrega/altera comportamiento que un humano ejercería corriendo la app y que verify no prueba end-to-end con datos reales.
+   - Si el kickoff trae `smoke_test.needed: yes|no`, respetalo; con `auto`, proponé y esperá el OK en una línea. Si "no" → registralo y seguí a 4.2.
+
+2. **Sembrar (solo si toca DB) — idempotente, contra la test DB.** Usá el mecanismo de seed del proyecto (seeders/factories/fixtures que detectó `sdd-init`), NUNCA INSERTs ad-hoc. Sembrá contra la **test DB persistente** del proyecto (`TEST_DB_URL` o el equivalente del stack), con el escenario del campo `smoke_test.data` del kickoff. El seed DEBE ser **idempotente** (upsert / claves estables / namespaced por change): re-correrlo no puede explotar por constraints ni duplicar filas. Si el change no toca DB (ej. UI-only sin datos), saltá el seed y seguí al paso a paso.
+
+3. **Paso a paso — orquestá `mala-pata-walkthrough` (carril QA/UAT).** No escribas tu propio guion: pedile a `mala-pata-walkthrough` el recorrido Given/When/Then "qué probar / cómo probar" de este change y presentáselo al humano junto a los datos sembrados (qué ids/registros quedaron listos). El humano prueba en minutos, sin armar el fixture.
+
+4. **Confirmación → GATE duro.** Preguntá explícitamente: **"¿Se cumplió la funcionalidad? (sí / no)"**.
+   - **Sí** → registralo y seguí a 4.2.
+   - **No** → NO abras el PR: **reabrí tasks** con lo que falló (vuelve al ciclo: apply, o design si es de fondo), igual que cualquier hallazgo que reabre TODOs.
+
+5. **Teardown — opcional, se pregunta (default NO).** Al cerrar el gate, una línea: **"¿Borro los datos que sembré? (default: no)"**. El default es no borrar — la test DB persistente con datos es útil. Si el humano pide borrar, borrá **solo lo que esta corrida sembró** (por los ids/namespace del seed), NUNCA un wipe de la DB entera.
+
+No sigas a 4.2 sin: (a) el "no aplica" confirmado por el humano, o (b) la confirmación humana de que la funcionalidad se cumplió.
+
 ### 4.2 — Destino del trabajo → **GATE OBLIGATORIO**
 Apenas Verify está en verde, **PARÁ y preguntá vos mismo, sin que el humano te lo tenga que pedir** — **NUNCA asumas PR** ni sigas de largo:
 > ¿Cómo cierro esto: **(a) abrir un PR** (¿hacia qué branch — `main` u otra?), o **(b) merge a una rama feature** (¿cuál, ej. `feature/caja`)?
@@ -214,6 +234,7 @@ Recién con el OK del humano (o si el perfil está corriendo en modo automático
 - `git worktree remove <ABS-worktree>` + `git worktree prune` (los symlinks `.env`/`node_modules` se van con la carpeta — **no toca** el target del repo principal).
 - Borrá temporales / artefactos de build que hayan quedado.
 - **Borrá la rama mergeada — local Y remota — como parte ESTÁNDAR del cleanup** (una rama ya integrada es código muerto; no requiere pedido aparte más allá del OK de arriba). Local: `git branch -d <branch>` (usa `-d`, no `-D`: `-d` falla si NO está mergeada, protegiéndote). Remota: `git push origin --delete <branch>` (o `az repos ref delete` / equivalente del proyecto). **Excepción — NO borres la rama si la integración NO ocurrió**: PR apenas abierto sin merge, PR abandonado, o merge que no llegó a verde. En esos casos la rama tiene trabajo no integrado → pedí OK explícito por separado antes de borrar. (Si al mergear el PR ya usaste `--delete-source-branch`, la remota ya no existe — solo limpiás la local.)
+- **Datos sembrados (4.1-ter):** NO hagas wipe de la test DB acá — su borrado ya se decidió en el gate de smoke test (default: no borrar). Si en 4.1-ter se pidió borrar y se difirió, borrá acá solo lo que esa corrida sembró.
 - Confirmá que no quedó nada corriendo ni colgado.
 
 ## Paso 5 — Resumen final en TABLA (OBLIGATORIO)
@@ -226,6 +247,7 @@ Filas canónicas (incluí SOLO las que apliquen; NO inventes una fila que no ocu
 |---|---|
 | Ciclo SDD (explore→archive) | Completo |
 | Verify | PASS `<n>/<n>`, `0 CRITICAL` |
+| Smoke test (fixtures + confirmación humana) | funcionalidad OK · o `N/A (no aplicó)` |
 | e2e caso real `<id>` | `<obtenido>` vs `<esperado>` (delta `<%>`), `<detalle>` |
 | No-regresión | `<Nf>/<Ne>` idéntico al baseline |
 | PR `#<n>` → `<branch>` | MERGEADO (merge commit `<sha>`) |

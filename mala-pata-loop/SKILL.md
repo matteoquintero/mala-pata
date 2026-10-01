@@ -4,7 +4,7 @@ description: Reinterpreta una solicitud a términos técnicos, elige perfil de e
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-loop — Generador de contexto para iniciar un SDD
@@ -186,6 +186,9 @@ worktree: <ruta absoluta sugerida>
 depends_on: <change-name(s)|ninguno>
 paralelizable_con: <change-name(s)|ninguno>
 migrations_reserved: <número(s) provisional(es) + "final al merge; 1° que mergea se lo queda"|no aplica>
+smoke_test:                 # ¿necesita prueba manual con datos sembrados tras apply? (lo confirma loop-start, Paso 4.1-ter)
+  needed: auto             # auto|yes|no — auto = loop-start propone y el humano confirma
+  data: <escenario/datos a sembrar, o "a definir">
 sdd_preflight:              # recomendaciones que el runner (loop-start) usa como default de la pregunta canónica del hook
   pace: interactive        # interactive|automatic — FULL/STANDARD => interactive; LITE/MINIMAL pueden ser automatic
   artifacts: engram        # engram|openspec|both — default engram para este usuario
@@ -253,6 +256,8 @@ Criterios verificables, no bullets vagos — usá Given/When/Then para el compor
 El kickoff DEBE incluir el frontmatter completo y el bloque "Reglas del método" con las rutas a los MDs — el ejecutor los lee al arrancar. No comprimas la Definition of Done para que "quepa": ya no hay presupuesto de caracteres, usá el espacio que el change necesite.
 
 `sdd_preflight` son solo RECOMENDACIONES — NO satisfacen el hook de preflight de gentle-ai (que exige un `AskUserQuestion` real y en vivo en la sesión del runner); `mala-pata-loop-start` las lee para pre-llenar el texto de recomendación de la pregunta canónica obligatoria del hook. Derivá `pace` del perfil: FULL/STANDARD → `interactive`; LITE/MINIMAL pueden ir `automatic`.
+
+**`smoke_test`** captura temprano si el change probablemente necesite una prueba manual con datos sembrados después del apply (gate de `loop-start`, Paso 4.1-ter). Default `needed: auto` — `loop-start` propone sí/no según la forma del cambio y el humano confirma; poné `yes`/`no` acá solo si ya lo sabés. En `data`, una línea con el escenario a sembrar (ej. "un pedido en estado BORRADOR con 2 ítems"), o "a definir". El seed siempre usa el mecanismo del proyecto y corre contra la test DB.
 
 ---
 

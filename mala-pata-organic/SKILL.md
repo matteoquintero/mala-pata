@@ -4,7 +4,7 @@ description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.2.0"
+  version: "3.3.0"
 ---
 
 # /mala-pata-organic — Generador de kickoff ODD (route ya decidido)
@@ -90,6 +90,9 @@ base: main|development|<feature-en-curso>   # confirmado con el humano — Regla
 branch: <tipo>/<change-name>                # tipo confirmado — nunca sdd/
 worktree: <ruta absoluta propuesta>          # <ABS-repo>-worktrees/<change-name> — organic-start lo crea, no este skill
 tdd_mode: <strict|standard>                  # de sdd-init/<project>
+smoke_test:                                  # ¿necesita prueba manual con datos sembrados tras apply? (lo confirma organic-start)
+  needed: auto                               # auto|yes|no — auto = organic-start propone y el humano confirma
+  data: <escenario/datos a sembrar, o "a definir">
 created_at: <ISO 8601>
 ---
 
@@ -113,6 +116,8 @@ created_at: <ISO 8601>
 ## Dónde (hint opcional — a descubrir en Explore)
 <archivo(s)/módulo si el humano ya lo sabe, o "a determinar en Explore">
 ```
+
+**Campo `smoke_test`**: captura temprano si el change probablemente necesite una prueba manual con datos sembrados después del apply (gate de `organic-start`, Paso 7 / 4.1-ter). Default `needed: auto` — `organic-start` propone sí/no según la forma del cambio y el humano confirma; poné `yes`/`no` solo si ya lo sabés. En `data`, una línea con el escenario a sembrar, o "a definir". El seed usa el mecanismo del proyecto y corre contra la test DB.
 
 ## Fase 3 — Puntero de una línea en engram
 

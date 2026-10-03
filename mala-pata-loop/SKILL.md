@@ -4,7 +4,7 @@ description: Reinterpreta una solicitud a términos técnicos, elige perfil de e
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-loop — Generador de contexto para iniciar un SDD
@@ -82,7 +82,7 @@ Antes de reinterpretar nada, medí si la solicitud está **lista para entrar al 
 8. **Branch base + tipo de rama — SIEMPRE se proponen y confirman con el humano** (ver `references/profiles/_base.md`):
    - **Base**: proponé con tu razón — default `main`/`development` (integración), u otra rama si el trabajo construye sobre una feature en curso ("el código vive en X"). Cualquier rama es válida con confirmación; lo prohibido es asumirla en silencio o bloquear solo por no ser main.
    - **Tipo de rama**: aconsejá el prefijo convencional según QUÉ es el cambio (`feature/` funcionalidad nueva, `fix/`/`bugfix/` corrección, `hotfix/` urgencia prod, `refactor/`, `chore/`, `docs/`, `release/`) y proponé el nombre completo `<tipo>/<change-name>`. **Nunca `sdd/...`**. Ej.: un fix de bug → propuesta `fix/<change-name>`; una feature nueva → `feature/<change-name>`.
-   - **Esperá el OK** antes de fijar `branch:` y `branch_base` en el kickoff. Estas dos confirmaciones pueden ir junto con la del perfil (Paso 1.5) en una sola interacción.
+   - **Esperá el OK** antes de fijar `branch:` y `branch_base` en el kickoff. Estas dos confirmaciones pueden ir junto con la del perfil (Paso 1.5) en una sola interacción. La rama de trabajo SIEMPRE es la nueva `<tipo>/<change-name>` y el `worktree` SIEMPRE un dir nuevo por change — nunca pongas una rama integradora como `branch:` ni un worktree a reusar; el ejecutor (loop-start) trabaja aislado en su propio worktree y consolida al merge.
 
 ---
 

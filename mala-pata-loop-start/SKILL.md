@@ -4,7 +4,7 @@ description: Inicia y corre el CICLO SDD a partir de la ruta del archivo de kick
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-loop-start — Corre el CICLO SDD desde un archivo de kickoff
@@ -18,7 +18,7 @@ Tu trabajo: leer el *kickoff* que dejó `/mala-pata-loop` y **correr el CICLO SD
 (El *init* —una vez por proyecto— ya lo garantizó `/mala-pata-loop`. El *explore* de acá **profundiza en el código real del worktree**; el kickoff fue solo la reinterpretación a alto nivel.) Cada fase cierra con **resumen + PAUSA** esperando OK antes de la siguiente. Toda la planeación (explore→propose→spec→design→tasks) va **antes** de escribir una línea de código.
 
 > **Regla dura #1 — NO implementes directo.** Está prohibido escribir código, migraciones o crear archivos de implementación **antes de que el PREVIEW esté aprobado** (el gate final antes de código: tasks primero, luego preview). El "plan de fases" del brief es material para la fase de Tasks, NO la señal para empezar a codear. Si te encontrás explorando para "ir resolviendo la tarea", frená: estás saltando el ciclo.
-> **Regla dura #2 — preparás el entorno EJECUTANDO el comando de arranque del brief, sin decidir nada.** Si el worktree no existe, creálo corriendo **exactamente** el comando de arranque del brief (ya trae el base branch + los symlinks de `.env`/`node_modules`). No elijas base, no inventes paths, no adivines `main`: solo ejecutás lo que el brief ya especificó. **Solo PARÁS si el brief NO trae comando de arranque completo** (le falta base branch o symlinks) — ahí sí pedilo al orquestador.
+> **Regla dura #2 — SIEMPRE tu propio worktree + tu propia rama nueva, aunque el brief diga reusar.** El ciclo corre en un worktree DEDICADO a este change, sobre una rama NUEVA `<tipo>/<change-name>` creada off la `branch_base`. **NUNCA in-place sobre una rama integradora/compartida, NUNCA reusando el worktree de otra feature — aunque el comando de arranque del brief apunte a un worktree existente o use una integradora como rama de trabajo.** Si el brief dice eso, está MAL: override — creá un worktree fresco y propio off la base con rama nueva `<tipo>/<change-name>`, y avisá en una línea que corregiste el brief. La `branch_base` sí sale del brief tal cual (puede ser `main`/`development` o una feature en curso — branchás off ella y consolidás al merge en el cierre). Del comando de arranque del brief reusás la base y los symlinks (`.env`/`node_modules`), no el worktree ni la rama de trabajo. **Único reuse válido**: el worktree PROPIO de ESTE change (mismo change-name) en un resume. El único carril que trabaja SIN worktree es `/mala-pata-shot`. Si el brief no trae base/symlinks, PARÁ y pedilo al orquestador.
 
 > **Agnóstico de stack.** Los ejemplos concretos de este comando (`.env`, `node_modules`, `npm`, `TEST_DB_URL`, Storybook, `gh`) son del stack Node/Postgres/GitHub. **Mapealos al stack real del proyecto** (entorno/DB de pruebas, gestor de deps, archivos de config/secrets, workshop de componentes, host de PRs según lo que el proyecto use). La convención del proyecto manda sobre cualquier ejemplo.
 

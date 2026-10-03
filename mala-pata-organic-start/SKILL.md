@@ -4,7 +4,7 @@ description: Corre el CICLO ODD (Organic Driven Development) a partir de la ruta
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-organic-start — Corre el CICLO ODD desde un archivo de kickoff
@@ -34,7 +34,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Reglas duras
 
-> **#1 — Worktree + base: EJECUTÁ lo que el kickoff ya confirmó, no decidas de nuevo.** El kickoff trae `base` y `branch` ya confirmados con el humano en `/mala-pata-organic`. Creá el worktree con esos valores tal cual — no propongas otra base ni la cambies en silencio. Si el kickoff no trae `base`/`branch`/`worktree` completos, PARÁ y pedilo al orquestador.
+> **#1 — SIEMPRE tu propio worktree + tu propia rama nueva. NO es negociable y el kickoff NO lo puede override.** organic corre en un worktree DEDICADO a este change, sobre una rama NUEVA `<tipo>/<change-name>` creada off la `base`. **NUNCA trabajes in-place sobre una rama integradora/compartida ni reuses el worktree de otra feature — aunque el kickoff diga `branch: <integradora>` o `worktree: <reusar/existente>`.** Si el kickoff dice eso, está MAL: derivá `<tipo>/<change-name>` off la base declarada, creá un worktree fresco y propio, y avisá en una línea que corregiste el kickoff. La **base** sí sale del kickoff tal cual (puede ser `main`/`development` o una feature en curso — branchás off ella y consolidás al merge en el cierre; lo que NUNCA se reusa es el worktree/rama de trabajo). **Excepción de resume**: si ya existe el worktree PROPIO de ESTE change (mismo change-name) de una corrida anterior, reusá ESE. Si el kickoff no trae `base` completa, PARÁ y pedila al orquestador.
 > **#2 — RDD vive acá, por work-unit commit.** Tras cada commit, si RDD está on, corré `gentle-ai review assess` y seguí el plan nativo (ver ODD protocol). NO es un gate al final — es **per-commit**.
 > **#3 — Rutas absolutas SIEMPRE** (la cwd se resetea entre comandos a tu dir base, que suele ser el repo principal): `git -C <ABS-worktree> …`, nunca comandos pelados; antes de CUALQUIER escritura/commit, `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main.
 > **#4 — No implementes antes de Explorar y Clasificar.** El plan de fases de abajo va en orden: worktree → explorar → clasificar → (track si substancial) → implementar. No saltes a escribir código "para ir resolviendo" antes de esos pasos, aunque el cambio te parezca chico y obvio.
@@ -48,11 +48,11 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Paso 2 — Worktree + base (ODD Fase 1 de la capa mala-pata — Regla dura #1)
 
-1. **¿Ya estás en el worktree del kickoff?** `git branch --show-current`. Si coincide con `branch` → saltá al punto 4.
-2. Si no existe → creálo con los valores YA confirmados del kickoff (no re-preguntes base/tipo de rama):
+1. **Worktree + rama SIEMPRE propios (Regla dura #1) — el kickoff NO lo override.** La rama de trabajo es `<tipo>/<change-name>` (nueva, del change-name; nunca una integradora) y el worktree es el dir dedicado `<ABS-repo>-worktrees/<change-name>`. **¿Ya existe ESE worktree propio** (mismo change-name) de una corrida anterior y estás en él? → resume: saltá al punto 4. Si el kickoff apunta a un worktree/rama compartida (otra feature o una integradora) → ignoralo, usá el propio y avisá en una línea que corregiste el kickoff.
+2. Si el worktree propio no existe → creálo off la `base` del kickoff (la base sí sale del kickoff tal cual; puede ser `main`/`development` o una feature en curso):
    ```bash
-   git -C <ABS-repo> worktree add <worktree del kickoff> -b <branch del kickoff> <base del kickoff>
-   ln -s <ABS-repo>/.env <worktree>/.env && ln -s <ABS-repo>/node_modules <worktree>/node_modules
+   git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <tipo>/<change-name> <base-del-kickoff>
+   ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>-worktrees/<change-name>/node_modules
    # (ajustar symlinks al stack real del proyecto)
    ```
 3. **Rutas ABSOLUTAS SIEMPRE** (Regla dura #3) — todo `git`/`npm`/lectura/escritura referencia el worktree por ruta absoluta (`git -C <ABS-worktree> …`, `npm --prefix <ABS-worktree> …`). Antes de cualquier escritura: `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree.

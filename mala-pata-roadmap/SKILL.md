@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -274,11 +274,11 @@ fases_total: <N>
 
 ## DAG de fases
 
-| # | Fase | Ruta tentativa | Depende de | Corte vertical (una línea) |
-|---|------|----------------|-----------|----------------------------|
-| 1 | <nombre> | loop:STANDARD | — | <qué entrega end-to-end> |
-| 2 | <nombre> | organic | 1 | ... |
-| 3 | <nombre> | loop:LITE | 1 | ... |
+| # | Fase | slug | Ruta tentativa | Depende de | Corte vertical (una línea) |
+|---|------|------|----------------|-----------|----------------------------|
+| 1 | <nombre> | <kebab-estable> | loop:STANDARD | — | <qué entrega end-to-end> |
+| 2 | <nombre> | <kebab-estable> | organic | 1 | ... |
+| 3 | <nombre> | <kebab-estable> | loop:LITE | 1 | ... |
 
 > **Ruta tentativa = pronóstico.** Al ejecutar, cada fase se pasa por `/mala-pata-triage`, que
 > re-decide organic/loop con la info del momento (ver Paso 4-bis). Las fases previas pueden cambiar
@@ -290,13 +290,15 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 
 ### Fase 1 — <nombre>
 - **Ruta tentativa**: loop:STANDARD  ·  **Depende de**: —
+- **slug**: `<kebab-estable>` — el change-name que usará al ejecutarse (rama `<tipo>/<slug>`); `mala-pata-roadmap-radar` matchea el avance por este slug. Único y estable; no lo cambies entre versiones del roadmap.
 - **Por qué esa ruta**: <si loop: LA decisión de DISEÑO que la hace loop — lo que triage re-chequea (una decisión decidible-con-una-pregunta NO va a loop); si organic/shot: "Qué+Done+Decisiones ya enunciables">
 - **IN**: <qué incluye esta fase>
 - **OUT**: <qué NO incluye — queda para otra fase>
 - **DoD** (Given/When/Then):
   - [ ] Given <estado>, When <acción>, Then <resultado observable>.
-- **Para arrancar**: `/mala-pata-triage <descripción de esta fase>` (triage decide organic/loop con
-  la info del momento; una fase = una unidad).
+- **Para arrancar**: `/mala-pata-triage <descripción de esta fase>` (triage decide organic/loop/shot con
+  la info del momento; una fase = una unidad; usá el `slug` de arriba como change-name para que el
+  avance se pueda trackear con `mala-pata-roadmap-radar`).
 
 ### Fase 2 — …
 (idem por cada fase)
@@ -314,3 +316,6 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 - **Redirigí a `/mala-pata-triage`** si el objetivo ya entra en una sola unidad (Regla dura #2).
 - Cada fase del roadmap es insumo para UNA pasada de `/mala-pata-triage` (que la rutea a organic o
   loop con la info del momento) — nunca las agrupes.
+- **slug estable por fase**: asigná a cada fase un `slug` kebab único y estable (= su change-name al
+  ejecutarse; rama `<tipo>/<slug>`). Es lo que `mala-pata-roadmap-radar` usa para derivar el avance
+  contra git. No lo cambies entre versiones del roadmap.

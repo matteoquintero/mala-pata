@@ -190,7 +190,7 @@ No sigas a 4.2 sin el número de migración confirmado (o renumerado + round-tri
 Prueba manual rápida de que la funcionalidad REAL se cumple, con datos ya sembrados — para que el humano no tenga que construir el fixture a mano. Es el gate de aceptación HUMANA que falta entre la prueba de máquina (verify) y el PR. Corre entre 4.1-bis y 4.2.
 
 1. **Gate de aplicabilidad — proponé vos, confirma el humano (una línea).** Derivá la propuesta de la forma del cambio y del campo `smoke_test` del kickoff:
-   - **Se SALTA** (proponé "no"): refactor puro, config, docs, chore, util interno sin superficie que un humano ejercite, o cuando verify ya cubre el caso end-to-end con datos.
+   - **Se SALTA** (proponé "no"): refactor puro, config, docs, chore, util interno sin superficie que un humano ejercite, **cambios puramente visuales/presentacionales** (layout, colores, hover, spacing — la aprobación visual ya los cubre), o cuando verify ya cubre el caso end-to-end con datos. Un cambio MIXTO (visual + comportamiento) no se salta por la parte visual: pesa la parte de comportamiento.
    - **Corre** (proponé "sí"): el change agrega/altera comportamiento que un humano ejercería corriendo la app y que verify no prueba end-to-end con datos reales.
    - Si el kickoff trae `smoke_test.needed: yes|no`, respetalo; con `auto`, proponé y esperá el OK en una línea. Si "no" → registralo y seguí a 4.2.
 

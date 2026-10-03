@@ -1,10 +1,10 @@
 ---
 name: mala-pata-triage
-description: Front-door único de mala-pata. Trigger — cualquier pedido de cambio, ANTES de tocar código. Lee el pedido, aplica el gate de forma (Qué + Done + Decisiones), y RESPONDE qué carril/skill correr — `/mala-pata-organic`, `/mala-pata-loop` o `/mala-pata-roadmap` — pasándole al carril elegido el borrador de campos ya inferidos. NO genera archivos, NO crea worktrees, NO ejecuta nada: es un skill de decisión, no de ejecución.
+description: Front-door único de mala-pata. Trigger — cualquier pedido de cambio, ANTES de tocar código. Lee el pedido, aplica el gate de forma (Qué + Done + Decisiones), y RESPONDE qué carril/skill correr — `/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop` o `/mala-pata-roadmap` — pasándole al carril elegido el borrador de campos ya inferidos. NO genera archivos, NO crea worktrees, NO ejecuta nada: es un skill de decisión, no de ejecución.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-triage — Router de entrada (decide, no ejecuta)
@@ -14,10 +14,10 @@ Pedido del usuario: **entrada entregada por el CLI**
 Tu único trabajo es **leer el pedido y decidir el carril**, después **responder cuál skill correr**. No generás kickoffs, no escribís archivos, no tocás código. Sos el gate — el mismo gate que documenta el diseño de mala-pata (`DESIGN-organic-loop-v2.md` §3: "el formato estricto ES el router") — separado de los tres carriles que lo consumen.
 
 > **NO ejecutás nada.** NO creás worktree, NO escribís kickoff, NO corrés fases de ningún ciclo.
-> El resultado es SIEMPRE una de estas cuatro cosas: (a) respuesta read-only directa, (b) "→ corré `/mala-pata-organic`" con el borrador de campos, (c) "→ corré `/mala-pata-loop`", (d) "→ corré `/mala-pata-roadmap`", o (e) `trabaje vago ` pidiendo lo mínimo.
+> El resultado es SIEMPRE una de estas cosas: (a) respuesta read-only directa, (b) "→ corré `/mala-pata-shot`" (cambio trivial y entendido), (c) "→ corré `/mala-pata-organic`" con el borrador de campos, (d) "→ corré `/mala-pata-loop`", (e) "→ corré `/mala-pata-roadmap`", o (f) `trabaje vago ` pidiendo lo mínimo.
 
 > **Triage no despacha agentes `sdd-*`.** Es un skill de decisión puro — el preflight `PreToolUse:Agent` de gentle-ai no aplica acá, igual que no aplica a `/mala-pata-organic`.
-> **Los tres carriles siguen invocables directo** si el humano ya sabe cuál es (`/mala-pata-organic`, `/mala-pata-loop`, `/mala-pata-roadmap`). Triage es la entrada recomendada cuando NO sabés por dónde va — no un paso obligatorio.
+> **Los carriles siguen invocables directo** si el humano ya sabe cuál es (`/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop`, `/mala-pata-roadmap`). Triage es la entrada recomendada cuando NO sabés por dónde va — no un paso obligatorio.
 
 ## Requisitos (orquestar, no reinventar)
 
@@ -48,7 +48,10 @@ Esto es un **diagnóstico desde el texto del pedido**, proporcional al pedido �
 
 ## Fase 2 — Decidí y respondé el carril
 
-- **Qué + Done enunciables y Decisiones resueltas/obvias** → **organic**.
+- **Trivial + entendido + blast radius mínimo** (Qué/Done obvios, sin decisiones, 1-3 archivos, sin migración/contrato/UI nueva) → **shot**.
+  Respondé: `→ corré /mala-pata-shot`. Es ODD sin worktree ni ceremonia, para el cambio más chico. **Frontera con organic**: ante CUALQUIER incertidumbre, decisión, o ceremonia necesaria (diseño, migración, UI nueva) → organic, NO shot. El conteo de líneas no decide; la ausencia de incertidumbre sí.
+
+- **Qué + Done enunciables y Decisiones resueltas/obvias** (pero no tan trivial como para shot) → **organic**.
   Respondé: `→ corré /mala-pata-organic`, y pasale como borrador los campos que ya inferiste (Qué / Why / Done / Decisiones / Riesgo) para que organic confirme en vez de arrancar de cero.
 
 - **Decisiones sin resolver** (fork de arquitectura real, forma de contrato/endpoint sin decidir, requisitos en disputa) → **loop**.

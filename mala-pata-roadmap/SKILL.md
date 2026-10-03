@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.1.1"
+  version: "2.2.0"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -116,7 +116,9 @@ En paralelo, sin escribir nada. **Inventariá TODAS las dimensiones del Paso 1, 
    a TU código** — la best-practice que ignora lo que ya existe no sirve (reuse-first, igual que preview).
 4. **Preguntas**: si después de esto quedan decisiones abiertas que cambian la forma del DAG —
    incluida cualquier dimensión que no pudiste inventariar bien — preguntá ANTES de descomponer
-   (no la resuelvas adivinando).
+   (no la resuelvas adivinando). Incluí acá las **decisiones de producto/escala** (quién lo usa, a
+   qué escala, qué modelo) que reforman el DAG: preguntalas vos, de forma proactiva, no esperes a que
+   el humano las ofrezca — una sola de esas puede colapsar medio roadmap.
 
 ## Paso 3 — Pase de arquitectura ANTES de descomponer
 
@@ -139,11 +141,15 @@ Producí el grafo de fases con estas reglas (todas, no opcionales):
 - **Cada fase recibe una RUTA TENTATIVA, con la frontera de triage** (la misma que usa
   `/mala-pata-organic`):
   - ¿Se puede enunciar **Qué + Done + Decisiones** de la fase, dado lo que sus dependencias ya van a
-    haber resuelto cuando llegue su turno? → tentativa **organic**.
-  - ¿Falta **diseño / decisión de arquitectura sin resolver** en ese punto? → tentativa **loop:PERFIL**
-    (FULL/STANDARD/LITE/MINIMAL).
-  - Para cada fase-loop, anotá **cuál decisión abierta** la hace loop — es exactamente lo que triage
-    va a re-chequear al llegar (si ya se resolvió, la fase pasa a organic).
+    haber resuelto cuando llegue su turno? → tentativa **organic** (o **shot** si además es trivial:
+    1-3 archivos, sin migración/contrato/UI nueva).
+  - ¿Queda una decisión abierta? **Distinguí antes de marcar loop** (no "hay decisión → loop"):
+    - **Decidible con una pregunta** (opciones conocidas, el humano elige) → NO es loop: tentativa
+      **organic**, y anotá la pregunta que triage va a hacer al llegar para cerrarla.
+    - **Necesita diseño** (arquitecturas viables con tradeoffs a investigar, u opciones que no se
+      saben sin explorar) → tentativa **loop:PERFIL** (FULL/STANDARD/LITE/MINIMAL).
+  - Para cada fase-loop, anotá **cuál decisión de diseño** la hace loop — es lo que triage re-chequea
+    al llegar (si ya se resolvió, la fase pasa a organic).
 - **El TECHO duro del tamaño es "entra en UNA unidad".** Un `loop:FULL` es el techo de una
   fase-loop; una fase-organic entra si el cambio ya es especificable. **Si una fase sería más grande
   que un FULL → se PARTE.** Sin excepción.
@@ -284,7 +290,7 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 
 ### Fase 1 — <nombre>
 - **Ruta tentativa**: loop:STANDARD  ·  **Depende de**: —
-- **Por qué esa ruta**: <si loop: LA decisión abierta que la hace loop — lo que triage re-chequea; si organic: "Qué+Done+Decisiones ya enunciables">
+- **Por qué esa ruta**: <si loop: LA decisión de DISEÑO que la hace loop — lo que triage re-chequea (una decisión decidible-con-una-pregunta NO va a loop); si organic/shot: "Qué+Done+Decisiones ya enunciables">
 - **IN**: <qué incluye esta fase>
 - **OUT**: <qué NO incluye — queda para otra fase>
 - **DoD** (Given/When/Then):

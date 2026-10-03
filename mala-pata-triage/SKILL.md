@@ -4,7 +4,7 @@ description: Front-door único de mala-pata. Trigger — cualquier pedido de cam
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-triage — Router de entrada (decide, no ejecuta)
@@ -54,8 +54,9 @@ Esto es un **diagnóstico desde el texto del pedido**, proporcional al pedido �
 - **Qué + Done enunciables y Decisiones resueltas/obvias** (pero no tan trivial como para shot) → **organic**.
   Respondé: `→ corré /mala-pata-organic`, y pasale como borrador los campos que ya inferiste (Qué / Why / Done / Decisiones / Riesgo) para que organic confirme en vez de arrancar de cero.
 
-- **Decisiones sin resolver** (fork de arquitectura real, forma de contrato/endpoint sin decidir, requisitos en disputa) → **loop**.
-  Respondé: `→ corré /mala-pata-loop`.
+- **Decisión abierta — distinguí si es DECIDIBLE o si NECESITA DISEÑO** (este es el discriminador de loop; NO "hay una decisión → loop"):
+  - **Decidible con una pregunta** (opciones conocidas y el humano elige, preferencia, o llamada de producto) → NO es loop. Hacé **esa** pregunta enfocada, parás y esperás; resuelta → **organic** (o **shot** si además es trivial: 1-3 archivos, sin migración/contrato/UI nueva). Test: *¿puedo enunciar las opciones y me las cierra en una respuesta?*
+  - **Necesita diseño** (varias arquitecturas viables con tradeoffs a investigar, o no se saben las opciones sin explorar) → **loop**. Respondé: `→ corré /mala-pata-loop`. Test: *¿necesito investigar/explorar para siquiera saber las opciones o sus tradeoffs?*
 
 - **Qué/Done claros pero el alcance abarca varios ciclos** (multi-loop) → **roadmap**.
   Respondé: `→ corré /mala-pata-roadmap`.

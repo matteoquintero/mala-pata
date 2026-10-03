@@ -4,7 +4,7 @@ description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.3.0"
+  version: "3.4.0"
 ---
 
 # /mala-pata-organic — Generador de kickoff ODD (route ya decidido)
@@ -34,7 +34,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Reglas duras
 
-> **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**.
+> **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**. **Pero primero distinguí**: si esa decisión es **decidible con una pregunta** (opciones conocidas, el humano elige), hacé esa pregunta y, una vez resuelta, **seguí en organic — NO rebotes**. Rebotá a `/mala-pata-loop` SOLO si la decisión **necesita diseño** (arquitecturas viables con tradeoffs a investigar, u opciones que no se saben sin explorar). El discriminador de loop no es "hay una decisión", es "la decisión necesita diseño".
 > **#2 — Base: proponé y confirmá, no crees nada.** La base sale de DONDE VIVE el código que se va a tocar (`main`/`development`, o una feature en curso). Proponé con tu razón en una línea ("el código vive en X") y esperá el OK antes de fijarla en el kickoff. Este skill NO crea el worktree — eso lo hace `/mala-pata-organic-start` con la base ya confirmada acá.
 > **#3 — El gate es sobre el formato, no sobre el tamaño.** Un cambio de 5 líneas con Qué/Done/Decisiones concretos pasa en una interacción de 10 segundos — una línea por campo alcanza. El gate rechaza lo SUB-especificado, no lo corto. Si estás pidiendo más de una línea por campo para un cambio chico, estás rearmando SDD adentro de organic: pará.
 > **#4 — Rutas absolutas SIEMPRE** en cualquier comando que muestres o dejes en el kickoff (`worktree:` es una ruta absoluta propuesta, nunca relativa).
@@ -64,7 +64,7 @@ El carril ya está decidido (route=organic) — esto no es más el gate que elig
 
 - **Qué + Done + Decisiones concretos (confirmados)** → generá el kickoff organic (Fase 2).
 - **Cualquiera de los tres sigue en "no sé" al confirmar** → NO generes kickoff:
-  - **Decisiones falla** (recién se descubre acá que la arquitectura no estaba resuelta) → red de seguridad, Regla dura #1 → rebotá a **`/mala-pata-loop`** (SDD, con preview y design formal).
+  - **Decisiones falla** (recién se descubre acá que la arquitectura no estaba resuelta) → red de seguridad, Regla dura #1 → rebotá a **`/mala-pata-loop`** (SDD, con preview y design formal) (salvo que esa decisión sea **decidible con una pregunta**: hacé la pregunta y, resuelta, seguí en organic — loop es solo si necesita diseño).
   - **Qué/Done están claros pero el alcance es enorme o cruza varios loops** → recomendá **`/mala-pata-roadmap`** (descomponer primero).
   - **Solo Dónde es "no sé" y el resto está claro** → NO es motivo de rebote — es organic normal, vas a explorar en `/mala-pata-organic-start`.
 

@@ -4,7 +4,7 @@ description: Carril MÍNIMO de ODD — el "direct inline" de ODD sin worktree ni
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-shot — ODD en una sola pasada, sin worktree
@@ -33,7 +33,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Reglas duras
 
-> **#1 — Gate de entrada: shot es para lo TRIVIAL y ENTENDIDO, no para lo chico-pero-incierto.** Shot aplica solo si: el Qué/Done son obvios, no hay decisiones abiertas, el blast radius es mínimo (1-3 archivos), no hay migración, ni contrato/endpoint nuevo, ni UI nueva. El criterio NO es el conteo de líneas — es la **ausencia de incertidumbre y de ceremonia necesaria**. Si falta algo de eso → NO es shot: rebotá a `/mala-pata-organic` (o `/mala-pata-loop` si hay decisiones de diseño, `/mala-pata-roadmap` si es multi-unidad).
+> **#1 — Gate de entrada: shot es para lo TRIVIAL y ENTENDIDO, no para lo chico-pero-incierto.** Shot aplica solo si: el Qué/Done son obvios, no hay decisiones que **necesiten diseño**, el blast radius es mínimo (1-3 archivos), no hay migración, ni contrato/endpoint nuevo, ni UI nueva. Una decisión **decidible con una pregunta** (opciones conocidas, el humano elige) NO te saca de shot: hacé esa pregunta y seguí. Solo una decisión que **necesita diseño** (arquitecturas con tradeoffs a investigar) sube a organic/loop. El criterio NO es el conteo de líneas — es la **ausencia de incertidumbre y de ceremonia necesaria**. Si falta algo de eso → NO es shot: rebotá a `/mala-pata-organic` (o `/mala-pata-loop` si hay decisiones de diseño, `/mala-pata-roadmap` si es multi-unidad).
 
 > **#2 — SIN worktree, pero NUNCA tocar `main` directo.** Trabajás in-place, sin crear worktree. Si estás parado en una rama protegida (`main`/`development`), **branch-first**: creá una rama corta `<tipo>/<slug>` (`fix`/`chore`/`refactor`/`docs`) y commiteá ahí. Si ya estás en una feature branch, commiteá en esa misma. El worktree se saltea; la rama segura NO.
 

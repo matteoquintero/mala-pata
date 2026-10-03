@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: mala-pata
-  version: "3.0"
+  version: "3.1"
 ---
 
 ## Requisitos (orquestar, no reinventar)
@@ -75,6 +75,8 @@ Antes de escribir el resumen, con `tasks` + `design` (+ código real) ya leídos
 - Reuse-first marca **NUEVO** un patrón/arquitectura sin precedente 1:1 en el repo (no un componente más del mismo tipo — un patrón genuinamente nuevo).
 - Smells de arquitectura con severidad **alta**.
 - `design` dejó decisiones abiertas sin resolver del todo con el humano.
+
+**Lente de plata / invariantes (disparo por dominio).** Si el blast-radius toca cálculo de dinero, totales, impuestos (IVA), descuentos, garantía, stock, o cualquier mapper/DTO/proyección que transforme valores → **nunca es 0 reviewers** (mínimo 1), y el/los revisor(es) adoptan explícitamente la lente **Correctitud / invariantes** (ver audit). Si además hay otra señal de alto riesgo (migración, patrón NUEVO, etc.) → 2, y ahí **se reparten lentes**: uno plata/invariantes, otro concurrencia/migraciones.
 
 Dejá explícito en el artefacto (línea corta, no una sección aparte) el número elegido y **la señal concreta** que lo motivó — nunca "audit activo" sin decir cuál evidencia lo disparó.
 
@@ -149,6 +151,14 @@ Cuando el self-assessment de arriba decide ≥1 reviewer, después del resumen s
 
 ### Supuestos silenciosos
 - <default que Apply hornearía si nadie mira>
+
+### Correctitud / invariantes (lente de plata — adoptar cuando el dominio lo dispara)
+Perspectivas a adoptar, NO un checklist a tildar — leé el plan contra el código real buscando:
+- **Proyección/mapper con pérdida**: ¿algún `SELECT`/recalc/DTO/mapper devuelve un subset y tira un campo que un consumidor downstream necesita? (plata, impuesto, stock, permiso perdido en la transformación)
+- **Test que prueba la lectura, no el resultado**: ¿hay un criterio "verde" que solo asegura el shape/SELECT y no el cálculo end-to-end? → cobertura falsa.
+- **Valor hardcodeado en un borde**: `0.00` fijo, default silencioso, constante donde va el valor real.
+- **Nivel de aplicación**: impuesto/descuento/garantía a nivel documento vs ítem — ¿coincide con la regla de negocio?
+- **Consistencia bajo concurrencia**: locks sin orden fijo (deadlock), lecturas sin la guarda que el invariante exige.
 ```
 
 **Reglas del audit**:
@@ -156,6 +166,7 @@ Cuando el self-assessment de arriba decide ≥1 reviewer, después del resumen s
 - Reviewers son **adversariales**: default a suspechar duplicación/over-engineering; el plan tiene que probar novedad.
 - **Empty audit prohibido**: si no hay hallazgos, explicitar QUÉ se buscó y por qué cada cosa se descartó.
 - Reviewers NO ven el output del otro. Se hace synthesis (merge + dedup) después.
+- La categoría **Correctitud / invariantes** es OBLIGATORIA cuando el self-assessment marcó disparo de plata/invariantes; si está activa y no encontrás nada, explicitá qué invariantes verificaste y por qué están a salvo (misma regla que empty-audit). Es una lente para adoptar, no un checklist que reemplace la lectura adversarial libre.
 
 ## UNA SOLA PASADA es el objetivo (ANTI-LOOP)
 

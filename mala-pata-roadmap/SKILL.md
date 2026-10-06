@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.3.0"
+  version: "2.4.0"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -234,6 +234,11 @@ El humano firma qué queda dentro (incluidas las propuestas-extra), qué se difi
 Si el objetivo es enorme (varias dimensiones grandes), ofrecé explícitamente la decisión de scope:
 **(a)** un roadmap multi-dimensión (todas), o **(b)** acotar este roadmap a una/unas dimensiones y
 las otras en roadmaps aparte. El humano elige el scope; vos no lo decidís solo.
+
+**Antes de pedir OK, mostrá el bloque de decisión (OBLIGATORIO — es lo que deja cazar la sobre-dimensión):**
+- **Núcleo mínimo vs completo**: cuál es la fase (o las pocas fases) que SOLAS resuelven el problema real, frente a todo lo propuesto. Si el núcleo es 1 fase y el DAG tiene 5, decilo explícito.
+- **Magnitud del problema**: alcance / frecuencia / severidad (de la Fase 1d de research; si no vino, medila acá). Un problema chico con un DAG grande es la señal de alarma.
+- **Workaround más barato**: la alternativa mínima conocida (un ajuste ya existente, un fix de una línea) y su costo, aunque no sea la solución "completa". Si existe, el humano tiene que verlo ANTES de aprobar N fases.
 
 Después presentá el DAG (fases, **rutas tentativas** organic/loop, dependencias, orden) y **esperá OK
 antes de escribir el `.md`**. Opciones: **Aprobar** (escribís el roadmap con el scope confirmado),

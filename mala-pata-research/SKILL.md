@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-research — afinador de ideas crudas (pre-triage)
@@ -52,9 +52,22 @@ Abrís el abanico antes de converger. Investigá en paralelo:
 
 **(a) Investigación externa** (WebSearch/WebFetch): cómo se resuelve HOY este tipo de idea, cuáles son los límites de la práctica actual, y qué best-practices existen — con fuentes citadas. No es una revisión bibliográfica exhaustiva: es lo suficiente para saber si estás por reinventar algo que ya tiene solución conocida.
 
-**(b) Anclaje al código real** (codegraph/Read): qué ya existe en el proyecto que toque esta idea, qué infraestructura instalada habilita más de lo que la idea original imaginaba. Anclá lo externo a TU código — la best-practice que ignora lo que ya está construido no sirve (reuse-first).
+**(b) Anclaje al código real** (codegraph/Read): qué ya existe en el proyecto que toque esta idea, qué infraestructura instalada habilita más de lo que la idea original imaginaba. Anclá lo externo a TU código — la best-practice que ignora lo que ya está construido no sirve (reuse-first). **Inventariá los mecanismos que YA existen** y podrían resolver esto (helpers, flags, ajustes, un patrón ya aplicado en otra parte del repo). **Antes de concluir "hace falta código nuevo", probá con evidencia que los existentes NO alcanzan** — no por no haberlos buscado. Gastar el análisis en el primer mecanismo que encontrás y saltar a "código nuevo" es el error clásico.
 
 **(c) Jobs-to-be-done**: de quién es el trabajo que la idea resuelve, cuál es el struggle real detrás del pedido, y cuál es el outcome que busca. Formulalo como: "como `<usuario>`, necesito `<trabajo>` para `<beneficio>`". Esto suele revelar que la idea cruda es un síntoma, no el trabajo real.
+
+**(d) Dimensionar el problema (agnóstico de proyecto)**: antes de pensar el tamaño de la SOLUCIÓN, medí el tamaño del PROBLEMA con la evidencia disponible, en tres ejes genéricos (no una lista fija de un dominio):
+- **Alcance** — cuánto/qué abarca (cuántas cosas afectadas, qué porción del todo).
+- **Frecuencia** — cada cuánto ocurre.
+- **Severidad / impacto** — en los términos que use ESTE proyecto (plata, usuarios, tiempo, riesgo, seguridad… lo que aplique).
+Cada proyecto llena esos ejes con lo que tenga sentido, usando la evidencia del código y las fuentes. Si un eje no se puede medir con evidencia, marcalo y preguntáselo al humano (Fase 2) — no lo inventes. Este tamaño-del-problema es lo que alimenta la señal de tamaño de la Fase 3, NUNCA el volumen de código/archivos/PRs.
+
+**(e) Problema vs solución propuesta**: el pedido casi siempre viene con una solución ya armada (una columna, un endpoint, una perilla). NO tomes esas piezas como alcance automáticamente. Por cada pieza de la solución propuesta, clasificá:
+- **necesaria** — hace falta para resolver el problema real.
+- **ya-existe** — el repo ya lo cubre (de (b)); se cae.
+- **derivable** — sale sola de otra pieza (ej.: si "el ciclo con diferencia" ya selecciona, una perilla por ciclo es redundante); se cae.
+- **extra** — mejora deseable, no parte del problema; va nombrada aparte, no infla el alcance.
+A Define pasan SOLO las piezas `necesaria`; las demás quedan nombradas (no desaparecen en silencio) pero no cuentan para el tamaño.
 
 ## Fase 2 — Heilmeier Catechism (respondé lo que sabés, PREGUNTÁ lo que solo el humano sabe)
 
@@ -93,7 +106,7 @@ Colapsá todo lo anterior en una **idea afinada**: un problem statement claro m�
 - **Decisiones abiertas** — qué sigue sin resolver (esto es exactamente lo que triage necesita para separar organic de loop).
 - **Riesgo** — blast radius en una línea.
 
-Sumá la **señal de tamaño**: ¿esto entra en una unidad (un organic o un loop), o es multi-unidad (necesita `/mala-pata-roadmap` para descomponerse primero)?
+Sumá la **señal de tamaño**: ¿esto entra en una unidad (un organic o un loop), o es multi-unidad (necesita `/mala-pata-roadmap` para descomponerse primero)? **La señal sale del tamaño del PROBLEMA (Fase 1d) y de las decisiones de arquitectura abiertas — NUNCA del volumen de código, archivos o PRs.** Un problema chico con solución clara es una-unidad aunque toque varios archivos; multi-unidad es solo cuando hay varias decisiones de arquitectura abiertas o cortes verticales independientes genuinos. Contá solo las piezas `necesaria` de la Fase 1e.
 
 ## Fase 4 — Escribir el doc (OBLIGATORIO, SIEMPRE)
 
@@ -120,6 +133,8 @@ size_signal: una-unidad | multi-unidad
 ### Cómo se hace hoy + límites (con fuentes)
 ### Qué existe en el código (anclaje real)
 ### Jobs-to-be-done
+### Dimensión del problema (alcance / frecuencia / severidad — con evidencia; marcá lo que preguntaste)
+### Problema vs solución propuesta (cada pieza: necesaria / ya-existe / derivable / extra)
 ## Heilmeier Catechism (las 7 respondidas; marcá cuáles preguntaste al humano y cuáles son asunción)
 ## Define — idea afinada (borrador para triage)
 - Qué / Why / Done (when) / Decisiones tomadas / Decisiones abiertas / Riesgo / Señal de tamaño
@@ -148,7 +163,8 @@ Después el resumen en cristiano:
 - **Qué propone** — una frase, sin jerga.
 - **Por qué** — 2-4 hallazgos clave que lo sostienen.
 - **Qué hará** — la forma a alto nivel (tiers/piezas/fases compactas).
-- **Lo que importa** — riesgo principal + decisiones abiertas.
+- **Dimensión del problema** — alcance / frecuencia / severidad (de la Fase 1d) — el humano decide el tamaño mirando ESTO, no el volumen de código.
+- **Lo que importa** — riesgo principal + decisiones abiertas + las piezas que se cayeron (ya-existe/derivable/extra).
 - **Señal de tamaño:** una-unidad | multi-unidad.
 - **Doc:** `<ruta absoluta del .md>`
 - **Siguiente paso — DEPENDE del veredicto:**

@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -236,7 +236,7 @@ Si el objetivo es enorme (varias dimensiones grandes), ofrecé explícitamente l
 las otras en roadmaps aparte. El humano elige el scope; vos no lo decidís solo.
 
 **Antes de pedir OK, mostrá el bloque de decisión (OBLIGATORIO — es lo que deja cazar la sobre-dimensión):**
-- **Núcleo mínimo vs completo**: cuál es la fase (o las pocas fases) que SOLAS resuelven el problema real, frente a todo lo propuesto. Si el núcleo es 1 fase y el DAG tiene 5, decilo explícito.
+- **Núcleo vs completo**: sale DIRECTO de la columna `¿Diferible?` de la tabla — el **núcleo** son las fases `¿Diferible? = no`; el **completo** es todas. No lo recalcules: leé la columna. Si el núcleo es 1 fase y el DAG tiene 5, decilo explícito.
 - **Magnitud del problema**: alcance / frecuencia / severidad (de la Fase 1d de research; si no vino, medila acá). Un problema chico con un DAG grande es la señal de alarma.
 - **Workaround más barato**: la alternativa mínima conocida (un ajuste ya existente, un fix de una línea) y su costo, aunque no sea la solución "completa". Si existe, el humano tiene que verlo ANTES de aprobar N fases.
 
@@ -279,11 +279,11 @@ fases_total: <N>
 
 ## DAG de fases
 
-| # | Fase | slug | Ruta tentativa | Depende de | Corte vertical (una línea) |
-|---|------|------|----------------|-----------|----------------------------|
-| 1 | <nombre> | <kebab-estable> | loop:STANDARD | — | <qué entrega end-to-end> |
-| 2 | <nombre> | <kebab-estable> | organic | 1 | ... |
-| 3 | <nombre> | <kebab-estable> | loop:LITE | 1 | ... |
+| # | Fase | slug | Ruta tentativa | Depende de | ¿Diferible? | Corte vertical (una línea) |
+|---|------|------|----------------|-----------|-------------|----------------------------|
+| 1 | <nombre> | <kebab-estable> | loop:STANDARD | — | no (núcleo) | <qué entrega end-to-end> |
+| 2 | <nombre> | <kebab-estable> | organic | 1 | sí | ... |
+| 3 | <nombre> | <kebab-estable> | loop:LITE | 1 | sí | ... |
 
 > **Ruta tentativa = pronóstico.** Al ejecutar, cada fase se pasa por `/mala-pata-triage`, que
 > re-decide organic/loop con la info del momento (ver Paso 4-bis). Las fases previas pueden cambiar
@@ -294,7 +294,8 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 ## Fases en detalle
 
 ### Fase 1 — <nombre>
-- **Ruta tentativa**: loop:STANDARD  ·  **Depende de**: —
+- **Ruta tentativa**: loop:STANDARD  ·  **Depende de**: —  ·  **¿Diferible?**: no (núcleo) | sí
+- **¿Diferible?**: `no` = núcleo, hay que hacerla para que el valor exista; `sí` = puede hacerse después sin romper el núcleo. Eje de PRIORIDAD de negocio, distinto de "Depende de" (que es técnico). El gate (Paso 5) lee esta marca para el núcleo-vs-completo.
 - **slug**: `<kebab-estable>` — el change-name que usará al ejecutarse (rama `<tipo>/<slug>`); `mala-pata-roadmap-radar` matchea el avance por este slug. Único y estable; no lo cambies entre versiones del roadmap.
 - **Por qué esa ruta**: <si loop: LA decisión de DISEÑO que la hace loop — lo que triage re-chequea (una decisión decidible-con-una-pregunta NO va a loop); si organic/shot: "Qué+Done+Decisiones ya enunciables">
 - **IN**: <qué incluye esta fase>
@@ -324,3 +325,7 @@ Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2,
 - **slug estable por fase**: asigná a cada fase un `slug` kebab único y estable (= su change-name al
   ejecutarse; rama `<tipo>/<slug>`). Es lo que `mala-pata-roadmap-radar` usa para derivar el avance
   contra git. No lo cambies entre versiones del roadmap.
+- **`¿Diferible?` por fase**: marcá cada fase `no` (núcleo — hace falta para que el valor exista) o `sí`
+  (puede esperar sin romper el núcleo). Es prioridad de negocio, NO la dependencia técnica (`Depende de`).
+  El gate (Paso 5) LEE esta columna para el núcleo-vs-completo; no la recalcula. Un roadmap NO deja nada
+  "afuera" (cubre todo, ideal mejor-que-sobre); lo que puede esperar se marca diferible, no se descarta.

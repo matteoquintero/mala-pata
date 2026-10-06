@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-research — afinador de ideas crudas (pre-triage)
@@ -164,8 +164,9 @@ Después el resumen en cristiano:
 - **Por qué** — 2-4 hallazgos clave que lo sostienen.
 - **Qué hará** — la forma a alto nivel (tiers/piezas/fases compactas).
 - **Dimensión del problema** — alcance / frecuencia / severidad (de la Fase 1d) — el humano decide el tamaño mirando ESTO, no el volumen de código.
-- **Lo que importa** — riesgo principal + decisiones abiertas + las piezas que se cayeron (ya-existe/derivable/extra).
+- **Lo que importa** — riesgo principal + decisiones abiertas.
 - **Señal de tamaño:** una-unidad | multi-unidad.
+- **Queda AFUERA / pendiente** — OBLIGATORIO **solo si la señal es una-unidad** (va a un ciclo organic/loop/shot, NO a roadmap). Listá cada pieza de la Fase 1e que se cayó del alcance (ya-existe / derivable / extra), una por línea, con por qué y quién lo decidió: `<pieza> — <por qué queda afuera> — [regla del skill | juicio]`. Nada desaparece en silencio: si elegiste un ciclo chico, el humano tiene que ver qué NO entra y poder sumarlo. Si la señal es multi-unidad → NO va este bloque: el roadmap cubre todo, y lo que puede esperar se marca allá con la columna `¿Diferible?` (no se descarta).
 - **Doc:** `<ruta absoluta del .md>`
 - **Siguiente paso — DEPENDE del veredicto:**
   - **PROCEDER** → `/mala-pata-triage <slug>` (o `/mala-pata-roadmap <slug>` si multi-unidad), pasando el borrador de campos de la Fase 3.

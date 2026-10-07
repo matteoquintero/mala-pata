@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.5.0"
+  version: "2.6.0"
 ---
 
 # /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
@@ -247,9 +247,9 @@ No escribas sin aprobación.
 
 ## Paso 6 — Dónde guardar + escribir el roadmap
 
-1. **Preguntá dónde guardarlo**, sugiriendo el default **`docs/planning/roadmaps/<slug>.md`**
-   (dentro del repo — este roadmap SÍ se versiona/commitea, a diferencia del kickoff transitorio de
-   los carriles que va fuera del repo). Permití override.
+1. **Preguntá dónde guardarlo**, sugiriendo el default **`mala-pata/roadmap/<slug>.md`**
+   (dentro del repo bajo `mala-pata/roadmap/`, versionado — como el resto de los artefactos
+   mala-pata). Permití override.
 2. Escribí el `.md` con el formato de abajo (rutas absolutas para operar; `mkdir -p` la carpeta).
 3. **Puntero liviano en engram** para descubribilidad: `mem_save` topic_key `sdd/<slug>/roadmap`,
    contenido de una línea `Roadmap en archivo: <ruta absoluta>`. No dupliques el contenido.

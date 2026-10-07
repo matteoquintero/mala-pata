@@ -4,7 +4,7 @@ description: Inicia y corre el CICLO SDD a partir de la ruta del archivo de kick
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-loop-start — Corre el CICLO SDD desde un archivo de kickoff
@@ -41,7 +41,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Paso 1 — Cargar el brief
 
-**Formato actual (default)**: `entrada entregada por el CLI` es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-loop` escribe en `<carpeta-del-proyecto>-mala-pata/<change-name>.md`, fuera del repo).
+**Formato actual (default)**: `entrada entregada por el CLI` es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-loop` escribe en `mala-pata/kickoffs/<change-name>.md`, dentro del repo).
 
 1. Si la entrada es una ruta absoluta (empieza con `/`) → `Read` directo sobre ese archivo. Si el archivo no existe → **PARÁ** y pedí la ruta correcta. No inventes el contexto.
 2. Leé el frontmatter (change_name, profile, project, branch, branch_base, worktree, depends_on, paralelizable_con, migrations_reserved) y TODO el cuerpo: reglas del método, contexto del proyecto, contrato, reinterpretación técnica, arquitectura, skills condicionales, **decisiones abiertas**, plan de fases, Definition of Done.
@@ -49,7 +49,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 **Formato legacy (kickoffs creados antes de este cambio — solo por compatibilidad, no lo uses para kickoffs nuevos)**: si la entrada NO es una ruta absoluta, puede venir como **(a)** un id de engram (`#1234` o `1234`), **(b)** un topic_key (`sdd/<change-name>/kickoff`), o **(c)** el formato combinado viejo `sdd/<change-name>/kickoff · engram #<id>`.
 3. Con `#<número>` (casos a/c) → `mem_get_observation(id: <número>)` DIRECTO, nunca `mem_search`.
 4. Con topic_key puro (caso b) → `mem_search` por el topic_key → `mem_get_observation`. Si lo que devuelve es el **puntero liviano nuevo** (`Kickoff en archivo: <ruta>`) en vez del contenido completo → seguí esa ruta y andá al punto 1.
-5. **Auto-migración one-shot**: si por la vía legacy obtuviste el contenido COMPLETO desde engram (kickoff pre-migración), escribilo al formato nuevo (`<carpeta-del-proyecto>-mala-pata/<change-name>.md`) y actualizá la observación de engram al puntero de una línea — así ese kickoff queda migrado y la próxima vez entra por la vía normal. Después seguí con ese archivo.
+5. **Auto-migración one-shot**: si por la vía legacy obtuviste el contenido COMPLETO desde engram (kickoff pre-migración), escribilo al formato nuevo (`mala-pata/kickoffs/<change-name>.md`) y actualizá la observación de engram al puntero de una línea — así ese kickoff queda migrado y la próxima vez entra por la vía normal. Después seguí con ese archivo.
 6. Si no se encuentra nada → **PARÁ** y pedí el identificador correcto.
 
 **Retome de un SDD pausado en Preview**: apenas cargado el brief, chequeá `mem_search("sdd/<change-name>/state")`. Si el ítem EXACTO dice `paused-at-preview` (lo deja el gate "Detener" de `sdd-preview`) → NO re-corras las fases de planeación: hacé el preflight del Paso 2 y saltá DIRECTO al gate de Preview (Paso 3, fase 6) re-presentando el artefacto `sdd/<change-name>/preview` ya persistido. `/sdd-continue` (comando de gentle-ai) NO conoce la fase preview — el retome es por acá. Si en cambio el ítem EXACTO dice `objective-not-ready-at-preview` (bounce de objetivo desde el preview, ver Regla dura #4 y `sdd-preview`) → el QUÉ quedó abierto: **NO saltes a preview**; hacé el preflight y **re-entrá por explore/propose** para redefinir el objetivo antes de volver a avanzar.

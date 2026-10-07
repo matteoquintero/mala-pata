@@ -4,12 +4,12 @@ description: Status READ-ONLY de un ROADMAP (no de SDD sueltos — eso es /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-roadmap-radar — avance de un roadmap contra git (formato fijo)
 
-Entrada: **la provista por el CLI** — la ruta a un roadmap `.md` (`docs/planning/roadmaps/<slug>.md`) o el slug/dominio del roadmap.
+Entrada: **la provista por el CLI** — la ruta a un roadmap `.md` (`mala-pata/roadmap/<slug>.md`) o el slug/dominio del roadmap.
 
 Tu trabajo: mostrar, en **un formato fijo y siempre igual**, cómo va un roadmap de un dominio — fase por fase — derivando cada estado **en vivo contra git**, y marcando **qué puede arrancar ahora y cuáles en paralelo**. Es a los roadmaps lo que `/mala-pata-radar` es a los SDD sueltos, con dos diferencias deliberadas: la **unidad es la fase de un roadmap** (no un change), y la **fuente es el roadmap `.md` + git, NUNCA engram**.
 
@@ -40,7 +40,7 @@ Chequeo: `command -v <tool>`. Si falta una obligatoria, no sigas.
 1. Resolvé el project root: `git -C <cwd> rev-parse --show-toplevel`.
 2. Resolvé el roadmap `.md`:
    - Si la entrada es una ruta → `Read` directo.
-   - Si es un slug/dominio → buscá `docs/planning/roadmaps/<slug>.md` (o el default que el roadmap haya usado). Si hay varios candidatos y no se especificó → listá los `.md` disponibles y pedí cuál (una sola pregunta, parás y esperás).
+   - Si es un slug/dominio → buscá `mala-pata/roadmap/<slug>.md` (o el default que el roadmap haya usado). Si hay varios candidatos y no se especificó → listá los `.md` disponibles y pedí cuál (una sola pregunta, parás y esperás).
    - Si no existe → decilo y PARÁ; no inventes fases.
 3. Del `.md` extraé por fase: **#**, **nombre**, **slug** (el change-name estable), **ruta** (organic/loop:PERFIL/shot), **Depende de**, y del cierre del DAG el **orden topológico** y los **paralelizables** (`{..}`). Si el roadmap es viejo y una fase no tiene `slug`, marcá esa fase `sin-slug` (no se puede matchear determinísticamente — ver Fase 2).
 

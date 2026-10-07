@@ -1,17 +1,17 @@
 ---
 name: mala-pata-loop
-description: Reinterpreta una solicitud a términos técnicos, elige perfil de ejecución con el humano, y genera el contexto completo en un archivo markdown (carpeta hermana del proyecto, fuera del repo) para arrancar un SDD interactivo — con solo un puntero de una línea en engram. NO ejecuta el SDD — solo deja el brief listo para que otro agente lo corra.
+description: Reinterpreta una solicitud a términos técnicos, elige perfil de ejecución con el humano, y genera el contexto completo en un archivo markdown (dentro del repo, `mala-pata/kickoffs/`, versionado) para arrancar un SDD interactivo — con solo un puntero de una línea en engram. NO ejecuta el SDD — solo deja el brief listo para que otro agente lo corra.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-loop — Generador de contexto para iniciar un SDD
 
 Solicitud del usuario: **entrada entregada por el CLI**
 
-Tu único trabajo es convertir esa solicitud en un **CONTEXTO TÉCNICO COMPLETO guardado en un archivo markdown** (fuera del repo, ver Paso 5) que otro agente consumirá para EJECUTAR un SDD.
+Tu único trabajo es convertir esa solicitud en un **CONTEXTO TÉCNICO COMPLETO guardado en un archivo markdown** dentro del repo (`mala-pata/kickoffs/`, ver Paso 5) que otro agente consumirá para EJECUTAR un SDD.
 
 > **NO inicias el SDD. NO escribís código. NO creás specs/tasks/migraciones reales. NO corrés tests.**
 > Solo producís el *brief* (contexto) y lo persistís en un archivo (con un puntero de una línea en engram para que se pueda buscar). Al terminar, el SDD queda **listo para arrancar**, no arrancado.
@@ -265,8 +265,8 @@ El kickoff DEBE incluir el frontmatter completo y el bloque "Reglas del método"
 
 El kickoff vive en un **archivo, no en engram** — así nunca se sube al repo del proyecto por accidente, y no tiene el límite práctico de longitud de una observación de engram. Esto es específico del kickoff: el resto del ciclo (explore, propose, spec, design, tasks, preview, apply-progress, verify-report, archive-report) sigue persistiendo en engram exactamente como siempre — no lo toques.
 
-1. **Ubicación — carpeta hermana del proyecto, NUNCA dentro del repo**: `<carpeta-del-proyecto>-mala-pata/`, al mismo nivel que la carpeta del proyecto. Ejemplo: proyecto en `/ruta/a/mi-proyecto` → kickoffs en `/ruta/a/mi-proyecto-mala-pata/<change-name>.md`. Creá la carpeta (`mkdir -p`) si no existe.
-2. Escribí el kickoff completo del Paso 4 en `<carpeta-hermana>/<change-name>.md`.
+1. **Ubicación — dentro del repo, versionado (trazabilidad)**: `mala-pata/kickoffs/<change-name>.md` (relativo a la raíz del repo, `git rev-parse --show-toplevel`; `mkdir -p` si no existe).
+2. Escribí el kickoff completo del Paso 4 en `mala-pata/kickoffs/<change-name>.md`.
 3. **Puntero liviano en engram** (solo para que `mem_search`/radar lo sigan encontrando — la idempotencia del Paso 1 punto 5 depende de esto): `mem_save` con `topic_key: "sdd/<change-name>/kickoff"`, `type: "architecture"`, contenido de **una sola línea**: `Kickoff en archivo: <ruta absoluta>`. No dupliques el contenido del kickoff acá — el archivo es la única fuente de verdad.
 4. Si reservaste migraciones, confirmá que el registry quedó actualizado.
 5. **Tu respuesta al humano es un cierre OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura:

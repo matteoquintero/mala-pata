@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-research — afinador de ideas crudas (pre-triage)
@@ -110,7 +110,7 @@ Sumá la **señal de tamaño**: ¿esto entra en una unidad (un organic o un loop
 
 ## Fase 4 — Escribir el doc (OBLIGATORIO, SIEMPRE)
 
-Escribís el doc de research SIEMPRE, sin excepción — es tu entregable. Va en la carpeta hermana del proyecto, FUERA del repo, igual que el kickoff de organic/loop: `<carpeta-del-proyecto>-mala-pata/research/<slug>.md` (`mkdir -p` la carpeta si no existe).
+Escribís el doc de research SIEMPRE, sin excepción — es tu entregable. Va **dentro del repo, versionado**: `mala-pata/research/<slug>.md` (relativo a la raíz del repo, `git rev-parse --show-toplevel`; `mkdir -p` la carpeta si no existe).
 
 **Puntero liviano en engram** para descubribilidad: `mem_save` con `topic_key: "research/<slug>"`, contenido de una sola línea: `Research en archivo: <ruta absoluta>`. No dupliques el contenido en engram — el archivo es la fuente de verdad. Si engram no está disponible, el archivo sigue siendo la fuente de verdad; avisá en una línea que el puntero no quedó guardado.
 

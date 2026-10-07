@@ -4,7 +4,7 @@ description: A partir de un PR/change O un roadmap (un PR = "un roadmap de un so
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-walkthrough — recorrido de prueba + base de doc de cliente
@@ -75,7 +75,7 @@ Regla dura: **si un paso no lo puede seguir alguien que no escribió el código,
 
 **Bloque de acceso (OBLIGATORIO, va primero — sin esto no se entrega el carril).** Para que el humano pruebe sin romper nada, el guion SIEMPRE arranca con cómo acceder:
 - **URL**: la del entorno de PRUEBA (localhost:<puerto> o la test env). **NUNCA producción.**
-- **Credenciales de prueba**: el usuario/login de prueba a usar (indicá de dónde salen; NO pegues secretos reales — el QA vive fuera del repo, Paso 6).
+- **Credenciales de prueba**: el usuario/login de prueba a usar (indicá de dónde salen; NO pegues secretos reales — el QA vive dentro del repo (`mala-pata/walkthroughs/`), Paso 6).
 - **Servidor corriendo**: cómo levantar la app contra la **test DB** y confirmar que está arriba antes de empezar.
 
 **Tabla de prueba (OBLIGATORIA, formato fijo).** Del core, UNA fila por escenario — este es el formato exacto, no lo cambies:
@@ -121,7 +121,7 @@ Si el stack permite levantar la app **y el humano lo OK**: capturá los pasos vi
 
 Diátaxis manda **NO mezclar** → **dos archivos**, no uno:
 - **Cliente final** (versionable, va al repo): aconsejá `docs/guias/<slug>.md` (o la convención de docs que use el proyecto). Confirmá la carpeta con el humano.
-- **QA/UAT** (interno): aconsejá el sibling `<carpeta-del-proyecto>-mala-pata/walkthroughs/<slug>-qa.md` (fuera del repo, como los kickoffs), o `docs/qa/` si el proyecto versiona QA. Confirmá.
+- **QA/UAT** (interno): aconsejá `mala-pata/walkthroughs/<slug>-qa.md` (dentro del repo, versionado, como el resto de mala-pata). Confirmá.
 - **Puntero liviano en engram**: `mem_save` topic_key `sdd/<change>/walkthrough`, contenido de una línea con las rutas de los dos archivos (para que el radar y futuras sesiones lo encuentren). Si la entrada fue un roadmap sin change-name único, usá el slug del roadmap.
 
 ## Paso 7 — Gate humano

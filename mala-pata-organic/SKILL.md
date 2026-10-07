@@ -1,17 +1,17 @@
 ---
 name: mala-pata-organic
-description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se invoca DESPUÉS de que el carril ya fue decidido — normalmente vía `/mala-pata-triage`, o directo cuando el humano ya sabe que es organic. Asume route=organic y captura/confirma el formato estricto (Qué, Why, Done, Decisiones, Riesgo) — si triage pasó un borrador, lo confirma/completa en vez de arrancar de cero. Si el formato queda completo, escribe el kickoff en una carpeta hermana del proyecto (fuera del repo) con un puntero de una línea en engram. NO ejecuta el ciclo ODD — el ejecutor es `/mala-pata-organic-start <ruta-al-kickoff>`. Red de seguridad: si al capturar los campos aparece que `Decisiones` está sin resolver, rebota a `/mala-pata-loop` — pero decidir el carril ya no es su trabajo primario.
+description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se invoca DESPUÉS de que el carril ya fue decidido — normalmente vía `/mala-pata-triage`, o directo cuando el humano ya sabe que es organic. Asume route=organic y captura/confirma el formato estricto (Qué, Why, Done, Decisiones, Riesgo) — si triage pasó un borrador, lo confirma/completa en vez de arrancar de cero. Si el formato queda completo, escribe el kickoff dentro del repo (`mala-pata/kickoffs/`, versionado) con un puntero de una línea en engram. NO ejecuta el ciclo ODD — el ejecutor es `/mala-pata-organic-start <ruta-al-kickoff>`. Red de seguridad: si al capturar los campos aparece que `Decisiones` está sin resolver, rebota a `/mala-pata-loop` — pero decidir el carril ya no es su trabajo primario.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.5.0"
+  version: "3.6.0"
 ---
 
 # /mala-pata-organic — Generador de kickoff ODD (route ya decidido)
 
 Pedido del usuario: **entrada entregada por el CLI** (o el borrador de campos que pasó `/mala-pata-triage` al decidir organic)
 
-Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo markdown, guardado fuera del repo, que otro agente (`/mala-pata-organic-start`) va a consumir para CORRER el ciclo. Es a ODD lo que `/mala-pata-loop` es al SDD: generás el contexto, no lo ejecutás.
+Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo markdown, guardado dentro del repo (`mala-pata/kickoffs/`, versionado), que otro agente (`/mala-pata-organic-start`) va a consumir para CORRER el ciclo. Es a ODD lo que `/mala-pata-loop` es al SDD: generás el contexto, no lo ejecutás.
 
 > **Asumís route=organic.** La decisión de carril (organic vs loop vs roadmap) la toma `/mala-pata-triage` ANTES de llegar acá. Si venís de triage, ya tenés un borrador de Qué/Why/Done/Decisiones/Riesgo — tu trabajo es **confirmarlo o completarlo**, no re-derivarlo desde cero. Si te invocaron directo (el humano ya sabía que era organic), hacé la misma captura desde el pedido crudo.
 > **NO ejecutás nada.** NO creás el worktree, NO explorás el código, NO escribís código, NO abrís PRs. Solo capturás/confirmás el formato y, si queda completo, escribís el kickoff.
@@ -123,8 +123,8 @@ created_at: <ISO 8601>
 
 Igual que `/mala-pata-loop` (Paso 5): el kickoff vive en un **archivo**, no en engram — así nunca se sube al repo por accidente.
 
-1. **Ubicación — carpeta hermana del proyecto, NUNCA dentro del repo**: `<carpeta-del-proyecto>-mala-pata/`, al mismo nivel que la carpeta del proyecto. Ejemplo: proyecto en `/ruta/a/mi-proyecto` → kickoff en `/ruta/a/mi-proyecto-mala-pata/<change-name>.md`. Creá la carpeta (`mkdir -p`) si no existe.
-2. Escribí el kickoff completo de la Fase 2 en `<carpeta-hermana>/<change-name>.md`.
+1. **Ubicación — dentro del repo, versionado (trazabilidad)**: `mala-pata/kickoffs/<change-name>.md` (relativo a la raíz del repo, `git rev-parse --show-toplevel`; `mkdir -p` si no existe).
+2. Escribí el kickoff completo de la Fase 2 en `mala-pata/kickoffs/<change-name>.md`.
 3. **Puntero liviano en engram**: `mem_save` con `topic_key: "odd/<change-name>/kickoff"`, `type: "architecture"`, contenido de **una sola línea**: `Kickoff ODD en archivo: <ruta absoluta>`. No dupliques el contenido acá — el archivo es la única fuente de verdad.
 4. Si engram no está disponible, el archivo sigue siendo la fuente de verdad — avisá en una línea que el puntero no quedó guardado (afecta la idempotencia futura, no el kickoff en sí).
 

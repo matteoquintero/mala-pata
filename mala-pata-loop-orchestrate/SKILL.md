@@ -4,7 +4,7 @@ description: Planificador READ-ONLY de un lote de kickoffs SDD — analiza vario
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # /mala-pata-loop-orchestrate — Planificar un LOTE de kickoffs (READ-ONLY)
@@ -35,8 +35,8 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Paso 1 — Cargar los kickoffs
 Input (acepta cualquiera de estas formas):
-- **Lista explícita de rutas** (formato actual): rutas absolutas a los `.md` de kickoff que dejó `/mala-pata-loop` en `<carpeta-proyecto>-mala-pata/`.
-- **Auto-descubrir**: si no se pasa lista, listá `<carpeta-proyecto>-mala-pata/*.md` (o por un prefijo/módulo si lo indican, ej. "todos los de sentencias").
+- **Lista explícita de rutas** (formato actual): rutas absolutas a los `.md` de kickoff que dejó `/mala-pata-loop` en `mala-pata/kickoffs/` (dentro del repo).
+- **Auto-descubrir**: si no se pasa lista, listá `mala-pata/kickoffs/*.md` (o por un prefijo/módulo si lo indican, ej. "todos los de sentencias").
 - **Legacy** (kickoffs viejos, solo compatibilidad): ids de engram (`#6717 #6712 …`) o topic_keys (`sdd/<name>/kickoff`).
 
 Para cada uno: si es ruta → `Read` directo. Si es legacy → `mem_search` → `mem_get_observation`; si lo que devuelve es el puntero liviano (`Kickoff en archivo: <ruta>`) en vez del contenido completo, seguí esa ruta y leé el archivo.

@@ -4,7 +4,7 @@ description: Corre el CICLO ODD (Organic Driven Development) a partir de la ruta
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-organic-start — Corre el CICLO ODD desde un archivo de kickoff
@@ -41,7 +41,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
 
 ## Paso 1 — Cargar el kickoff + contexto de engram
 
-1. La entrada es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-organic` escribió en `<carpeta-del-proyecto>-mala-pata/<change-name>.md`). Si no empieza con `/` o el archivo no existe → **PARÁ** y pedí la ruta correcta. No inventes el contexto.
+1. La entrada es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-organic` escribió en `mala-pata/kickoffs/<change-name>.md`, dentro del repo). Si no empieza con `/` o el archivo no existe → **PARÁ** y pedí la ruta correcta. No inventes el contexto.
 2. `Read` completo: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`) y cuerpo (Qué, Why, Done, Decisiones ya tomadas, Riesgo, Dónde-hint).
 3. Si `route` no es `organic` → **PARÁ**: este kickoff no es de este skill (probablemente es un kickoff de `/mala-pata-loop`, que usa `/mala-pata-loop-start`).
 4. `mem_search("odd/<change_name>/kickoff")` solo para confirmar el puntero — no es bloqueante si falla, el archivo ya es la fuente de verdad.
@@ -70,7 +70,7 @@ Research opcional solo para una **incertidumbre nombrada**; 1 pregunta al humano
 
 ## Paso 5 — Track (ODD 5 — solo si substancial)
 
-Antes del primer write: creá `odd/tasks/<change_name>.md` + su mirror en engram `odd/<change_name>/tasks` (automático, sin pedir permiso de tasks/storage). **El `Why` del kickoff FLUYE al feature-doc** (sección de motivación/contexto). Avisá en **1 línea** qué feature-doc creaste y cuántas tasks tiene. (Contenido y contrato del doc: ODD protocol del CLAUDE.md.)
+Antes del primer write: creá `mala-pata/odd/<change_name>.md` + su mirror en engram `odd/<change_name>/tasks` (automático, sin pedir permiso de tasks/storage). **El `Why` del kickoff FLUYE al feature-doc** (sección de motivación/contexto). Avisá en **1 línea** qué feature-doc creaste y cuántas tasks tiene. (Contenido y contrato del doc: ODD protocol del CLAUDE.md.)
 
 ## Paso 6 — Implementar task-by-task (ODD 6)
 
@@ -93,7 +93,7 @@ Mismo formato que `/mala-pata-loop-start` Paso 5: tabla Markdown, un hito por fi
 | Autorización | cambio autorizado / read-only |
 | Worktree + base | `<branch>` off `<base>` |
 | Explore (Dónde) | `<n>` archivos/módulos tocados |
-| Feature-doc (si substancial) | `odd/tasks/<change_name>.md` · `<n>` tasks |
+| Feature-doc (si substancial) | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
 | Apply (TDD si aplica) | Red-Green-Refactor, `<n>` tests |
 | Smoke test (fixtures + confirmación) | funcionalidad OK · o `N/A (no aplicó)` |
 | Work-unit commits | `<n>` commits · RDD assess: `<granted/passive/…>` |
@@ -103,4 +103,4 @@ Mismo formato que `/mala-pata-loop-start` Paso 5: tabla Markdown, un hito por fi
 
 ## Persistencia
 
-Para trabajo **substancial**, el **feature-doc** (`odd/tasks/<change_name>.md` + mirror engram `odd/<change_name>/tasks`) ES la persistencia de ODD. Para trabajo **chico** sin feature-doc, un cierre liviano opcional (`mem_save` topic `odd/<change_name>/organic`) si querés continuidad futura.
+Para trabajo **substancial**, el **feature-doc** (`mala-pata/odd/<change_name>.md` + mirror engram `odd/<change_name>/tasks`) ES la persistencia de ODD. Para trabajo **chico** sin feature-doc, un cierre liviano opcional (`mem_save` topic `odd/<change_name>/organic`) si querés continuidad futura.

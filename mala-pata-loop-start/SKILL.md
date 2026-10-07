@@ -4,7 +4,7 @@ description: Inicia y corre el CICLO SDD a partir de la ruta del archivo de kick
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-loop-start — Corre el CICLO SDD desde un archivo de kickoff
@@ -194,9 +194,9 @@ Prueba manual rápida de que la funcionalidad REAL se cumple, con datos ya sembr
    - **Corre** (proponé "sí"): el change agrega/altera comportamiento que un humano ejercería corriendo la app y que verify no prueba end-to-end con datos reales.
    - Si el kickoff trae `smoke_test.needed: yes|no`, respetalo; con `auto`, proponé y esperá el OK en una línea. Si "no" → registralo y seguí a 4.2.
 
-2. **Sembrar (solo si toca DB) — idempotente, contra la test DB.** Usá el mecanismo de seed del proyecto (seeders/factories/fixtures que detectó `sdd-init`), NUNCA INSERTs ad-hoc. Sembrá contra la **test DB persistente** del proyecto (`TEST_DB_URL` o el equivalente del stack), con el escenario del campo `smoke_test.data` del kickoff. El seed DEBE ser **idempotente** (upsert / claves estables / namespaced por change): re-correrlo no puede explotar por constraints ni duplicar filas. Si el change no toca DB (ej. UI-only sin datos), saltá el seed y seguí al paso a paso.
+2. **Guion + receta de seed — orquestá `mala-pata-walkthrough` (carril QA/UAT).** No escribas tu propio guion: pedile a `mala-pata-walkthrough` el recorrido de este change. Devuelve SIEMPRE el **bloque de acceso** (URL de prueba + credenciales + servidor corriendo contra la test DB), la **tabla fija** `# | Given (ruta) | When | Then`, y —si toca DB— el apartado **`## Seed`** (receta de fixtures derivada de los `Given` + el `smoke_test.data` del kickoff). Corre ANTES del sembrado, porque el seed lee esa receta.
 
-3. **Paso a paso — orquestá `mala-pata-walkthrough` (carril QA/UAT).** No escribas tu propio guion: pedile a `mala-pata-walkthrough` el recorrido Given/When/Then "qué probar / cómo probar" de este change y presentáselo al humano junto a los datos sembrados (qué ids/registros quedaron listos). El humano prueba en minutos, sin armar el fixture.
+3. **Sembrar (solo si toca DB) — delegá en `mala-pata-seed`.** El sembrado lo ejecuta `mala-pata-seed`, que lee el apartado `## Seed` del QA de walkthrough y siembra con el mecanismo del proyecto (`sdd-init`), **idempotente**, contra la **test DB** (nunca prod). Un solo ejecutor para in-cycle (acá) y standalone. Presentá al humano qué quedó sembrado (ids/registros) junto al guion. Si el change no toca DB (UI-only sin datos), saltá el seed.
 
 4. **Confirmación → GATE duro.** Preguntá explícitamente: **"¿Se cumplió la funcionalidad? (sí / no)"**.
    - **Sí** → registralo y seguí a 4.2.

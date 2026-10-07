@@ -4,7 +4,7 @@ description: A partir de un PR/change O un roadmap (un PR = "un roadmap de un so
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-walkthrough — recorrido de prueba + base de doc de cliente
@@ -73,13 +73,34 @@ Regla dura: **si un paso no lo puede seguir alguien que no escribió el código,
 
 ## Paso 3 — Carril QA/UAT (uso interno: "qué probar / cómo probar")
 
-Del core, generá el guion de verificación humana:
-- Pasos numerados + **casilla pass/fail** por escenario.
+**Bloque de acceso (OBLIGATORIO, va primero — sin esto no se entrega el carril).** Para que el humano pruebe sin romper nada, el guion SIEMPRE arranca con cómo acceder:
+- **URL**: la del entorno de PRUEBA (localhost:<puerto> o la test env). **NUNCA producción.**
+- **Credenciales de prueba**: el usuario/login de prueba a usar (indicá de dónde salen; NO pegues secretos reales — el QA vive fuera del repo, Paso 6).
+- **Servidor corriendo**: cómo levantar la app contra la **test DB** y confirmar que está arriba antes de empezar.
+
+**Tabla de prueba (OBLIGATORIA, formato fijo).** Del core, UNA fila por escenario — este es el formato exacto, no lo cambies:
+
+| # | Given (ruta) | When | Then (lo que tenés que ver) |
+|---|--------------|------|-----------------------------|
+| 1 | <estado inicial concreto + dónde/ruta> | <acción exacta> | <resultado observable a ojo> |
+
+Debajo de la tabla, por escenario:
+- **casilla pass/fail**.
 - **Señal de que falló**: qué se ve si NO anduvo (no solo el happy path).
 - **Datos de prueba y casos borde** explícitos.
 - **Nota de regresión**: qué NO debería haber cambiado y hay que confirmar de paso.
 
-Este carril es un **checklist accionable**, no prosa.
+Este carril es un **checklist accionable**, no prosa. El **bloque de acceso** y la **tabla** son obligatorios SIEMPRE.
+
+## Paso 3.5 — Apartado `## Seed` (receta de fixtures, para `mala-pata-seed`)
+
+walkthrough NO siembra (sigue read-only) — deja la **receta** para que la ejecuten `mala-pata-seed` (standalone, en una rama) o el gate de smoke test (in-cycle, 4.1-ter / Paso 7). Si el change toca datos, agregá al QA un apartado `## Seed (fixtures)`:
+- **Qué fixtures** — el estado inicial mínimo para correr la tabla, **derivado de los `Given` + `Datos de prueba` del core** (+ el `smoke_test.data` del kickoff si existe). NO inventes datos: si un `Given` no alcanza para fijar un valor, marcalo "a confirmar".
+- **Mecanismo** — con qué sembrar (seeders/factories del proyecto que detectó `sdd-init`). Nombralo, no lo reimplementes.
+- **Dónde** — la **test DB** (nunca prod).
+- **Idempotente** — claves estables para que re-sembrar no choque.
+
+Este apartado es el contrato que `mala-pata-seed` lee. Si el change NO toca datos (ej. visual puro), omitilo y decilo explícito.
 
 ## Paso 4 — Carril cliente final (how-to / tutorial)
 

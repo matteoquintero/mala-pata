@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.9.0"
+  version: "3.10.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -134,11 +134,11 @@ Same as `/mala-pata-loop` (Step 5): the kickoff lives in a **file**, not in engr
 
 Your reply to the human is a **MANDATORY and standard close (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, without inventing anything. Emit exactly this structure (same format as `/mala-pata-loop` Step 5):
 
-- Title: `**Kickoff listo — <change-name>**`
+- Title: `**Kickoff ready — <change-name>**`
 - Summary (one line per item):
   - **What:** <one line>
-  - **Carril:** organic
-  - **Base → rama:** <base> → <type>/<change-name>
+  - **Lane:** organic
+  - **Base → branch:** <base> → <type>/<change-name>
   - **Worktree:** <absolute path>
   - **DoD:** <testable criterion, one line>
 - **Kickoff:** `<absolute path of the .md>`
@@ -147,6 +147,8 @@ Your reply to the human is a **MANDATORY and standard close (summary + kickoff)*
   ```
   /mala-pata-organic-start <absolute path of the .md>
   ```
+
+Emit the field labels above (Kickoff ready, What, Lane, Base → branch, Worktree, DoD, Kickoff, Next step) **verbatim in English** — they are structural; only the values and any surrounding prose follow the conversation language.
 
 This block is the ONLY way to close on the happy path.
 

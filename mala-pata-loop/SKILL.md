@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -271,7 +271,7 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
 4. If the change needs migrations, `migrations_reserved` in the frontmatter is provisional (there is no registry): re-measure git right before the merge (Step 3).
 5. **Your response to the human is a MANDATORY, standard closing (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, inventing nothing. Emit exactly this structure:
 
-   - Title: `**Kickoff listo — <change-name>**`
+   - Title: `**Kickoff ready — <change-name>**`
    - Summary (one line per item):
      - **What:** <one line>
      - **Profile:** <FULL/STANDARD/LITE/MINIMAL>
@@ -285,6 +285,8 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
      ```
      /mala-pata-loop-start <absolute path of the .md>
      ```
+
+   Emit the field labels above (Kickoff ready, What, Profile, Base → branch, Worktree, DoD, Migration / Phases, Kickoff, Next step) **verbatim in English** — they are structural; only the values and any surrounding prose follow the conversation language.
 
    This block is the ONLY way to close on the happy path.
 

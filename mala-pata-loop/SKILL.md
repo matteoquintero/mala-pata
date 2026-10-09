@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.0"
+  version: "1.9.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -75,7 +75,7 @@ Before reinterpreting anything, measure whether the request is **ready to enter 
 1. Detect the **active project** (the available memory tool or the cwd) and read its architecture (`CLAUDE.md`, `ARCHITECTURE.md` or equivalents).
 2. `mem_search` with keywords from the request (and `mem_get_observation` for what is relevant). Reuse existing decisions/conventions.
 3. Explore the minimum of the code to ground the reinterpretation (grep/reading). Do not edit anything.
-4. Rewrite the request as a **technical objective**: Objective, Problem/root cause, Scope IN, Scope OUT, measurable Success criteria, `change-name` in kebab-case.
+4. Rewrite the request as a **technical objective**: Objective, Problem/root cause, Scope IN, Scope OUT, measurable Success criteria, `change-name` in kebab-case. If the incoming draft carries a `change_name` (a roadmap phase slug), HONOR it as the change-name — do NOT derive a new one (the branch `<type>/<slug>` must match what `mala-pata-roadmap-radar` searches for); derive only when it is absent.
 5. **Idempotency**: `mem_search("sdd/<change-name>/kickoff")`. If one that is equal/similar already exists → offer to update it or rename.
 6. **Size / splitting guard**: one SDD = one coherent objective. If it spans several, recommend splitting into N SDDs (with a dependency graph) and generate only the first.
 7. **In-flight conflict**: `git worktree list` + active branches. If there is overlap → warn and confirm before continuing.
@@ -149,7 +149,7 @@ The executor will load exactly the skills this kickoff lists — so choose them 
 
 1. **By objective, not by reflex**: if the Scope IN does not mention it, do not load it. E.g.: a query fix does NOT load `ui-ux-pro-max`; a screen redesign does NOT load `rag-*`.
 2. **Ceiling ~3-4 conditionals.** If you end up with more, the objective is probably too big → split it (Step 1.6), do not load everything.
-3. **Every chosen skill goes in the kickoff** (section "Skills condicionales") **with ONE line of why** (which part of the objective justifies it). The executor loads that list literally.
+3. **Every chosen skill goes in the kickoff** (section "Additional conditional skills") **with ONE line of why** (which part of the objective justifies it). The executor loads that list literally.
 4. **Only skills that EXIST** in the session (look at `<available_skills>`); never invent a name. Some are plugin skills → use the `plugin:skill` name exactly as it appears in the listing. The stack-specific ones (`gsap-*`, `threejs-*`, `go-testing`, `neon-postgres`) only if `sdd-init` confirms the stack uses them.
 
 **Init guard**: `mem_search("sdd-init/<project>")`. If it does NOT exist → run `sdd-init` to detect stack, conventions, testing, `strict_tdd`. If it already exists → reuse it (it is what tells you which stack-specific ones apply).
@@ -253,7 +253,7 @@ Verifiable criteria, not vague bullets — use Given/When/Then for observable be
 - [ ] Kickoff referenced in the PR body (file path — see Step 5).
 ```
 
-The kickoff MUST include the full frontmatter and the "Method rules" block with the paths to the MDs — the executor reads them at startup. Do not compress the Definition of Done so that it "fits": there is no longer a character budget, use the space the change needs.
+The kickoff MUST include the full frontmatter and the "Method rules" block with the paths to the MDs — the executor reads them at startup. Those `references/profiles/...` paths are relative to the `mala-pata-loop` skill directory (not the repo); `/mala-pata-loop-start` resolves them against the installed skill dir. Do not compress the Definition of Done so that it "fits": there is no longer a character budget, use the space the change needs.
 
 `sdd_preflight` are only RECOMMENDATIONS — they do NOT satisfy gentle-ai's preflight hook (which requires a real, live `AskUserQuestion` in the runner's session); `mala-pata-loop-start` reads them to pre-fill the recommendation text of the hook's mandatory canonical question. Derive `pace` from the profile: FULL/STANDARD → `interactive`; LITE/MINIMAL may go `automatic`.
 

@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: mala-pata
-  version: "3.4"
+  version: "3.5"
 ---
 
 ## Requirements (orchestrate, don't reinvent)
@@ -49,7 +49,7 @@ The **audit mode and the number of reviewers (0/1/2) do NOT come from the orches
 Required reads (parallel + `mem_get_observation` — previews are truncated):
 - `sdd/{change-name}/tasks` (required)
 - `sdd/{change-name}/design` (required) — OR the merged `sdd/{change-name}/spec-design` written by the LITE/MINIMAL profiles (accept EITHER separate `spec` + `design` OR the merged `spec-design`)
-- `sdd/{change-name}/kickoff` (required — to read the DoD)
+- `sdd/{change-name}/kickoff` (required — to read the DoD). The kickoff arrives from the orchestrator as an **absolute path**: `Read` that file and copy the DoD verbatim. If only the engram topic is available, it holds just the pointer `Kickoff in file: <path>` — follow that path and `Read` the file; never paraphrase the DoD from the pointer.
 - `sdd/{change-name}/spec` (when not merged into `spec-design`), `sdd/{change-name}/proposal`, `sdd/{change-name}/explore` (context)
 
 Also read the **real worktree code** (Grep/Glob/Read) — do not review in the abstract.

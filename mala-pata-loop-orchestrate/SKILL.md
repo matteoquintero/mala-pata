@@ -4,7 +4,7 @@ description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.3.0"
+  version: "2.4.0"
 ---
 
 # /mala-pata-loop-orchestrate — Plan a BATCH of kickoffs (READ-ONLY)
@@ -44,10 +44,9 @@ If any is not found → warn and continue with the rest (do not invent context).
 
 ## Step 2 — Extract the metadata that governs orchestration
 From each kickoff take:
-- `change-name`, `size`, `depends_on` (hard/soft).
+- `change_name`, `profile` (FULL / STANDARD / LITE / MINIMAL — infer the weight/size from it), `depends_on` (the dependency list; blocking by default), `parallelizable_with` (what the kickoff declares as safe to run alongside).
 - **Affected areas/files** (the "Architecture and affected layers" section — BCs/layers + ARCHITECTURE.md refs; cross-check "Technical reinterpretation" Scope IN) → key for detecting clashes.
-- **Migration?** (seed/DDL yes/no).
-- **Severity/value** (high / low / "evaluar si amerita").
+- **Migration?** = `migrations_reserved` is not `N/A` (provisional number present).
 - **base branch** declared in the kickoff.
 - **Phases**: almost all are SDD (`explore→propose→spec→design→tasks→apply→verify→archive`).
   The **only NON-SDD phases** are the **final tail** of `/mala-pata-loop-start` (Step 4): **PR →
@@ -55,19 +54,19 @@ From each kickoff take:
   parallel/serial boundary (see Step 3).
 
 ## Step 3 — Analyze (plan rules)
-1. **Dependency graph** (`depends_on`) → topological order. A hard dependency = the
+1. **Dependency graph** (`depends_on`) → topological order. Every listed dependency is blocking by default = the
    dependent does not enter **Apply** until the provider closes **design** (the convention/contract).
 2. **Conflict by shared file**: intersect the affected areas. Two kickoffs that edit
    the SAME file **cannot Apply in parallel** (merge conflict) → serialize their Apply
-   or stagger them. **Planning** (explore→design) CAN go in parallel (it does not write code).
+   or stagger them. Use each kickoff's `parallelizable_with` as the starting parallel grouping (a declared pair still gets serialized if the file/migration check finds a clash). **Planning** (explore→design) CAN go in parallel (it does not write code).
 3. **Migration collision**: if ≥2 seed a migration and run in parallel → the number is **provisional,
    not a reservation**: the first to merge keeps it and the others renumber on integration (see
    `/mala-pata-loop-start`, Step 4.1-bis). The truth about taken numbers is **git** (measure the branches),
    NOT a registry in engram; the kickoffs carry their provisional number in the frontmatter
    `migrations_reserved`. Never trust the file number nor a registry.
-4. **Triage by value**: those marked "evaluar si amerita"/low severity → **defer them** out of the
+4. **Triage by weight**: a MINIMAL/LITE kickoff the kickoff itself flags as optional ("evaluar si amerita") → **defer it** out of the
    first batch (or close them at propose without code). Do not put them in wave 1.
-5. **Split (ONLY recommend)**: if a kickoff mixes 2 independent concerns or is size L with two
+5. **Split (ONLY recommend)**: if a kickoff mixes 2 independent concerns or is profile FULL with two
    separable deliverables → **recommend** splitting it into A/B with the reason. Do NOT create the
    split kickoffs (that is the user's decision).
 6. **Shared final tail**: if several changes go to the same destination, decide whether **one consolidated

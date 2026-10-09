@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.7.0"
+  version: "3.8.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -74,7 +74,7 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 
 ## Phase 2 — Generate the organic kickoff (if the capture ended up complete)
 
-1. Derive a short `change-name` in kebab-case.
+1. `change-name`: if the incoming draft carries a `change_name` (a roadmap phase slug), HONOR it as-is — do NOT derive a new one (the branch `<type>/<slug>` must match what `mala-pata-roadmap-radar` searches for). Only when `change_name` is absent, derive a short one in kebab-case.
 2. **Base — propose and confirm (Hard rule #2)**: where the code lives (`main`/`development` or an in-progress feature). Wait for the OK.
 3. **Branch type — advise and confirm**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — never `sdd/`. The full name goes as the proposed `worktree` (absolute path, `<ABS-repo>-worktrees/<change-name>`) — you do **not create it here**, `/mala-pata-organic-start` executes that.
 4. **Init guard**: `mem_search("sdd-init/{project}")` (only the EXACT item). If it does not exist → run `sdd-init` first to detect the stack and `strict_tdd`. Take `tdd_mode` from there for the frontmatter.

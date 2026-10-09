@@ -4,9 +4,9 @@ They apply to **all profiles** (FULL / STANDARD / LITE / MINIMAL) and to **all p
 
 ## Method (non-negotiable)
 
-- **Interactive phase-by-phase execution**: each phase closes with a summary and a **pause** waiting for the human's OK before the next one. **The pace is NOT asked as a separate gate** — this is the only pace, always. The active profile (FULL/STANDARD/LITE/MINIMAL) already defines how explicit each specific human gate is (see profiles); there is no separate "interactive or automatic?" question. An automatic mode only exists if the human explicitly asks for it and without it being offered as an option (e.g. "corré automático hasta X") — it is never presented as a menu.
+- **Interactive phase-by-phase execution**: each phase closes with a summary and a **pause** waiting for the human's OK before the next one. **Pace default = interactive.** `/mala-pata-loop-start` Step 2.9 asks pace + artifacts in the hook's canonical question; this rule gives the RECOMMENDED DEFAULT the runner feeds into that question (interactive; automatic only in LITE/MINIMAL and only if the human picks it). The active profile (FULL/STANDARD/LITE/MINIMAL) already defines how explicit each specific human gate is (see profiles).
   - **Automatic ceiling by objective size (non-negotiable)**: even if the human asks for it, automatic mode is only allowed in **LITE / MINIMAL**. In **FULL / STANDARD** the pace is interactive phase-by-phase ALWAYS — "auto until X" is not accepted. Reason: a large objective run in auto **dams up all the confirmations at the preview** — the human arrives at a gate with 5-6 phases of accumulated decisions they can no longer genuinely review, and the preview stops being a checkpoint and becomes a rubber stamp. If the FULL/STANDARD human asks for auto, answer in one line that because of the objective's size the cycle goes interactive (and why), and you continue phase-by-phase. In any profile, additionally, the **preview** phase is NEVER automatic (it always stops, see `sdd-preview`).
-- **Artifact store: ALWAYS `engram`**. NEVER ask about `openspec`/`hybrid`/`none` — it is not a decision exposed in this setup.
+- **Artifact store: recommended default `engram`**. This is the default the runner feeds into the canonical pace + artifacts question in `/mala-pata-loop-start` Step 2.9 — the human may pick another store there.
 - **Return envelope per phase**: each phase returns `{ status, resumen, artefactos, riesgos, next_recommended }`.
 - **Init guard**: before starting, `mem_search("sdd-init/<project>")`. If it does not exist, run `sdd-init` to detect the project's stack, testing, conventions and tools. Those remain in engram as project context — **NOT in the SDD rules**.
 - **Phase 0 (if the change touches UI)**: audit REUSA/ADAPTA/NUEVO + Atomic Design + component workshop (Storybook or whichever the project uses). The human gate level is defined by the profile.
@@ -63,7 +63,7 @@ They apply to **all profiles** (FULL / STANDARD / LITE / MINIMAL) and to **all p
 Every kickoff **MUST** have:
 
 1. **Active profile** — FULL/STANDARD/LITE/MINIMAL, confirmed by the human in Step 1.5. With the proposal's reasoning and estimated cost (order of magnitude).
-2. **Orchestration metadata** — change-name, branch, worktree, size, depends_on, parallelizable_with, base branch, start command.
+2. **Orchestration metadata** — change-name, branch, worktree, profile, depends_on, parallelizable_with, base branch, start command.
 3. **Change contract** — endpoints, shapes, types, BE migrations if applicable. Specific to the change, NOT to the method.
 4. **Technical reinterpretation** — objective, problem, IN/OUT, measurable success criteria.
 5. **Architecture and affected layers** — with refs to the project's ARCHITECTURE.md (detected by sdd-init).

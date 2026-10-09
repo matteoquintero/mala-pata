@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -31,6 +31,12 @@ Only if there is real intent to change code do you continue to the gate.
 
 Ambiguity about whether it is a change → 1 specific question, you stop and wait.
 
+## Phase 0.5 — Input is a slug/path? Read its research doc (and carry the slug)
+
+If the input arg is a slug or a path that resolves to an existing `mala-pata/research/<slug>.md` (what `/mala-pata-research` hands off), `Read` it and use its Define fields (What / Why / Done / Decisions / Risk / size_signal) as the draft instead of only the raw request text. Then run the form gate below over that draft.
+
+If the arg is a roadmap phase slug (invoked for a roadmap phase), remember it: it travels in the draft as `change_name` (see Phase 2). When triage is invoked free-standing (plain request text), there is no slug — omit `change_name`.
+
 ## Phase 1 — Form gate (quick diagnosis, not an interview)
 
 Evaluate the request against these three fields, as defined by the original design (same table used by `/mala-pata-organic` and which `/mala-pata-loop` references as its compass):
@@ -52,7 +58,7 @@ This is a **diagnosis from the text of the request**, proportional to the reques
   Answer: `→ run /mala-pata-shot`. It is ODD with no worktree and no ceremony, for the smallest change. **Boundary with organic**: with ANY uncertainty, decision, or necessary ceremony (design, migration, new UI) → organic, NOT shot. Line count does not decide; the absence of uncertainty does.
 
 - **What + Done statable and Decisions resolved/obvious** (but not trivial enough for shot) → **organic**.
-  Answer: `→ run /mala-pata-organic`, and hand it as a draft the fields you already inferred (What / Why / Done / Decisions / Risk) so organic confirms instead of starting from scratch.
+  Answer: `→ run /mala-pata-organic`, and hand it as a draft the fields you already inferred (What / Why / Done / Decisions / Risk) so organic confirms instead of starting from scratch. The same draft goes to `/mala-pata-loop`. **Optional `change_name`**: when triage was invoked for a roadmap phase (the arg is a slug), add `change_name: <slug>` to the draft so the lane uses it as the change-name; when free-standing, omit it.
 
 - **Open decision — distinguish whether it is DECIDABLE or NEEDS DESIGN** (this is the loop discriminator; NOT "there is a decision → loop"):
   - **Decidable with one question** (known options and the human chooses, a preference, or a product call) → NOT loop. Ask **that** focused question, stop and wait; once resolved → **organic** (or **shot** if it is also trivial: 1-3 files, no migration/contract/new UI). Test: *can I state the options and does one answer close them?*

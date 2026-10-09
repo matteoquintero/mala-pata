@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.8.0"
+  version: "2.9.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -55,6 +55,8 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
 ## Step 0 — Does it merit a roadmap? (size + vagueness gate)
+
+- **Research doc first**: if the input is a slug (or path) that resolves to an existing `mala-pata/research/<slug>.md`, `Read` it and use its Define fields and findings as the objective's starting context instead of only the raw text.
 
 - **Is it big enough?** If the objective fits in ONE unit (one organic or one loop) → Hard rule
   #2 (redirect to `/mala-pata-triage`).
@@ -237,7 +239,7 @@ the others in separate roadmaps. The human chooses the scope; you do not decide 
 
 **Before asking for OK, show the decision block (MANDATORY — it is what lets over-sizing get caught):**
 - **Core vs complete**: it comes DIRECTLY from the `Deferrable?` column of the table — the **core** is the phases with `Deferrable? = no`; the **complete** is all of them. Do not recompute it: read the column. If the core is 1 phase and the DAG has 5, say so explicitly.
-- **Magnitude of the problem**: scope / frequency / severity (from research's Phase 1d; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
+- **Magnitude of the problem**: scope / frequency / severity (from research's "Problem dimension"; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
 - **Cheapest workaround**: the known minimal alternative (an already-existing tweak, a one-line fix) and its cost, even if it is not the "complete" solution. If it exists, the human has to see it BEFORE approving N phases.
 
 Then present the DAG (phases, **tentative routes** organic/loop, dependencies, order) and **wait for OK

@@ -1,75 +1,109 @@
 ---
 idea_slug: skill-mejora-visual
 project: mala-pata-skills
-verdict: PROCEDER
+verdict: AFILAR
 created_at: 2026-10-09
-next: triage
+next: ninguno (AFILAR — faltan tus picks + nombre + modalidad)
 size_signal: una-unidad
 ---
-# Research: skill de mejora visual a medida del usuario
+# Research: skill de mejora visual (obra de mala-pata, a medida del usuario)
 
-## Veredicto: PROCEDER
-La idea es sólida y es sobre todo **orquestación, no invención**: las reglas duras del usuario (no emoji, SVG-only, contraste, tokens) YA están codificadas tanto en el sistema de diseño de bodega (ESLint-enforced) como en las "leyes" de `ui-ux-pro-max`. El skill nuevo las compone + aplica reglas modernas/anti-cliché + usa el criterio visual del humano como gate final. Entra en **una-unidad**.
+## Veredicto: AFILAR
+La idea es sólida y es **obra de mala-pata** (mucho es criterio propio del usuario), que **reusa selectivamente** ui-ux-pro-max — no es un wrapper. Falta que el usuario: (1) elija qué de ui-ux-pro-max entra, (2) ponga el nombre, (3) confirme las 3 modalidades (HTML/shot · artifact · roadmap de mejora visual). No rutear hasta eso.
 
 ## Idea cruda (lo que pediste)
-Un skill de mala-pata que, cuando algo visualmente no te gusta, lo **mejore** — muy a tu medida/gusto (confiás mucho en tu criterio visual). Fuentes a investigar: (1) las reglas de diseño de bodega-ferreteria-colombia (sistema visualmente muy bueno), (2) internet — reglas para que se vea moderno, destaque, no viejo ni cliché, (3) qué hace `ui-ux-pro-max` para apoyarse. Restricciones duras: odiás los emoticones; solo SVG para iconos; contraste; retícula; regla del espacio en blanco; principios de Gestalt.
+Un skill que, cuando algo visualmente no te gusta, lo mejore — muy a tu medida/gusto (confiás mucho en tu criterio visual). Es obra de mala-pata: reusa ui-ux-pro-max donde conviene, pero mucho es TU criterio. Restricciones duras: no emoticones; solo SVG para iconos; contraste; retícula; regla del espacio en blanco; Gestalt. Querés un catálogo INMENSO de principios (pre-digitales y digitales, citando diseñadores/artistas de todo). Y que te liste TODO ui-ux-pro-max para elegir.
+
+## Modalidades del skill (confirmar)
+No es editar-vs-proponer binario; es **multi-modal según el alcance** (alimenta los carriles existentes):
+- **Mejorar un HTML / componente** → carril **shot** (cambio chico, in-situ).
+- **Mejorar un artifact** → mejora puntual sobre el artefacto.
+- **Proponer un roadmap de mejora visual de un proyecto completo** → carril **roadmap** (DAG de fases de mejora).
+El skill es el LENTE/criterio; el carril (shot/organic/roadmap) lo decide triage según el alcance.
 
 ## Discover
 
-### Cómo se hace hoy + límites (con fuentes)
-Lo que distingue un diseño moderno en 2025-26 es **restricción + criterio**, no apilar efectos de moda:
-- **Minimalismo expresivo** (no vacío): pocos elementos, pero con energía — color fuerte, tipografía con carácter, un focal claro. [tubik/LinkedIn](https://www.linkedin.com/pulse/whats-next-7-ui-design-trends-2026-tubik-dd82f), [Envato](https://elements.envato.com/learn/ux-ui-design-trends)
-- **Tokens primero** (color/espaciado/tipografía) = el "contrato" que evita el look promedio de lo generado por IA. [gitnexa](https://www.gitnexa.com/blogs/modern-ui-ux-design-principles)
-- **Tells de diseño genérico/IA a evitar**: gradientes morados, Inter por default, glassmorphism decorativo, bento grid por default, simetría perfecta, el patrón hero+3-cards+testimonios+pricing+CTA. [inspoai](https://www.inspoai.io/blog/why-ai-websites-look-generic), [managed-code](https://managed-code.com/blog-post/why-ai-websites-look-the-same)
-- **Una dirección con punto de vista** + **un detalle de firma** por pantalla; cortar secciones que no se ganan el lugar. [gist NovCog](https://gist.github.com/NovCog/c3c9d70ddafb3da451ca3d2a316f324d)
-- **Gestalt** (proximidad/similitud/cierre/continuidad/figura-fondo). [uxplanet](https://uxplanet.org/gestalt-principles-in-ux-design-2e0f423bfcb5)
-- **Jerarquía** (tamaño+peso, 3-4 niveles, un focal por pantalla), **contraste** (WCAG ≥4.5:1 body, no solo color), **espacio en blanco** (más entre lo no-relacionado), **retícula** (12 col, todo alineado a grilla + escala de espaciado). [magicui](https://magicui.design/blog/visual-hierarchy-in-web-design), [freecodecamp](https://www.freecodecamp.org/news/learn-ui-design-in-5-minutes-tutorial/)
-- *Caveat*: casi todas las fuentes son blogs de tendencia/vendor — tomar los específicos como opinión, no ley. El núcleo (intención + restricción + decisiones deliberadas) es consistente entre todas.
+### A. Catálogo de principios visuales (el "cuerpo de criterio" del skill, citado)
 
-### Qué existe en el código (anclaje real)
-**(a) bodega-ferreteria-colombia** tiene un sistema de diseño explícito y **enforced por ESLint** ("Lulo G Design System"). Canónico: `DESIGN.md`, `client/ARCHITECTURE.md` §10-12.5, Storybook. Reglas concretas:
-- **Tokens HSL de 2 capas** con canales separados (`client/src/index.css`, mapeados en `tailwind.config.ts`). Tokens semánticos (success/info/warning/destructive/…), cada uno con `-foreground` + `-soft`. Marca Lulo fija (coral #cb5239, etc.). Light primario, dark override.
-- **Contraste**: overlay WCAG-strict opt-in (`data-wcag-strict`), redeclara SOLO los tokens que fallan AA (≥4.5:1), con invariante de minimalidad testeado (`token-contrast.test.ts`).
-- **Retícula/espaciado**: escala nombrada `--space-2xs…2xl`, breakpoints definidos, alturas single-sourced, `svh/dvh` nunca `vh`.
-- **Espacio en blanco/densidad**: shell de scroll único (invariante), padding de card `p-6`, jerarquía por tamaño/peso/espacio, NO por color.
-- **Tipografía**: Montserrat/Geist; **`<Num>`** (JetBrains Mono, tabular-nums) obligatorio SOLO para plata/cantidades/IDs — enforced por `require-num-for-currency.js`.
-- **Iconos SVG-only enforced**: todo pasa por `<Icon name>` (registry de lucide SVG); `no-raw-lucide-import.js` prohíbe imports crudos; cero emoji-como-icono. **Coincide exacto con tu mandato.**
-- **Componentes**: `button.tsx` (cva, matriz de variantes por acción), `card.tsx` (static/hoverable/interactive). Reglas de color NO negociables enforced (`no-ad-hoc-semantic-colors.js`, `no-bespoke-ui.js`, etc.).
-- Stack: React+Vite+Tailwind+shadcn (new-york) + Storybook (Atoms/Molecules/Organisms).
+**A1. Fundaciones perceptuales — Gestalt** (Wertheimer, Koffka, Köhler, ~1920; revisión Wagemans 2012): proximidad, similitud, cierre, continuidad, destino común, figura-fondo, **Prägnanz/buena forma**, región común, conexión/uniform connectedness. ([simplypsychology](https://www.simplypsychology.org/what-is-gestalt-psychology.html))
 
-**(b) `ui-ux-pro-max`** (`~/.claude/plugins/marketplaces/ui-ux-pro-max-skill/.claude/skills/ui-ux-pro-max/SKILL.md`, v2.5.0): catálogo data-driven — 50+ estilos, 161 paletas, 57 pairings de fuente, 161 product types, 99 guidelines UX, 25 charts, 10 stacks. Se invoca por CLI: `python3 scripts/search.py "<product> <keywords>" --design-system [--domain …] [--stack …]` → devuelve pattern/style/colors/typography + **anti-patterns**. Ya trae leyes duras alineadas con tu mandato: `no-emoji-icons` (SVG only), `color-semantic` (tokens no hex), `color-accessible-pairs` (4.5:1 AA / 7:1 AAA), `spacing-scale` (4/8pt), `number-tabular`, reduced-motion, 150-300ms. *Gotcha*: su body hardcodea "React Native" en algunos pasos aunque el frontmatter y los CSV cubren web — para web se invoca con `--stack shadcn|react|html-tailwind`.
+**A2. Bauhaus** (Gropius 1919; Itten, Albers, Moholy-Nagy, Kandinsky): forma sigue función, verdad de los materiales, unión arte+oficio, geometría elemental.
 
-### Jobs-to-be-done
-Como **desarrollador con buen criterio visual pero sin ganas de re-derivar las reglas cada vez**, necesito **un skill que tome una UI que no me gusta y la mejore respetando mis reglas duras + el sistema del proyecto + lo que se ve moderno**, para **subir el piso estético de todo lo que hago sin pelear con los detalles, dejando la decisión final a mi ojo**.
+**A3. Estilo Suizo / Tipográfico Internacional** (1950s; Ernst Keller, Armin Hofmann, Max Bill, **Josef Müller-Brockmann**): claridad objetiva, **sistema de grilla matemática**, sans-serif como material, layout asimétrico, foto objetiva, diseño como comunicación no autoexpresión. Müller-Brockmann *Grid Systems in Graphic Design* (1981). ([printmag](https://www.printmag.com/?p=1387), [opentextbc](https://opentextbc.ca/graphicdesign/chapter/1-6-its/))
 
-### Dimensión del problema (alcance / frecuencia / severidad)
-- **Alcance**: un skill nuevo (1 SKILL.md + symlinks), mayormente orquestación de herramientas ya instaladas (ui-ux-pro-max + el sistema del proyecto). No infra nueva.
-- **Frecuencia**: alta — cada vez que algo visual no te gusta.
-- **Severidad/impacto**: calidad y consistencia visual de TODO lo que producís; riesgo bajo (es un skill de guía/mejora, read sobre el sistema). Impacto alto, blast radius bajo.
+**A4. Nueva Tipografía / tipografía** — **Jan Tschichold** (*Die Neue Typographie* 1928: asimetría, sans, blanco estructural; luego vira al clasicismo en *The Form of the Book*); **Robert Bringhurst** (*The Elements of Typographic Style*: legibilidad, la tipografía se muestra y luego se borra para ser leída); **Massimo Vignelli** (*Vignelli Canon*: intangibles [semántica, sintaxis, disciplina, adecuación] + tangibles [grilla, tipo, color, layout]; restricción de tipografías); **Otl Aicher** (sistemas, pictogramas Múnich 72). ([vignelli canon](https://lars-mueller-publishers.com/vignelli-canon), [bringhurst review](https://oss.adm.ntu.edu.sg/kyong009/review-the-elements-of-typographic-style/))
 
-### Problema vs solución propuesta (cada pieza)
-- Restricciones duras (no emoji / SVG / contraste / grid / espacio / Gestalt) → **necesaria**, pero **ya-existe** en ui-ux-pro-max + bodega → el skill las ORQUESTA/enforcea, no las reimplementa.
-- "Leer reglas de bodega" → **derivable** a lo genérico: el skill lee el **sistema de diseño del PROYECTO ACTUAL** (DESIGN.md/tokens/eslint/primitivas) si existe; bodega es el EJEMPLAR de referencia, no un hardcode (las skills mala-pata son agnósticas de proyecto).
-- "Apoyarse en ui-ux-pro-max" → **necesaria** (capa de principios generales + anti-patterns, vía su CLI).
-- "A mi medida/gusto" → **necesaria**; se define como: enforcar las reglas duras + el sistema del proyecto + las reglas modernas, y tu **criterio visual como gate final** (vos aprobás/ajustás).
+**A5. Color** — **Johannes Itten** (7 tipos de contraste, esfera cromática); **Josef Albers** (*Interaction of Color* 1963: contraste simultáneo, "el color es relativo — todo fondo resta su propio tono"); **Albert Munsell** (orden por hue/value/chroma). ([modernism101](https://modernism101.com/?p=68810), [mitchellino](https://mitchellino.substack.com/p/albers-versus-itten))
+
+**A6. Composición (bellas artes / foto, siglos)**: balance (simétrico/asimétrico), ritmo (repetición), proporción (**áureo 1:1.618**, **regla de tercios**), énfasis/focal, unidad, contraste tonal, escala, peso visual, espacio negativo. ([momaa](https://momaa.org/composition/))
+
+**A7. Diseño de producto / "menos pero mejor"** — **Dieter Rams** (10 principios: innovador, útil, estético, comprensible, discreto, honesto, durable, minucioso, ecológico, lo menos posible). ([crm.org](https://crm.org/articles/less-but-better-dieter-rams-10-principles))
+
+**A8. Visualización de datos** — **Edward Tufte** (data-ink ratio, chartjunk, lie factor, small multiples, densidad de datos). ([IEEE](https://spectrum.ieee.org/tufteisms))
+
+**A9. Identidad / marca** — **Paul Rand** (simplicidad, memorabilidad, ingenio), **Saul Bass**, **Lester Beall**.
+
+**A10. Interacción / usabilidad (digital)** — **Don Norman** (affordances, signifiers, mapping, feedback, constraints); **Jakob Nielsen** (10 heurísticas de usabilidad).
+
+**A11. Leyes de UX** (Jon Yablonski, *Laws of UX*): Fitts, Hick, Miller (7±2), Jakob, Tesler (conservación de la complejidad), Postel, efecto estética-usabilidad, Von Restorff (aislamiento), posición serial, umbral de Doherty (<400ms), ley de Prägnanz, ley de proximidad/región común.
+
+**A12. Práctica web contemporánea** — *Refactoring UI* (Wathan & Schoger: jerarquía por peso/color no solo tamaño; escala de espaciado; empezar con mucho blanco y poco contraste y agregar donde haga falta; limitar opciones — Hick); **design tokens** como contrato.
+
+**A13. Craft moderno 2025-26 (técnico, no "anti-cliché a secas")**:
+- **Minimalismo expresivo** (restricción en cantidad, no en energía).
+- **Tipografía como identidad** (variable fonts, grotescas distintivas, type fluido sin saltos por breakpoint).
+- **Tokens-first** (evita el "look promedio" de lo generado por IA).
+- **Motion como explicación** (estado, no decoración; 150-300ms; respetar reduced-motion).
+- **Un detalle de firma** por pantalla; cortar secciones que no se ganan el lugar.
+- **Evitación de anti-patrones generativos** (los *tells* de IA): gradientes morados, Inter por default, glassmorphism decorativo, bento-grid por default, simetría perfecta, el patrón hero+3-cards+testimonios+pricing+CTA. ([inspoai](https://www.inspoai.io/blog/why-ai-websites-look-generic), [tubik 2026](https://www.linkedin.com/pulse/whats-next-7-ui-design-trends-2026-tubik-dd82f))
+
+**Invariantes duras del usuario (no negociables, enforced):** sin emoji · iconos SVG-only · contraste ≥4.5:1 (AA) · retícula + escala de espaciado · regla del espacio en blanco · Gestalt.
+
+### B. Qué existe en el código (anclaje real)
+**bodega-ferreteria-colombia** = ejemplar de referencia (sistema ESLint-enforced: tokens HSL 2 capas, overlay WCAG-strict, `<Num>` tabular, `<Icon>` SVG-registry, variantes por acción). El skill NO lo hardcodea — lee el sistema del PROYECTO ACTUAL si existe (agnóstico).
+
+**ui-ux-pro-max** (v2.5.0, `~/.claude/plugins/marketplaces/ui-ux-pro-max-skill/`) — inventario COMPLETO para elegir:
+
+- **Motor**: `search.py` (BM25) + CSVs en `src/ui-ux-pro-max/data/`. Flags: `--design-system`, `--domain {style,color,chart,landing,product,ux,typography,icons,google-fonts,react,web}`, `--stack`, `--persist` (escribe `design-system/<proj>/MASTER.md` + `pages/`), `-f markdown`.
+- **UI Styles (84)** — General: Minimalism/Swiss · Neumorphism · Glassmorphism · Brutalism · 3D/Hyperrealism · Dark Mode OLED · Claymorphism · Aurora UI · Retro-Futurism · Flat · Skeuomorphism · Liquid Glass · Motion-Driven · Micro-interactions · Neubrutalism · Bento Box · Y2K · Cyberpunk · Organic Biophilic · AI-Native · Memphis · Vaporwave · Dimensional Layering · Exaggerated Minimalism · Kinetic Typography · Parallax Storytelling · Swiss Modernism 2.0 · HUD/Sci-Fi · Pixel Art · Spatial/VisionOS · E-Ink · Gen Z Maximalism · Anti-Polish/Raw · Tactile/Deformable · Editorial Grid/Magazine · Chromatic Aberration · Vintage Analog (+ landing/dashboard/mobile variants). 
+- **UX guidelines — 10 categorías**: 1 Accessibility(14) · 2 Touch/Interaction(17) · 3 Performance(19) · 4 Style Selection(13) · 5 Layout/Responsive(16) · 6 Typography/Color(15) · 7 Animation(24) · 8 Forms/Feedback(31) · 9 Navigation(26) · 10 Charts/Data(30).
+- **Leyes duras**: no-emoji-icons · color-semantic · color-accessible-pairs(4.5:1/7:1) · color-not-only · spacing-scale(4/8pt) · number-tabular · reduced-motion · duration 150-300ms · transform/opacity-only · touch-target 44/48 · viewport-meta · readable-font-size · cursor-pointer · visible-focus · no-layout-shift-hover. **(coinciden con tus invariantes)**
+- **Charts (25)**, **Stacks (16)** (react/next/vue/svelte/astro/swiftui/rn/flutter/nuxt/nuxt-ui/html-tailwind/shadcn/jetpack/threejs/angular/laravel).
+- **Lookups parametricos**: colors(161, por product-type, token-sheet shadcn completo) · typography(73 pairings) · products(161, mapea product→estilo+paleta).
+- **Siblings**: `design` (logos/CIP/banners/icons SVG) · `design-system` (tokens 3 capas primitive→semantic→component) · `ui-styling` (shadcn/radix/tailwind build) · `brand` (voz) · `slides` (decks).
+
+### C. Jobs-to-be-done
+Como dev con buen criterio visual, necesito un skill que tome algo que no me gusta y lo mejore **con mi criterio + el sistema del proyecto + un cuerpo citado de principios**, en la modalidad que corresponda al alcance (HTML/artifact/roadmap), para subir el piso estético de todo, con mi ojo como gate final.
+
+### D. Dimensión del problema
+- **Alcance**: 1 skill (orquestación + cuerpo de criterio propio). Reusa ui-ux-pro-max + sistema del proyecto.
+- **Frecuencia**: alta.
+- **Severidad**: calidad visual de todo lo tuyo; riesgo bajo.
+
+### E. Problema vs solución propuesta
+- Invariantes duras → **ya-existe** (ui-ux-pro-max + bodega) → reusar/enforcar.
+- Cuerpo de principios citado → **necesaria + NUEVO** (es el criterio propio de mala-pata; no lo da ui-ux-pro-max — su catálogo es de estilos/UX, no de principios citados históricos).
+- Multi-modalidad (shot/artifact/roadmap) → **necesaria** (reusa carriles existentes).
+- Lectura del sistema del proyecto → **necesaria** (agnóstico).
 
 ## Heilmeier Catechism
-1. **Qué**: un skill que mejora una UI que no te gusta, a tu medida, componiendo tus reglas duras + el sistema de diseño del proyecto + reglas modernas/anti-cliché.
-2. **Cómo se hace hoy / límites**: a ojo o pidiéndole a un modelo "hacelo lindo" → sale el look promedio/IA (gradiente morado, Inter, bento por default). Límite: sin reglas que lo aten, el modelo devuelve lo más probable, no lo distintivo.
-3. **Qué hay de nuevo**: atar la mejora a (i) tus reglas duras, (ii) el sistema real del proyecto (tokens/eslint/primitivas), (iii) anti-patterns explícitos — y dejar tu ojo como gate. No es "otro generador", es un enforcer con criterio.
-4. **A quién le importa** *(tu prioridad)*: a vos; que todo lo tuyo se vea intencional y moderno sin re-pensar las reglas. [asunción a confirmar: sos el único usuario objetivo por ahora]
-5. **Riesgos**: que degenere en "generador genérico" (mitigado por anti-patterns + sistema del proyecto); que choque con ui-ux-pro-max si duplica sus reglas (mitigado: apoyarse en su CLI, no copiarlo).
-6. **Costo**: una-unidad — 1 SKILL.md + symlinks, orquestación.
-7. **Done testeable**: dada una UI que no te gusta, el skill produce una mejora que (a) no usa emoji y usa SVG, (b) cumple contraste AA, (c) alinea a retícula + escala de espaciado, (d) respeta tokens/sistema del proyecto si existe, (e) evita los tells de cliché, y (f) vos la aprobás a ojo.
+1. **Qué**: skill de mejora visual multi-modal, obra de mala-pata, que compone criterio propio (principios citados + invariantes duras) + el sistema del proyecto + lo reusable de ui-ux-pro-max.
+2. **Hoy/límites**: "hacelo lindo" a un modelo → look promedio/IA; ui-ux-pro-max da catálogo pero no TU criterio ni el cuerpo de principios citado.
+3. **Nuevo**: atar la mejora a un cuerpo de principios con autores + invariantes duras + sistema del proyecto + tu ojo como gate; multi-modal por alcance.
+4. **A quién le importa** *(solo-humano)*: a vos; [asunción a confirmar: único usuario objetivo].
+5. **Riesgos**: degenerar en generador genérico (mitigado: anti-patrones + sistema del proyecto + criterio); duplicar ui-ux-pro-max (mitigado: reuso selectivo elegido por vos).
+6. **Costo**: una-unidad.
+7. **Done**: dada una UI que no te gusta, el skill produce/propone una mejora que (a) sin emoji, SVG; (b) contraste AA; (c) alineada a grilla+espaciado; (d) respeta el sistema del proyecto si existe; (e) aplica principios del catálogo y evita los tells; (f) en la modalidad correcta (shot/artifact/roadmap); (g) vos la aprobás a ojo.
 
 ## Define — idea afinada (borrador para triage)
-- **Qué**: skill mala-pata de mejora visual que toma una UI y la mejora componiendo reglas duras del usuario + el sistema de diseño del proyecto actual + reglas modernas/anti-cliché, apoyándose en `ui-ux-pro-max`.
-- **Why**: subir el piso estético de todo sin re-derivar reglas, con el criterio visual del humano como gate final.
-- **Done (when)**: los 7 criterios de arriba (Heilmeier 7).
-- **Decisiones ya tomadas**: agnóstico de proyecto (lee el sistema del proyecto; bodega = ejemplar, no hardcode); se apoya en `ui-ux-pro-max` (CLI `search.py`, capa general) + el sistema del proyecto (capa autoritativa cuando existe); reglas duras no negociables (no emoji, SVG-only, contraste AA, retícula, espacio en blanco, Gestalt) + reglas modernas/anti-cliché; criterio del humano = gate final.
-- **Decisiones abiertas**: (1) **¿el skill EDITA la UI in-situ (transformer que mejora el código) o produce un PLAN/crítica de mejora que aplica shot/organic?** — decidible con una pregunta al construir. (2) el **nombre** del skill (como shot/gaps, lo elegís vos).
-- **Riesgo**: bajo — skill de guía/mejora; el enforcement real del sistema lo da el proyecto (ESLint en bodega).
-- **Señal de tamaño**: **una-unidad** (orquestación; no multi-unidad — no hay varias decisiones de arquitectura abiertas ni cortes verticales independientes).
+- **Qué / Why / Done**: ver arriba.
+- **Decisiones ya tomadas**: obra de mala-pata con criterio propio; agnóstico de proyecto; multi-modal (shot/artifact/roadmap); invariantes duras; cuerpo de principios citado (sección A); tu ojo = gate final.
+- **Decisiones abiertas (AFILAR — solo-humano)**:
+  1. **Picks de ui-ux-pro-max**: qué módulos reusa (motor/CSVs, cuáles categorías de las 10 UX-guidelines, leyes duras, styles como referencia, charts, siblings). → el usuario elige del pick-list.
+  2. **Nombre del skill** (técnico; el usuario elige).
+  3. **Confirmar las 3 modalidades** y cómo rutea cada una (shot/artifact/roadmap).
+- **Riesgo**: bajo.
+- **Señal de tamaño**: una-unidad.
 
 ## Handoff
-→ `/mala-pata-triage skill-mejora-visual` con el borrador de campos de arriba. Las 2 decisiones abiertas (editar-vs-proponer, nombre) son decidibles con una pregunta cada una al construir — no fuerzan loop.
+AFILAR — no rutear. Esperar: picks de ui-ux-pro-max + nombre + confirmación de modalidades. Con eso → `/mala-pata-triage`.

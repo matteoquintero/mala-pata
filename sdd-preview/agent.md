@@ -76,3 +76,4 @@ Persistence rules:
 - The gate always runs and STOPS — immune to the auto mode of the rest of the SDD.
 - Approve requires a comprehension autotest (1 written line); without it, no approval.
 - Stop = resumable pause (Option A), not a hard abort.
+- **Emit every section header, field label and option token VERBATIM in English** — `What I'll do`, `Affects`, `DoD (from the kickoff)`, `Risks`, `Findings & disposition` (and its `Finding`/`Severity`/`Disposition` columns), the severities `high`/`medium`/`low`, the dispositions `IGNORE`/`REFACTOR`/`ADJUST`/`REUSE`, and the gate options `Approve`/`Adjust`/`Stop` — even when the summary CONTENT is written in the user's language. The labels are structural; never localize them.

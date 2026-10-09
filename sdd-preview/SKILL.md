@@ -9,7 +9,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.7.0"
+  version: "3.8.0"
 ---
 
 # sdd-preview — pre-apply executive summary (hard human gate)
@@ -112,6 +112,8 @@ A markdown artifact with exactly **4 mandatory sections**, none empty:
 ## Risks
 - <things that can go wrong, things to watch closely — 1-3 lines>
 ```
+
+**Emit every section header, field label, enum/option token and table header VERBATIM in English** — `Preview`, `Profile`, `Audit mode`, `What I'll do`, `Affects`, `DoD (from the kickoff)`, `Risks`, `Findings & disposition`, `Finding` / `Severity` / `Disposition`, the severities `high`/`medium`/`low`, the dispositions `IGNORE`/`REFACTOR`/`ADJUST`/`REUSE`, and the gate options `Approve` / `Adjust` / `Stop` — **even when the conversation is in the user's language**. Only the bullet CONTENT and the VALUES follow the user's language; the labels are structural and are never localized.
 
 ### Word target per profile
 

@@ -4,7 +4,7 @@ description: Reinterpreta una solicitud a términos técnicos, elige perfil de e
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-loop — Generador de contexto para iniciar un SDD

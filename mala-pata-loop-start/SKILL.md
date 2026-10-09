@@ -4,7 +4,7 @@ description: Inicia y corre el CICLO SDD a partir de la ruta del archivo de kick
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-loop-start — Corre el CICLO SDD desde un archivo de kickoff
@@ -62,7 +62,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
    - Regla dura: **TODO** comando referencia el worktree por ruta absoluta — `git -C <ABS-worktree> …` (incluidos `add`, `status`, `commit`, `push`, `worktree`, `rev-parse`), `npm --prefix <ABS-worktree> …`, y paths absolutos en toda lectura/escritura.
    - **PROHIBIDO** un `git add`/`commit`/`status`/`push` pelado, y prohibido usar `cd <worktree> && git …` como sustituto de `-C`.
    - Antes de CUALQUIER escritura o commit, confirmá sobre qué repo estás parado: `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main. Si devuelve el main, PARÁ: estás por escribir en el lugar equivocado.
-4.5. **Chequeo de nombre de worktree (anti-desfase):** `git -C <ABS-repo> worktree list` — confirmá que el worktree de este change está registrado con un path que **resuelve en disco** y cuyo basename coincide con el `<change-name>`. Si el id registrado no coincide con el folder (resto de un `mv`), avisá en una línea y ofrecé `git worktree repair <path>` antes de seguir; nunca sigas operando sobre un worktree con el registro desfasado.
+4.5. **Chequeo de worktree desfasado (una línea, antes de operar)**: confirmá que el worktree está en su path canónico `<ABS-repo>-worktrees/<change-name>` y que `git worktree list` lo muestra ahí, resolviendo en disco. Si el id registrado != el folder, o el path no resuelve (alguien lo renombró con `mv`), avisá y ofrecé `git worktree repair <path>` (o `git worktree prune` si se borró) antes de seguir. **NUNCA uses `mv` para renombrar un worktree** — usá `git worktree move`.
 5. **Entorno ejecutable**: verificá que los untracked que el stack necesita estén resueltos en el worktree (config/secrets + dependencias — p.ej. `.env` y `node_modules`, o el equivalente del proyecto). Si falta un symlink → recreálo con el mismo comando del arranque (punto 3). No corras tests/migraciones sin esto.
 6. **Init ya hecho** (lo garantiza `/mala-pata-loop`, una vez por proyecto) — chequeo de EXISTENCIA EXACTA, no exploración: `mem_search(query: "sdd-init/{project}")` devuelve varios resultados por ranking difuso (otros kickoffs/artefactos del proyecto). **Quedate ÚNICAMENTE con el ítem cuyo título/topic_key sea EXACTAMENTE `sdd-init/{project}`; el resto son falsos positivos del ranking — NO los leas ni los consideres contexto de esta tarea.** Con ese ítem exacto: `mem_get_observation` y leé `strict_tdd` (si `true`, NO NEGOCIABLE). Si el ítem exacto NO aparece → avisá al orquestador; no corras el init.
 7. **Cargá EXACTAMENTE los skills que el kickoff eligió por objetivo (Paso 2 de `/mala-pata-loop`), ni más ni menos.** Base: `clean-architecture` y `solid` siempre; `clean-ddd-hexagonal` + `design-patterns` solo si el objetivo toca backend/dominio. Condicionales: los de la sección "Skills condicionales" del kickoff (ej. `database-design`, `ui-ux-pro-max`, `heuristic-evaluation`, `rag-*`, etc. — según lo que el kickoff listó para ESTE objetivo). Vía el tool **Skill**, uno por nombre (no todos en una llamada); los de plugin usan el nombre `plugin:skill` del listado. **No agregues skills que el kickoff no eligió** — la selección enfocada ya se hizo al generar el brief; cargar de más solo hace ruido.

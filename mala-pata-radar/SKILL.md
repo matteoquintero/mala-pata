@@ -14,8 +14,12 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.5.0"
+  version: "4.6.0"
 ---
+
+# /mala-pata-radar — SDD radar (discover + diagnose, read-only)
+
+> Scope: radar tracks `sdd/…` changes only. ODD changes (`odd/…`) are tracked via the feature-doc (`mala-pata/odd/<change>.md`), not radar.
 
 ## Requirements (orchestrate, don't reinvent)
 

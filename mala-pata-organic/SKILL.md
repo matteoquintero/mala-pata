@@ -1,10 +1,10 @@
 ---
 name: mala-pata-organic
-description: Generates the kickoff of an ODD (Organic Driven Development) change. It is invoked AFTER the lane has already been decided — normally via `/mala-pata-triage`, or directly when the human already knows it is organic. It assumes route=organic and captures/confirms the strict format (What, Why, Done, Decisions, Risk) — if triage passed a draft, it confirms/completes it instead of starting from scratch. If the format ends up complete, it writes the kickoff inside the repo (`mala-pata/kickoffs/`, versioned) with a one-line pointer in engram. It does NOT run the ODD cycle — the executor is `/mala-pata-organic-start <path-to-kickoff>`. Safety net: if while capturing the fields it turns out that `Decisions` is unresolved, it bounces to `/mala-pata-loop` — but deciding the lane is no longer its primary job.
+description: Generates the kickoff of an ODD (Organic Driven Development) change. It is invoked AFTER the lane has already been decided — normally via `/mala-pata-triage`, or directly when the human already knows it is organic. It assumes route=organic and captures/confirms the strict format (What, Why, Done, Decisions, Risk) — if triage passed a draft, it confirms/completes it instead of starting from scratch. If the format ends up complete, it writes the kickoff inside the repo (`mala-pata/kickoffs/`, versioned) with a one-line pointer in engram. It does NOT run the ODD cycle — the executor is `/mala-pata-organic-start <path-to-kickoff>`. Safety net: if while capturing the fields it turns out that `Decisions` is unresolved, it bounces to `/mala-pata-loop` — but deciding the lane is no longer its primary job. Trigger — "armá el kickoff organic de <cambio>", "generá el kickoff ODD", "ya sé que es organic, prepará el brief".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.8.0"
+  version: "3.9.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)

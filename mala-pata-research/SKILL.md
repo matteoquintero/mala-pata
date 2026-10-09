@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -71,7 +71,7 @@ Only the `necessary` pieces move on to Define; the others remain named (they do 
 
 ## Phase 2 — Heilmeier Catechism (answer what you know, ASK what only the human knows)
 
-The 8 questions (DARPA framework adapted to 7 for mala-pata — verbatim list, do not paraphrase):
+The 7 questions (DARPA framework adapted to 7 for mala-pata — verbatim list, do not paraphrase):
 
 1. What are you trying to do? Explain it with no jargon.
 2. How is it done today, and what are the limits of current practice?

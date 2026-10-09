@@ -7,7 +7,7 @@ They apply to **all profiles** (FULL / STANDARD / LITE / MINIMAL) and to **all p
 - **Interactive phase-by-phase execution**: each phase closes with a summary and a **pause** waiting for the human's OK before the next one. **Pace default = interactive.** `/mala-pata-loop-start` Step 2.9 asks pace + artifacts in the hook's canonical question; this rule gives the RECOMMENDED DEFAULT the runner feeds into that question (interactive; automatic only in LITE/MINIMAL and only if the human picks it). The active profile (FULL/STANDARD/LITE/MINIMAL) already defines how explicit each specific human gate is (see profiles).
   - **Automatic ceiling by objective size (non-negotiable)**: even if the human asks for it, automatic mode is only allowed in **LITE / MINIMAL**. In **FULL / STANDARD** the pace is interactive phase-by-phase ALWAYS — "auto until X" is not accepted. Reason: a large objective run in auto **dams up all the confirmations at the preview** — the human arrives at a gate with 5-6 phases of accumulated decisions they can no longer genuinely review, and the preview stops being a checkpoint and becomes a rubber stamp. If the FULL/STANDARD human asks for auto, answer in one line that because of the objective's size the cycle goes interactive (and why), and you continue phase-by-phase. In any profile, additionally, the **preview** phase is NEVER automatic (it always stops, see `sdd-preview`).
 - **Artifact store: recommended default `engram`**. This is the default the runner feeds into the canonical pace + artifacts question in `/mala-pata-loop-start` Step 2.9 — the human may pick another store there.
-- **Return envelope per phase**: each phase returns `{ status, resumen, artefactos, riesgos, next_recommended }`.
+- **Return envelope per phase**: each phase returns `{ status, executive_summary, artifacts, risks, next_recommended, skill_resolution }` (the gentle-ai result contract).
 - **Init guard**: before starting, `mem_search("sdd-init/<project>")`. If it does not exist, run `sdd-init` to detect the project's stack, testing, conventions and tools. Those remain in engram as project context — **NOT in the SDD rules**.
 - **Phase 0 (if the change touches UI)**: audit REUSA/ADAPTA/NUEVO + Atomic Design + component workshop (Storybook or whichever the project uses). The human gate level is defined by the profile.
 - **TDD**: always present. Granularity (per task vs per feature) is defined by the profile.
@@ -49,13 +49,13 @@ They apply to **all profiles** (FULL / STANDARD / LITE / MINIMAL) and to **all p
 
 - **NEVER `git push` directly to `main` / `master` / integration branch**. Always through a PR (or the repo's review mechanism).
 - **PR title**: Conventional Commits format, same style as the commits.
-- **PR body**: include (a) summary of what changes, (b) verifiable test plan, (c) link/reference to the kickoff in engram (`sdd/<change-name>/kickoff · engram #<id>`).
+- **PR body**: include (a) summary of what changes, (b) verifiable test plan, (c) link/reference to the kickoff FILE (`mala-pata/kickoffs/<change-name>.md`; kickoffs are files now, engram holds only a pointer).
 - **Base branch**: default/recommended `main` or `development`, but **any branch is valid if the human confirms it** (e.g.: work that builds on a feature in progress comes off THAT feature). What is NON-NEGOTIABLE is the **confirmation**: the base is ALWAYS proposed with its reason ("the code lives in X" / "integration default") and the human's OK is awaited before fixing it — it is never assumed silently, never blocked just for not being main. It is recorded explicitly in the kickoff (frontmatter `branch_base`), and that confirmation holds for the whole cycle.
 
 ### Paths
 
 - **In code**: paths relative to the workspace (according to the stack's resolver — `tsconfig`, `pyproject.toml`, etc.).
-- **In communication with the human**: paths relative to the repo (not absolute to the filesystem).
+- **In communication with the human**: paths relative to the repo when addressing the human in prose (not absolute to the filesystem); in commands and artifacts (e.g. the copy-paste start command that the Step-5 closes show) the path stays ABSOLUTE.
 - **In shell commands**: absolute paths (`git -C <abs>`, `--prefix`, absolute paths), no `cd` to operate in another directory.
 
 ## Kickoff structure (SSOT)

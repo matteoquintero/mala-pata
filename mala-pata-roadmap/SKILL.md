@@ -6,7 +6,7 @@ description: >
   do it), reads the project's .codegraph/ to anchor it to the real code, asks questions if context
   is missing, and breaks it down into a DAG of unit-sized phases (each phase = a shippable vertical
   slice that fits in ONE unit: one organic or one loop). Each phase gets a TENTATIVE ROUTE
-  (organic or loop:PROFILE) as an approximation — but triage is the one that decides on arrival,
+  (organic, loop:PROFILE or shot) as an approximation — but triage is the one that decides on arrival,
   with the information already updated by the previous phases. Writes a versionable roadmap .md in
   the repo. It does NOT execute, does NOT run any lane, does NOT touch code: it only produces the
   phase map that you then pass one by one to /mala-pata-triage.
@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.9.0"
+  version: "2.10.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -24,7 +24,7 @@ User objective: **input delivered by the CLI**
 
 Your job: turn a LARGE objective into a **DAG of phases**, where each phase is so small that it
 fits in **ONE unit** — one `/mala-pata-organic` or one `/mala-pata-loop`. You assign each phase a
-**tentative route** (organic or loop) as an approximation. You produce a `.md` with that roadmap and **nothing
+**tentative route** (organic, loop or shot) as an approximation. You produce a `.md` with that roadmap and **nothing
 else** — you do not write code, you do not run any lane, you do not apply. Afterwards the human takes each phase and
 passes it to `/mala-pata-triage`, which decides the final lane with the information of the moment.
 
@@ -125,7 +125,7 @@ In parallel, without writing anything. **Inventory ALL the dimensions of Step 1,
 ## Step 3 — Architecture pass BEFORE decomposing
 
 Before cutting into phases, define the **real seams** along which the work will split
-(interfaces, modules, data boundaries), anchored to the `.codegraph/` of Step 1. This is what makes
+(interfaces, modules, data boundaries), anchored to the `.codegraph/` of Step 2. This is what makes
 the phases come out along clean edges and not along arbitrary themes — the lesson from planners that
 decompose without an architecture view and end up with phases that are not shippable on their own.
 
@@ -140,8 +140,7 @@ Produce the phase graph with these rules (all of them, none optional):
 - **Each phase is a shippable VERTICAL slice** — an end-to-end slice that leaves the system
   working, not a horizontal layer ("the whole DB", "the whole UI"). If the phase cannot be merged
   and stay green on its own, it is not a valid phase.
-- **Each phase receives a TENTATIVE ROUTE, with the triage border** (the same one used by
-  `/mala-pata-organic`):
+- **Each phase receives a TENTATIVE ROUTE, with the triage border** (triage's gate):
   - Can the phase's **What + Done + Decisions** be stated, given what its dependencies will already
     have resolved by the time its turn comes? → tentative **organic** (or **shot** if it is also trivial:
     1-3 files, no migration/contract/new UI).
@@ -168,7 +167,7 @@ Produce the phase graph with these rules (all of them, none optional):
 
 ## Step 4-bis — Tentative route vs triage decision (contract)
 
-The route you assign to each phase (organic or loop) is an **approximation with TODAY's info**, not a
+The route you assign to each phase (organic, loop or shot) is an **approximation with TODAY's info**, not a
 commitment. The truth is decided at EXECUTION:
 
 - As the roadmap advances, **each phase is passed through `/mala-pata-triage`** (not directly to a lane).
@@ -284,10 +283,11 @@ phases_total: <N>
 |---|-------|------|-----------------|-----------|-------------|----------------------------|
 | 1 | <name> | <stable-kebab> | loop:STANDARD | — | no (core) | <what it delivers end-to-end> |
 | 2 | <name> | <stable-kebab> | organic | 1 | yes | ... |
+| 4 | <name> | <stable-kebab> | shot | — | yes | ... |
 | 3 | <name> | <stable-kebab> | loop:LITE | 1 | yes | ... |
 
 > **Tentative route = forecast.** On execution, each phase is passed through `/mala-pata-triage`, which
-> re-decides organic/loop with the information of the moment (see Step 4-bis). Previous phases may change
+> re-decides shot/organic/loop with the information of the moment (see Step 4-bis). Previous phases may change
 > the route of a later one.
 
 Suggested order (topological): 1 → (2 ∥ 3) → …   ·   Parallelizable: {2, 3}

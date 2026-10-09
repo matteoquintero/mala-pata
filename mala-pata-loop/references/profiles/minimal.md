@@ -5,6 +5,7 @@
 > (traceability in engram). Organic does NOT do SDD at all: a single direct pass
 > without planning artifacts. If the small change merits an SDD trail →
 > MINIMAL; if it does not merit SDD → organic.
+> **Lane vs depth**: `/mala-pata-triage` owns the LANE choice (loop vs organic); this profile only sets the DEPTH within an already-chosen loop (architecture decided elsewhere → organic, not loop).
 
 ## When to choose MINIMAL
 - Targeted bug fix (1-3 files).
@@ -17,7 +18,7 @@
 
 - **Phase 0 components**: mandatory — the REUSA/ADAPTA/NUEVO audit is **NOT skipped**. Auto-approve if audit = 0 NEW. **If the audit marks ≥1 NEW component, escalate to LITE** — do not continue in MINIMAL with new components.
 - **TDD granularity**: **per feature**. Never per task in MINIMAL.
-- **Explore**: skippable if the module was touched this week. Otherwise minimal explore (1 grep pass).
+- **Explore**: minimal, never skipped (Explore is phase 1 of loop-start) — if the module was touched this week, a quick pass over the prior explore; otherwise 1 grep pass.
 - **Spec + Design**: **merged and short** (target 1-2 markdown pages).
 - **sdd-preview**: typically 0 reviewers via its own self-assessment (mechanical change, no risk signals).
 - **Verify**: light — suite + build. No mandatory live smoke unless it touches visible UI. (Default by size: rises to normal if `sdd-preview` detected risk signals — see `_base.md`.)

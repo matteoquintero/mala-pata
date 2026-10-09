@@ -1,5 +1,7 @@
 # LITE profile — S/M in a known module
 
+> **Lane vs depth**: `/mala-pata-triage` owns the LANE choice (loop vs organic); this profile only sets the DEPTH within an already-chosen loop (architecture decided elsewhere → organic, not loop).
+
 ## When to choose LITE
 - Small or medium change.
 - Hot module (worked on this week or recently).

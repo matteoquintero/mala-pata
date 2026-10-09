@@ -1,10 +1,10 @@
 ---
 name: mala-pata-loop-orchestrate
-description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several kickoffs and returns a start plan (waves, parallelism, file/migration conflicts, recommended splits, deferrals) + copy-paste commands. It does NOT create worktrees, does NOT advance branches, does NOT launch sessions — /mala-pata-loop-orchestrate-start does that.
+description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several kickoffs and returns a start plan (waves, parallelism, file/migration conflicts, recommended splits, deferrals) + copy-paste commands. It does NOT create worktrees, does NOT advance branches, does NOT launch sessions — /mala-pata-loop-orchestrate-start does that. Trigger — "planificá estos kickoffs en olas", "qué kickoffs puedo correr en paralelo", "orquestá este lote de SDD".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 # /mala-pata-loop-orchestrate — Plan a BATCH of kickoffs (READ-ONLY)
@@ -85,7 +85,7 @@ ALWAYS return:
    phase in parallel) | conflict/note`.
 2. **Copy-paste commands** per wave, to run each cycle by hand if the user does NOT want to launch in Warp:
    ```
-   /mala-pata-loop-start sdd/<change-name>/kickoff
+   /mala-pata-loop-start <absolute-path-of-kickoff>.md
    ```
    (All enter through **Explore**; make that clear. The difference is the wave and up to which phase it can advance
    in parallel.)

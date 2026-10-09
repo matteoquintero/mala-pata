@@ -1,15 +1,13 @@
 ---
 name: mala-pata-states
-description: Given a feature by name, extracts its state machine(s) from the code (enum + guards) and draws them with archify (lifecycle) as a faithful HTML for human visual inspection — onboarding and detection of broken transitions. Read-only on the project's code (does not modify it); does NOT dispatch sdd-*.
+description: Given a feature by name, extracts its state machine(s) from the code (enum + guards) and draws them with archify (lifecycle) as a faithful HTML for human visual inspection — onboarding and detection of broken transitions. Read-only on the project's code (does not modify it); does NOT dispatch sdd-*. Trigger — "máquina de estados de <feature>", "diagramá los estados de X", "mala-pata-states <feature>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # mala-pata-states — Faithful state machine diagram
-
-Trigger: "máquina de estados de \<feature\>", "diagramá los estados de X", "mala-pata-states \<feature\>".
 
 This skill produces a diagram, not an analysis. It is read-only on the target project's code: it reads the state enum and the real transitions, and draws them — it does not modify a single line of the code it inspects. It uses ODD workers (direct/delegated) for its own execution; it does NOT dispatch `sdd-*` agents — the gentle-ai preflight hook does not apply here. Absolute paths always, both for reading the target project and for invoking archify.
 
@@ -85,7 +83,7 @@ The viewport that squeezes is **1440x900** (the others — 1600/1920/2048 — fi
 
 ## Phase 4 — Validate and deliver with archify
 
-Run these commands with absolute paths, from the archify skill's directory (`/Users/matteoquintero/.agents/skills/archify`):
+Run these commands with absolute paths, from the archify skill's directory (resolved at runtime: `~/.claude/skills/archify` or `~/.agent-skills/archify`, whichever exists):
 
 ```bash
 node bin/archify.mjs validate lifecycle <absolute-path-json> --quality showcase --json

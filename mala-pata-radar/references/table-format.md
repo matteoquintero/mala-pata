@@ -1,4 +1,6 @@
-# FIXED control tower format (immutable contract)
+# FIXED radar format (immutable contract)
+
+> Scope: radar tracks `sdd/…` changes only. ODD changes (`odd/…`) are tracked via their feature-doc (`mala-pata/odd/<change>.md`), not radar.
 
 > This format does NOT change. Same banner, same 7 columns in the same order,
 > same status-light lexicon, same row order. It is mechanical memory: the
@@ -7,7 +9,7 @@
 ## 1. Freshness banner (mandatory, always at the top)
 
 ```
-CONTROL TOWER · <n> SDD · <YYYY-MM-DD HH:MM>
+RADAR · <n> SDD · <YYYY-MM-DD HH:MM>
 Fresh: fetched <repo>@<sha7>[ · <repo2>@<sha7>] · integration=<branch> · live memory · READ-ONLY
 ```
 
@@ -32,6 +34,8 @@ freshly fetched in this run.
 
 ## 3. Status-light lexicon (closed — never add new symbols)
 
+> Closed set of 8 lights. There is NO BLUE: SDDs still in planning (kickoff … preview) are shown GREEN (in progress) unless a gate/blocker applies.
+
 | Light | State | The human reacts |
 |-------|-------|------------------|
 | RED | **Your action NOW** — ready for PR, or apply/verify done without closing | do the step |
@@ -41,7 +45,7 @@ freshly fetched in this run.
 | GREEN | **In progress** — advances normally, next phase auto-runnable | run the next phase |
 | MERGED | **Merged, cleanup pending** (CLEANUP) — code in integration but worktree/branch alive | clean up |
 | CLOSED | **Closed** — merged + clean | nothing |
-| CANCELLED | **Cancelled** — state = ABANDONED | nothing |
+| CANCELLED | **Cancelled** — a state/decision marks it cancelled (manual/legacy marker, e.g. `ABANDONED`) | nothing |
 
 ## 4. Phase pipeline (canonical cycle order)
 
@@ -70,7 +74,7 @@ Evidence:
 ## Example (illustrates the format; the data is sample data)
 
 ```
-CONTROL TOWER · 5 SDD · 2026-07-30 17:40
+RADAR · 5 SDD · 2026-07-30 17:40
 Fresh: fetched <repo>@3f090a3 · integration=development · live memory · READ-ONLY
 ```
 

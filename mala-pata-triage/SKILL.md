@@ -4,14 +4,14 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
 
 User request: **input delivered by the CLI**
 
-Your only job is to **read the request and decide the lane**, then **answer which skill to run**. You do not generate kickoffs, you do not write files, you do not touch code. You are the gate — the same gate documented by mala-pata's design (`DESIGN-organic-loop-v2.md` §3: "the strict format IS the router") — separated from the three lanes that consume it.
+Your only job is to **read the request and decide the lane**, then **answer which skill to run**. You do not generate kickoffs, you do not write files, you do not touch code. You are the gate — the strict format IS the router — separated from the three lanes that consume it.
 
 > **You execute NOTHING.** Do NOT create a worktree, do NOT write a kickoff, do NOT run phases of any cycle.
 > The result is ALWAYS one of these: (a) a direct read-only answer, (b) "→ run `/mala-pata-shot`" (trivial, understood change), (c) "→ run `/mala-pata-organic`" with the field draft, (d) "→ run `/mala-pata-loop`", (e) "→ run `/mala-pata-roadmap`", or (f) `vague work ` asking for the minimum.

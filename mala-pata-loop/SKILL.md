@@ -1,10 +1,10 @@
 ---
 name: mala-pata-loop
-description: Reinterprets a request into technical terms, chooses an execution profile with the human, and generates the full context in a markdown file (inside the repo, `mala-pata/kickoffs/`, versioned) to start an interactive SDD — with only a one-line pointer in engram. It does NOT run the SDD — it only leaves the brief ready for another agent to run it.
+description: Reinterprets a request into technical terms, chooses an execution profile with the human, and generates the full context in a markdown file (inside the repo, `mala-pata/kickoffs/`, versioned) to start an interactive SDD — with only a one-line pointer in engram. It does NOT run the SDD — it only leaves the brief ready for another agent to run it. Trigger — "armá el kickoff de este SDD", "prepará el contexto para un SDD de <objetivo>", "generá el brief del loop".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.10.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -148,7 +148,7 @@ The executor will load exactly the skills this kickoff lists — so choose them 
 ### Selection rules (non-negotiable)
 
 1. **By objective, not by reflex**: if the Scope IN does not mention it, do not load it. E.g.: a query fix does NOT load `ui-ux-pro-max`; a screen redesign does NOT load `rag-*`.
-2. **Ceiling ~3-4 conditionals.** If you end up with more, the objective is probably too big → split it (Step 1.6), do not load everything.
+2. **Ceiling ~3-4 conditionals.** If you end up with more, the objective is probably too big → split it (Step 1, point 6), do not load everything.
 3. **Every chosen skill goes in the kickoff** (section "Additional conditional skills") **with ONE line of why** (which part of the objective justifies it). The executor loads that list literally.
 4. **Only skills that EXIST** in the session (look at `<available_skills>`); never invent a name. Some are plugin skills → use the `plugin:skill` name exactly as it appears in the listing. The stack-specific ones (`gsap-*`, `threejs-*`, `go-testing`, `neon-postgres`) only if `sdd-init` confirms the stack uses them.
 
@@ -268,7 +268,7 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
 1. **Location — inside the repo, versioned (traceability)**: `mala-pata/kickoffs/<change-name>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` if it does not exist).
 2. Write the complete kickoff from Step 4 to `mala-pata/kickoffs/<change-name>.md`.
 3. **Light pointer in engram** (only so `mem_search`/radar keep finding it — the idempotency of Step 1 point 5 depends on this): `mem_save` with `topic_key: "sdd/<change-name>/kickoff"`, `type: "architecture"`, **single-line** content: `Kickoff in file: <absolute path>`. Do not duplicate the kickoff's content here — the file is the only source of truth.
-4. If you reserved migrations, confirm that the registry was updated.
+4. If the change needs migrations, `migrations_reserved` in the frontmatter is provisional (there is no registry): re-measure git right before the merge (Step 3).
 5. **Your response to the human is a MANDATORY, standard closing (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, inventing nothing. Emit exactly this structure:
 
    - Title: `**Kickoff listo — <change-name>**`
@@ -291,5 +291,5 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
 **Only exceptions** (when the response is NOT the closing block):
 - Vagueness gate → answer `vague work ` (Step 0).
 - Idempotency / in-flight conflict → a one-line warning + the question, before creating.
-- Step 1.5 and Step 1.8 → the interactive question function available in the CLI to choose the profile and confirm the base branch (ideally in a SINGLE interaction; they are the only questions allowed before the kickoff).
+- Step 1.5 and Step 1 (point 8) → the interactive question function available in the CLI to choose the profile and confirm the base branch (ideally in a SINGLE interaction; they are the only questions allowed before the kickoff).
 - Engram not available for the pointer → the file is already the source of truth, continue anyway; warn in one line that the pointer was not saved (it affects future idempotency, not the kickoff itself).

@@ -79,8 +79,9 @@ With `<branch>` resolved (call it that below):
 
 ## Step D — State machine (first match wins, top to bottom)
 
-1. **CANCELLED** — there is a `state` artifact/decision that says ABANDONED/
-   cancelled. Next action: none.
+1. **CANCELLED** — there is a `state` artifact/decision that marks it cancelled
+   (`ABANDONED` is a manual/legacy marker — no current skill emits it; do not
+   treat it as a live token). Next action: none.
 2. **CLOSED** — merged into integration AND no remote branch AND no local worktree/
    branch. Next action: none.
 3. **MERGED (cleanup pending)** — merged into integration BUT worktree or
@@ -92,7 +93,10 @@ With `<branch>` resolved (call it that below):
 5. **RED: APPLY/VERIFY NOT CLOSED** — apply-progress complete without verify, or verify
    PASS without archive. Next action: run the missing phase (verify / archive).
 6. **YELLOW: HUMAN GATE** — the last artifact is a `preview` with no later approval
-   decision, OR `verify-report` with unresolved CRITICAL/WARNING, OR
+   decision, OR a preview state emitted by `sdd-preview` (read by loop-start):
+   `paused-at-preview` (resumable pause → next action: resume the preview) or
+   `objective-not-ready-at-preview` (→ next action: go back to explore/propose to
+   fix the objective, then re-run preview), OR `verify-report` with unresolved CRITICAL/WARNING, OR
    a decision that asks for explicit human input. Next action: review/approve.
 7. **ORANGE: PARKED/BLOCKED** — depends on another SDD in the list not yet merged
    (BLOCKED), OR there is a pause note (adjacency/sibling worktree without merge), OR

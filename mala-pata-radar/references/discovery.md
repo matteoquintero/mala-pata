@@ -58,7 +58,7 @@ mem_get_observation(id=<state, if it exists>)
 ## Step 3 — Filter (cycle only)
 
 Discard from the table (they are NOT active candidates):
-- `CANCELLED`: `state`/decision says ABANDONED → count it separately.
+- `CANCELLED`: a `state`/decision explicitly marks it cancelled (a manual/legacy marker — no skill emits `ABANDONED` anymore) → count it separately.
 - `cerrado en ciclo`: an `archive-report` exists → count it separately (Phase B will say whether
   it is also merged/clean).
 
@@ -66,7 +66,7 @@ The ones that remain = **ACTIVE candidates**, with their status light:
 | Light | phase(C) |
 |-------|----------|
 | GREEN | apply-progress / verify-report (with code) |
-| BLUE | kickoff … preview (in planning) |
+| GREEN | kickoff … preview (in planning; the closed lexicon has no separate planning light) |
 
 ---
 

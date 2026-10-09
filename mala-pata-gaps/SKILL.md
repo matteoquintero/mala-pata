@@ -1,10 +1,10 @@
 ---
 name: mala-pata-gaps
-description: READ-ONLY completeness auditor for a DOMAIN — given one or several roadmaps of the same domain + the real CODE, it finds what is missing to cover the total objective (follow-ups). Even if all phases are finished, something may be missing. It cross-checks 3 sources — the total objective (roadmaps), the follow-ups already NOTED (Level-2 / deferred / extra proposals not done / TODO-FIXME in code) and the gaps INFERRED from the code (codegraph/serena, anchored to evidence). Each gap comes out tagged [noted] or [inferred] with evidence (file:line or the annotation). It does NOT look only at the .md — it analyzes the code. It does NOT execute phases or touch code — it leaves its report in mala-pata/gaps/<dominio>.md (versioned) + an engram pointer, and suggests routing. Different from mala-pata-roadmap-radar (that one is phase status vs git; this one is completeness of the objective). Trigger — "tenemos follow ups", "gaps de <dominio>", "qué falta del dominio <X>", "qué falta para cubrir <objetivo>".
+description: READ-ONLY completeness auditor for a DOMAIN — given one or several roadmaps of the same domain + the real CODE, it finds what is missing to cover the total objective (follow-ups). Even if all phases are finished, something may be missing. It cross-checks 3 sources — the total objective (roadmaps), the follow-ups already NOTED (Level-2 / deferred / extra proposals not done / TODO-FIXME in code) and the gaps INFERRED from the code (codegraph/serena, anchored to evidence). Each gap comes out tagged [noted] or [inferred] with evidence (file:line or the annotation). It does NOT look only at the .md — it analyzes the code. It does NOT execute phases or touch code — it leaves its report in mala-pata/gaps/<domain>.md (versioned) + an engram pointer, and suggests routing. Different from mala-pata-roadmap-radar (that one is phase status vs git; this one is completeness of the objective). Trigger — "tenemos follow ups", "gaps de <dominio>", "qué falta del dominio <X>", "qué falta para cubrir <objetivo>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -31,7 +31,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 - **Anchored to evidence, NEVER invented.** Each gap comes from a real annotation or from a reading of the code with `file:line`. If you cannot anchor it, it is not a gap — it is a question, mark it separately.
 - **`[noted]` vs `[inferred]`** for each gap: noted = it was already written (Level-2, deferred, TODO); inferred = the model detected it by cross-checking objective + code. The human trusts each differently — like the `[rule/judgment]` of the other skills.
-- **Read-only on the code/project.** It does NOT execute phases, does NOT touch code, does NOT create a kickoff/roadmap. But it DOES leave its **own report** in `mala-pata/gaps/<dominio>.md` + an engram pointer (like research/roadmap) — for traceability. It suggests routing and ends.
+- **Read-only on the code/project.** It does NOT execute phases, does NOT touch code, does NOT create a kickoff/roadmap. But it DOES leave its **own report** in `mala-pata/gaps/<domain>.md` + an engram pointer (like research/roadmap) — for traceability. It suggests routing and ends.
 - **Over-discover, the human trims.** Better to propose one gap too many (marked `[inferred]`) than to stay silent. But never invented.
 
 ## Phase 0 — Resolve the domain and its roadmaps
@@ -81,13 +81,13 @@ Routing suggestion (I do NOT execute): <gap> → /mala-pata-research or /mala-pa
 
 ## Phase 5 — Persist the report (traceability)
 
-Write the Phase 4 report to **`mala-pata/gaps/<dominio>.md`** (inside the repo, versioned; `mkdir -p` if it does not exist; `<dominio>` = the keyword, or a composite slug of the analyzed roadmaps). If it already exists, **update** that file — gaps is a **living backlog** of the domain, not an endless append nor a new file per run. Lightweight pointer in engram: `mem_save` topic_key `gaps/<dominio>`, one-line content `Gaps in file: <absolute path>` (do not duplicate the content — the file is the source). If engram is not available, the file is the source; warn in one line.
+Write the Phase 4 report to **`mala-pata/gaps/<domain>.md`** (inside the repo, versioned; `mkdir -p` if it does not exist; `<domain>` = the keyword, or a composite slug of the analyzed roadmaps). If it already exists, **update** that file — gaps is a **living backlog** of the domain, not an endless append nor a new file per run. Lightweight pointer in engram: `mem_save` topic_key `gaps/<domain>`, one-line content `Gaps in file: <absolute path>` (do not duplicate the content — the file is the source). If engram is not available, the file is the source; warn in one line.
 
 After persisting, you close: you suggest routing, **you do not execute phases or touch code**.
 
 ## Rules
 
-- **Read-only on the code/project.** It does not execute phases, does not touch code, does not create a kickoff/roadmap. It DOES write its own report in `mala-pata/gaps/<dominio>.md` + engram pointer (its artifact, like research/roadmap).
+- **Read-only on the code/project.** It does not execute phases, does not touch code, does not create a kickoff/roadmap. It DOES write its own report in `mala-pata/gaps/<domain>.md` + engram pointer (its artifact, like research/roadmap).
 - **Never invent.** Every gap anchored to an annotation or `file:line`. What cannot be anchored goes as a "Pregunta", not as a gap.
 - **Does not overstep `mala-pata-roadmap-radar`** (phase status) — this one is completeness of the objective.
 - **Fixed format** always.

@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -75,7 +75,7 @@ The only thing taken from ui-ux-pro-max; they make the judgment testable:
 - **A11y/interaction rules**: `color-not-only` (meaning never by color alone), `visible-focus`, `cursor-pointer` on clickables, viewport without disabled zoom, `no-layout-shift-hover`.
 - **Anti-pattern checklist (the "tells" of generic/AI design, avoid them)**: purple gradients, Inter by default, decorative glassmorphism, bento-grid by default, perfect symmetry, the hero + 3-cards + testimonials + pricing + CTA pattern, generic shadows/borders without intent.
 
-> **The prescriptive side of ui-ux-pro-max is forbidden**: do NOT use its 161 palettes, 73 font pairings, or its product→style mappings. The concrete values (which color, which font) come from the **project's system** + the **judgment** above. The 84 styles serve only as vocabulary to NAME a direction, not as "apply this style".
+> **The prescriptive side of ui-ux-pro-max is forbidden**: do NOT use its 161 palettes, its font pairings, or its product→style mappings. The concrete values (which color, which font) come from the **project's system** + the **judgment** above. Its style vocabulary serve only as vocabulary to NAME a direction, not as "apply this style".
 
 ## Read the project's system (agnostic)
 Before proposing concrete values, find the **current project's design system** and treat it as **authoritative**: tokens (CSS vars / Tailwind config), spacing scale, typography, primitives (`Button`/`Card`/`Icon`/etc.), rules (design ESLint), Storybook, `DESIGN.md`/`ARCHITECTURE.md`. If it exists, the concrete values come from there (do not invent hex/fonts). `bodega-ferreteria-colombia` is the **reference exemplar** of a well-built system — do NOT hardcode it; it is the pattern of "what a good system looks like", not the source.
@@ -87,7 +87,7 @@ If the project has NO system, propose a minimal one (spacing scale, neutral ramp
 2. **Read the project's system** (previous section) — the concrete values come from there.
 3. **Diagnosis**: what is wrong against the **invariants** (first) and the **judgment** (Level 1-3). Anchor each finding to what is observable ("this block violates hierarchy: 3 focal points compete"; "emoji icons → SVG").
 4. **Advice MD**: write the judgment applied to THIS case — findings + what to change + why (citing the principle). Inline by default; if the human wants to save it, `mala-pata/art/<slug>.md`.
-5. **Apply (optional, if asked)**: in the same run, improve the thing following that MD + the invariants + the project's system. Respect SVG-only, the no-emoji invariant (7), project tokens.
+5. **Apply (optional, if asked)**: never on `main`/the default branch — work on a branch (if on main/development, `git switch -c <type>/<slug>` first, same safe-branch rule as `mala-pata-shot`). In the same run, improve the thing following that MD + the invariants + the project's system. Respect SVG-only, the no-emoji invariant (7), project tokens.
 6. **Human gate**: present the before/after or the MD and wait for their OK or adjustments. Their eye rules.
 
 ## What it does NOT do

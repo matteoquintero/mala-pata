@@ -1,10 +1,10 @@
 ---
 name: mala-pata-loop-orchestrate-start
-description: Executes a batch of SDD kickoffs IN PARALLEL — creates one worktree per kickoff, advances them to origin/<base> (anti-stale), builds ONE Warp launch config (one Claude session per tab) and opens it. The purpose IS to launch many SDDs in parallel in a single wave; file conflict is handled by serializing the APPLY (each session stops at its gate), NOT by holding back the launch.
+description: Executes a batch of SDD kickoffs IN PARALLEL — creates one worktree per kickoff, advances them to origin/<base> (anti-stale), builds ONE Warp launch config (one Claude session per tab) and opens it. The purpose IS to launch many SDDs in parallel in a single wave; file conflict is handled by serializing the APPLY (each session stops at its gate), NOT by holding back the launch. Trigger — "lanzá estos SDD en paralelo", "armá los worktrees y abrí Warp para estos kickoffs", "arrancá la ola de kickoffs".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-loop-orchestrate-start — Launch a BATCH of SDDs in parallel

@@ -1,129 +1,129 @@
-# Derivación de fase + semáforo EN VIVO
+# LIVE phase + status-light derivation
 
-Todo se re-deriva cada corrida. Dos fuentes, ninguna cacheada:
-- **VCS (git)** = verdad de branch/merge/limpieza.
-- **Memoria persistente disponible** = verdad de fase (qué artefactos existen).
+Everything is re-derived every run. Two sources, neither cached:
+- **VCS (git)** = truth about branch/merge/cleanup.
+- **Available persistent memory** = truth about phase (which artifacts exist).
 
-## Paso A — Frescura (git)
+## Step A — Freshness (git)
 
 ```
 git fetch --all --prune
 ```
-- Detectá la branch de integración del repo (mirá a qué se mergean los feature
-  branches; suele ser `development` o `main`). Confirmala, no la asumas.
-- Guardá `git rev-parse --short origin/<integr>` para el banner. Por defecto
-  operá sobre EL repo actual (el del cwd). Un proyecto abarca varios repos SOLO
-  si el humano los nombra explícitamente (o la config del proyecto los declara);
-  NUNCA asumas ni salgas a buscar repos hermanos por memoria de sesión ni
-  adivinando rutas. Si son varios, repetí los pasos por cada repo nombrado.
+- Detect the repo's integration branch (look at what the feature
+  branches are merged into; usually `development` or `main`). Confirm it, do not assume it.
+- Save `git rev-parse --short origin/<integr>` for the banner. By default
+  operate on THE current repo (the cwd's). A project spans several repos ONLY
+  if the human names them explicitly (or the project config declares them);
+  NEVER assume nor go looking for sibling repos from session memory nor
+  by guessing paths. If there are several, repeat the steps for each named repo.
 
-## Paso B — Ciclo COMPLETO de cada SDD (memoria — comandos exactos)
+## Step B — COMPLETE cycle of each SDD (memory — exact commands)
 
-Stack concreto: memoria = engram MCP (`mem_search`, `mem_get_observation`). Si
-tu runtime usa otra memoria, mapeá a "búsqueda por título exacto" + "traer
-contenido por id".
+Concrete stack: memory = engram MCP (`mem_search`, `mem_get_observation`). If
+your runtime uses another memory, map to "search by exact title" + "fetch
+content by id".
 
-Por CADA change-name `C`, traé TODAS sus fases con UNA búsqueda por el
-change-name EXACTO y desnudo (sin palabras extra — agregar
-"archive/verify/shipped" hace fallar la búsqueda semántica y fue el bug
-histórico de confiar en 1 hit):
+For EACH change-name `C`, fetch ALL its phases with ONE search by the
+EXACT and bare change-name (no extra words — adding
+"archive/verify/shipped" makes the semantic search fail and was the
+historical bug of trusting 1 hit):
 
 ```
 mem_search(query="C")
 ```
 
-Quedate con TODAS las observaciones cuyo título sea `sdd/C/<fase>`. Fases en
-orden canónico:
+Keep ALL the observations whose title is `sdd/C/<phase>`. Phases in
+canonical order:
 ```
 kickoff · explore · proposal · spec · design · tasks · preview
 · apply-progress · verify-report · archive-report · state
 ```
-`fase_memoria` = la MÁS AVANZADA presente. Progreso parcial: si `apply-progress`
-dice "X/Y tasks", reportá `apply X/Y`.
+`memory_phase` = the MOST ADVANCED one present. Partial progress: if `apply-progress`
+says "X/Y tasks", report `apply X/Y`.
 
-Anti-truncado (OBLIGATORIO): si `mem_search("C")` parece truncado o faltan fases
-tardías, confirmá el cierre con búsquedas dirigidas y traé el contenido:
+Anti-truncation (MANDATORY): if `mem_search("C")` looks truncated or late phases
+are missing, confirm closure with targeted searches and fetch the content:
 ```
 mem_search(query="sdd/C/archive-report")
 mem_search(query="sdd/C/verify-report")
 mem_search(query="sdd/C/state")
-mem_get_observation(id=<fase más avanzada>)
-mem_get_observation(id=<state/decisión de cierre, si existe>)
+mem_get_observation(id=<most advanced phase>)
+mem_get_observation(id=<state/closing decision, if it exists>)
 ```
-PROHIBIDO derivar la fase de un único hit de búsqueda. Enumerá el ciclo completo.
+FORBIDDEN to derive the phase from a single search hit. Enumerate the full cycle.
 
-## Paso C — Realidad git de cada SDD
+## Step C — Git reality of each SDD
 
-Convención de branch: `<tipo>/<change-name>` — el prefijo de tipo (`feature/`, `fix/`,
-`hotfix/`, `refactor/`, `chore/`, `docs/`, `release/`) se elige por trabajo y se confirma
-(ver `_base.md`); **nunca `sdd/`**. El sufijo `<change-name>` es único e igual pase lo que
-pase con el prefijo — por eso **localizá la rama por el sufijo, no por prefijo fijo**:
-1. Si tenés el kickoff, usá su `branch:` del frontmatter (nombre exacto ya confirmado).
-2. Si no, buscá por sufijo: `git branch -r --list '*/<change-name>'` (matchea cualquier
-   prefijo convencional). Si aparece bajo `sdd/...`, es una rama LEGACY fuera de convención —
-   marcala con flag "rama legacy sdd/ — renombrar" en la evidencia (los skills nuevos ya no
-   generan `sdd/`).
-   Nota: `<change-name>` es único → el sufijo no colisiona entre SDDs.
+Branch convention: `<type>/<change-name>` — the type prefix (`feature/`, `fix/`,
+`hotfix/`, `refactor/`, `chore/`, `docs/`, `release/`) is chosen per job and confirmed
+(see `_base.md`); **never `sdd/`**. The `<change-name>` suffix is unique and the same no matter
+what happens with the prefix — that is why **locate the branch by the suffix, not by a fixed prefix**:
+1. If you have the kickoff, use its frontmatter `branch:` (exact name already confirmed).
+2. If not, search by suffix: `git branch -r --list '*/<change-name>'` (matches any
+   conventional prefix). If it shows up under `sdd/...`, it is a LEGACY branch outside the convention —
+   flag it with "legacy branch sdd/ — rename" in the evidence (the new skills no longer
+   generate `sdd/`).
+   Note: `<change-name>` is unique → the suffix does not collide between SDDs.
 
-Con `<branch>` resuelto (llamalo así abajo):
-- ¿Branch existe en remoto? `git branch -r --list 'origin/<branch>'` (o el resultado del punto 2).
-- ¿Mergeado a integración? Confirmá por CONTENIDO/commits, no por `--merged`
-  solo (el squash no aparece como merged). Dos señales fuertes:
-  - `git log origin/<integr> --oneline | grep -i '<change o PR#>'`
-  - un archivo/símbolo distintivo del SDD presente en `origin/<integr>`
-    (`git grep <símbolo> origin/<integr> -- <path>`).
+With `<branch>` resolved (call it that below):
+- Does the branch exist on the remote? `git branch -r --list 'origin/<branch>'` (or the result of point 2).
+- Merged into integration? Confirm by CONTENT/commits, not by `--merged`
+  alone (a squash does not show up as merged). Two strong signals:
+  - `git log origin/<integr> --oneline | grep -i '<change or PR#>'`
+  - a distinctive file/symbol of the SDD present in `origin/<integr>`
+    (`git grep <symbol> origin/<integr> -- <path>`).
 - Stale: `git rev-list --left-right --count origin/<integr>...origin/<branch>`
-  → `A` (integr adelante) `B` (branch adelante). `A` grande = branch vieja.
-- ¿Worktree/branch local vivos? `git worktree list`, `git branch --list` (el worktree dir
-  sigue siendo `<change-name>` sin prefijo).
+  → `A` (integr ahead) `B` (branch ahead). Large `A` = old branch.
+- Local worktree/branch alive? `git worktree list`, `git branch --list` (the worktree dir
+  is still `<change-name>` without prefix).
 
-## Paso D — Máquina de estados (primer match gana, de arriba a abajo)
+## Step D — State machine (first match wins, top to bottom)
 
-1. **❌ CANCELADO** — hay artefacto `state`/decisión que dice ABANDONADO/
-   cancelado. Próxima acción: ninguna.
-2. **✔️ CERRADO** — mergeado a integración Y sin branch remota Y sin worktree/
-   branch local. Próxima acción: ninguna.
-3. **✅ MERGEADO (🧹 falta limpieza)** — mergeado a integración PERO worktree o
-   branch (local/remota) siguen vivos. Próxima acción: limpiar.
-4. **🔴 LISTO P/PR** — apply completo + verify PASS (y/o archive) PERO NO
-   mergeado (código en branch, ausente en integración). Próxima acción: abrir
-   PR / mergear. Si `stale` (B chico, A grande): añadí "⚠️ actualizar branch +
-   re-verificar antes del PR".
-5. **🔴 APPLY/VERIFY SIN CERRAR** — apply-progress completo sin verify, o verify
-   PASS sin archive. Próxima acción: correr la fase que falta (verify / archive).
-6. **🟡 GATE HUMANO** — el último artefacto es un `preview` sin decisión de
-   aprobación posterior, O `verify-report` con CRITICAL/WARNING sin resolver, O
-   una decisión que pide input humano explícito. Próxima acción: revisar/aprobar.
-7. **🟠 PARQUEADO/BLOQUEADO** — depende de otro SDD de la lista aún NO mergeado
-   (⛔), O hay nota de pausa (adyacencia/worktree hermano sin merge), O branch
-   stale que bloquea. Próxima acción: desbloquear (nombrá el bloqueador).
-8. **⚫ SIN INSTRUCCIÓN** — ciclo trabado sin próximo paso claro: apply-progress
-   parcial (X/Y) sin continuación ni gate pendiente, o planning detenido a mitad
-   sin gate y sin actividad reciente. Próxima acción: el humano define qué sigue.
-9. **🟢 EN CURSO** — avanza normal; una fase cerró y la próxima es auto-corrible
-   sin gate. Próxima acción: correr la próxima fase (nombrala: p.ej. "correr
-   spec", "correr tasks").
+1. **CANCELLED** — there is a `state` artifact/decision that says ABANDONED/
+   cancelled. Next action: none.
+2. **CLOSED** — merged into integration AND no remote branch AND no local worktree/
+   branch. Next action: none.
+3. **MERGED (cleanup pending)** — merged into integration BUT worktree or
+   branch (local/remote) are still alive. Next action: clean up.
+4. **RED: READY FOR PR** — apply complete + verify PASS (and/or archive) BUT NOT
+   merged (code on branch, absent from integration). Next action: open
+   PR / merge. If `stale` (B small, A large): add "WARNING: update branch +
+   re-verify before the PR".
+5. **RED: APPLY/VERIFY NOT CLOSED** — apply-progress complete without verify, or verify
+   PASS without archive. Next action: run the missing phase (verify / archive).
+6. **YELLOW: HUMAN GATE** — the last artifact is a `preview` with no later approval
+   decision, OR `verify-report` with unresolved CRITICAL/WARNING, OR
+   a decision that asks for explicit human input. Next action: review/approve.
+7. **ORANGE: PARKED/BLOCKED** — depends on another SDD in the list not yet merged
+   (BLOCKED), OR there is a pause note (adjacency/sibling worktree without merge), OR
+   a stale branch that blocks. Next action: unblock (name the blocker).
+8. **BLACK: NO INSTRUCTION** — cycle stuck with no clear next step: partial apply-progress
+   (X/Y) without continuation nor pending gate, or planning stopped midway
+   with no gate and no recent activity. Next action: the human defines what is next.
+9. **GREEN: IN PROGRESS** — advances normally; a phase closed and the next one is auto-runnable
+   without a gate. Next action: run the next phase (name it: e.g. "run
+   spec", "run tasks").
 
-## Paso E — Dependencias (entre los SDD de la lista)
+## Step E — Dependencies (among the SDDs in the list)
 
-Señales de dependencia (leer de kickoff/proposal/design):
-- "off <branch> tras merge del sibling PR #X" / "depends_on" / "base branch".
-- Mismo archivo/servicio tocado por dos SDD (adyacencia → riesgo de bloqueo).
+Dependency signals (read from kickoff/proposal/design):
+- "off <branch> after merge of sibling PR #X" / "depends_on" / "base branch".
+- Same file/service touched by two SDDs (adjacency → blocking risk).
 
-**Kickoff = archivo, no engram**: la observación `sdd/C/kickoff` de engram es solo un
-puntero de una línea (`Kickoff en archivo: <ruta>`). Para leer `depends_on`/branch base
-del kickoff, seguí esa ruta con `Read` — el frontmatter YAML del archivo trae
-`depends_on`, `paralelizable_con` y `branch_base` directo. Solo los kickoffs viejos
-(pre-migración) tienen el contenido completo en engram.
+**Kickoff = file, not engram**: the engram observation `sdd/C/kickoff` is just a
+one-line pointer (`Kickoff en archivo: <path>`). To read `depends_on`/base branch
+from the kickoff, follow that path with `Read` — the file's YAML frontmatter carries
+`depends_on`, `parallelizable_with` and `branch_base` directly. Only old kickoffs
+(pre-migration) have the full content in engram.
 
-Si A depende de B y B no está mergeado → A va 🟠 con `Depende = #idxB ⛔`.
-Si B ya está mergeado → mostrar `Depende = #idxB` sin ⛔ (informativo).
+If A depends on B and B is not merged → A goes ORANGE with `Depends = #idxB BLOCKED`.
+If B is already merged → show `Depends = #idxB` without BLOCKED (informational).
 
-## Reglas de derivación (no negociables)
+## Derivation rules (non-negotiable)
 
-- **Nunca** derivar "mergeado" de la memoria. Solo de git contra integración.
-- **Nunca** confiar en un estado de una corrida anterior. Re-derivar siempre.
-- Ante conflicto memoria↔git, **git manda** para branch/merge/limpieza; la
-  memoria manda para fase/gate/cancelación.
-- Si un dato no se puede verificar en vivo, marcá la celda con `?` y explicá en
-  la evidencia — nunca rellenar con una suposición.
+- **Never** derive "merged" from memory. Only from git against integration.
+- **Never** trust a state from a previous run. Always re-derive.
+- On a memory↔git conflict, **git rules** for branch/merge/cleanup; memory
+  rules for phase/gate/cancellation.
+- If a datum cannot be verified live, mark the cell with `?` and explain in
+  the evidence — never fill with an assumption.

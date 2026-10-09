@@ -1,27 +1,27 @@
-# Perfil STANDARD — default para changes M
+# STANDARD profile — default for M changes
 
-## Cuándo elegir STANDARD
-- Change de tamaño medio: 1-2 containers + 1-2 services nuevos.
-- Módulo conocido pero cambio no trivial.
-- Feature aditivo sobre contrato BE existente (no endpoints nuevos).
-- No hay riesgo alto de regresión pero sí toca lógica de dominio.
+## When to choose STANDARD
+- Medium-sized change: 1-2 containers + 1-2 new services.
+- Known module but non-trivial change.
+- Additive feature on an existing BE contract (no new endpoints).
+- There is no high regression risk but it does touch domain logic.
 
-## Ajustes respecto al método base
+## Adjustments relative to the base method
 
-- **Fase 0 componentes**: obligatoria + **gate humano explícito**.
-- **TDD granularidad**: **por task** — Red → Green → Refactor por cada task.
-- **Explore**: reutilizar si el módulo tiene explore en engram de esta semana; sino full.
-- **Spec + Design**: separados.
-- **sdd-preview**: decide su propia cantidad de reviewers vía self-assessment según riesgo real. El perfil no fuerza número.
-- **Verify**: normal — suite + build + smoke live. Sin adversarial extra salvo que design lo pida.
-- **Apply**: batches libres (a criterio de `sdd-tasks`).
-- **Storybook / MSW / fixtures**: cobertura completa.
+- **Phase 0 components**: mandatory + **explicit human gate**.
+- **TDD granularity**: **per task** — Red → Green → Refactor for each task.
+- **Explore**: reuse if the module has an explore in engram from this week; otherwise full.
+- **Spec + Design**: separate.
+- **sdd-preview**: decides its own number of reviewers via self-assessment according to real risk. The profile does not force a number.
+- **Verify**: normal — suite + build + live smoke. No extra adversarial unless design asks for it.
+- **Apply**: free batches (at `sdd-tasks`'s discretion).
+- **Storybook / MSW / fixtures**: full coverage.
 
-## Nudges de `/clear`
+## `/clear` nudges
 
-- Entre fases mayores (design → tasks, tasks → apply).
-- Entre batches del apply si el humano lo prefiere.
+- Between major phases (design → tasks, tasks → apply).
+- Between apply batches if the human prefers.
 
-## Costo orden de magnitud
+## Cost order of magnitude
 
 ~250K tokens end-to-end.

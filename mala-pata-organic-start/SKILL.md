@@ -1,107 +1,107 @@
 ---
 name: mala-pata-organic-start
-description: Corre el CICLO ODD (Organic Driven Development) a partir de la ruta del kickoff que dejó `/mala-pata-organic` — worktree+base → explorar (ahí se descubre el Dónde) → resolver incertidumbre → clasificar → (feature-doc si es substancial) → implementar task-by-task (work-unit commit + RDD por commit) → cerrar (PR/CI/limpieza) → tabla. El init (`sdd-init`) lo garantiza `/mala-pata-organic` (una vez por proyecto). Usa workers de ODD (direct/delegated), NUNCA agentes `sdd-*` — el hook de preflight `PreToolUse:Agent` de gentle-ai no aplica acá. Para trabajo chico, las fases corren en una sola pasada; el kickoff separado existe para review/handoff, igual que en el par loop/loop-start.
+description: Runs the ODD (Organic Driven Development) CYCLE from the path of the kickoff that `/mala-pata-organic` left — worktree+base → explore (this is where the Where is discovered) → resolve uncertainty → classify → (feature-doc if substantial) → implement task-by-task (work-unit commit + RDD per commit) → close (PR/CI/cleanup) → table. The init (`sdd-init`) is guaranteed by `/mala-pata-organic` (once per project). Uses ODD workers (direct/delegated), NEVER `sdd-*` agents — the gentle-ai `PreToolUse:Agent` preflight hook does not apply here. For small work, the phases run in a single pass; the separate kickoff exists for review/handoff, same as in the loop/loop-start pair.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
-# /mala-pata-organic-start — Corre el CICLO ODD desde un archivo de kickoff
+# /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
 
-Kickoff: **entrada entregada por el CLI** (ruta absoluta al archivo `.md` que dejó `/mala-pata-organic`)
+Kickoff: **input delivered by the CLI** (absolute path to the `.md` file left by `/mala-pata-organic`)
 
-Tu trabajo: leer el kickoff y correr el **ciclo ODD nativo de gentle-ai**, organizado en el flujo mala-pata — worktree aislado, gates humanos donde corresponde, tabla final. Es a ODD lo que `/mala-pata-loop-start` es al SDD: **no reimplementás ODD — lo orquestás.**
+Your job: read the kickoff and run the **native gentle-ai ODD cycle**, organized into the mala-pata flow — isolated worktree, human gates where appropriate, final table. It is to ODD what `/mala-pata-loop-start` is to SDD: **you do not reimplement ODD — you orchestrate it.**
 
-> **El protocolo ODD es la fuente de verdad.** Sus 7 pasos (Authorize → Explore → Resolve → Classify → Track → Implement → Close), el feature-doc, los work-unit commits, la evaluación RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill los sigue y les suma la capa mala-pata. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
+> **The ODD protocol is the source of truth.** Its 7 steps (Authorize → Explore → Resolve → Classify → Track → Implement → Close), the feature-doc, the work-unit commits, the RDD evaluation per commit and the delivery slicing live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill follows them and adds the mala-pata layer. If the CLAUDE.md and this skill differ on ODD mechanics, **the CLAUDE.md wins**.
 
-> **Usa workers de ODD (direct inline / delegated direct), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica a este skill. No preguntes el preflight canónico de 3 preguntas acá: no existe para este carril.
+> **Uses ODD workers (direct inline / delegated direct), NEVER `sdd-*` agents.** The gentle-ai `PreToolUse:Agent` preflight (`gentle-ai sdd-preflight-hook`) only intercepts `sdd-*` dispatches — it does not apply to this skill. Do not ask the canonical 3-question preflight here: it does not exist for this lane.
 
-> **Proporcionalidad**: para un cambio chico y ya entendido, las fases de abajo corren en una sola pasada (explorá → implementá → cerrá) sin pausas ceremoniales — la separación kickoff/start existe para dar un punto de review/handoff entre "qué se va a hacer" y "hacerlo", igual que en el par `mala-pata-loop`/`mala-pata-loop-start`, no para forzar burocracia en lo chico.
+> **Proportionality**: for a small, already-understood change, the phases below run in a single pass (explore → implement → close) without ceremonial pauses — the kickoff/start separation exists to give a review/handoff point between "what is going to be done" and "doing it", same as in the `mala-pata-loop`/`mala-pata-loop-start` pair, not to force bureaucracy on small things.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, do not reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `gentle-ai` — motor ODD + RDD por commit. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
-  - `serena` — explorar y editar código. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el kickoff en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Mandatory** (no fallback — if missing, STOP and ask to install it, do not start):
+  - `gentle-ai` — ODD engine + RDD per commit. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `codegraph` — code graph (anchoring and structure). Fallback: grep/Read. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — explore and edit code. Fallback: codegraph/grep. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `engram` — persistent memory and continuity pointer. Fallback: continue without a pointer; the kickoff file is the source. Install: comes with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Reglas duras
+## Hard rules
 
-> **#1 — SIEMPRE tu propio worktree + tu propia rama nueva. NO es negociable y el kickoff NO lo puede override.** organic corre en un worktree DEDICADO a este change, sobre una rama NUEVA `<tipo>/<change-name>` creada off la `base`. **NUNCA trabajes in-place sobre una rama integradora/compartida ni reuses el worktree de otra feature — aunque el kickoff diga `branch: <integradora>` o `worktree: <reusar/existente>`.** Si el kickoff dice eso, está MAL: derivá `<tipo>/<change-name>` off la base declarada, creá un worktree fresco y propio, y avisá en una línea que corregiste el kickoff. La **base** sí sale del kickoff tal cual (puede ser `main`/`development` o una feature en curso — branchás off ella y consolidás al merge en el cierre; lo que NUNCA se reusa es el worktree/rama de trabajo). **Excepción de resume**: si ya existe el worktree PROPIO de ESTE change (mismo change-name) de una corrida anterior, reusá ESE. Si el kickoff no trae `base` completa, PARÁ y pedila al orquestador.
-> **#2 — RDD vive acá, por work-unit commit.** Tras cada commit, si RDD está on, corré `gentle-ai review assess` y seguí el plan nativo (ver ODD protocol). NO es un gate al final — es **per-commit**.
-> **#3 — Rutas absolutas SIEMPRE** (la cwd se resetea entre comandos a tu dir base, que suele ser el repo principal): `git -C <ABS-worktree> …`, nunca comandos pelados; antes de CUALQUIER escritura/commit, `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main.
-> **#4 — No implementes antes de Explorar y Clasificar.** El plan de fases de abajo va en orden: worktree → explorar → clasificar → (track si substancial) → implementar. No saltes a escribir código "para ir resolviendo" antes de esos pasos, aunque el cambio te parezca chico y obvio.
+> **#1 — ALWAYS your own worktree + your own new branch. It is NOT negotiable and the kickoff CANNOT override it.** organic runs in a worktree DEDICATED to this change, on a NEW branch `<type>/<change-name>` created off the `base`. **NEVER work in-place on an integration/shared branch nor reuse another feature's worktree — even if the kickoff says `branch: <integration>` or `worktree: <reuse/existing>`.** If the kickoff says that, it is WRONG: derive `<type>/<change-name>` off the declared base, create a fresh worktree of your own, and say in one line that you corrected the kickoff. The **base** does come from the kickoff as-is (it may be `main`/`development` or a feature in progress — you branch off it and consolidate at merge on close; what is NEVER reused is the working worktree/branch). **Resume exception**: if ESTE change's OWN worktree (same change-name) already exists from a previous run, reuse THAT one. If the kickoff does not carry a complete `base`, STOP and ask the orchestrator for it.
+> **#2 — RDD lives here, per work-unit commit.** After each commit, if RDD is on, run `gentle-ai review assess` and follow the native plan (see ODD protocol). It is NOT a gate at the end — it is **per-commit**.
+> **#3 — Absolute paths ALWAYS** (the cwd resets between commands to your base dir, which is usually the main repo): `git -C <ABS-worktree> …`, never bare commands; before ANY write/commit, `git -C <ABS-worktree> rev-parse --show-toplevel` must return the worktree, not main.
+> **#4 — Do not implement before Exploring and Classifying.** The phase plan below goes in order: worktree → explore → classify → (track if substantial) → implement. Do not jump to writing code "to figure it out as you go" before those steps, even if the change seems small and obvious.
 
-## Paso 1 — Cargar el kickoff + contexto de engram
+## Step 1 — Load the kickoff + engram context
 
-1. La entrada es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-organic` escribió en `mala-pata/kickoffs/<change-name>.md`, dentro del repo). Si no empieza con `/` o el archivo no existe → **PARÁ** y pedí la ruta correcta. No inventes el contexto.
-2. `Read` completo: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`) y cuerpo (Qué, Why, Done, Decisiones ya tomadas, Riesgo, Dónde-hint).
-3. Si `route` no es `organic` → **PARÁ**: este kickoff no es de este skill (probablemente es un kickoff de `/mala-pata-loop`, que usa `/mala-pata-loop-start`).
-4. `mem_search("odd/<change_name>/kickoff")` solo para confirmar el puntero — no es bloqueante si falla, el archivo ya es la fuente de verdad.
+1. The input is an **absolute path to an `.md` file** (the one `/mala-pata-organic` wrote in `mala-pata/kickoffs/<change-name>.md`, inside the repo). If it does not start with `/` or the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
+2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`) and body (What, Why, Done, Decisions already made, Risk, Where-hint).
+3. If `route` is not `organic` → **STOP**: this kickoff is not for this skill (it is probably a `/mala-pata-loop` kickoff, which uses `/mala-pata-loop-start`).
+4. `mem_search("odd/<change_name>/kickoff")` only to confirm the pointer — it is not blocking if it fails, the file is already the source of truth.
 
-## Paso 2 — Worktree + base (ODD Fase 1 de la capa mala-pata — Regla dura #1)
+## Step 2 — Worktree + base (ODD Phase 1 of the mala-pata layer — Hard rule #1)
 
-1. **Worktree + rama SIEMPRE propios (Regla dura #1) — el kickoff NO lo override.** La rama de trabajo es `<tipo>/<change-name>` (nueva, del change-name; nunca una integradora) y el worktree es el dir dedicado `<ABS-repo>-worktrees/<change-name>`. **¿Ya existe ESE worktree propio** (mismo change-name) de una corrida anterior y estás en él? → resume: saltá al punto 4. Si el kickoff apunta a un worktree/rama compartida (otra feature o una integradora) → ignoralo, usá el propio y avisá en una línea que corregiste el kickoff.
-2. Si el worktree propio no existe → creálo off la `base` del kickoff (la base sí sale del kickoff tal cual; puede ser `main`/`development` o una feature en curso):
+1. **Worktree + branch ALWAYS your own (Hard rule #1) — the kickoff does NOT override it.** The working branch is `<type>/<change-name>` (new, from the change-name; never an integration branch) and the worktree is the dedicated dir `<ABS-repo>-worktrees/<change-name>`. **Does THAT own worktree already exist** (same change-name) from a previous run and are you in it? → resume: skip to point 4. If the kickoff points to a shared worktree/branch (another feature or an integration branch) → ignore it, use your own and say in one line that you corrected the kickoff.
+2. If your own worktree does not exist → create it off the kickoff's `base` (the base does come from the kickoff as-is; it may be `main`/`development` or a feature in progress):
    ```bash
-   git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <tipo>/<change-name> <base-del-kickoff>
+   git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <type>/<change-name> <base-from-kickoff>
    ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>-worktrees/<change-name>/node_modules
    # (ajustar symlinks al stack real del proyecto)
    ```
-3. **Rutas ABSOLUTAS SIEMPRE** (Regla dura #3) — todo `git`/`npm`/lectura/escritura referencia el worktree por ruta absoluta (`git -C <ABS-worktree> …`, `npm --prefix <ABS-worktree> …`). Antes de cualquier escritura: `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree.
-3.5. **Chequeo de worktree desfasado (una línea, antes de operar)**: confirmá que el worktree está en su path canónico `<ABS-repo>-worktrees/<change-name>` y que `git worktree list` lo muestra ahí, resolviendo en disco. Si el id registrado != el folder, o el path no resuelve (alguien lo renombró con `mv`), avisá y ofrecé `git worktree repair <path>` (o `git worktree prune` si se borró) antes de seguir. **NUNCA uses `mv` para renombrar un worktree** — usá `git worktree move`.
-4. **Init guard**: `mem_search("sdd-init/{project}")` — quedate solo con el ítem EXACTO. Si no existe → avisá al orquestador; no corras el init acá (`/mala-pata-organic` ya lo garantiza). Con el ítem exacto, confirmá `strict_tdd` contra el `tdd_mode` del kickoff — si difieren, el de `sdd-init` manda (es la fuente en vivo).
+3. **ABSOLUTE paths ALWAYS** (Hard rule #3) — every `git`/`npm`/read/write references the worktree by absolute path (`git -C <ABS-worktree> …`, `npm --prefix <ABS-worktree> …`). Before any write: `git -C <ABS-worktree> rev-parse --show-toplevel` must return the worktree.
+3.5. **Drifted worktree check (one line, before operating)**: confirm that the worktree is at its canonical path `<ABS-repo>-worktrees/<change-name>` and that `git worktree list` shows it there, resolving on disk. If the registered id != the folder, or the path does not resolve (someone renamed it with `mv`), warn and offer `git worktree repair <path>` (or `git worktree prune` if it was deleted) before continuing. **NEVER use `mv` to rename a worktree** — use `git worktree move`.
+4. **Init guard**: `mem_search("sdd-init/{project}")` — keep only the EXACT item. If it does not exist → warn the orchestrator; do not run the init here (`/mala-pata-organic` already guarantees it). With the exact item, confirm `strict_tdd` against the kickoff's `tdd_mode` — if they differ, the one from `sdd-init` wins (it is the live source).
 
-## Paso 3 — Explorar + resolver incertidumbre (ODD 2-3 — **acá se descubre el Dónde**)
+## Step 3 — Explore + resolve uncertainty (ODD 2-3 — **this is where the Where is discovered**)
 
-Explorá el código y los requisitos **proporcional al pedido** antes de escribir una línea. El kickoff trae un `Dónde (hint opcional)` — puede estar vacío o ser solo una pista; **este paso es el que lo confirma o lo completa**, nunca una precondición previa. Registrá los archivos/módulos tocados: van al feature-doc (Paso 5) si el trabajo es substancial, o quedan en el resumen de cierre si es chico.
+Explore the code and requirements **proportionally to the request** before writing a line. The kickoff carries a `Where (optional hint)` — it may be empty or just a hint; **this step is what confirms or completes it**, never a prior precondition. Record the files/modules touched: they go in the feature-doc (Step 5) if the work is substantial, or stay in the closing summary if it is small.
 
-Research opcional solo para una **incertidumbre nombrada**; 1 pregunta al humano solo para una **decisión de producto real** (después pará y esperá); a lo sumo **un** assumption-challenge read-only para una premisa de alto impacto. No inventes alcance sobre el Qué/Done/Decisiones que ya trae el kickoff — esos ya pasaron el gate en `/mala-pata-organic`.
+Optional research only for a **named uncertainty**; 1 question to the human only for a **real product decision** (then stop and wait); at most **one** read-only assumption-challenge for a high-impact premise. Do not invent scope beyond the What/Done/Decisions the kickoff already carries — those already passed the gate in `/mala-pata-organic`.
 
-## Paso 4 — Clasificar (ODD 4)
+## Step 4 — Classify (ODD 4)
 
-**Substancial** = 2+ pasos de implementación con sentido, o progreso que valga recuperar tras una interrupción. **Chico y entendido** = queda chico, sin artefactos durables — seguí directo al Paso 6.
+**Substantial** = 2+ meaningful implementation steps, or progress worth recovering after an interruption. **Small and understood** = stays small, no durable artifacts — go straight on to Step 6.
 
-## Paso 5 — Track (ODD 5 — solo si substancial)
+## Step 5 — Track (ODD 5 — only if substantial)
 
-Antes del primer write: creá `mala-pata/odd/<change_name>.md` + su mirror en engram `odd/<change_name>/tasks` (automático, sin pedir permiso de tasks/storage). **El `Why` del kickoff FLUYE al feature-doc** (sección de motivación/contexto). Avisá en **1 línea** qué feature-doc creaste y cuántas tasks tiene. (Contenido y contrato del doc: ODD protocol del CLAUDE.md.)
+Before the first write: create `mala-pata/odd/<change_name>.md` + its engram mirror `odd/<change_name>/tasks` (automatic, without asking permission for tasks/storage). **The kickoff's `Why` FLOWS into the feature-doc** (motivation/context section). Say in **1 line** which feature-doc you created and how many tasks it has. (Content and contract of the doc: ODD protocol in the CLAUDE.md.)
 
-## Paso 6 — Implementar task-by-task (ODD 6)
+## Step 6 — Implement task-by-task (ODD 6)
 
-Por cada task: la **topología más chica** — direct inline (1-3 archivos ya entendidos) / delegated direct (entender 4+ o escribir 2+ no triviales) — con el **modo TDD del proyecto** (`strict_tdd` de sdd-init) y los checks aplicables. Marcá la task solo tras **observar** su resultado + checks; actualizá el feature-doc y el mirror.
-- **Cada task cierra con ≥1 work-unit commit en la feature branch**, con tests+docs junto al comportamiento, Conventional Commit; registrá el commit en el feature-doc como evidencia.
-- **RDD por commit** (Regla dura #2): tras cada work-unit commit, si RDD on → `gentle-ai review assess --cwd <ABS-worktree> --agent claude-code --base-ref <último boundary revisado> --committed-only --json`; leé `review_due`; si es true, ejecutá **verbatim** el `next_transition.command` que devuelve; el boundary avanza al acknowledgear. `false` → registrá `review_due_reason` y seguí. **El detalle completo (tiers, consent medio/alto, continuaciones) vive en el ODD protocol del CLAUDE.md — no lo reimplementes.**
-- **Delivery slicing**: forecast ~400 líneas autoradas; estrategia `ask-on-risk` (default) / `auto-chain` / `single-pr`; resolvé los skills `work-unit-commits` y `chained-pr` por nombre de registro antes de armar PRs.
+For each task: the **smallest topology** — direct inline (1-3 already-understood files) / delegated direct (understand 4+ or write 2+ non-trivial) — with the **project's TDD mode** (`strict_tdd` from sdd-init) and the applicable checks. Check off the task only after **observing** its result + checks; update the feature-doc and the mirror.
+- **Each task closes with ≥1 work-unit commit on the feature branch**, with tests+docs alongside the behavior, Conventional Commit; record the commit in the feature-doc as evidence.
+- **RDD per commit** (Hard rule #2): after each work-unit commit, if RDD is on → `gentle-ai review assess --cwd <ABS-worktree> --agent claude-code --base-ref <last reviewed boundary> --committed-only --json`; read `review_due`; if it is true, run **verbatim** the `next_transition.command` it returns; the boundary advances on acknowledgement. `false` → record `review_due_reason` and continue. **The full detail (tiers, medium/high consent, continuations) lives in the CLAUDE.md ODD protocol — do not reimplement it.**
+- **Delivery slicing**: forecast ~400 authored lines; strategy `ask-on-risk` (default) / `auto-chain` / `single-pr`; resolve the `work-unit-commits` and `chained-pr` skills by registry name before building PRs.
 
-## Paso 7 — Cerrar (ODD 7 + cierre mala-pata)
+## Step 7 — Close (ODD 7 + mala-pata close)
 
-Reportá el **resultado verificado** + todo check fallado/skippeado/pendiente + próximo paso. Después, el cierre mala-pata: reusá de `/mala-pata-loop-start` las sub-fases **4.1 (reporte), 4.1-bis (re-verificar/renumerar migración si tocaste una), **4.1-ter (smoke test con datos sembrados — GATE, solo si aplica)**, 4.2 (destino PR/merge con GATE), 4.4 (CI proactivo), 4.5 (limpieza con GATE)** — **NO la 4.3** (esa ya no existe en el ciclo SDD; RDD ya corrió por commit acá, en el Paso 6). **El `Why` del kickoff FLUYE al body del PR** (sección de motivación).
-**Excepción de limpieza** si trabajaste con commits incrementales DENTRO del worktree de una feature en curso: esa rama/worktree la cierra su propio ciclo, no organic-start — solo limpiás lo que este skill creó.
+Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data — GATE, only if applicable)**, 4.2 (PR/merge destination with GATE), 4.4 (proactive CI), 4.5 (cleanup with GATE)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
+**Cleanup exception** if you worked with incremental commits INSIDE the worktree of a feature in progress: that branch/worktree is closed by its own cycle, not organic-start — you only clean up what this skill created.
 
-## Paso 8 — Tabla final (OBLIGATORIO)
+## Step 8 — Final table (MANDATORY)
 
-Mismo formato que `/mala-pata-loop-start` Paso 5: tabla Markdown, un hito por fila, emoji + evidencia concreta. Filas típicas (solo las que apliquen):
+Same format as `/mala-pata-loop-start` Step 5: Markdown table, one milestone per row, status (plain text, no emoji) + concrete evidence. Typical rows (only those that apply):
 
-| Hito | Estado |
+| Milestone | Status |
 |---|---|
-| Autorización | cambio autorizado / read-only |
+| Authorization | change authorized / read-only |
 | Worktree + base | `<branch>` off `<base>` |
-| Explore (Dónde) | `<n>` archivos/módulos tocados |
-| Feature-doc (si substancial) | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
-| Apply (TDD si aplica) | Red-Green-Refactor, `<n>` tests |
-| Smoke test (fixtures + confirmación) | funcionalidad OK · o `N/A (no aplicó)` |
+| Explore (Where) | `<n>` files/modules touched |
+| Feature-doc (if substantial) | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
+| Apply (TDD if applies) | Red-Green-Refactor, `<n>` tests |
+| Smoke test (fixtures + confirmation) | functionality OK · or `N/A (did not apply)` |
 | Work-unit commits | `<n>` commits · RDD assess: `<granted/passive/…>` |
-| PR `#<n>` → `<branch>` | MERGEADO (merge commit `<sha>`) |
-| CI post-merge | VERDE |
-| Cleanup (worktree + rama) | Hecho |
+| PR `#<n>` → `<branch>` | MERGED (merge commit `<sha>`) |
+| CI post-merge | GREEN |
+| Cleanup (worktree + branch) | Done |
 
-## Persistencia
+## Persistence
 
-Para trabajo **substancial**, el **feature-doc** (`mala-pata/odd/<change_name>.md` + mirror engram `odd/<change_name>/tasks`) ES la persistencia de ODD. Para trabajo **chico** sin feature-doc, un cierre liviano opcional (`mem_save` topic `odd/<change_name>/organic`) si querés continuidad futura.
+For **substantial** work, the **feature-doc** (`mala-pata/odd/<change_name>.md` + engram mirror `odd/<change_name>/tasks`) IS ODD's persistence. For **small** work with no feature-doc, an optional lightweight close (`mem_save` topic `odd/<change_name>/organic`) if you want future continuity.

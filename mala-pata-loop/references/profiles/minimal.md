@@ -1,33 +1,33 @@
-# Perfil MINIMAL — fix chico / refactor conocido
+# MINIMAL profile — small fix / known refactor
 
-> **MINIMAL ≠ `/mala-pata-organic`** (decisión deliberada, no duplicación): MINIMAL
-> **corre el ciclo SDD** — versión liviana, pero con artefactos, fases y gates
-> (trazabilidad en engram). Organic NO hace SDD en absoluto: una sola pasada
-> directa sin artefactos de planeación. Si el cambio chico amerita rastro SDD →
-> MINIMAL; si no amerita SDD → organic.
+> **MINIMAL ≠ `/mala-pata-organic`** (deliberate decision, not duplication): MINIMAL
+> **runs the SDD cycle** — lightweight version, but with artifacts, phases and gates
+> (traceability in engram). Organic does NOT do SDD at all: a single direct pass
+> without planning artifacts. If the small change merits an SDD trail →
+> MINIMAL; if it does not merit SDD → organic.
 
-## Cuándo elegir MINIMAL
-- Fix de bug puntual (1-3 archivos).
-- Refactor mecánico (rename, mover, extraer).
-- Migración de tipo (agregar campo, actualizar tipos generados desde contrato).
-- Fix de regresión en módulo que se tocó esta semana.
-- Cambio sin lógica de negocio nueva.
+## When to choose MINIMAL
+- Targeted bug fix (1-3 files).
+- Mechanical refactor (rename, move, extract).
+- Type migration (add a field, update types generated from the contract).
+- Regression fix in a module touched this week.
+- Change without new business logic.
 
-## Ajustes respecto al método base
+## Adjustments relative to the base method
 
-- **Fase 0 componentes**: obligatoria — audit REUSA/ADAPTA/NUEVO **NO se salta**. Auto-approve si audit = 0 NUEVOS. **Si el audit marca ≥1 componente NUEVO, escalar a LITE** — no seguir en MINIMAL con componentes nuevos.
-- **TDD granularidad**: **por feature**. Nunca por task en MINIMAL.
-- **Explore**: skipeable si el módulo se tocó esta semana. Sino explore mínimo (1 pass grep).
-- **Spec + Design**: **fusionados y cortos** (target 1-2 páginas markdown).
-- **sdd-preview**: típicamente 0 reviewers vía su propio self-assessment (change mecánico, sin señales de riesgo).
-- **Verify**: liviano — suite + build. Sin smoke live obligatorio salvo que toque UI visible. (Default por tamaño: sube a normal si `sdd-preview` detectó señales de riesgo — ver `_base.md`.)
-- **Apply**: 1 solo batch (sin `/clear` entre tasks).
-- **Storybook / MSW / fixtures**: solo si el change toca UI.
+- **Phase 0 components**: mandatory — the REUSA/ADAPTA/NUEVO audit is **NOT skipped**. Auto-approve if audit = 0 NEW. **If the audit marks ≥1 NEW component, escalate to LITE** — do not continue in MINIMAL with new components.
+- **TDD granularity**: **per feature**. Never per task in MINIMAL.
+- **Explore**: skippable if the module was touched this week. Otherwise minimal explore (1 grep pass).
+- **Spec + Design**: **merged and short** (target 1-2 markdown pages).
+- **sdd-preview**: typically 0 reviewers via its own self-assessment (mechanical change, no risk signals).
+- **Verify**: light — suite + build. No mandatory live smoke unless it touches visible UI. (Default by size: rises to normal if `sdd-preview` detected risk signals — see `_base.md`.)
+- **Apply**: a single batch (no `/clear` between tasks).
+- **Storybook / MSW / fixtures**: only if the change touches UI.
 
-## Nudges de `/clear`
+## `/clear` nudges
 
-- Al gusto del humano. En un MINIMAL de verdad, el ciclo completo entra en una sesión sin necesidad de `/clear`.
+- At the human's discretion. In a true MINIMAL, the whole cycle fits in one session with no need for `/clear`.
 
-## Costo orden de magnitud
+## Cost order of magnitude
 
 ~70K tokens end-to-end.

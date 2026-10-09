@@ -1,92 +1,92 @@
-# Formato FIJO de la torre de control (contrato inmutable)
+# FIXED control tower format (immutable contract)
 
-> Este formato NO cambia. Mismo banner, mismas 7 columnas en el mismo orden,
-> mismo léxico de semáforo, mismo orden de filas. Es memoria mecánica: el
-> humano reacciona sin releer.
+> This format does NOT change. Same banner, same 7 columns in the same order,
+> same status-light lexicon, same row order. It is mechanical memory: the
+> human reacts without rereading.
 
-## 1. Banner de frescura (obligatorio, siempre arriba)
+## 1. Freshness banner (mandatory, always at the top)
 
 ```
-🗼 CONTROL TOWER · <n> SDD · <YYYY-MM-DD HH:MM>
-Fresh: fetched <repo>@<sha7>[ · <repo2>@<sha7>] · integración=<branch> · memoria live · READ-ONLY
+CONTROL TOWER · <n> SDD · <YYYY-MM-DD HH:MM>
+Fresh: fetched <repo>@<sha7>[ · <repo2>@<sha7>] · integration=<branch> · live memory · READ-ONLY
 ```
 
-Prueba visual de que NO es cache: los SHA son los de la branch de integración
-recién traída en esta corrida.
+Visual proof that it is NOT cache: the SHAs are those of the integration branch
+freshly fetched in this run.
 
-## 2. Tabla (exactamente estas 7 columnas, este orden)
+## 2. Table (exactly these 7 columns, this order)
 
-| # | 🚦 | SDD | Fase | Git | Depende | 👉 Próxima acción |
-|---|----|-----|------|-----|---------|-------------------|
+| # | Light | SDD | Phase | Git | Depends | Next action |
+|---|-------|-----|-------|-----|---------|-------------|
 
-- **#** — índice.
-- **🚦** — un solo símbolo del léxico cerrado (§3).
-- **SDD** — change-name en `code`.
-- **Fase** — fase más avanzada alcanzada del pipeline (§4), con progreso si es
-  parcial. Ej: `preview ✅`, `apply 12/18`, `verify ✅`.
-- **Git** — realidad de branch/merge: `sin branch` · `branch viva` · `worktree`
-  · `PR#N mergeado` · `en <integr>` · `stale +A/-B` (adelante/atrás de integr).
-- **Depende** — otro SDD de la lista del que depende (+ `⛔` si ese aún no
-  está mergeado) o `—`.
-- **👉 Próxima acción** — UN solo paso imperativo (qué hay que hacer ya).
+- **#** — index.
+- **Light** — a single word from the closed lexicon (§3).
+- **SDD** — change-name in `code`.
+- **Phase** — most advanced phase reached in the pipeline (§4), with progress if
+  partial. E.g.: `preview OK`, `apply 12/18`, `verify OK`.
+- **Git** — branch/merge reality: `no branch` · `live branch` · `worktree`
+  · `PR#N merged` · `in <integr>` · `stale +A/-B` (ahead/behind integr).
+- **Depends** — another SDD in the list it depends on (+ `BLOCKED` if that one is not yet
+  merged) or `—`.
+- **Next action** — ONE single imperative step (what has to be done now).
 
-## 3. Léxico del semáforo (cerrado — nunca agregar símbolos nuevos)
+## 3. Status-light lexicon (closed — never add new symbols)
 
-| 🚦 | Estado | El humano reacciona |
-|----|--------|---------------------|
-| 🔴 | **Acción tuya YA** — listo p/PR, o apply/verify hecho sin cerrar | hacé el paso |
-| 🟡 | **Gate humano** — espera tu aprobación/decisión (preview, o verify con hallazgos) | revisá y aprobá |
-| 🟠 | **Parqueado/bloqueado** — depende de otro SDD sin merge, branch stale, o pausa | desbloqueá |
-| ⚫ | **Sin instrucción** — ciclo trabado, no hay próximo paso claro | definí qué sigue |
-| 🟢 | **En curso** — avanza normal, próxima fase auto-corrible | corré la próxima fase |
-| ✅ | **Mergeado, falta limpieza** (🧹) — código en integración pero worktree/branch vivos | limpiá |
-| ✔️ | **Cerrado** — mergeado + limpio | nada |
-| ❌ | **Cancelado** — state = ABANDONADO | nada |
+| Light | State | The human reacts |
+|-------|-------|------------------|
+| RED | **Your action NOW** — ready for PR, or apply/verify done without closing | do the step |
+| YELLOW | **Human gate** — awaiting your approval/decision (preview, or verify with findings) | review and approve |
+| ORANGE | **Parked/blocked** — depends on another SDD without merge, stale branch, or pause | unblock |
+| BLACK | **No instruction** — cycle stuck, no clear next step | define what is next |
+| GREEN | **In progress** — advances normally, next phase auto-runnable | run the next phase |
+| MERGED | **Merged, cleanup pending** (CLEANUP) — code in integration but worktree/branch alive | clean up |
+| CLOSED | **Closed** — merged + clean | nothing |
+| CANCELLED | **Cancelled** — state = ABANDONED | nothing |
 
-## 4. Pipeline de fases (orden canónico del ciclo)
+## 4. Phase pipeline (canonical cycle order)
 
 ```
 kickoff → explore → propose → spec → design → tasks → preview(gate)
-→ apply → verify → archive → PR → merge → limpieza
+→ apply → verify → archive → PR → merge → cleanup
 ```
 
-## 5. Orden de filas (SIEMPRE por urgencia)
+## 5. Row order (ALWAYS by urgency)
 
 ```
-🔴 → 🟡 → 🟠 → ⚫ → 🟢 → ✅ → ✔️ → ❌
+RED → YELLOW → ORANGE → BLACK → GREEN → MERGED → CLOSED → CANCELLED
 ```
 
-El ojo del humano va directo a lo de arriba.
+The human's eye goes straight to what is on top.
 
-## 6. Bloque de evidencia (debajo de la tabla, obligatorio)
+## 6. Evidence block (below the table, mandatory)
 
-Una línea por SDD, para que el estado sea auditable:
-
-```
-Evidencia:
-- <SDD> — memoria: <#id/topic_key> · git: <branch|sha7|PR#N> · <base de 1 línea del veredicto>
-```
-
-## Ejemplo (ilustra el formato; los datos son de muestra)
+One line per SDD, so the state is auditable:
 
 ```
-🗼 CONTROL TOWER · 5 SDD · 2026-07-30 17:40
-Fresh: fetched <repo>@3f090a3 · integración=development · memoria live · READ-ONLY
+Evidence:
+- <SDD> — memory: <#id/topic_key> · git: <branch|sha7|PR#N> · <1-line basis for the verdict>
 ```
 
-| # | 🚦 | SDD | Fase | Git | Depende | 👉 Próxima acción |
-|---|----|-----|------|-----|---------|-------------------|
-| 1 | 🔴 | `cartas-datos-instancia-firme` | apply ✅ 18/18 | branch viva, sin PR | — | verify → archive → PR |
-| 2 | 🟡 | `gate-verde` | preview ✅ | worktree | — | gate humano: aprobar apply |
-| 3 | 🟠 | `foo-bar` | tasks ✅ | sin branch | #1 ⛔ | espera merge de #1 |
-| 4 | ✅ | `mora-actuarial` | merge ✅ PR#426 | en development | — | 🧹 limpiar worktree/branch |
-| 5 | ❌ | `reintegro-pila` | cancelado (preview) | — | — | ninguna |
+## Example (illustrates the format; the data is sample data)
 
 ```
-Evidencia:
-- cartas-datos-instancia-firme — memoria: sdd/.../apply-progress #7311 · git: feature/... (no en development) · 18/18 tasks, sin PR
-- gate-verde — memoria: sdd/.../preview #… · git: worktree presente · preview aprobado sin apply
-- foo-bar — memoria: sdd/.../tasks #… · git: sin branch · depende de #1 no mergeado
-- mora-actuarial — memoria: archive-report #7078 · git: PR#426 en development, branch borrada · mergeado
-- reintegro-pila — memoria: state #7284 = ABANDONADO · git: sin branch · cancelado en preview
+CONTROL TOWER · 5 SDD · 2026-07-30 17:40
+Fresh: fetched <repo>@3f090a3 · integration=development · live memory · READ-ONLY
+```
+
+| # | Light | SDD | Phase | Git | Depends | Next action |
+|---|-------|-----|-------|-----|---------|-------------|
+| 1 | RED | `cartas-datos-instancia-firme` | apply OK 18/18 | live branch, no PR | — | verify → archive → PR |
+| 2 | YELLOW | `gate-verde` | preview OK | worktree | — | human gate: approve apply |
+| 3 | ORANGE | `foo-bar` | tasks OK | no branch | #1 BLOCKED | waiting for merge of #1 |
+| 4 | MERGED | `mora-actuarial` | merge OK PR#426 | in development | — | CLEANUP: remove worktree/branch |
+| 5 | CANCELLED | `reintegro-pila` | cancelled (preview) | — | — | none |
+
+```
+Evidence:
+- cartas-datos-instancia-firme — memory: sdd/.../apply-progress #7311 · git: feature/... (not in development) · 18/18 tasks, no PR
+- gate-verde — memory: sdd/.../preview #… · git: worktree present · preview approved without apply
+- foo-bar — memory: sdd/.../tasks #… · git: no branch · depends on #1 not merged
+- mora-actuarial — memory: archive-report #7078 · git: PR#426 in development, branch deleted · merged
+- reintegro-pila — memory: state #7284 = ABANDONED · git: no branch · cancelled at preview
 ```

@@ -1,154 +1,156 @@
 ---
 name: mala-pata-organic
-description: Genera el kickoff de un cambio ODD (Organic Driven Development). Se invoca DESPUÉS de que el carril ya fue decidido — normalmente vía `/mala-pata-triage`, o directo cuando el humano ya sabe que es organic. Asume route=organic y captura/confirma el formato estricto (Qué, Why, Done, Decisiones, Riesgo) — si triage pasó un borrador, lo confirma/completa en vez de arrancar de cero. Si el formato queda completo, escribe el kickoff dentro del repo (`mala-pata/kickoffs/`, versionado) con un puntero de una línea en engram. NO ejecuta el ciclo ODD — el ejecutor es `/mala-pata-organic-start <ruta-al-kickoff>`. Red de seguridad: si al capturar los campos aparece que `Decisiones` está sin resolver, rebota a `/mala-pata-loop` — pero decidir el carril ya no es su trabajo primario.
+description: Generates the kickoff of an ODD (Organic Driven Development) change. It is invoked AFTER the lane has already been decided — normally via `/mala-pata-triage`, or directly when the human already knows it is organic. It assumes route=organic and captures/confirms the strict format (What, Why, Done, Decisions, Risk) — if triage passed a draft, it confirms/completes it instead of starting from scratch. If the format ends up complete, it writes the kickoff inside the repo (`mala-pata/kickoffs/`, versioned) with a one-line pointer in engram. It does NOT run the ODD cycle — the executor is `/mala-pata-organic-start <path-to-kickoff>`. Safety net: if while capturing the fields it turns out that `Decisions` is unresolved, it bounces to `/mala-pata-loop` — but deciding the lane is no longer its primary job.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.6.0"
+  version: "3.7.0"
 ---
 
-# /mala-pata-organic — Generador de kickoff ODD (route ya decidido)
+# /mala-pata-organic — ODD kickoff generator (route already decided)
 
-Pedido del usuario: **entrada entregada por el CLI** (o el borrador de campos que pasó `/mala-pata-triage` al decidir organic)
+User request: **input delivered by the CLI** (or the draft of fields that `/mala-pata-triage` passed when it decided organic)
 
-Tu único trabajo es convertir ese pedido en un **kickoff ODD** — un archivo markdown, guardado dentro del repo (`mala-pata/kickoffs/`, versionado), que otro agente (`/mala-pata-organic-start`) va a consumir para CORRER el ciclo. Es a ODD lo que `/mala-pata-loop` es al SDD: generás el contexto, no lo ejecutás.
+Your only job is to turn that request into an **ODD kickoff** — a markdown file, saved inside the repo (`mala-pata/kickoffs/`, versioned), that another agent (`/mala-pata-organic-start`) will consume to RUN the cycle. It is to ODD what `/mala-pata-loop` is to SDD: you generate the context, you do not execute it.
 
-> **Asumís route=organic.** La decisión de carril (organic vs loop vs roadmap) la toma `/mala-pata-triage` ANTES de llegar acá. Si venís de triage, ya tenés un borrador de Qué/Why/Done/Decisiones/Riesgo — tu trabajo es **confirmarlo o completarlo**, no re-derivarlo desde cero. Si te invocaron directo (el humano ya sabía que era organic), hacé la misma captura desde el pedido crudo.
-> **NO ejecutás nada.** NO creás el worktree, NO explorás el código, NO escribís código, NO abrís PRs. Solo capturás/confirmás el formato y, si queda completo, escribís el kickoff.
-> El resultado es: (a) el kickoff listo para `/mala-pata-organic-start`, o (b) el rebote de red-de-seguridad a `/mala-pata-loop` si aparece que Decisiones no estaba resuelto, o (c) preguntas puntuales si falta un campo bloqueante.
+> **You assume route=organic.** The lane decision (organic vs loop vs roadmap) is made by `/mala-pata-triage` BEFORE getting here. If you come from triage, you already have a draft of What/Why/Done/Decisions/Risk — your job is to **confirm or complete it**, not re-derive it from scratch. If you were invoked directly (the human already knew it was organic), do the same capture from the raw request.
+> **You do NOT execute anything.** You do NOT create the worktree, do NOT explore the code, do NOT write code, do NOT open PRs. You only capture/confirm the format and, if it ends up complete, write the kickoff.
+> The result is: (a) the kickoff ready for `/mala-pata-organic-start`, or (b) the safety-net bounce to `/mala-pata-loop` if it turns out Decisions was not resolved, or (c) specific questions if a blocking field is missing.
 
-> **El protocolo ODD es la fuente de verdad.** Sus 7 pasos, el feature-doc, los work-unit commits, RDD por commit y el delivery slicing viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill no los duplica — el kickoff que generás es el insumo que `/mala-pata-organic-start` usa para seguirlos. Si el CLAUDE.md y este skill difieren en la mecánica de ODD, **manda el CLAUDE.md**.
+> **The ODD protocol is the source of truth.** Its 7 steps, the feature-doc, the work-unit commits, RDD per commit and the delivery slicing live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill does not duplicate them — the kickoff you generate is the input that `/mala-pata-organic-start` uses to follow them. If CLAUDE.md and this skill differ on ODD mechanics, **CLAUDE.md rules**.
 
-> **Organic usa workers de ODD (direct/delegated), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai (`gentle-ai sdd-preflight-hook`) solo intercepta dispatches `sdd-*` — no aplica ni a este skill ni a `/mala-pata-organic-start`. No inventes un gate de preflight acá: no existe para este carril.
+> **Organic uses ODD workers (direct/delegated), NEVER `sdd-*` agents.** gentle-ai's `PreToolUse:Agent` preflight (`gentle-ai sdd-preflight-hook`) only intercepts `sdd-*` dispatches — it applies neither to this skill nor to `/mala-pata-organic-start`. Do not invent a preflight gate here: it does not exist for this lane.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, don't reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `gentle-ai` — motor ODD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el kickoff en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Mandatory** (no fallback — if missing, STOP and ask to install it, do not start):
+  - `gentle-ai` — ODD engine. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `engram` — persistent memory and continuity pointer. Fallback: continue without the pointer; the kickoff file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory one is missing, do not continue.
 
-## Reglas duras
+## Hard rules
 
-> **#1 — Red de seguridad, no tu trabajo primario: si al capturar `Decisiones ya tomadas` te das cuenta de que está sin resolver** (arquitectura sin resolver, contrato/endpoint nuevo sin decidir, riesgo que amerita ciclo completo con preview), **no fuerces organic — rebotá a `/mala-pata-loop`**. Esto es un fallback: lo normal es que `/mala-pata-triage` ya haya filtrado esto antes de que llegues. El tamaño del cambio o el conteo de archivos NUNCA fuerza el loop — ODD maneja lo chico y lo **substancial**. **Pero primero distinguí**: si esa decisión es **decidible con una pregunta** (opciones conocidas, el humano elige), hacé esa pregunta y, una vez resuelta, **seguí en organic — NO rebotes**. Rebotá a `/mala-pata-loop` SOLO si la decisión **necesita diseño** (arquitecturas viables con tradeoffs a investigar, u opciones que no se saben sin explorar). El discriminador de loop no es "hay una decisión", es "la decisión necesita diseño".
-> **#2 — Base: proponé y confirmá, no crees nada.** La base sale de DONDE VIVE el código que se va a tocar (`main`/`development`, o una feature en curso). Proponé con tu razón en una línea ("el código vive en X") y esperá el OK antes de fijarla en el kickoff. Este skill NO crea el worktree — eso lo hace `/mala-pata-organic-start` con la base ya confirmada acá. **La rama de trabajo SIEMPRE es nueva `<tipo>/<change-name>` (nunca una integradora existente) y el `worktree` SIEMPRE es un dir nuevo por change (`<ABS-repo>-worktrees/<change-name>`) — nunca pongas `branch: <integradora>` ni `worktree: <reusar/existente>` en el kickoff. La base puede ser una feature en curso; la rama de trabajo no la reemplaza (organic-start branchea off la base en su propio worktree y consolida al merge).**
-> **#3 — El gate es sobre el formato, no sobre el tamaño.** Un cambio de 5 líneas con Qué/Done/Decisiones concretos pasa en una interacción de 10 segundos — una línea por campo alcanza. El gate rechaza lo SUB-especificado, no lo corto. Si estás pidiendo más de una línea por campo para un cambio chico, estás rearmando SDD adentro de organic: pará.
-> **#4 — Rutas absolutas SIEMPRE** en cualquier comando que muestres o dejes en el kickoff (`worktree:` es una ruta absoluta propuesta, nunca relativa).
+> **#1 — Safety net, not your primary job: if while capturing `Decisions already made` you realize it is unresolved** (unresolved architecture, a new contract/endpoint left undecided, risk that deserves a full cycle with preview), **do not force organic — bounce to `/mala-pata-loop`**. This is a fallback: normally `/mala-pata-triage` has already filtered this out before you arrive. The size of the change or the file count NEVER forces the loop — ODD handles the small and the **substantial**. **But first distinguish**: if that decision is **decidable with one question** (known options, the human chooses), ask that question and, once resolved, **stay in organic — do NOT bounce**. Bounce to `/mala-pata-loop` ONLY if the decision **needs design** (viable architectures with tradeoffs to research, or options that cannot be known without exploring). The loop discriminator is not "there is a decision", it is "the decision needs design".
+> **#2 — Base: propose and confirm, create nothing.** The base comes from WHERE THE CODE TO BE TOUCHED LIVES (`main`/`development`, or an in-progress feature). Propose it with your reason in one line ("the code lives in X") and wait for the OK before fixing it in the kickoff. This skill does NOT create the worktree — `/mala-pata-organic-start` does that with the base already confirmed here. **The working branch is ALWAYS a new `<type>/<change-name>` (never an existing integration branch) and the `worktree` is ALWAYS a new dir per change (`<ABS-repo>-worktrees/<change-name>`) — never put `branch: <integration>` nor `worktree: <reuse/existing>` in the kickoff. The base may be an in-progress feature; the working branch does not replace it (organic-start branches off the base in its own worktree and consolidates on merge).**
+> **#3 — The gate is about format, not size.** A 5-line change with concrete What/Done/Decisions passes in a 10-second interaction — one line per field is enough. The gate rejects the UNDER-specified, not the short. If you are asking for more than one line per field for a small change, you are rebuilding SDD inside organic: stop.
+> **#4 — Absolute paths ALWAYS** in any command you show or leave in the kickoff (`worktree:` is a proposed absolute path, never relative).
 
-## Fase 0 — Autorizar (ODD paso 1, read-only guard)
+## Phase 0 — Authorize (ODD step 1, read-only guard)
 
-¿El pedido autoriza un **cambio**? Investigación, explicación, review, auditoría, comparación, o propuesta/planeación = **read-only** salvo que el humano pida implementar u otra mutación explícita.
-- Read-only → inspeccioná/explicá/recomendá, pero **NO** generes kickoff, NO propongas worktree, NO avances de fase.
-- Intención ambigua o condicional → 1 pregunta y quedate read-only hasta la respuesta.
+Does the request authorize a **change**? Investigation, explanation, review, audit, comparison, or proposal/planning = **read-only** unless the human asks to implement or another explicit mutation.
+- Read-only → inspect/explain/recommend, but do **NOT** generate a kickoff, do NOT propose a worktree, do NOT advance phases.
+- Ambiguous or conditional intent → 1 question and stay read-only until the answer.
 
-Si el pedido autoriza cambio, seguí al gate.
+If the request authorizes a change, proceed to the gate.
 
-## Fase 1 — Capturar/confirmar el formato estricto (insumo del kickoff, no el ruteo)
+## Phase 1 — Capture/confirm the strict format (kickoff input, not the routing)
 
-El carril ya está decidido (route=organic) — esto no es más el gate que elige entre organic/loop/roadmap, eso ya lo hizo `/mala-pata-triage`. Acá **recolectás/confirmás** los campos que van a quedar en el kickoff. Si `/mala-pata-triage` te pasó un borrador, arrancás de ahí y confirmás con el humano en vez de inferir desde cero:
+The lane is already decided (route=organic) — this is no longer the gate that chooses between organic/loop/roadmap, `/mala-pata-triage` already did that. Here you **collect/confirm** the fields that will go in the kickoff. If `/mala-pata-triage` passed you a draft, you start from there and confirm with the human instead of inferring from scratch:
 
-| Campo | Bloquea | Qué prueba |
+| Field | Blocks | What it tests |
 |---|---|---|
-| **Qué** | SÍ | Objetivo = comportamiento/resultado observable y concreto. "Mejorar X" sin blanco concreto → FALLA. |
-| **Why** | NO | Motivación en 1 línea. Siempre se pide, nunca bloquea — pero FLUYE al feature-doc y al body del PR. |
-| **Done** | SÍ | Definición testeable = el CUÁNDO: "cuando X, pasa Y" o el check que lo prueba. |
-| **Decisiones ya tomadas** | SÍ | El approach/arquitectura está DECIDIDO o es obvio. |
-| **Riesgo** | NO (opcional) | Blast radius en una línea. |
-| **Dónde** | NUNCA bloquea | Es un OUTPUT de la fase Explore de `/mala-pata-organic-start`, no una precondición — en ODD explorás primero. El humano puede dejar una pista opcional, pero jamás bloquea. |
+| **What** | YES | Objective = concrete, observable behavior/result. "Improve X" with no concrete target → FAILS. |
+| **Why** | NO | Motivation in 1 line. Always asked, never blocks — but it FLOWS into the feature-doc and the PR body. |
+| **Done** | YES | Testable definition = the WHEN: "when X, Y happens" or the check that proves it. |
+| **Decisions already made** | YES | The approach/architecture is DECIDED or obvious. |
+| **Risk** | NO (optional) | Blast radius in one line. |
+| **Where** | NEVER blocks | It is an OUTPUT of the Explore phase of `/mala-pata-organic-start`, not a precondition — in ODD you explore first. The human may leave an optional hint, but it never blocks. |
 
-### Qué hacer con el resultado
+### What to do with the result
 
-- **Qué + Done + Decisiones concretos (confirmados)** → generá el kickoff organic (Fase 2).
-- **Cualquiera de los tres sigue en "no sé" al confirmar** → NO generes kickoff:
-  - **Decisiones falla** (recién se descubre acá que la arquitectura no estaba resuelta) → red de seguridad, Regla dura #1 → rebotá a **`/mala-pata-loop`** (SDD, con preview y design formal) (salvo que esa decisión sea **decidible con una pregunta**: hacé la pregunta y, resuelta, seguí en organic — loop es solo si necesita diseño).
-  - **Qué/Done están claros pero el alcance es enorme o cruza varios loops** → recomendá **`/mala-pata-roadmap`** (descomponer primero).
-  - **Solo Dónde es "no sé" y el resto está claro** → NO es motivo de rebote — es organic normal, vas a explorar en `/mala-pata-organic-start`.
+- **What + Done + Decisions concrete (confirmed)** → generate the organic kickoff (Phase 2).
+- **Any of the three still "don't know" on confirming** → do NOT generate a kickoff:
+  - **Decisions fails** (it is only discovered here that the architecture was not resolved) → safety net, Hard rule #1 → bounce to **`/mala-pata-loop`** (SDD, with preview and formal design) (unless that decision is **decidable with one question**: ask the question and, once resolved, stay in organic — loop only if it needs design).
+  - **What/Done are clear but the scope is huge or crosses several loops** → recommend **`/mala-pata-roadmap`** (decompose first).
+  - **Only Where is "don't know" and the rest is clear** → it is NOT a reason to bounce — it is normal organic, you will explore in `/mala-pata-organic-start`.
 
-### Proporcionalidad (no negociable, Regla dura #3)
+### Proportionality (non-negotiable, Hard rule #3)
 
-Un cambio chico = una línea por campo, ~10 segundos de llenar. El gate no pide un párrafo por campo — pide que cada campo bloqueante tenga un **contenido concreto**, sea largo o corto. No infles el kickoff de un fix de 5 líneas con secciones que no aportan: eso reconstruye SDD adentro de organic y le mata el carril rápido.
+A small change = one line per field, ~10 seconds to fill. The gate does not ask for a paragraph per field — it asks that each blocking field have **concrete content**, whether long or short. Do not inflate the kickoff of a 5-line fix with sections that add nothing: that rebuilds SDD inside organic and kills its fast lane.
 
-## Fase 2 — Generar el kickoff de organic (si la captura quedó completa)
+## Phase 2 — Generate the organic kickoff (if the capture ended up complete)
 
-1. Derivá un `change-name` corto en kebab-case.
-2. **Base — proponé y confirmá (Regla dura #2)**: de dónde vive el código (`main`/`development` o una feature en curso). Esperá el OK.
-3. **Tipo de rama — aconsejá y confirmá**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — nunca `sdd/`. El nombre completo va como `worktree` propuesto (ruta absoluta, `<ABS-repo>-worktrees/<change-name>`) — **no lo creás acá**, eso lo ejecuta `/mala-pata-organic-start`.
-4. **Init guard**: `mem_search("sdd-init/{project}")` (solo el ítem EXACTO). Si no existe → corré `sdd-init` primero para detectar stack y `strict_tdd`. Tomá `tdd_mode` de ahí para el frontmatter.
-5. **Idempotencia**: `mem_search("odd/<change-name>/kickoff")`. Si ya existe uno igual/parecido → ofrecé actualizar o cambiar nombre.
-6. Armá el kickoff con esta estructura (mismo mecanismo de persistencia que `/mala-pata-loop` — ver Fase 3):
+1. Derive a short `change-name` in kebab-case.
+2. **Base — propose and confirm (Hard rule #2)**: where the code lives (`main`/`development` or an in-progress feature). Wait for the OK.
+3. **Branch type — advise and confirm**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — never `sdd/`. The full name goes as the proposed `worktree` (absolute path, `<ABS-repo>-worktrees/<change-name>`) — you do **not create it here**, `/mala-pata-organic-start` executes that.
+4. **Init guard**: `mem_search("sdd-init/{project}")` (only the EXACT item). If it does not exist → run `sdd-init` first to detect the stack and `strict_tdd`. Take `tdd_mode` from there for the frontmatter.
+5. **Idempotency**: `mem_search("odd/<change-name>/kickoff")`. If one equal/similar already exists → offer to update or rename.
+6. Build the kickoff with this structure (same persistence mechanism as `/mala-pata-loop` — see Phase 3):
 
 ```markdown
 ---
 change_name: <change-name>
 project: <project>
 route: organic
-base: main|development|<feature-en-curso>   # confirmado con el humano — Regla dura #2
-branch: <tipo>/<change-name>                # tipo confirmado — nunca sdd/
-worktree: <ruta absoluta propuesta>          # <ABS-repo>-worktrees/<change-name> — organic-start lo crea, no este skill
-tdd_mode: <strict|standard>                  # de sdd-init/<project>
-smoke_test:                                  # ¿necesita prueba manual con datos sembrados tras apply? (lo confirma organic-start)
-  needed: auto                               # auto|yes|no — auto = organic-start propone y el humano confirma
-  data: <escenario/datos a sembrar, o "a definir">
+base: main|development|<feature-en-curso>   # confirmed with the human — Hard rule #2
+branch: <type>/<change-name>                # type confirmed — never sdd/
+worktree: <proposed absolute path>          # <ABS-repo>-worktrees/<change-name> — organic-start creates it, not this skill
+tdd_mode: <strict|standard>                  # from sdd-init/<project>
+smoke_test:                                  # does it need manual testing with seeded data after apply? (organic-start confirms)
+  needed: auto                               # auto|yes|no — auto = organic-start proposes and the human confirms
+  data: <scenario/data to seed, or "a definir">
 created_at: <ISO 8601>
 ---
 
 # Kickoff ODD: <change-name>
 
-## Qué
-<objetivo concreto y observable — una línea si el cambio es chico>
+## What
+<concrete, observable objective — one line if the change is small>
 
 ## Why
-<motivación en 1 línea — fluye al feature-doc y al PR>
+<motivation in 1 line — flows into the feature-doc and the PR>
 
 ## Done
-<definición testeable — "cuando X, pasa Y" o el check que lo prueba>
+<testable definition — "when X, Y happens" or the check that proves it>
 
-## Decisiones ya tomadas
-<approach/arquitectura decidido u obvio — confirmalo, no lo redecidas>
+## Decisions already made
+<approach/architecture decided or obvious — confirm it, do not re-decide it>
 
-## Riesgo
-<blast radius en 1 línea — opcional, "N/A" si no aplica>
+## Risk
+<blast radius in 1 line — optional, "N/A" if it does not apply>
 
-## Dónde (hint opcional — a descubrir en Explore)
-<archivo(s)/módulo si el humano ya lo sabe, o "a determinar en Explore">
+## Where (optional hint — to be discovered in Explore)
+<file(s)/module if the human already knows, or "a determinar en Explore">
 ```
 
-**Campo `smoke_test`**: captura temprano si el change probablemente necesite una prueba manual con datos sembrados después del apply (gate de `organic-start`, Paso 7 / 4.1-ter). Default `needed: auto` — `organic-start` propone sí/no según la forma del cambio y el humano confirma; poné `yes`/`no` solo si ya lo sabés. En `data`, una línea con el escenario a sembrar, o "a definir". El seed usa el mecanismo del proyecto y corre contra la test DB.
+(The section headings and frontmatter keys in the template are fixed identifiers read by `/mala-pata-organic-start` and stay as written; only the `<...>` placeholders and comments are prose.)
 
-## Fase 3 — Puntero de una línea en engram
+**`smoke_test` field**: capture early whether the change is likely to need a manual test with seeded data after apply (gate of `organic-start`, Step 7 / 4.1-ter). Default `needed: auto` — `organic-start` proposes yes/no based on the shape of the change and the human confirms; set `yes`/`no` only if you already know. In `data`, one line with the scenario to seed, or "a definir". The seed uses the project's mechanism and runs against the test DB.
 
-Igual que `/mala-pata-loop` (Paso 5): el kickoff vive en un **archivo**, no en engram — así nunca se sube al repo por accidente.
+## Phase 3 — One-line pointer in engram
 
-1. **Ubicación — dentro del repo, versionado (trazabilidad)**: `mala-pata/kickoffs/<change-name>.md` (relativo a la raíz del repo, `git rev-parse --show-toplevel`; `mkdir -p` si no existe).
-2. Escribí el kickoff completo de la Fase 2 en `mala-pata/kickoffs/<change-name>.md`.
-3. **Puntero liviano en engram**: `mem_save` con `topic_key: "odd/<change-name>/kickoff"`, `type: "architecture"`, contenido de **una sola línea**: `Kickoff ODD en archivo: <ruta absoluta>`. No dupliques el contenido acá — el archivo es la única fuente de verdad.
-4. Si engram no está disponible, el archivo sigue siendo la fuente de verdad — avisá en una línea que el puntero no quedó guardado (afecta la idempotencia futura, no el kickoff en sí).
+Same as `/mala-pata-loop` (Step 5): the kickoff lives in a **file**, not in engram — so it is never pushed to the repo by accident.
 
-## Fase 4 — NO ejecuta · cierre obligatorio (resumen + kickoff)
+1. **Location — inside the repo, versioned (traceability)**: `mala-pata/kickoffs/<change-name>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` if it does not exist).
+2. Write the full kickoff from Phase 2 to `mala-pata/kickoffs/<change-name>.md`.
+3. **Lightweight pointer in engram**: `mem_save` with `topic_key: "odd/<change-name>/kickoff"`, `type: "architecture"`, **single-line** content: `Kickoff ODD in file: <absolute path>`. Do not duplicate the content here — the file is the sole source of truth.
+4. If engram is unavailable, the file is still the source of truth — warn in one line that the pointer was not saved (it affects future idempotency, not the kickoff itself).
 
-Tu respuesta al humano es un cierre **OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura (mismo formato que `/mala-pata-loop` Paso 5):
+## Phase 4 — Does NOT execute · mandatory close (summary + kickoff)
 
-- Título: `**Kickoff listo — <change-name>**`
-- Resumen (una línea por ítem):
-  - **Qué:** <una línea>
+Your reply to the human is a **MANDATORY and standard close (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, without inventing anything. Emit exactly this structure (same format as `/mala-pata-loop` Step 5):
+
+- Title: `**Kickoff listo — <change-name>**`
+- Summary (one line per item):
+  - **What:** <one line>
   - **Carril:** organic
-  - **Base → rama:** <base> → <tipo>/<change-name>
-  - **Worktree:** <ruta absoluta>
-  - **DoD:** <criterio testeable, una línea>
-- **Kickoff:** `<ruta absoluta del .md>`
-- **Siguiente paso** (en bloque de código, copy-paste):
+  - **Base → rama:** <base> → <type>/<change-name>
+  - **Worktree:** <absolute path>
+  - **DoD:** <testable criterion, one line>
+- **Kickoff:** `<absolute path of the .md>`
+- **Next step** (in a code block, copy-paste):
 
   ```
-  /mala-pata-organic-start <ruta absoluta del .md>
+  /mala-pata-organic-start <absolute path of the .md>
   ```
 
-Este bloque es la ÚNICA forma de cerrar en el happy path.
+This block is the ONLY way to close on the happy path.
 
-**Únicas excepciones** (cuando la respuesta no es solo eso):
-- Fase 0 read-only → quedate en modo lectura, sin kickoff.
-- Campo bloqueante sigue sin resolver al confirmar → una línea con el campo que falló + la recomendación (`/mala-pata-loop` o `/mala-pata-roadmap`), sin crear kickoff.
-- Confirmación de base/tipo de rama (Fase 2, puntos 2-3) → única pregunta permitida antes de escribir el kickoff.
+**Only exceptions** (when the reply is not just that):
+- Phase 0 read-only → stay in read mode, no kickoff.
+- A blocking field is still unresolved on confirming → one line with the field that failed + the recommendation (`/mala-pata-loop` or `/mala-pata-roadmap`), without creating a kickoff.
+- Confirmation of base/branch type (Phase 2, points 2-3) → the only question allowed before writing the kickoff.

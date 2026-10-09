@@ -1,28 +1,28 @@
-# Perfil FULL — SDDs L / críticos / primer paso en un módulo
+# FULL profile — L / critical SDDs / first step in a module
 
-## Cuándo elegir FULL
-- Change grande: múltiples containers + services + tipos + tests.
-- Feature nuevo (no adapta código existente).
-- Contrato BE nuevo (endpoints, migraciones, cambio de shape).
-- Módulo que nunca trabajaste (necesita explore desde cero).
-- Riesgo de regresión en flujos críticos (auth, permisos, PII, dinero).
+## When to choose FULL
+- Large change: multiple containers + services + types + tests.
+- New feature (does not adapt existing code).
+- New BE contract (endpoints, migrations, shape change).
+- A module you have never worked on (needs explore from scratch).
+- Regression risk in critical flows (auth, permissions, PII, money).
 
-## Ajustes respecto al método base
+## Adjustments relative to the base method
 
-- **Fase 0 componentes**: obligatoria + **gate humano explícito** para aprobar el set de átomos/moléculas/organismos antes de Apply.
-- **TDD granularidad**: **por task** — Red → Green → Refactor por cada task individual.
-- **Explore**: full desde cero. Ignorar explores previos aunque existan (el módulo se re-audita).
-- **Spec + Design**: separados. Corren como fases distintas (`sdd-spec` y `sdd-design`).
-- **sdd-preview**: decide su propia cantidad de reviewers vía self-assessment en función del riesgo real. El perfil NO impone un número.
-- **Verify**: pesado + adversarial. Verifica contra todos los criterios del spec, corre suite completa + build + smoke live + adversarial checks si aplican.
-- **Apply**: batches chicos (3-4 tasks) + nudge `/clear` entre batches.
-- **Storybook / MSW / fixtures**: cobertura completa de variantes nuevas.
+- **Phase 0 components**: mandatory + **explicit human gate** to approve the set of atoms/molecules/organisms before Apply.
+- **TDD granularity**: **per task** — Red → Green → Refactor for each individual task.
+- **Explore**: full from scratch. Ignore previous explores even if they exist (the module is re-audited).
+- **Spec + Design**: separate. They run as distinct phases (`sdd-spec` and `sdd-design`).
+- **sdd-preview**: decides its own number of reviewers via self-assessment based on real risk. The profile does NOT impose a number.
+- **Verify**: heavy + adversarial. Verifies against all the spec's criteria, runs the full suite + build + live smoke + adversarial checks if they apply.
+- **Apply**: small batches (3-4 tasks) + `/clear` nudge between batches.
+- **Storybook / MSW / fixtures**: full coverage of new variants.
 
-## Nudges de `/clear`
+## `/clear` nudges
 
-- Después de cada fase mayor (`explore`, `propose`, `spec`, `design`, `tasks`, cada batch de `apply`, `verify`).
-- Antes de arrancar Apply.
+- After each major phase (`explore`, `propose`, `spec`, `design`, `tasks`, each `apply` batch, `verify`).
+- Before starting Apply.
 
-## Costo orden de magnitud
+## Cost order of magnitude
 
 ~500K tokens end-to-end.

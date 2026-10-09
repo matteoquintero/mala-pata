@@ -1,331 +1,330 @@
 ---
 name: mala-pata-roadmap
 description: >
-  Capa de planeación por ENCIMA de los carriles (organic/loop), ruteada por /mala-pata-triage.
-  Recibe UN objetivo grande, lo analiza, investiga cómo se resuelve (web + cómo lo hacen los
-  grandes), lee el .codegraph/ del proyecto para anclarlo al código real, hace preguntas si falta
-  contexto, y lo descompone en un DAG de fases unit-sized (cada fase = corte vertical shippeable
-  que entra en UNA unidad: un organic o un loop). A cada fase le asigna una RUTA TENTATIVA
-  (organic o loop:PERFIL) como acercamiento — pero triage es el que decide al llegar, con la info
-  ya actualizada por las fases previas. Escribe un roadmap .md versionable en el repo. NO ejecuta,
-  NO corre ningún carril, NO toca código: solo produce el mapa de fases que después vos pasás una
-  por una a /mala-pata-triage.
-  Trigger: "roadmap de <objetivo>", "descomponé este objetivo grande", "armá el plan de fases",
-  o cualquier objetivo demasiado grande para una sola unidad.
+  Planning layer ABOVE the lanes (organic/loop), routed by /mala-pata-triage.
+  Receives ONE large objective, analyzes it, researches how it is solved (web + how the big players
+  do it), reads the project's .codegraph/ to anchor it to the real code, asks questions if context
+  is missing, and breaks it down into a DAG of unit-sized phases (each phase = a shippable vertical
+  slice that fits in ONE unit: one organic or one loop). Each phase gets a TENTATIVE ROUTE
+  (organic or loop:PROFILE) as an approximation — but triage is the one that decides on arrival,
+  with the information already updated by the previous phases. Writes a versionable roadmap .md in
+  the repo. It does NOT execute, does NOT run any lane, does NOT touch code: it only produces the
+  phase map that you then pass one by one to /mala-pata-triage.
+  Trigger — "roadmap de <objetivo>", "descomponé este objetivo grande", "armá el plan de fases",
+  or any objective too large for a single unit.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.6.0"
+  version: "2.7.0"
 ---
 
-# /mala-pata-roadmap — objetivo grande → DAG de fases unit-sized (organic o loop)
+# /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
 
-Objetivo del usuario: **entrada entregada por el CLI**
+User objective: **input delivered by the CLI**
 
-Tu trabajo: convertir un objetivo GRANDE en un **DAG de fases**, donde cada fase es tan chica que
-entra en **UNA unidad** — un `/mala-pata-organic` o un `/mala-pata-loop`. A cada fase le asignás una
-**ruta tentativa** (organic o loop) como acercamiento. Producís un `.md` con ese roadmap y **nada
-más** — no escribís código, no corrés ningún carril, no aplicás. Después el humano toma cada fase y
-se la pasa a `/mala-pata-triage`, que decide el carril final con la info del momento.
+Your job: turn a LARGE objective into a **DAG of phases**, where each phase is so small that it
+fits in **ONE unit** — one `/mala-pata-organic` or one `/mala-pata-loop`. You assign each phase a
+**tentative route** (organic or loop) as an approximation. You produce a `.md` with that roadmap and **nothing
+else** — you do not write code, you do not run any lane, you do not apply. Afterwards the human takes each phase and
+passes it to `/mala-pata-triage`, which decides the final lane with the information of the moment.
 
-> **Regla dura #1 — NO ejecutás nada.** Ni código, ni migraciones, ni corrés `/mala-pata-triage`,
-> `/mala-pata-loop` ni `/mala-pata-organic`. Tu único entregable es el roadmap `.md` (+ un puntero en
-> engram). El DAG es un plan, no una orden de implementar.
+> **Hard rule #1 — you execute NOTHING.** Not code, not migrations, you do not run `/mala-pata-triage`,
+> `/mala-pata-loop` or `/mala-pata-organic`. Your only deliverable is the roadmap `.md` (+ a pointer in
+> engram). The DAG is a plan, not an order to implement.
 >
-> **Regla dura #2 — si el objetivo YA entra en UNA unidad, NO inventes fases.** Si al analizarlo
-> ves que es un cambio que cabe en un solo organic o un solo loop, **PARÁ y redirigí a
-> `/mala-pata-triage`** — él decide el carril. Este skill es solo para objetivos que NO caben en una
-> sola unidad. Sobre-descomponer algo chico es el anti-patrón que este skill debe evitar.
+> **Hard rule #2 — if the objective ALREADY fits in ONE unit, do NOT invent phases.** If on analyzing it
+> you see it is a change that fits in a single organic or a single loop, **STOP and redirect to
+> `/mala-pata-triage`** — it decides the lane. This skill is only for objectives that do NOT fit in a
+> single unit. Over-decomposing something small is the anti-pattern this skill must avoid.
 >
-> **Regla dura #3 — la ruta por fase es un PRONÓSTICO, no un compromiso.** Clasificás cada fase
-> como organic o loop con tu mejor lectura de HOY, pero **triage re-decide al llegar** (ver Paso 4-bis):
-> las fases previas resuelven incógnitas, así que una fase pronosticada loop puede volverse organic
-> (o al revés). Vos pronosticás; triage manda.
+> **Hard rule #3 — the route per phase is a FORECAST, not a commitment.** You classify each phase
+> as organic or loop with your best reading of TODAY, but **triage re-decides on arrival** (see Step 4-bis):
+> previous phases resolve unknowns, so a phase forecast as loop may become organic
+> (or the other way around). You forecast; triage rules.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, don't reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias**: ninguna.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
-  - `serena` — navegación y edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
-  - `WebSearch/WebFetch` — investigación externa. Fallback: disclosar que no hay investigación externa. Instalar: no requiere (herramientas nativas del cliente).
+- **Required**: none.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `codegraph` — code graph (anchoring and structure). Fallback: grep. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — symbol-level navigation and editing. Fallback: codegraph/grep. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `WebSearch/WebFetch` — external research. Fallback: disclose that there is no external research. Install: not required (native client tools).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
-## Paso 0 — ¿Amerita roadmap? (gate de tamaño + vaguedad)
+## Step 0 — Does it merit a roadmap? (size + vagueness gate)
 
-- **¿Es lo bastante grande?** Si el objetivo cabe en UNA unidad (un organic o un loop) → Regla dura
-  #2 (redirigí a `/mala-pata-triage`).
-- **¿Es lo bastante claro para descomponer?** Necesitás inferir **qué** se quiere lograr, **para
-  quién/dónde** (módulo/dominio) y **cómo se ve el éxito**. Si falta el objeto mismo ("mejorá la
-  app") → pedí lo mínimo y esperá; no inventes alcance.
-- Recuperable (falta 1-2 datos) → hacé preguntas concretas y esperá. Este es el gate de preguntas.
+- **Is it big enough?** If the objective fits in ONE unit (one organic or one loop) → Hard rule
+  #2 (redirect to `/mala-pata-triage`).
+- **Is it clear enough to decompose?** You need to infer **what** is to be achieved, **for
+  whom/where** (module/domain) and **what success looks like**. If the object itself is missing ("improve the
+  app") → ask for the minimum and wait; do not invent scope.
+- Recoverable (1-2 pieces of data missing) → ask concrete questions and wait. This is the question gate.
 
-## Paso 1 — Definir el ESTADO DESEADO: las dimensiones del objetivo completo
+## Step 1 — Define the DESIRED STATE: the dimensions of the complete objective
 
-El objetivo del roadmap NO es cubrir lo que el humano LISTÓ — es cubrir lo que el objetivo NECESITA.
-La solicitud casi siempre queda incompleta; tu trabajo es cerrar el hueco. **Sesgo: mejor que sobre,
-no que falte.** Hay dos errores simétricos a evitar:
+The roadmap's goal is NOT to cover what the human LISTED — it is to cover what the objective NEEDS.
+The request almost always ends up incomplete; your job is to close the gap. **Bias: better too much,
+than too little.** There are two symmetric errors to avoid:
 
-**Encoger a lo fácil de medir** — anclarte al primer inventario que el código deja grepear (una
-métrica, un report) y planificar solo esa faceta.
-**Cubrir solo lo que el humano dijo** — la solicitud es incompleta por default; si no buscás lo que
-falta, el humano lo termina descubriendo en producción.
+**Shrinking to what is easy to measure** — anchoring on the first inventory the code lets you grep
+(a metric, a report) and planning only that facet.
+**Covering only what the human said** — the request is incomplete by default; if you do not look for what
+is missing, the human ends up discovering it in production.
 
-Definí el **estado deseado** (el objetivo COMPLETO) uniendo TRES fuentes:
+Define the **desired state** (the COMPLETE objective) by joining THREE sources:
 
-1. **Lo que el humano dijo** — releé el objetivo literal, listá cada faceta. ¿Qué "tipos de cosa"
-   abarca? ¿Qué implica "todo / cualquier / completo"?
-2. **Lo que el DOMINIO necesita** (investigación externa, Paso 2.3) — el **feature-set canónico** de
-   cómo equipos maduros resuelven este tipo de objetivo. Es la red anti-olvido (checklist de dominio,
-   estilo ISO/IEC 25010 para software). En **dos niveles** (ver Paso 4-ter): *adyacente-implicado* (lo
-   que completa o implica directamente lo pedido) vs *dominio amplio* (el resto del universo del dominio).
-3. **Lo que la doc de intención del repo YA anticipa** — leé la documentación de arquitectura/intención
-   que exista, **esté donde esté** (`CLAUDE.md`, `ARCHITECTURE.md`, READMEs, RFCs, notas de diseño). NO
-   asumas una carpeta fija; si el repo tiene pendientes documentados, suelen ser huecos que el humano olvidó.
+1. **What the human said** — re-read the literal objective, list each facet. What "types of thing"
+   does it span? What does "all / any / complete" imply?
+2. **What the DOMAIN needs** (external research, Step 2.3) — the **canonical feature-set** of
+   how mature teams solve this kind of objective. It is the anti-forgetting net (domain checklist,
+   ISO/IEC 25010 style for software). In **two levels** (see Step 4-ter): *adjacent-implied* (what
+   completes or directly implies what was asked) vs *broad domain* (the rest of the domain's universe).
+3. **What the repo's intent docs ALREADY anticipate** — read the architecture/intent documentation
+   that exists, **wherever it is** (`CLAUDE.md`, `ARCHITECTURE.md`, READMEs, RFCs, design notes). Do NOT
+   assume a fixed folder; if the repo has documented pending items, they are often gaps the human forgot.
 
-Expresá el objetivo también como **jobs-to-be-done** ("como <usuario>, necesito <trabajo> para <beneficio>"):
-cacha huecos de cara al usuario que la lista de features no muestra (p.ej. una pantalla que hace falta y
-nadie nombró).
+Also express the objective as **jobs-to-be-done** ("as <user>, I need <job> in order to <benefit>"):
+it catches user-facing gaps that the feature list does not show (e.g. a screen that is needed and
+nobody named).
 
-**Chequeo MECE + regla del 100%**: el set de dimensiones debe ser *mutuamente excluyente* (sin solape) y
-*colectivamente exhaustivo* (cubre TODO el objetivo, sin huecos). Si no es exhaustivo, faltan dimensiones
-— seguí buscando. Este es el chequeo que fuerza completitud.
+**MECE check + 100% rule**: the set of dimensions must be *mutually exclusive* (no overlap) and
+*collectively exhaustive* (covers the WHOLE objective, no gaps). If it is not exhaustive, dimensions are
+missing — keep looking. This is the check that forces completeness.
 
-Esta lista de dimensiones es el **contrato de cobertura** contra el que se mide el DAG (Paso 5). Si el
-objetivo resulta enorme, NO asumas que va todo en un roadmap: en el gate (Paso 5) ofrecés scope. Vos no
-acotás en silencio.
+This list of dimensions is the **coverage contract** against which the DAG is measured (Step 5). If the
+objective turns out to be enormous, do NOT assume it all goes in one roadmap: at the gate (Step 5) you offer scope. You
+do not narrow it silently.
 
-## Paso 2 — Inventariar CADA dimensión + investigar + anclar al código real
+## Step 2 — Inventory EACH dimension + research + anchor to the real code
 
-En paralelo, sin escribir nada. **Inventariá TODAS las dimensiones del Paso 1, no solo la fácil:**
+In parallel, without writing anything. **Inventory ALL the dimensions of Step 1, not just the easy one:**
 
-1. **Proyecto activo**: detectá el repo/cwd y leé su arquitectura (`CLAUDE.md`, `ARCHITECTURE.md`,
-   o equivalentes). `mem_search` por trabajo previo relacionado.
-2. **.codegraph/ + inventario por dimensión**: si el proyecto tiene índice, usá `codegraph_explore`
-   (o los comandos read-only de CodeGraph) para mapear módulos, símbolos y dependencias. Corré un
-   inventario por CADA dimensión del Paso 1 (qué existe ya, qué está crudo, cuánto), no solo por la
-   que grepeás en un comando. Si una dimensión no se deja medir por código (p.ej. inventario de un
-   tipo de artefacto que no tiene marca única), decilo explícito y estimá — no la borres del mapa.
-   Si no hay `.codegraph/`, mapeá con Read/Grep/Glob lo mínimo para entender las costuras reales.
-3. **Investigación externa** (WebSearch/WebFetch): el **feature-set canónico** del dominio — cómo lo
-   resuelven equipos maduros, qué patrones/errores conocidos hay. Separalo en **dos niveles**:
-   *adyacente-implicado* (completa/implica lo pedido) y *dominio amplio* (el resto). **Anclá lo que traés
-   a TU código** — la best-practice que ignora lo que ya existe no sirve (reuse-first, igual que preview).
-4. **Preguntas**: si después de esto quedan decisiones abiertas que cambian la forma del DAG —
-   incluida cualquier dimensión que no pudiste inventariar bien — preguntá ANTES de descomponer
-   (no la resuelvas adivinando). Incluí acá las **decisiones de producto/escala** (quién lo usa, a
-   qué escala, qué modelo) que reforman el DAG: preguntalas vos, de forma proactiva, no esperes a que
-   el humano las ofrezca — una sola de esas puede colapsar medio roadmap.
+1. **Active project**: detect the repo/cwd and read its architecture (`CLAUDE.md`, `ARCHITECTURE.md`,
+   or equivalents). `mem_search` for related prior work.
+2. **.codegraph/ + per-dimension inventory**: if the project has an index, use `codegraph_explore`
+   (or CodeGraph's read-only commands) to map modules, symbols and dependencies. Run an
+   inventory for EACH dimension of Step 1 (what already exists, what is raw, how much), not just for the
+   one you grep in a single command. If a dimension cannot be measured by code (e.g. an inventory of a
+   kind of artifact that has no unique marker), say so explicitly and estimate — do not delete it from the map.
+   If there is no `.codegraph/`, map with Read/Grep/Glob the minimum needed to understand the real seams.
+3. **External research** (WebSearch/WebFetch): the domain's **canonical feature-set** — how
+   mature teams solve it, what known patterns/mistakes exist. Separate it into **two levels**:
+   *adjacent-implied* (completes/implies what was asked) and *broad domain* (the rest). **Anchor what you bring
+   to YOUR code** — a best practice that ignores what already exists is useless (reuse-first, same as preview).
+4. **Questions**: if after this there remain open decisions that change the shape of the DAG —
+   including any dimension you could not inventory well — ask BEFORE decomposing
+   (do not resolve it by guessing). Include here the **product/scale decisions** (who uses it, at
+   what scale, which model) that reshape the DAG: ask them yourself, proactively, do not wait for
+   the human to offer them — a single one of those can collapse half a roadmap.
 
-## Paso 3 — Pase de arquitectura ANTES de descomponer
+## Step 3 — Architecture pass BEFORE decomposing
 
-Antes de cortar en fases, definí las **costuras reales** por donde va a partir el trabajo
-(interfaces, módulos, límites de datos), ancladas al `.codegraph/` del Paso 1. Esto es lo que hace
-que las fases salgan por bordes limpios y no por temas arbitrarios — la lección de los planners que
-descomponen sin visión de arquitectura y terminan con fases que no son shippeables solas.
+Before cutting into phases, define the **real seams** along which the work will split
+(interfaces, modules, data boundaries), anchored to the `.codegraph/` of Step 1. This is what makes
+the phases come out along clean edges and not along arbitrary themes — the lesson from planners that
+decompose without an architecture view and end up with phases that are not shippable on their own.
 
-## Paso 4 — Descomponer a un DAG de fases
+## Step 4 — Decompose into a DAG of phases
 
-Producí el grafo de fases con estas reglas (todas, no opcionales):
+Produce the phase graph with these rules (all of them, none optional):
 
-- **El DAG debe CUBRIR todas las dimensiones del Paso 1**, no solo la más fácil de medir. Cada
-  dimensión aparece cubierta por al menos una fase, o queda explícitamente marcada como diferida /
-  fuera de scope (para el gate del Paso 5). Nunca dejes una dimensión afuera sin nombrarla.
+- **The DAG must COVER all the dimensions of Step 1**, not just the easiest one to measure. Each
+  dimension appears covered by at least one phase, or is explicitly marked as deferred / out of scope
+  (for the Step 5 gate). Never leave a dimension out without naming it.
 
-- **Cada fase es un corte VERTICAL shippeable** — una rebanada end-to-end que deja el sistema
-  funcionando, no una capa horizontal ("toda la DB", "toda la UI"). Si la fase no se puede mergear
-  y quedar sola en verde, no es una fase válida.
-- **Cada fase recibe una RUTA TENTATIVA, con la frontera de triage** (la misma que usa
+- **Each phase is a shippable VERTICAL slice** — an end-to-end slice that leaves the system
+  working, not a horizontal layer ("the whole DB", "the whole UI"). If the phase cannot be merged
+  and stay green on its own, it is not a valid phase.
+- **Each phase receives a TENTATIVE ROUTE, with the triage border** (the same one used by
   `/mala-pata-organic`):
-  - ¿Se puede enunciar **Qué + Done + Decisiones** de la fase, dado lo que sus dependencias ya van a
-    haber resuelto cuando llegue su turno? → tentativa **organic** (o **shot** si además es trivial:
-    1-3 archivos, sin migración/contrato/UI nueva).
-  - ¿Queda una decisión abierta? **Distinguí antes de marcar loop** (no "hay decisión → loop"):
-    - **Decidible con una pregunta** (opciones conocidas, el humano elige) → NO es loop: tentativa
-      **organic**, y anotá la pregunta que triage va a hacer al llegar para cerrarla.
-    - **Necesita diseño** (arquitecturas viables con tradeoffs a investigar, u opciones que no se
-      saben sin explorar) → tentativa **loop:PERFIL** (FULL/STANDARD/LITE/MINIMAL).
-  - Para cada fase-loop, anotá **cuál decisión de diseño** la hace loop — es lo que triage re-chequea
-    al llegar (si ya se resolvió, la fase pasa a organic).
-- **El TECHO duro del tamaño es "entra en UNA unidad".** Un `loop:FULL` es el techo de una
-  fase-loop; una fase-organic entra si el cambio ya es especificable. **Si una fase sería más grande
-  que un FULL → se PARTE.** Sin excepción.
-- **El disparador del split es la COMPLEJIDAD / AISLAMIENTO DE CONTEXTO, no las líneas.** La prueba
-  de "¿entra en una unidad?" es: ¿el contexto de esta fase se aísla limpio del resto? Si para entender
-  o hacer la fase necesitás cargar el contexto de media otra fase, todavía está demasiado grande.
-- **Cada nodo lleva un borde EXPLÍCITO IN / OUT** — qué entra y qué queda afuera — para que dos
-  fases no se pisen ni dupliquen trabajo.
-- **Dependencias como DAG**: cada fase declara de qué otras fases depende. El grafo no tiene ciclos.
-  Da el orden topológico sugerido (qué se puede hacer en paralelo, qué es secuencial).
-- **Anti-sobre-descomposición**: la MENOR cantidad de fases posible con la condición de que cada una
-  entre en una unidad. No 40 micro-fases; no una fase gigante. Si dudás entre 3 fases grandes o 8
-  chicas, elegí el mínimo que respete el techo (loop:FULL) y el aislamiento de contexto.
+  - Can the phase's **What + Done + Decisions** be stated, given what its dependencies will already
+    have resolved by the time its turn comes? → tentative **organic** (or **shot** if it is also trivial:
+    1-3 files, no migration/contract/new UI).
+  - Is a decision still open? **Distinguish before marking loop** (not "there is a decision → loop"):
+    - **Decidable with a question** (known options, the human chooses) → NOT loop: tentative
+      **organic**, and note the question triage will ask on arrival to close it.
+    - **Needs design** (viable architectures with tradeoffs to investigate, or options that
+      cannot be known without exploring) → tentative **loop:PROFILE** (FULL/STANDARD/LITE/MINIMAL).
+  - For each loop phase, note **which design decision** makes it loop — it is what triage re-checks
+    on arrival (if it is already resolved, the phase becomes organic).
+- **The hard CEILING of size is "fits in ONE unit".** A `loop:FULL` is the ceiling of a
+  loop phase; an organic phase fits if the change is already specifiable. **If a phase would be larger
+  than a FULL → it is SPLIT.** No exception.
+- **The split trigger is COMPLEXITY / CONTEXT ISOLATION, not lines.** The "does it fit in a unit?"
+  test is: does this phase's context isolate cleanly from the rest? If to understand
+  or do the phase you need to load the context of half of another phase, it is still too big.
+- **Each node carries an EXPLICIT IN / OUT border** — what goes in and what stays out — so that two
+  phases do not step on each other or duplicate work.
+- **Dependencies as a DAG**: each phase declares which other phases it depends on. The graph has no cycles.
+  Give the suggested topological order (what can be done in parallel, what is sequential).
+- **Anti-over-decomposition**: the FEWEST phases possible on the condition that each one
+  fits in a unit. Not 40 micro-phases; not one giant phase. If you hesitate between 3 large phases or 8
+  small ones, choose the minimum that respects the ceiling (loop:FULL) and context isolation.
 
-## Paso 4-bis — Ruta tentativa vs decisión de triage (contrato)
+## Step 4-bis — Tentative route vs triage decision (contract)
 
-La ruta que asignás a cada fase (organic o loop) es un **acercamiento con la info de HOY**, no un
-compromiso. La verdad se decide al EJECUTAR:
+The route you assign to each phase (organic or loop) is an **approximation with TODAY's info**, not a
+commitment. The truth is decided at EXECUTION:
 
-- Al avanzar el roadmap, **cada fase se pasa por `/mala-pata-triage`** (no directo a un carril).
-  Triage aplica su gate con la info ACTUAL del repo y de las fases ya completadas.
-- Como las fases previas **resuelven incógnitas** (una decisión de arquitectura tomada en la fase A
-  puede cerrar la que tenía abierta la fase D), una fase pronosticada **loop** puede llegar como
-  **organic** — o una que parecía organic puede revelar complejidad y volverse **loop**.
-- Por eso cada fase-loop declara **la decisión abierta que la hace loop**: es exactamente lo que
-  triage re-chequea. Si esa decisión ya está resuelta al llegar, triage la manda a organic.
-- **El roadmap pronostica; triage manda.** No trates la ruta tentativa como fija ni saltees triage
-  "porque el roadmap ya dijo loop".
+- As the roadmap advances, **each phase is passed through `/mala-pata-triage`** (not directly to a lane).
+  Triage applies its gate with the CURRENT info of the repo and of the phases already completed.
+- Since previous phases **resolve unknowns** (an architecture decision made in phase A
+  may close the one phase D had open), a phase forecast as **loop** may arrive as
+  **organic** — or one that looked organic may reveal complexity and become **loop**.
+- That is why each loop phase declares **the open decision that makes it loop**: it is exactly what
+  triage re-checks. If that decision is already resolved on arrival, triage sends it to organic.
+- **The roadmap forecasts; triage rules.** Do not treat the tentative route as fixed and do not skip triage
+  "because the roadmap already said loop".
 
-## Paso 4-ter — Gap analysis: validar que el DAG cubre el objetivo completo
+## Step 4-ter — Gap analysis: validate that the DAG covers the complete objective
 
-El roadmap **SOBRE-descubre y propone; el humano RECORTA** en el gate. Nunca al revés (que el humano
-descubra lo que faltó). Hacé el análisis de brecha:
+The roadmap **OVER-discovers and proposes; the human TRIMS** at the gate. Never the other way around (the human
+discovering what was missing). Do the gap analysis:
 
-- **Estado deseado** (Paso 1: humano + dominio + doc de intención, MECE) **vs estado actual** (lo que el
-  código ya resuelve, medido en Paso 2 con codegraph) = **el gap**. El gap es lo que el roadmap tiene que
-  cubrir con fases.
-- Toda dimensión del estado deseado que el humano **NO pidió** pero el objetivo implica → va marcada como
-  **propuesta-extra** (no como algo que decidiste solo). **Nunca la agregues en silencio ni la descartes en
-  silencio**: va al gate marcada.
-- **Dos niveles de propuesta** (amplitud de la fuente de dominio, resuelta):
-  - **Nivel 1 — núcleo + adyacente-implicado**: dimensiones que el objetivo NECESITA o implica
-    directamente → se vuelven **fases candidatas** en el DAG (marcadas propuesta-extra si el humano no las
-    pidió).
-  - **Nivel 2 — dominio amplio**: el resto del feature-set canónico del dominio → **NO infla el DAG**; se
-    lista **compacto como checklist** ("existe en el dominio, este roadmap NO lo cubre") para que el humano
-    marque si algo sube a fase. No se esconde nada, pero no se vuelve fase por default.
-- Aprovechá lo que el código YA tiene para habilitar más de lo que el humano imaginó (p.ej. infra ya
-  instalada que abre una capacidad): eso también es gap que vale proponer.
+- **Desired state** (Step 1: human + domain + intent docs, MECE) **vs current state** (what the
+  code already solves, measured in Step 2 with codegraph) = **the gap**. The gap is what the roadmap has to
+  cover with phases.
+- Every dimension of the desired state that the human did **NOT request** but the objective implies → is marked as
+  **extra-proposal** (not as something you decided alone). **Never add it silently nor discard it
+  silently**: it goes to the gate marked.
+- **Two levels of proposal** (breadth of the domain source, resolved):
+  - **Level 1 — core + adjacent-implied**: dimensions the objective NEEDS or directly implies
+    → become **candidate phases** in the DAG (marked extra-proposal if the human did not
+    request them).
+  - **Level 2 — broad domain**: the rest of the domain's canonical feature-set → **does NOT inflate the DAG**; it is
+    listed **compactly as a checklist** ("exists in the domain, this roadmap does NOT cover it") so the human
+    can mark whether something gets promoted to a phase. Nothing is hidden, but it does not become a phase by default.
+- Take advantage of what the code ALREADY has to enable more than the human imagined (e.g. already
+  installed infrastructure that opens up a capability): that is also a gap worth proposing.
 
-## Paso 5 — Gate de cobertura + gate humano del DAG
+## Step 5 — Coverage gate + human gate of the DAG
 
-Antes de pedir OK, validá **MECE** sobre las dimensiones (sin solapes, sin huecos) y mostrá la **tabla de
-cobertura OBLIGATORIA**: **cada eje del estado deseado (Paso 1) aparece en la tabla con EXACTAMENTE UN
-estado.** Ningún eje puede faltar ni "colarse" a Nivel 2 sin quedar mapeado primero — un eje del deseado
-que no está en la tabla es un **drop silencioso** (falla el gate). **Chequeo duro: nº de ejes en la tabla
-== nº de ejes del Paso 1.**
+Before asking for OK, validate **MECE** over the dimensions (no overlaps, no gaps) and show the **MANDATORY
+coverage table**: **each axis of the desired state (Step 1) appears in the table with EXACTLY ONE
+status.** No axis can be missing nor "slip" into Level 2 without being mapped first — an axis of the desired state
+that is not in the table is a **silent drop** (the gate fails). **Hard check: number of axes in the table
+== number of axes in Step 1.**
 
-Estados posibles por eje:
-- **cubierta** → la(s) fase(s) que la cubren.
-- **propuesta-extra** → la(s) fase(s); el humano no la pidió pero el objetivo la implica.
-- **diferida** → con motivo (o "roadmap aparte").
-- **→ Nivel 2** → con motivo: es un eje del deseado que se decide dejar en el checklist de dominio amplio,
-  NO que desaparece. Debe figurar acá **Y** en la lista Nivel 2 de abajo.
+Possible statuses per axis:
+- **covered** → the phase(s) that cover it.
+- **extra-proposal** → the phase(s); the human did not request it but the objective implies it.
+- **deferred** → with reason (or "separate roadmap").
+- **→ Level 2** → with reason: it is an axis of the desired state that is decided to be left in the broad-domain checklist,
+  NOT one that disappears. It must appear here **AND** in the Level 2 list below.
 
 ```
-Cobertura del objetivo (estado deseado → DAG) — TODOS los ejes del Paso 1, uno por renglón:
-- Eje 1 <nombre> → Fases 1, 3        [cubierta]
-- Eje 2 <nombre> → Fase 4            [cubierta]
-- Eje 3 <nombre> → Fase 7            [PROPUESTA-EXTRA — no la pediste; el objetivo la implica]
-- Eje 4 <nombre> → DIFERIDA (motivo) / roadmap aparte
-- Eje 5 <nombre> → Nivel 2 (motivo)  [queda como checklist, no como fase]
-(… un renglón por CADA eje del Paso 1, sin excepción — el conteo debe coincidir)
+Objective coverage (desired state → DAG) — ALL the axes of Step 1, one per line:
+- Axis 1 <name> → Phases 1, 3        [covered]
+- Axis 2 <name> → Phase 4            [covered]
+- Axis 3 <name> → Phase 7            [EXTRA-PROPOSAL — you didn't ask for it; the objective implies it]
+- Axis 4 <name> → DEFERRED (reason) / separate roadmap
+- Axis 5 <name> → Level 2 (reason)   [stays as a checklist, not as a phase]
+(… one line for EACH axis of Step 1, no exception — the count must match)
 
-Nivel 2 — dominio amplio NO cubierto (checklist, marcá si algo sube a fase):
-- [ ] <capacidad del dominio 1>   - [ ] <capacidad del dominio 2>   - [ ] …
+Level 2 — broad domain NOT covered (checklist, mark whether something gets promoted to a phase):
+- [ ] <domain capability 1>   - [ ] <domain capability 2>   - [ ] …
 ```
 
-El humano firma qué queda dentro (incluidas las propuestas-extra), qué se difiere, y si algo del Nivel 2
-(o un eje mandado a Nivel 2) sube a fase. **Vos proponés de más; el humano recorta.**
+The human signs off on what stays inside (including the extra-proposals), what is deferred, and whether anything from Level 2
+(or an axis sent to Level 2) gets promoted to a phase. **You propose too much; the human trims.**
 
-Si el objetivo es enorme (varias dimensiones grandes), ofrecé explícitamente la decisión de scope:
-**(a)** un roadmap multi-dimensión (todas), o **(b)** acotar este roadmap a una/unas dimensiones y
-las otras en roadmaps aparte. El humano elige el scope; vos no lo decidís solo.
+If the objective is enormous (several large dimensions), explicitly offer the scope decision:
+**(a)** a multi-dimension roadmap (all of them), or **(b)** narrow this roadmap to one/some dimensions and
+the others in separate roadmaps. The human chooses the scope; you do not decide it alone.
 
-**Antes de pedir OK, mostrá el bloque de decisión (OBLIGATORIO — es lo que deja cazar la sobre-dimensión):**
-- **Núcleo vs completo**: sale DIRECTO de la columna `¿Diferible?` de la tabla — el **núcleo** son las fases `¿Diferible? = no`; el **completo** es todas. No lo recalcules: leé la columna. Si el núcleo es 1 fase y el DAG tiene 5, decilo explícito.
-- **Magnitud del problema**: alcance / frecuencia / severidad (de la Fase 1d de research; si no vino, medila acá). Un problema chico con un DAG grande es la señal de alarma.
-- **Workaround más barato**: la alternativa mínima conocida (un ajuste ya existente, un fix de una línea) y su costo, aunque no sea la solución "completa". Si existe, el humano tiene que verlo ANTES de aprobar N fases.
+**Before asking for OK, show the decision block (MANDATORY — it is what lets over-sizing get caught):**
+- **Core vs complete**: it comes DIRECTLY from the `Deferrable?` column of the table — the **core** is the phases with `Deferrable? = no`; the **complete** is all of them. Do not recompute it: read the column. If the core is 1 phase and the DAG has 5, say so explicitly.
+- **Magnitude of the problem**: scope / frequency / severity (from research's Phase 1d; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
+- **Cheapest workaround**: the known minimal alternative (an already-existing tweak, a one-line fix) and its cost, even if it is not the "complete" solution. If it exists, the human has to see it BEFORE approving N phases.
 
-Después presentá el DAG (fases, **rutas tentativas** organic/loop, dependencias, orden) y **esperá OK
-antes de escribir el `.md`**. Opciones: **Aprobar** (escribís el roadmap con el scope confirmado),
-**Ajustar** (el humano corrige dimensiones/fases/rutas/bordes/orden/scope y re-presentás), **Detener**.
-No escribas sin aprobación.
+Then present the DAG (phases, **tentative routes** organic/loop, dependencies, order) and **wait for OK
+before writing the `.md`**. Options: **Approve** (you write the roadmap with the confirmed scope),
+**Adjust** (the human corrects dimensions/phases/routes/borders/order/scope and you re-present), **Stop**.
+Do not write without approval.
 
-## Paso 6 — Dónde guardar + escribir el roadmap
+## Step 6 — Where to save + write the roadmap
 
-1. **Preguntá dónde guardarlo**, sugiriendo el default **`mala-pata/roadmap/<slug>.md`**
-   (dentro del repo bajo `mala-pata/roadmap/`, versionado — como el resto de los artefactos
-   mala-pata). Permití override.
-2. Escribí el `.md` con el formato de abajo (rutas absolutas para operar; `mkdir -p` la carpeta).
-3. **Puntero liviano en engram** para descubribilidad: `mem_save` topic_key `sdd/<slug>/roadmap`,
-   contenido de una línea `Roadmap en archivo: <ruta absoluta>`. No dupliques el contenido.
-4. Respondé con la ruta del archivo + el orden sugerido de fases para pasar a `/mala-pata-triage`.
+1. **Ask where to save it**, suggesting the default **`mala-pata/roadmap/<slug>.md`**
+   (inside the repo under `mala-pata/roadmap/`, versioned — like the rest of the mala-pata artifacts). Allow override.
+2. Write the `.md` with the format below (absolute paths to operate; `mkdir -p` the folder).
+3. **Light pointer in engram** for discoverability: `mem_save` topic_key `sdd/<slug>/roadmap`,
+   one-line content `Roadmap in file: <absolute path>`. Do not duplicate the content.
+4. Respond with the file path + the suggested order of phases to pass to `/mala-pata-triage`.
 
-### Formato del roadmap `.md`
+### Roadmap `.md` format
 
 ```markdown
 ---
-objetivo: <título corto del objetivo grande>
+objective: <short title of the large objective>
 slug: <kebab-case>
 project: <project>
 created_at: <ISO 8601>
-fases_total: <N>
+phases_total: <N>
 ---
 
-# Roadmap: <objetivo>
+# Roadmap: <objective>
 
-## Objetivo grande
-<qué se quiere lograr, para quién/dónde, cómo se ve el éxito — medible>
+## Large objective
+<what is to be achieved, for whom/where, what success looks like — measurable>
 
-## Arquitectura / costuras (Paso 3)
-<los bordes reales por donde parte el trabajo, anclados al .codegraph/ — módulos/interfaces/datos>
+## Architecture / seams (Step 3)
+<the real borders along which the work splits, anchored to .codegraph/ — modules/interfaces/data>
 
-## Contexto e investigación
-<hallazgos relevantes: cómo se resuelve esto / patrones / qué reusar del repo — con refs>
+## Context and research
+<relevant findings: how this is solved / patterns / what to reuse from the repo — with refs>
 
-## DAG de fases
+## DAG of phases
 
-| # | Fase | slug | Ruta tentativa | Depende de | ¿Diferible? | Corte vertical (una línea) |
-|---|------|------|----------------|-----------|-------------|----------------------------|
-| 1 | <nombre> | <kebab-estable> | loop:STANDARD | — | no (núcleo) | <qué entrega end-to-end> |
-| 2 | <nombre> | <kebab-estable> | organic | 1 | sí | ... |
-| 3 | <nombre> | <kebab-estable> | loop:LITE | 1 | sí | ... |
+| # | Phase | slug | Tentative route | Depends on | Deferrable? | Vertical slice (one line) |
+|---|-------|------|-----------------|-----------|-------------|----------------------------|
+| 1 | <name> | <stable-kebab> | loop:STANDARD | — | no (core) | <what it delivers end-to-end> |
+| 2 | <name> | <stable-kebab> | organic | 1 | yes | ... |
+| 3 | <name> | <stable-kebab> | loop:LITE | 1 | yes | ... |
 
-> **Ruta tentativa = pronóstico.** Al ejecutar, cada fase se pasa por `/mala-pata-triage`, que
-> re-decide organic/loop con la info del momento (ver Paso 4-bis). Las fases previas pueden cambiar
-> la ruta de una posterior.
+> **Tentative route = forecast.** On execution, each phase is passed through `/mala-pata-triage`, which
+> re-decides organic/loop with the information of the moment (see Step 4-bis). Previous phases may change
+> the route of a later one.
 
-Orden sugerido (topológico): 1 → (2 ∥ 3) → …   ·   Paralelizables: {2, 3}
+Suggested order (topological): 1 → (2 ∥ 3) → …   ·   Parallelizable: {2, 3}
 
-## Fases en detalle
+## Phases in detail
 
-### Fase 1 — <nombre>
-- **Ruta tentativa**: loop:STANDARD  ·  **Depende de**: —  ·  **¿Diferible?**: no (núcleo) | sí
-- **¿Diferible?**: `no` = núcleo, hay que hacerla para que el valor exista; `sí` = puede hacerse después sin romper el núcleo. Eje de PRIORIDAD de negocio, distinto de "Depende de" (que es técnico). El gate (Paso 5) lee esta marca para el núcleo-vs-completo.
-- **slug**: `<kebab-estable>` — el change-name que usará al ejecutarse (rama `<tipo>/<slug>`); `mala-pata-roadmap-radar` matchea el avance por este slug. Único y estable; no lo cambies entre versiones del roadmap.
-- **Por qué esa ruta**: <si loop: LA decisión de DISEÑO que la hace loop — lo que triage re-chequea (una decisión decidible-con-una-pregunta NO va a loop); si organic/shot: "Qué+Done+Decisiones ya enunciables">
-- **IN**: <qué incluye esta fase>
-- **OUT**: <qué NO incluye — queda para otra fase>
+### Phase 1 — <name>
+- **Tentative route**: loop:STANDARD  ·  **Depends on**: —  ·  **Deferrable?**: no (core) | yes
+- **Deferrable?**: `no` = core, it has to be done for the value to exist; `yes` = can be done later without breaking the core. It is a business PRIORITY axis, distinct from "Depends on" (which is technical). The gate (Step 5) reads this mark for core-vs-complete.
+- **slug**: `<stable-kebab>` — the change-name it will use when executed (branch `<type>/<slug>`); `mala-pata-roadmap-radar` matches progress by this slug. Unique and stable; do not change it between roadmap versions.
+- **Why that route**: <if loop: THE DESIGN decision that makes it loop — what triage re-checks (a decision decidable-with-a-question does NOT go to loop); if organic/shot: "What+Done+Decisions already statable">
+- **IN**: <what this phase includes>
+- **OUT**: <what it does NOT include — stays for another phase>
 - **DoD** (Given/When/Then):
-  - [ ] Given <estado>, When <acción>, Then <resultado observable>.
-- **Para arrancar**: `/mala-pata-triage <descripción de esta fase>` (triage decide organic/loop/shot con
-  la info del momento; una fase = una unidad; usá el `slug` de arriba como change-name para que el
-  avance se pueda trackear con `mala-pata-roadmap-radar`).
+  - [ ] Given <state>, When <action>, Then <observable result>.
+- **To start**: `/mala-pata-triage <description of this phase>` (triage decides organic/loop/shot with
+  the information of the moment; one phase = one unit; use the `slug` above as the change-name so that
+  progress can be tracked with `mala-pata-roadmap-radar`).
 
-### Fase 2 — …
-(idem por cada fase)
+### Phase 2 — …
+(same for each phase)
 ```
 
-## Reglas
+## Rules
 
-- **Completitud > lo pedido**: el roadmap cubre el objetivo COMPLETO (estado deseado MECE), no solo lo
-  que el humano listó. Sobre-descubrí y proponé; el humano recorta en el gate. Mejor que sobre, no que falte.
-- **NO ejecutás**: ni triage, ni loop, ni organic, ni código. Solo el roadmap.
-- **Rutas absolutas** en comandos; relativas al hablarle al humano.
-- **Únicas preguntas válidas**: las del gate de vaguedad (Paso 0), las decisiones abiertas que
-  cambian el DAG (Paso 2), dónde guardar (Paso 6) y el gate de cobertura + DAG (Paso 5). Nada de "ritmo" ni
+- **Completeness > what was requested**: the roadmap covers the COMPLETE objective (MECE desired state), not just what
+  the human listed. Over-discover and propose; the human trims at the gate. Better too much than too little.
+- **You do NOT execute**: not triage, not loop, not organic, not code. Only the roadmap.
+- **Absolute paths** in commands; relative when talking to the human.
+- **Only valid questions**: those of the vagueness gate (Step 0), the open decisions that
+  change the DAG (Step 2), where to save (Step 6) and the coverage gate + DAG (Step 5). Nothing about "pace" or
   "artifact store".
-- **Redirigí a `/mala-pata-triage`** si el objetivo ya entra en una sola unidad (Regla dura #2).
-- Cada fase del roadmap es insumo para UNA pasada de `/mala-pata-triage` (que la rutea a organic o
-  loop con la info del momento) — nunca las agrupes.
-- **slug estable por fase**: asigná a cada fase un `slug` kebab único y estable (= su change-name al
-  ejecutarse; rama `<tipo>/<slug>`). Es lo que `mala-pata-roadmap-radar` usa para derivar el avance
-  contra git. No lo cambies entre versiones del roadmap.
-- **`¿Diferible?` por fase**: marcá cada fase `no` (núcleo — hace falta para que el valor exista) o `sí`
-  (puede esperar sin romper el núcleo). Es prioridad de negocio, NO la dependencia técnica (`Depende de`).
-  El gate (Paso 5) LEE esta columna para el núcleo-vs-completo; no la recalcula. Un roadmap NO deja nada
-  "afuera" (cubre todo, ideal mejor-que-sobre); lo que puede esperar se marca diferible, no se descarta.
+- **Redirect to `/mala-pata-triage`** if the objective already fits in a single unit (Hard rule #2).
+- Each phase of the roadmap is input for ONE pass of `/mala-pata-triage` (which routes it to organic or
+  loop with the information of the moment) — never group them.
+- **Stable slug per phase**: assign each phase a unique and stable kebab `slug` (= its change-name when
+  executed; branch `<type>/<slug>`). It is what `mala-pata-roadmap-radar` uses to derive progress
+  against git. Do not change it between roadmap versions.
+- **`Deferrable?` per phase**: mark each phase `no` (core — needed for the value to exist) or `yes`
+  (can wait without breaking the core). It is business priority, NOT the technical dependency (`Depends on`).
+  The gate (Step 5) READS this column for core-vs-complete; it does not recompute it. A roadmap does NOT leave anything
+  "out" (it covers everything, ideally better-too-much); what can wait is marked deferrable, not discarded.

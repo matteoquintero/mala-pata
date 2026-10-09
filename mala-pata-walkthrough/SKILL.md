@@ -1,142 +1,142 @@
 ---
 name: mala-pata-walkthrough
-description: A partir de un PR/change O un roadmap (un PR = "un roadmap de un solo nodo"), genera un recorrido de prueba de la funcionalidad en Given/When/Then + pasos seguibles, y lo proyecta en DOS carriles SIN mezclarlos (Diátaxis) — (1) guía QA/UAT interna "qué probar / cómo probar" y (2) documentación how-to/tutorial para el cliente final. Living documentation (BDD): el mismo Given/When/Then verifica Y documenta. NO escribe código, NO corre el ciclo SDD, NO reemplaza a sdd-verify (que es verificación de máquina). Trigger: "documentá cómo probar esto", "guía de prueba", "tutorial de la funcionalidad", "doc de funcionamiento para el cliente", a partir de un PR, un change-name o un roadmap.
+description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), generates a test walkthrough of the functionality in Given/When/Then + followable steps, and projects it into TWO lanes WITHOUT mixing them (Diátaxis) — (1) internal QA/UAT guide "what to test / how to test" and (2) how-to/tutorial documentation for the end customer. Living documentation (BDD): the same Given/When/Then verifies AND documents. It does NOT write code, does NOT run the SDD cycle, does NOT replace sdd-verify (which is machine verification). Trigger: "documentá cómo probar esto", "guía de prueba", "tutorial de la funcionalidad", "doc de funcionamiento para el cliente", starting from a PR, a change-name or a roadmap.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
-# /mala-pata-walkthrough — recorrido de prueba + base de doc de cliente
+# /mala-pata-walkthrough — test walkthrough + customer doc base
 
-Entrada del usuario: **entregada por el CLI** (un PR/change, o la ruta de un roadmap).
+User input: **delivered by the CLI** (a PR/change, or the path to a roadmap).
 
-Tu trabajo: convertir una funcionalidad ya definida o ya entregada en un **recorrido que un humano puede seguir a mano** para probarla, escrito de forma que **se reuse como documentación de funcionamiento para el cliente final**. NO escribís código, NO corrés el ciclo SDD, NO reemplazás a `sdd-verify`.
+Your job: turn an already-defined or already-delivered functionality into a **walkthrough a human can follow by hand** to test it, written so that it **can be reused as functioning documentation for the end customer**. You do NOT write code, do NOT run the SDD cycle, do NOT replace `sdd-verify`.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, don't reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias**: ninguna.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `gh` — lectura de PRs. Fallback: pasar el PR/diff a mano. Instalar: `brew install gh`.
+- **Mandatory**: none.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `gh` — reading PRs. Fallback: pass the PR/diff by hand. Install: `brew install gh`.
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory one is missing, do not continue.
 
-## Principios (probados, no inventados)
+## Principles (proven, not invented)
 
-- **Diátaxis** (framework de doc de Canonical/Ubuntu): tutorial (aprender) ≠ how-to (resolver una tarea) ≠ reference ≠ explanation. El guion de QA y la doc de cliente **comparten los pasos pero difieren en audiencia y propósito** → NO se mezclan en un solo doc; salen **dos renders del mismo core**.
-- **BDD / living documentation**: el mismo **Given/When/Then** verifica Y documenta. Es el puente entre "prueba" y "doc". El DoD de los kickoffs de esta familia YA está en Given/When/Then — es materia prima directa.
-- **Frontera con verify (no duplicar)**: `sdd-verify` es verificación **técnica/de máquina** contra el DoD (build, tests, checklist). Esto es un **recorrido humano** + la base de doc para el cliente. Propósitos distintos.
+- **Diátaxis** (documentation framework from Canonical/Ubuntu): tutorial (learning) ≠ how-to (solving a task) ≠ reference ≠ explanation. The QA script and the customer doc **share the steps but differ in audience and purpose** → they are NOT mixed into a single doc; **two renders of the same core** come out.
+- **BDD / living documentation**: the same **Given/When/Then** verifies AND documents. It is the bridge between "test" and "doc". The DoD of this family's kickoffs is ALREADY in Given/When/Then — it is direct raw material.
+- **Boundary with verify (don't duplicate)**: `sdd-verify` is **technical/machine** verification against the DoD (build, tests, checklist). This is a **human walkthrough** + the doc base for the customer. Different purposes.
 
-## Modelo unificado de entrada — todo es 1..N "unidades shippables"
+## Unified input model — everything is 1..N "shippable units"
 
-Dos entradas, **PARES** (ninguna es secundaria):
+Two inputs, **PEERS** (neither is secondary):
 
-- **PR / change** → **1 unidad** (un PR es "un roadmap de un solo nodo").
-- **Roadmap** → **N unidades** (una por fase shippable).
+- **PR / change** → **1 unit** (a PR is "a one-node roadmap").
+- **Roadmap** → **N units** (one per shippable phase).
 
-**Normalizá SIEMPRE la entrada a una lista ordenada de unidades.** De ahí en adelante el flujo por unidad es idéntico, venga de un PR o de una fase de roadmap.
+**ALWAYS normalize the input to an ordered list of units.** From there on the per-unit flow is identical, whether it comes from a PR or from a roadmap phase.
 
-## Paso 0 — Gate de entrada
+## Step 0 — Entry gate
 
-Detectá el tipo de entrada y armá la lista de unidades:
-- **Ruta a un `.md` de roadmap** → cada fase = una unidad (leé su IN/OUT, DoD y bordes).
-- **PR# / branch / change-name** → una unidad (vas a traer el diff + los artefactos SDD).
+Detect the input type and build the list of units:
+- **Path to a roadmap `.md`** → each phase = one unit (read its IN/OUT, DoD and edges).
+- **PR# / branch / change-name** → one unit (you will fetch the diff + the SDD artifacts).
 
-Si no podés identificar la funcionalidad ni de dónde sacarla → **PARÁ** y pedí el insumo concreto (PR#, change-name o ruta del roadmap). No inventes funcionalidad.
+If you cannot identify the functionality or where to get it from → **STOP** and ask for the concrete input (PR#, change-name or roadmap path). Do not invent functionality.
 
-## Paso 1 — Reunir fuentes por unidad (read-only)
+## Step 1 — Gather sources per unit (read-only)
 
-Por cada unidad, juntá lo que YA existe (no re-derives desde cero):
-- **SDD en engram**: `sdd/<change>/spec` (escenarios Given/When/Then), `design`, `tasks`, y el **DoD del kickoff** (ya en Given/When/Then).
-- **El cambio real**: el diff (`gh pr diff <n>` / `git -C <repo> diff <base>...<branch>`), y los **endpoints / pantallas / comandos** que se tocaron.
-- **Roadmap**: IN/OUT y criterios de éxito de cada fase.
-- Quedate SOLO con el **comportamiento observable por el usuario**, no el interno. Si algo únicamente se ve leyendo código, no es material de walkthrough.
+For each unit, collect what ALREADY exists (do not re-derive from scratch):
+- **SDD in engram**: `sdd/<change>/spec` (Given/When/Then scenarios), `design`, `tasks`, and the **kickoff DoD** (already in Given/When/Then).
+- **The real change**: the diff (`gh pr diff <n>` / `git -C <repo> diff <base>...<branch>`), and the **endpoints / screens / commands** that were touched.
+- **Roadmap**: IN/OUT and success criteria of each phase.
+- Keep ONLY the **user-observable behavior**, not the internals. If something is only visible by reading code, it is not walkthrough material.
 
-## Paso 2 — Extraer el "scenario core" (única fuente de verdad)
+## Step 2 — Extract the "scenario core" (single source of truth)
 
-Por cada comportamiento observable, un escenario en este formato — es el **core** del que salen los dos carriles:
+For each observable behavior, one scenario in this format — it is the **core** from which both lanes derive:
 
 ```
-### <comportamiento en lenguaje de usuario>
-- **Contexto (Given)**: <estado inicial concreto>
-- **Acción (When)**:
-  1. <paso concreto y seguible — clic / comando / input EXACTO>
+### <behavior in user language>
+- **Context (Given)**: <concrete initial state>
+- **Action (When)**:
+  1. <concrete, followable step — EXACT click / command / input>
   2. ...
-- **Resultado esperado (Then)**: <observable, verificable a ojo>
-- **Datos de prueba**: <inputs concretos, no "un valor cualquiera">
-- **Casos borde**: <variaciones que también hay que mirar>
+- **Expected result (Then)**: <observable, verifiable by eye>
+- **Test data**: <concrete inputs, not "any value">
+- **Edge cases**: <variations that must also be checked>
 ```
 
-Regla dura: **si un paso no lo puede seguir alguien que no escribió el código, está mal escrito.** Cero jerga interna en el core.
+Hard rule: **if a step cannot be followed by someone who did not write the code, it is badly written.** Zero internal jargon in the core.
 
-## Paso 3 — Carril QA/UAT (uso interno: "qué probar / cómo probar")
+## Step 3 — QA/UAT lane (internal use: "what to test / how to test")
 
-**Bloque de acceso (OBLIGATORIO, va primero — sin esto no se entrega el carril).** Para que el humano pruebe sin romper nada, el guion SIEMPRE arranca con cómo acceder:
-- **URL**: la del entorno de PRUEBA (localhost:<puerto> o la test env). **NUNCA producción.**
-- **Credenciales de prueba**: el usuario/login de prueba a usar (indicá de dónde salen; NO pegues secretos reales — el QA vive dentro del repo (`mala-pata/walkthroughs/`), Paso 6).
-- **Servidor corriendo**: cómo levantar la app contra la **test DB** y confirmar que está arriba antes de empezar.
+**Access block (MANDATORY, goes first — without this the lane is not delivered).** So the human can test without breaking anything, the script ALWAYS starts with how to access:
+- **URL**: that of the TEST environment (localhost:<port> or the test env). **NEVER production.**
+- **Test credentials**: the test user/login to use (indicate where they come from; do NOT paste real secrets — the QA lives inside the repo (`mala-pata/walkthroughs/`), Step 6).
+- **Server running**: how to bring up the app against the **test DB** and confirm it is up before starting.
 
-**Tabla de prueba (OBLIGATORIA, formato fijo).** Del core, UNA fila por escenario — este es el formato exacto, no lo cambies:
+**Test table (MANDATORY, fixed format).** From the core, ONE row per scenario — this is the exact format, do not change it:
 
-| # | Given (ruta) | When | Then (lo que tenés que ver) |
+| # | Given (path) | When | Then (what you must see) |
 |---|--------------|------|-----------------------------|
-| 1 | <estado inicial concreto + dónde/ruta> | <acción exacta> | <resultado observable a ojo> |
+| 1 | <concrete initial state + where/route> | <exact action> | <result observable by eye> |
 
-Debajo de la tabla, por escenario:
-- **casilla pass/fail**.
-- **Señal de que falló**: qué se ve si NO anduvo (no solo el happy path).
-- **Datos de prueba y casos borde** explícitos.
-- **Nota de regresión**: qué NO debería haber cambiado y hay que confirmar de paso.
+Below the table, per scenario:
+- **pass/fail checkbox**.
+- **Failure signal**: what is seen if it did NOT work (not just the happy path).
+- **Test data and edge cases** explicit.
+- **Regression note**: what should NOT have changed and should be confirmed along the way.
 
-Este carril es un **checklist accionable**, no prosa. El **bloque de acceso** y la **tabla** son obligatorios SIEMPRE.
+This lane is an **actionable checklist**, not prose. The **access block** and the **table** are ALWAYS mandatory.
 
-## Paso 3.5 — Apartado `## Seed` (receta de fixtures, para `mala-pata-seed`)
+## Step 3.5 — `## Seed` section (fixtures recipe, for `mala-pata-seed`)
 
-walkthrough NO siembra (sigue read-only) — deja la **receta** para que la ejecuten `mala-pata-seed` (standalone, en una rama) o el gate de smoke test (in-cycle, 4.1-ter / Paso 7). Si el change toca datos, agregá al QA un apartado `## Seed (fixtures)`:
-- **Qué fixtures** — el estado inicial mínimo para correr la tabla, **derivado de los `Given` + `Datos de prueba` del core** (+ el `smoke_test.data` del kickoff si existe). NO inventes datos: si un `Given` no alcanza para fijar un valor, marcalo "a confirmar".
-- **Mecanismo** — con qué sembrar (seeders/factories del proyecto que detectó `sdd-init`). Nombralo, no lo reimplementes.
-- **Dónde** — la **test DB** (nunca prod).
-- **Idempotente** — claves estables para que re-sembrar no choque.
+walkthrough does NOT seed (it stays read-only) — it leaves the **recipe** for `mala-pata-seed` (standalone, on a branch) or the smoke-test gate (in-cycle, 4.1-ter / Step 7) to execute. If the change touches data, add a `## Seed (fixtures)` section to the QA:
+- **Which fixtures** — the minimal initial state needed to run the table, **derived from the core's `Given` + `Test data`** (+ the kickoff's `smoke_test.data` if it exists). Do NOT invent data: if a `Given` is not enough to fix a value, mark it "to confirm".
+- **Mechanism** — what to seed with (the project's seeders/factories detected by `sdd-init`). Name it, do not reimplement it.
+- **Where** — the **test DB** (never prod).
+- **Idempotent** — stable keys so that re-seeding does not collide.
 
-Este apartado es el contrato que `mala-pata-seed` lee. Si el change NO toca datos (ej. visual puro), omitilo y decilo explícito.
+This section is the contract that `mala-pata-seed` reads. If the change does NOT touch data (e.g. purely visual), omit it and say so explicitly.
 
-## Paso 4 — Carril cliente final (how-to / tutorial)
+## Step 4 — End-customer lane (how-to / tutorial)
 
-Del **MISMO** core, reescribí para el usuario final:
-- **Sin jerga, sin pass/fail, sin datos de test internos.**
-- Orientado a **resultado y "para qué / cuándo usarlo"**, no a "verificar".
-- Título en forma de tarea ("Cómo <hacer X>") o de tutorial guiado, según lo que pida Diátaxis.
-- **Placeholders de screenshot** por paso visual (`![descripción](placeholder)`); capturarlos es opcional (Paso 5).
-- Apoyate en la skill **`cognitive-doc-design`** para la calidad de redacción (cargala liviana, no la ejecutes como fase).
+From the **SAME** core, rewrite for the end user:
+- **No jargon, no pass/fail, no internal test data.**
+- Oriented to **outcome and "what for / when to use it"**, not to "verifying".
+- Title in task form ("How to <do X>") or as a guided tutorial, depending on what Diátaxis calls for.
+- **Screenshot placeholders** for each visual step (`![description](placeholder)`); capturing them is optional (Step 5).
+- Lean on the **`cognitive-doc-design`** skill for writing quality (load it lightly, do not run it as a phase).
 
-Este carril **NUNCA** menciona tests, ramas, migraciones ni nada interno.
+This lane **NEVER** mentions tests, branches, migrations or anything internal.
 
-## Paso 5 — Screenshots (opcional, si la app se puede correr)
+## Step 5 — Screenshots (optional, if the app can be run)
 
-Si el stack permite levantar la app **y el humano lo OK**: capturá los pasos visuales con la herramienta del proyecto (Playwright si está disponible) y reemplazá los placeholders. Si no se puede o no se quiere, dejá los placeholders marcados para que el humano los complete. **No es obligatorio** para cerrar.
+If the stack allows bringing up the app **and the human OKs it**: capture the visual steps with the project's tool (Playwright if available) and replace the placeholders. If it is not possible or not wanted, leave the placeholders marked for the human to complete. **It is not mandatory** to close.
 
-## Paso 6 — Ubicación y persistencia (aconsejar + confirmar)
+## Step 6 — Location and persistence (advise + confirm)
 
-Diátaxis manda **NO mezclar** → **dos archivos**, no uno:
-- **Cliente final** (versionable, va al repo): aconsejá `docs/guias/<slug>.md` (o la convención de docs que use el proyecto). Confirmá la carpeta con el humano.
-- **QA/UAT** (interno): aconsejá `mala-pata/walkthroughs/<slug>-qa.md` (dentro del repo, versionado, como el resto de mala-pata). Confirmá.
-- **Puntero liviano en engram**: `mem_save` topic_key `sdd/<change>/walkthrough`, contenido de una línea con las rutas de los dos archivos (para que el radar y futuras sesiones lo encuentren). Si la entrada fue un roadmap sin change-name único, usá el slug del roadmap.
+Diátaxis says **do NOT mix** → **two files**, not one:
+- **End customer** (versionable, goes to the repo): advise `docs/guides/<slug>.md` (or the docs convention the project uses). Confirm the folder with the human.
+- **QA/UAT** (internal): advise `mala-pata/walkthroughs/<slug>-qa.md` (inside the repo, versioned, like the rest of mala-pata). Confirm.
+- **Lightweight pointer in engram**: `mem_save` topic_key `sdd/<change>/walkthrough`, one-line content with the paths of the two files (so the radar and future sessions can find it). If the input was a roadmap without a unique change-name, use the roadmap slug.
 
-## Paso 7 — Gate humano
+## Step 7 — Human gate
 
-Presentá los dos carriles (resumen corto + rutas de archivo) y **esperá OK o ajustes** antes de dar por cerrado. Como todo en la familia: no marques "listo" con algo sin revisar.
+Present the two lanes (short summary + file paths) and **wait for OK or adjustments** before considering it closed. Like everything in the family: do not mark "done" with something unreviewed.
 
-## Relación con la familia
+## Relation to the family
 
-- **Consume** un roadmap de `/mala-pata-roadmap`, o un change/PR cerrado por `/mala-pata-loop-start` o `/mala-pata-organic`.
-- **Momento típico**: después de `verify` (funcionalidad real → doc más rica), o sobre un roadmap **hacia adelante** (genera un esqueleto provisional que se rellena cuando cada fase se implementa).
-- **No** orquesta, **no** ejecuta fases, **no** muta código.
+- **Consumes** a roadmap from `/mala-pata-roadmap`, or a change/PR closed by `/mala-pata-loop-start` or `/mala-pata-organic`.
+- **Typical moment**: after `verify` (real functionality → richer doc), or over a roadmap **going forward** (generates a provisional skeleton that gets filled in as each phase is implemented).
+- It does **not** orchestrate, does **not** execute phases, does **not** mutate code.
 
-## Qué NO hace (invariantes)
+## What it does NOT do (invariants)
 
-- NO escribe código ni corre el ciclo SDD.
-- NO reemplaza `sdd-verify` (verificación de máquina contra el DoD).
-- NO mezcla el carril QA con el de cliente (Diátaxis: dos renders, dos archivos).
-- NO inventa comportamiento que no esté en el PR / roadmap / artefactos SDD.
+- Does NOT write code nor run the SDD cycle.
+- Does NOT replace `sdd-verify` (machine verification against the DoD).
+- Does NOT mix the QA lane with the customer lane (Diátaxis: two renders, two files).
+- Does NOT invent behavior that is not in the PR / roadmap / SDD artifacts.

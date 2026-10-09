@@ -1,262 +1,262 @@
 ---
 name: sdd-preview
 description: >
-  Resumen ejecutivo pre-Apply — un walkthrough corto en cristiano de lo que sdd-apply va a
-  hacer, con gate humano duro que FRENA hasta obtener aprobación. El propio preview lee
-  tasks + design y decide su modo audit (0, 1 o 2 revisores ciegos) — no depende de que
-  sdd-tasks lo pida. Trigger: when the orchestrator launches the preview phase between
+  Pre-Apply executive summary — a short plain-language walkthrough of what sdd-apply is going to
+  do, with a hard human gate that STOPS until approval is obtained. The preview itself reads
+  tasks + design and decides its own audit mode (0, 1 or 2 blind reviewers) — it does not depend
+  on sdd-tasks requesting it. Trigger: when the orchestrator launches the preview phase between
   `sdd-tasks` and `sdd-apply`.
 license: MIT
 metadata:
   author: mala-pata
-  version: "3.1"
+  version: "3.2"
 ---
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, don't reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `gentle-ai` — parte del ciclo SDD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; los artefactos en archivo son la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Required** (no fallback — if missing, STOP and ask for it to be installed, do not start):
+  - `gentle-ai` — part of the SDD cycle. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `engram` — persistent memory and continuity pointer. Fallback: continue without the pointer; the file artifacts are the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
 ## Purpose
 
-Producir un **resumen ejecutivo corto** de qué va a hacer `sdd-apply`, en lenguaje llano ("en cristiano"), para que el humano lo lea en ≤30 segundos y decida si el plan sigue en pie o se salió del camino.
+Produce a **short executive summary** of what `sdd-apply` is going to do, in plain language ("in plain words"), so the human can read it in ≤30 seconds and decide whether the plan still stands or has gone off track.
 
-Esta fase sitúa entre `sdd-tasks` (plan aprobado) y `sdd-apply` (código). **NO** escribe código, migraciones, ni archivos del proyecto. Su output es un artefacto corto y un **gate humano DURO** que no se puede pasar con un "sí" ciego.
+This phase sits between `sdd-tasks` (approved plan) and `sdd-apply` (code). It does **NOT** write code, migrations, or project files. Its output is a short artifact and a **HARD human gate** that cannot be passed with a blind "yes".
 
-**Objetivo primario**: resumen para tomar una decisión rápida.
-**Objetivo secundario (condicional, autodecidido)**: auditoría adversarial con 0, 1 o 2 revisores — el número lo decide el propio preview (ver Self-assessment), no `sdd-tasks`.
+**Primary goal**: a summary for making a quick decision.
+**Secondary goal (conditional, self-decided)**: adversarial audit with 0, 1 or 2 reviewers — the number is decided by the preview itself (see Self-assessment), not by `sdd-tasks`.
 
 ## What You Receive
 
-Del orchestrator:
+From the orchestrator:
 - Change name
 - Artifact store mode (`engram | openspec | hybrid | none`)
-- Absolute path del worktree a inspeccionar
-- Perfil del kickoff (FULL/STANDARD/LITE/MINIMAL) — determina target de palabras del resumen
+- Absolute path of the worktree to inspect
+- Kickoff profile (FULL/STANDARD/LITE/MINIMAL) — determines the summary's word target
 
-El **modo audit y el número de reviewers (0/1/2) NO llegan del orchestrator ni de `sdd-tasks`** — los fija el propio preview en el paso de Self-assessment, antes de escribir el resumen.
+The **audit mode and the number of reviewers (0/1/2) do NOT come from the orchestrator or from `sdd-tasks`** — the preview itself sets them in the Self-assessment step, before writing the summary.
 
 ## Execution and Persistence Contract
 
 > Follow **Section A** (skill loading), **Section B** (retrieval), and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
 
-Lecturas requeridas (parallel + `mem_get_observation` — previews truncados):
+Required reads (parallel + `mem_get_observation` — previews are truncated):
 - `sdd/{change-name}/tasks` (required)
 - `sdd/{change-name}/design` (required)
-- `sdd/{change-name}/kickoff` (required — para leer DoD)
-- `sdd/{change-name}/spec`, `sdd/{change-name}/proposal`, `sdd/{change-name}/explore` (contexto)
+- `sdd/{change-name}/kickoff` (required — to read the DoD)
+- `sdd/{change-name}/spec`, `sdd/{change-name}/proposal`, `sdd/{change-name}/explore` (context)
 
-También leer el **código real del worktree** (Grep/Glob/Read) — no revisar en abstracto.
+Also read the **real worktree code** (Grep/Glob/Read) — do not review in the abstract.
 
-## Self-assessment — cuántos reviewers (0, 1 o 2)
+## Self-assessment — how many reviewers (0, 1 or 2)
 
-Antes de escribir el resumen, con `tasks` + `design` (+ código real) ya leídos, el propio preview decide el modo audit. Esto reemplaza la señal que antes venía de `sdd-tasks` — `sdd-tasks` ya no la manda.
+Before writing the summary, with `tasks` + `design` (+ real code) already read, the preview itself decides the audit mode. This replaces the signal that used to come from `sdd-tasks` — `sdd-tasks` no longer sends it.
 
-**Regla base (tomada del modelo de riesgo nativo de gentle-ai, `internal/reviewtransaction/risk.go`): el volumen NUNCA decide el número.** Ni cantidad de tasks, ni de archivos, ni de líneas estimadas — "un cambio de 5 líneas en autenticación pesa más que un rename mecánico de 5000 líneas" (cita del propio comentario del código de gentle-ai). El "Review Workload Forecast" que `tasks` sigue calculando (budget de 400 líneas) es para OTRA cosa — decidir si conviene partir en PRs encadenados — y **no es señal de riesgo acá**. Solo escala evidencia concreta, igual que en gentle-ai: se arma con las categorías que tu propio audit YA produce (Blast-radius, Reuse-first, Smells de arquitectura), leyendo el plan de tasks/design contra el código real.
+**Base rule (taken from gentle-ai's native risk model, `internal/reviewtransaction/risk.go`): volume NEVER decides the number.** Not the number of tasks, nor of files, nor of estimated lines — "a 5-line change in authentication weighs more than a mechanical 5000-line rename" (quote from gentle-ai's own code comment). The "Review Workload Forecast" that `tasks` still computes (400-line budget) is for something ELSE — deciding whether it is worth splitting into chained PRs — and **is not a risk signal here**. Only concrete evidence escalates, just as in gentle-ai: it is built from the categories your own audit ALREADY produces (Blast-radius, Reuse-first, Architecture smells), reading the tasks/design plan against the real code.
 
-**0 reviewers (solo resumen, sin audit)** — TODAS estas condiciones:
-- Blast-radius: ningún archivo tocado cae en las señales de alto riesgo de abajo.
-- Reuse-first: todo es **REUSA** o **ADAPTA** de un precedente exacto ya existente — nada queda como **NUEVO** estructural.
-- Smells de arquitectura: ninguno.
-- No toca archivos de configuración (`.env`, `package.json`/lockfiles, `go.mod`, `Dockerfile`, `Makefile`, o extensión `.json`/`.yaml`/`.yml`/`.toml`/`.ini`).
+**0 reviewers (summary only, no audit)** — ALL of these conditions:
+- Blast-radius: no touched file falls under the high-risk signals below.
+- Reuse-first: everything is **REUSES** or **ADAPTS** from an exact existing precedent — nothing remains as structurally **NEW**.
+- Architecture smells: none.
+- Does not touch configuration files (`.env`, `package.json`/lockfiles, `go.mod`, `Dockerfile`, `Makefile`, or extension `.json`/`.yaml`/`.yml`/`.toml`/`.ini`).
 
-**1 reviewer** — el caso por defecto cuando no aplica ni 0 ni 2: hay algo **NUEVO** en Reuse-first o superficie nueva moderada, pero sin ninguna de las señales de alto riesgo de abajo.
+**1 reviewer** — the default case when neither 0 nor 2 applies: there is something **NEW** in Reuse-first or a moderate new surface, but none of the high-risk signals below.
 
-**2 reviewers (doble ciego + síntesis)** — CUALQUIERA de estas señales concretas en el Blast-radius o en el código real que va a tocarse (mismas categorías que gentle-ai usa para su tier "high"):
-- Ruta/símbolo con `auth`, `security`, `payments`, `webhook`, o manejo de tokens/credenciales/secrets.
-- Cambio de bit ejecutable (un archivo pasa a/desde ejecutable), scripts de shell (`.sh`/`.bash`/`.zsh`), o workflows de CI (`.github/workflows/*.yml`).
-- Migración de datos/DDL, o cualquier dato personal/sensible.
-- Reuse-first marca **NUEVO** un patrón/arquitectura sin precedente 1:1 en el repo (no un componente más del mismo tipo — un patrón genuinamente nuevo).
-- Smells de arquitectura con severidad **alta**.
-- `design` dejó decisiones abiertas sin resolver del todo con el humano.
+**2 reviewers (double blind + synthesis)** — ANY of these concrete signals in the Blast-radius or in the real code that will be touched (same categories gentle-ai uses for its "high" tier):
+- Path/symbol with `auth`, `security`, `payments`, `webhook`, or handling of tokens/credentials/secrets.
+- Executable-bit change (a file becomes or stops being executable), shell scripts (`.sh`/`.bash`/`.zsh`), or CI workflows (`.github/workflows/*.yml`).
+- Data migration/DDL, or any personal/sensitive data.
+- Reuse-first marks a pattern/architecture as **NEW** with no 1:1 precedent in the repo (not just one more component of the same kind — a genuinely new pattern).
+- Architecture smells with **high** severity.
+- `design` left open decisions not fully resolved with the human.
 
-**Lente de plata / invariantes (disparo por dominio).** Si el blast-radius toca cálculo de dinero, totales, impuestos (IVA), descuentos, garantía, stock, o cualquier mapper/DTO/proyección que transforme valores → **nunca es 0 reviewers** (mínimo 1), y el/los revisor(es) adoptan explícitamente la lente **Correctitud / invariantes** (ver audit). Si además hay otra señal de alto riesgo (migración, patrón NUEVO, etc.) → 2, y ahí **se reparten lentes**: uno plata/invariantes, otro concurrencia/migraciones.
+**Money / invariants lens (domain trigger).** If the blast-radius touches money calculation, totals, taxes (VAT), discounts, warranty, stock, or any mapper/DTO/projection that transforms values → **it is never 0 reviewers** (minimum 1), and the reviewer(s) explicitly adopt the **Correctness / invariants** lens (see audit). If there is also another high-risk signal (migration, NEW pattern, etc.) → 2, and there **the lenses are split**: one money/invariants, the other concurrency/migrations.
 
-Dejá explícito en el artefacto (línea corta, no una sección aparte) el número elegido y **la señal concreta** que lo motivó — nunca "audit activo" sin decir cuál evidencia lo disparó.
+Make explicit in the artifact (a short line, not a separate section) the chosen number and **the concrete signal** that motivated it — never "audit active" without saying which evidence triggered it.
 
-Persistencia:
+Persistence:
 - **engram**: `sdd/{change-name}/preview` (type: `architecture`).
-- **openspec / hybrid**: `preview.md` en la carpeta del change.
-- **none**: return inline; no escribir archivos.
+- **openspec / hybrid**: `preview.md` in the change folder.
+- **none**: return inline; do not write files.
 
-## Output — Resumen ejecutivo (SIEMPRE)
+## Output — Executive summary (ALWAYS)
 
-Un artefacto markdown con exactamente **4 secciones obligatorias**, ninguna vacía:
+A markdown artifact with exactly **4 mandatory sections**, none empty:
 
 ```markdown
 # Preview: <change-name>
 
-**Perfil**: <FULL/STANDARD/LITE/MINIMAL> · **Modo audit**: <activo/inactivo>
+**Profile**: <FULL/STANDARD/LITE/MINIMAL> · **Audit mode**: <active/inactive>
 
-## Voy a hacer
-- <acción concreta 1 — verbo + qué>
-- <acción 2>
-- <acción 3>
-(3-5 bullets, cada uno accionable)
+## What I'll do
+- <concrete action 1 — verb + what>
+- <action 2>
+- <action 3>
+(3-5 bullets, each actionable)
 
-## Afecta
-- <archivos/módulos/servicios impactados, 1-3 líneas>
-- <lo que NO se toca, si el scope tiene bordes importantes>
+## Affects
+- <files/modules/services impacted, 1-3 lines>
+- <what is NOT touched, if the scope has important boundaries>
 
-## DoD (del kickoff)
-<copia textual del "Definition of Done" del kickoff — NO reinventar criterios>
+## DoD (from the kickoff)
+<verbatim copy of the kickoff's "Definition of Done" — do NOT reinvent criteria>
 
-## Riesgos
-- <cosas que pueden salir mal, cosas que mirar de cerca — 1-3 líneas>
+## Risks
+- <things that can go wrong, things to watch closely — 1-3 lines>
 ```
 
-### Target de palabras por perfil
+### Word target per profile
 
-| Perfil | Target del resumen |
+| Profile | Summary target |
 |---|---|
-| MINIMAL | ≤100 palabras |
-| LITE | ≤150 palabras |
-| STANDARD | ≤250 palabras |
-| FULL | ≤400 palabras |
+| MINIMAL | ≤100 words |
+| LITE | ≤150 words |
+| STANDARD | ≤250 words |
+| FULL | ≤400 words |
 
-Target orientativo, no cap duro. Si necesitás más para ser honesto, decilo.
+Indicative target, not a hard cap. If you need more to be honest, say so.
 
-### Reglas del resumen
+### Summary rules
 
-- **Cero jargon innecesario**: un humano no-autor debe entender qué va a pasar.
-- **No hay resumen vacío**: si "Voy a hacer" tiene solo 1 bullet, algo está mal — o el change es demasiado chico para pasar por preview, o el plan no está listo.
-- **DoD es copia textual del kickoff**, no reinvención — el preview NUNCA reescribe ni "mejora" criterios por su cuenta, y por default **no audita el DoD**. Solo levantás un criterio como hallazgo si es un **bloqueante duro de comprobabilidad** (un criterio que literalmente NO se puede verificar tal como está escrito — no "podría estar mejor", no "quedó un poco viejo"). Ese umbral alto es a propósito: cazar criterios mejorables en cada pasada es lo que generaba el loop de volver a design/tasks sin fin. Si de verdad hay un bloqueante y el humano elige "Ajustar", es la ruta barata (editar el DoD del kickoff + volver al gate, ver la opción Ajustar), NO regeneración de plan.
-- **"Afecta" es concreto**: nombres de archivos/módulos, no genéricos ("varios archivos" prohibido).
+- **Zero unnecessary jargon**: a non-author human must understand what is going to happen.
+- **No empty summary**: if "What I'll do" has only 1 bullet, something is wrong — either the change is too small to go through preview, or the plan is not ready.
+- **The DoD is a verbatim copy of the kickoff**, not a reinvention — the preview NEVER rewrites or "improves" criteria on its own, and by default **does not audit the DoD**. You only raise a criterion as a finding if it is a **hard testability blocker** (a criterion that literally CANNOT be verified as written — not "could be better", not "became a bit outdated"). That high threshold is deliberate: catching improvable criteria on every pass is what produced the endless loop back to design/tasks. If there really is a blocker and the human chooses "Adjust", it is the cheap route (edit the kickoff's DoD + return to the gate, see the Adjust option), NOT plan regeneration.
+- **"Affects" is concrete**: names of files/modules, not generic ones ("several files" is forbidden).
 
-## Output — Modo audit (cuando el self-assessment decide ≥1 reviewer)
+## Output — Audit mode (when the self-assessment decides ≥1 reviewer)
 
-Cuando el self-assessment de arriba decide ≥1 reviewer, después del resumen se agrega este bloque:
+When the self-assessment above decides ≥1 reviewer, this block is added after the summary:
 
 ```markdown
-## Auditoría adversarial
+## Adversarial audit
 
 ### Blast-radius
-| Archivo | Acción | ~LOC | Símbolo público |
+| File | Action | ~LOC | Public symbol |
 |---|---|---|---|
-| <path> | NUEVO/MODIFICADO/BORRADO | <n> | <symbol> |
+| <path> | NEW/MODIFIED/DELETED | <n> | <symbol> |
 
-### Reuse-first (REUSA / ADAPTA / NUEVO)
-- <pieza nueva 1>: **REUSA** `<file:line>` — <helper existente que aplica>
-- <pieza 2>: **ADAPTA** `<file:line>` — <mínima diferencia>
-- <pieza 3>: **NUEVO** — <por qué no existe equivalente>
+### Reuse-first (REUSES / ADAPTS / NEW)
+- <new piece 1>: **REUSES** `<file:line>` — <existing helper that applies>
+- <piece 2>: **ADAPTS** `<file:line>` — <minimal difference>
+- <piece 3>: **NEW** — <why no equivalent exists>
 
-### Smells de arquitectura
-- **alta/media/baja**: <descripción> — `<file:line>` o `<task ref>`
+### Architecture smells
+- **high/medium/low**: <description> — `<file:line>` or `<task ref>`
 
-### Supuestos silenciosos
-- <default que Apply hornearía si nadie mira>
+### Silent assumptions
+- <default that Apply would bake in if nobody looks>
 
-### Correctitud / invariantes (lente de plata — adoptar cuando el dominio lo dispara)
-Perspectivas a adoptar, NO un checklist a tildar — leé el plan contra el código real buscando:
-- **Proyección/mapper con pérdida**: ¿algún `SELECT`/recalc/DTO/mapper devuelve un subset y tira un campo que un consumidor downstream necesita? (plata, impuesto, stock, permiso perdido en la transformación)
-- **Test que prueba la lectura, no el resultado**: ¿hay un criterio "verde" que solo asegura el shape/SELECT y no el cálculo end-to-end? → cobertura falsa.
-- **Valor hardcodeado en un borde**: `0.00` fijo, default silencioso, constante donde va el valor real.
-- **Nivel de aplicación**: impuesto/descuento/garantía a nivel documento vs ítem — ¿coincide con la regla de negocio?
-- **Consistencia bajo concurrencia**: locks sin orden fijo (deadlock), lecturas sin la guarda que el invariante exige.
+### Correctness / invariants (money lens — adopt when the domain triggers it)
+Perspectives to adopt, NOT a checklist to tick off — read the plan against the real code looking for:
+- **Lossy projection/mapper**: does any `SELECT`/recalc/DTO/mapper return a subset and drop a field that a downstream consumer needs? (money, tax, stock, permission lost in the transformation)
+- **Test that proves the read, not the result**: is there a "green" criterion that only ensures the shape/SELECT and not the end-to-end calculation? → false coverage.
+- **Hardcoded value at an edge**: a fixed `0.00`, a silent default, a constant where the real value should go.
+- **Application level**: tax/discount/warranty at document level vs line-item level — does it match the business rule?
+- **Consistency under concurrency**: locks without a fixed order (deadlock), reads without the guard that the invariant requires.
 ```
 
-**Reglas del audit**:
-- El número de reviewers (1 o 2) ya quedó fijado en el Self-assessment. El orchestrator solo hace el fan-out según ese número.
-- Reviewers son **adversariales**: default a suspechar duplicación/over-engineering; el plan tiene que probar novedad.
-- **Empty audit prohibido**: si no hay hallazgos, explicitar QUÉ se buscó y por qué cada cosa se descartó.
-- Reviewers NO ven el output del otro. Se hace synthesis (merge + dedup) después.
-- La categoría **Correctitud / invariantes** es OBLIGATORIA cuando el self-assessment marcó disparo de plata/invariantes; si está activa y no encontrás nada, explicitá qué invariantes verificaste y por qué están a salvo (misma regla que empty-audit). Es una lente para adoptar, no un checklist que reemplace la lectura adversarial libre.
+**Audit rules**:
+- The number of reviewers (1 or 2) was already fixed in the Self-assessment. The orchestrator only does the fan-out according to that number.
+- Reviewers are **adversarial**: default to suspecting duplication/over-engineering; the plan has to prove novelty.
+- **Empty audit forbidden**: if there are no findings, state EXPLICITLY WHAT was looked for and why each thing was discarded.
+- Reviewers do NOT see each other's output. Synthesis (merge + dedup) is done afterwards.
+- The **Correctness / invariants** category is MANDATORY when the self-assessment flagged the money/invariants trigger; if it is active and you find nothing, state which invariants you verified and why they are safe (same rule as empty-audit). It is a lens to adopt, not a checklist that replaces free adversarial reading.
 
-## UNA SOLA PASADA es el objetivo (ANTI-LOOP)
+## A SINGLE PASS is the goal (ANTI-LOOP)
 
-Preview está diseñado para correr **UNA vez** y ser lo bastante completo como para que el humano decida en esa única pasada. Hacé la auditoría a fondo la primera vez — no dejes nada "para mirar en una segunda vuelta", porque no hay segunda vuelta como norma. El resumen + audit + gate salen completos de una.
+Preview is designed to run **ONCE** and be complete enough for the human to decide in that single pass. Do the audit thoroughly the first time — do not leave anything "to look at in a second round", because there is no second round as the norm. The summary + audit + gate come out complete in one go.
 
-"Ajustar" es un **escape raro**, no un round-trip esperado. Si el humano lo elige:
-- El orchestrator hace SOLO el cambio puntual pedido (editar el DoD del kickoff, o el arreglo de plan específico si era defecto real de plan).
-- **Al volver, preview NO se re-ejecuta**: nada de nuevo resumen, nada de nueva auditoría, nada de buscar hallazgos frescos. Se muestra un **delta corto** ("pediste X → se hizo Y") y se va **DIRECTO al gate**. Esta es la regla que hace imposible el loop: volver de un ajuste nunca genera hallazgos nuevos, porque no se re-audita.
-- Ese re-gate ofrece solo: **Aprobar** (con el delta a la vista) o **Detener**. NO vuelve a ofrecer "Ajustar" — si el delta no alcanzó, es Detener y repensar fuera del ciclo, no otra vuelta de regeneración.
+"Adjust" is a **rare escape**, not an expected round-trip. If the human chooses it:
+- The orchestrator makes ONLY the specific change requested (edit the kickoff's DoD, or the specific plan fix if it was a real plan defect).
+- **On return, preview is NOT re-run**: no new summary, no new audit, no hunting for fresh findings. A **short delta** is shown ("you asked for X → Y was done") and it goes **STRAIGHT to the gate**. This is the rule that makes the loop impossible: returning from an adjustment never generates new findings, because nothing is re-audited.
+- That re-gate offers only: **Approve** (with the delta in view) or **Stop**. It does NOT offer "Adjust" again — if the delta was not enough, it is Stop and rethink outside the cycle, not another regeneration round.
 
-Backstop duro: **nunca hay una tercera interacción de preview** para el mismo change. Pasada 1 (completa) → a lo sumo un re-gate de delta → apply o stop. Un change no puede quedar rebotando entre preview y design/tasks.
+Hard backstop: **there is never a third preview interaction** for the same change. Pass 1 (complete) → at most one delta re-gate → apply or stop. A change cannot end up bouncing between preview and design/tasks.
 
-## Hallazgo de nivel-objetivo vs nivel-plan (clasificá antes de disponer)
+## Objective-level vs plan-level finding (classify before disposing)
 
-Preview revisa **el plan**, no **el objetivo** — el QUÉ ya tuvo que quedar cerrado en explore/propose/spec (ver `mala-pata-loop-start`, Regla dura #4). Por eso, antes de meter cualquier hallazgo en la tabla de disposición, clasificá su **nivel**:
+Preview reviews **the plan**, not **the objective** — the WHAT must already have been closed in explore/propose/spec (see `mala-pata-loop-start`, Hard rule #4). So, before putting any finding in the disposition table, classify its **level**:
 
-- **Nivel-plan** (duplicación, over-engineering, flujo hardcodeado, mala capa, reuse ignorado, task mal pensada) → es lo que preview SÍ dispone: REUSAR / REFACTOR / IGNORAR, o va por "Ajustar" si necesita un arreglo de plan puntual. Camino normal.
-- **Nivel-objetivo** (el hallazgo no es "el plan está mal" sino "el plan resuelve el objetivo equivocado / el objetivo no está definido / falta la mitad del alcance / el DoD no es testeable y no es un simple reword") → **NO lo dispongas** (no es REUSAR/REFACTOR/IGNORAR) y **NO lo mandes por "Ajustar"** (Ajustar es para plan o para reword de DoD, nunca para redefinir el QUÉ). Un defecto de objetivo que llega hasta acá significa que se coló por el gate de origen. La disposición correcta es **frenar y devolverlo atrás**:
-  - El gate ofrece **Detener** con motivo explícito `objetivo-no-listo → explore/propose`.
-  - El orchestrator marca `sdd/<change>/state = "objective-not-ready-at-preview"` (con la ruta absoluta del worktree vivo, igual que el pause normal) y el ciclo vuelve a **explore o propose** a redefinir el QUÉ.
-  - NO se re-audita el plan, NO se re-gatea el preview. Es un **escape hacia atrás**, no un round-trip: no viola "una sola pasada" (el preview termina acá; lo que sigue es planeación desde más atrás, no otra vuelta de preview).
+- **Plan-level** (duplication, over-engineering, hardcoded flow, wrong layer, ignored reuse, badly thought-out task) → this is what preview DOES dispose of: REUSE / REFACTOR / IGNORE, or it goes through "Adjust" if it needs a specific plan fix. Normal path.
+- **Objective-level** (the finding is not "the plan is wrong" but "the plan solves the wrong objective / the objective is not defined / half the scope is missing / the DoD is not testable and it is not a simple reword") → **do NOT dispose of it** (it is not REUSE/REFACTOR/IGNORE) and **do NOT send it through "Adjust"** (Adjust is for the plan or for a DoD reword, never for redefining the WHAT). An objective defect that reaches this point means it slipped through the origin gate. The correct disposition is to **stop and send it back**:
+  - The gate offers **Stop** with explicit reason `objetivo-no-listo → explore/propose`.
+  - The orchestrator marks `sdd/<change>/state = "objective-not-ready-at-preview"` (with the absolute path of the live worktree, just like the normal pause) and the cycle goes back to **explore or propose** to redefine the WHAT.
+  - The plan is NOT re-audited, the preview is NOT re-gated. It is an **escape backwards**, not a round-trip: it does not violate "single pass" (the preview ends here; what follows is planning from further back, not another preview round).
 
-Regla de oro: **si te encontrás debatiendo con el humano si el objetivo está bien, ese debate NO va en preview.** Cortalo y devolvé a explore/propose. Preview asume objetivo definido; su trabajo empieza donde el objetivo termina.
+Golden rule: **if you find yourself debating with the human whether the objective is right, that debate does NOT belong in preview.** Cut it off and send it back to explore/propose. Preview assumes a defined objective; its job starts where the objective ends.
 
-## The GATE — DURO, siempre corre, siempre frena
+## The GATE — HARD, always runs, always stops
 
-El gate corre **SIEMPRE**, tenga o no audit activo. Es **inmune a cualquier modo "auto"** del resto del SDD — esta fase FRENA independientemente. El artefacto DEBE incluir el gate payload listo para la función de preguntas interactiva disponible en el CLI.
+The gate **ALWAYS** runs, whether or not the audit is active. It is **immune to any "auto" mode** of the rest of the SDD — this phase STOPS regardless. The artifact MUST include the gate payload ready for the interactive question function available in the CLI.
 
-### Opciones del gate (3 en la pasada única; si hubo "Ajustar", el re-gate del delta trae solo 2: Aprobar / Detener — ver ANTI-LOOP)
+### Gate options (3 in the single pass; if there was an "Adjust", the delta re-gate brings only 2: Approve / Stop — see ANTI-LOOP)
 
-**Aprobar (requiere autotest de comprensión)**
-- El humano escribe en 1 línea qué entendió que se va a hacer.
-- Sin esa línea, no se aprueba. **Micro-forcing-function** contra rubber-stamp.
-- Si la respuesta no coincide razonablemente con "Voy a hacer" del resumen, el orchestrator pide re-lectura y reformulación.
-- Al aprobar → `next_recommended: sdd-apply`.
+**Approve (requires comprehension autotest)**
+- The human writes in 1 line what they understood is going to be done.
+- Without that line, it is not approved. **Micro-forcing-function** against rubber-stamping.
+- If the answer does not reasonably match the summary's "What I'll do", the orchestrator asks for a re-read and rephrasing.
+- On approval → `next_recommended: sdd-apply`.
 
-**Ajustar antes (textarea libre)** — *escape raro; al volver es un re-gate de delta (Aprobar/Detener), NO otra pasada de preview (ver ANTI-LOOP).*
-- El humano escribe feedback: qué cambiar, qué falta, qué está mal.
-- **Ruta según el TIPO de ajuste — NO todo ajuste regenera el plan** (esto es lo que evita el loop):
-  - **DoD stale / criterio incomprobable u obsoleto** → el orchestrator edita SOLO la sección Definition of Done del archivo de kickoff y **vuelve DIRECTO al gate de preview**. NO reejecuta design/tasks — un ajuste de criterio no es un defecto de plan.
-  - **Defecto real de plan** (duplicación, mala arquitectura, flujo hardcodeado, task mal pensada) → ahí sí vuelve a `sdd-tasks` o `sdd-design` según el feedback.
-  - **Defecto de objetivo** (el QUÉ está mal/incompleto, no el plan ni el wording del DoD) → NO es "Ajustar": es **Detener con motivo `objetivo-no-listo`** y volver a explore/propose (ver "Hallazgo de nivel-objetivo vs nivel-plan"). Ajustar nunca redefine el objetivo.
-  - Ante la duda entre DoD y plan, es DoD/gate (camino barato), no regeneración.
-- Estado en engram: `sdd/<change>/state = "adjustment-requested-at-preview"` con feedback + el tipo de ruta tomada.
+**Adjust first (free textarea)** — *rare escape; on return it is a delta re-gate (Approve/Stop), NOT another preview pass (see ANTI-LOOP).*
+- The human writes feedback: what to change, what is missing, what is wrong.
+- **Route depending on the TYPE of adjustment — NOT every adjustment regenerates the plan** (this is what avoids the loop):
+  - **Stale DoD / untestable or obsolete criterion** → the orchestrator edits ONLY the Definition of Done section of the kickoff file and **returns STRAIGHT to the preview gate**. It does NOT re-run design/tasks — a criterion adjustment is not a plan defect.
+  - **Real plan defect** (duplication, bad architecture, hardcoded flow, badly thought-out task) → then yes, it goes back to `sdd-tasks` or `sdd-design` according to the feedback.
+  - **Objective defect** (the WHAT is wrong/incomplete, not the plan or the DoD wording) → it is NOT "Adjust": it is **Stop with reason `objetivo-no-listo`** and back to explore/propose (see "Objective-level vs plan-level finding"). Adjust never redefines the objective.
+  - When in doubt between DoD and plan, it is DoD/gate (cheap path), not regeneration.
+- State in engram: `sdd/<change>/state = "adjustment-requested-at-preview"` with the feedback + the type of route taken.
 
-**Detener (pausa retomable, Opción A)**
-- Marca `sdd/<change>/state = "paused-at-preview"` en engram, con motivo opcional del humano, **y la ruta absoluta del worktree que queda VIVO** — un SDD pausado es el candidato #1 a filtrar worktrees huérfanos; registrarlo es lo que permite que el radar lo liste para limpieza futura.
-- **NO borra** artefactos previos (explore/proposal/spec/design/tasks quedan en engram).
-- **Retomable con `/mala-pata-loop-start <ruta-del-kickoff>`** — al retomar, loop-start detecta el `paused-at-preview` y salta directo a este mismo gate (NO uses `/sdd-continue`: es de gentle-ai y no conoce la fase preview — rutea por encima del gate).
-- Estado registrado para memoria futura (si vuelve en 2 semanas sabe por qué frenó).
-- **Variante objetivo-no-listo**: si el motivo de detener es un defecto de **nivel-objetivo** (ver la sección de clasificación), el estado es `sdd/<change>/state = "objective-not-ready-at-preview"` en vez de `paused-at-preview`, y el retome NO es en el gate de preview sino en **explore/propose** (hay que redefinir el QUÉ primero). El resto es igual: worktree vivo registrado, artefactos previos intactos.
+**Stop (resumable pause, Option A)**
+- Marks `sdd/<change>/state = "paused-at-preview"` in engram, with an optional reason from the human, **and the absolute path of the worktree that stays LIVE** — a paused SDD is the #1 candidate for leaking orphan worktrees; recording it is what lets the radar list it for future cleanup.
+- It does **NOT delete** previous artifacts (explore/proposal/spec/design/tasks stay in engram).
+- **Resumable with `/mala-pata-loop-start <kickoff-path>`** — on resume, loop-start detects the `paused-at-preview` and jumps straight to this same gate (do NOT use `/sdd-continue`: it belongs to gentle-ai and does not know the preview phase — it routes above the gate).
+- State recorded for future memory (if it comes back in 2 weeks it knows why it stopped).
+- **Objective-not-ready variant**: if the reason for stopping is an **objective-level** defect (see the classification section), the state is `sdd/<change>/state = "objective-not-ready-at-preview"` instead of `paused-at-preview`, and the resume is NOT at the preview gate but at **explore/propose** (the WHAT has to be redefined first). The rest is the same: live worktree recorded, previous artifacts intact.
 
-### Reglas del gate
+### Gate rules
 
-- El orchestrator es quien corre la función de preguntas interactiva disponible en el CLI — el reviewer sub-agent NO.
-- No hay "OK global" que barra sin lectura. La única forma de decir sí es escribir la línea del autotest.
-- El gate está incluido en el artefacto como `gate_payload` — el orchestrator lo lee y lo dispara.
+- The orchestrator is the one that runs the interactive question function available in the CLI — the reviewer sub-agent is NOT.
+- There is no global "OK" that sweeps through without reading. The only way to say yes is to write the autotest line.
+- The gate is included in the artifact as `gate_payload` — the orchestrator reads it and fires it.
 
-## Doble reviewer (solo cuando el self-assessment decidió 2)
+## Double reviewer (only when the self-assessment decided 2)
 
-Cuando el Self-assessment decidió 2 reviewers:
-- Reviewers corren **en paralelo, ciegos** entre sí.
-- Cada uno produce su set de findings adversarial (audit).
-- Un run separado en modo `synthesis` merge/dedup los findings y produce el artefacto único.
-- El orchestrator hace el fan-out — el reviewer sub-agent NO llama a otros agentes.
+When the Self-assessment decided 2 reviewers:
+- Reviewers run **in parallel, blind** to each other.
+- Each one produces its set of adversarial findings (audit).
+- A separate run in `synthesis` mode merges/dedups the findings and produces the single artifact.
+- The orchestrator does the fan-out — the reviewer sub-agent does NOT call other agents.
 
 ## What to Do — Role: `reviewer`
 
-1. Leer artefactos y código real del worktree.
-2. Correr el **Self-assessment** y fijar el número de reviewers (0/1/2).
-3. Producir el **resumen** (4 secciones obligatorias, respetando target del perfil).
-4. Si el self-assessment decidió ≥1: producir el bloque audit.
-5. Preparar el `gate_payload` con las 3 opciones fijas.
-6. Devolver al orchestrator — NO persistir a menos que seas `synthesis`.
+1. Read artifacts and real worktree code.
+2. Run the **Self-assessment** and fix the number of reviewers (0/1/2).
+3. Produce the **summary** (4 mandatory sections, respecting the profile target).
+4. If the self-assessment decided ≥1: produce the audit block.
+5. Prepare the `gate_payload` with the 3 fixed options.
+6. Return to the orchestrator — do NOT persist unless you are `synthesis`.
 
-## What to Do — Role: `synthesis` (solo cuando hay 2 reviewers)
+## What to Do — Role: `synthesis` (only when there are 2 reviewers)
 
-1. Recibir los 2 reviews.
-2. Merge + dedup del audit (mantener severidad más alta si overlappean; señalar hallazgos que solo uno vio).
-3. Ensamblar el artefacto único (resumen + audit + gate).
-4. Persistir a `sdd/{change-name}/preview` (Section C).
+1. Receive the 2 reviews.
+2. Merge + dedup the audit (keep the highest severity if they overlap; flag findings that only one saw).
+3. Assemble the single artifact (summary + audit + gate).
+4. Persist to `sdd/{change-name}/preview` (Section C).
 
 ## Rules
 
-- **NUNCA** escribir código, migraciones, o archivos del proyecto.
-- **NUNCA** lanzar sub-agents desde el reviewer.
-- **Empty resumen prohibido**: las 4 secciones tienen contenido concreto o no hay preview.
-- **Empty audit prohibido** (cuando activo): explicitar qué se buscó y descartó.
-- **Gate no se puede pasar sin autotest** (1 línea escrita).
-- **Gate frena aunque el resto del SDD esté en modo auto** — esta fase es interactiva por diseño.
-- Size budget del **resumen** por perfil (ver tabla). Audit no tiene cap.
-- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`; `next_recommended: sdd-apply` **solo** después de aprobación del gate.
-- **Registrá las disposiciones en el artefacto persistido** (`sdd/<change>/preview`): por cada hallazgo, su disposición final (REUSAR / REFACTOR / IGNORAR / aceptado-como-gap). El objetivo es UNA pasada: si hubo un "Ajustar", registrá también el delta pedido y que el cierre fue por re-gate de delta, no por otra pasada de auditoría (sección ANTI-LOOP).
+- **NEVER** write code, migrations, or project files.
+- **NEVER** launch sub-agents from the reviewer.
+- **Empty summary forbidden**: the 4 sections have concrete content or there is no preview.
+- **Empty audit forbidden** (when active): state what was looked for and discarded.
+- **The gate cannot be passed without the autotest** (1 written line).
+- **The gate stops even if the rest of the SDD is in auto mode** — this phase is interactive by design.
+- Size budget of the **summary** per profile (see table). Audit has no cap.
+- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`; `next_recommended: sdd-apply` **only** after gate approval.
+- **Record the dispositions in the persisted artifact** (`sdd/<change>/preview`): for each finding, its final disposition (REUSE / REFACTOR / IGNORE / accepted-as-gap). The goal is ONE pass: if there was an "Adjust", also record the requested delta and that the close was via a delta re-gate, not another audit pass (ANTI-LOOP section).

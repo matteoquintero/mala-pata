@@ -1,63 +1,63 @@
 ---
 name: mala-pata-shot
-description: Carril MÍNIMO de ODD — el "direct inline" de ODD sin worktree ni ceremonia, para el cambio más chico y ya entendido (un color, un copy, un flag, un fix de una línea). Corre en una sola pasada — autorizar → entrar a la rama segura → entender (1-3 archivos) → editar con el modo TDD del proyecto → work-unit commit (+ RDD por commit si está on). NO crea worktree, NO escribe feature-doc, NO hace preview ni smoke test, NO despacha sdd-*. Si a mitad aparece una decisión, el blast radius crece o hace falta diseñar → PARA y rebota a /mala-pata-organic. Trigger — cambio trivial + entendido + blast radius mínimo, o cuando /mala-pata-triage rutea acá.
+description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree and no ceremony, for the smallest, already-understood change (a color, a copy, a flag, a one-line fix). Runs in a single pass — authorize → enter the safe branch → understand (1-3 files) → edit with the project's TDD mode → work-unit commit (+ RDD per commit if on). Does NOT create a worktree, does NOT write a feature-doc, does NOT do preview or smoke test, does NOT dispatch sdd-*. If midway a decision appears, the blast radius grows or design is needed → STOP and bounce to /mala-pata-organic. Trigger — trivial change + understood + minimal blast radius, or when /mala-pata-triage routes here.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
-# /mala-pata-shot — ODD en una sola pasada, sin worktree
+# /mala-pata-shot — ODD in a single pass, no worktree
 
-Pedido del usuario: **entrada entregada por el CLI** (o el borrador de campos que pasó `/mala-pata-triage` al decidir shot)
+User request: **input delivered by the CLI** (or the draft of fields that `/mala-pata-triage` passed when deciding shot)
 
-Es el carril más chico de mala-pata: **ODD desnudo**. Mismo método que `/mala-pata-organic-start` (authorize → explore → implementar → cerrar, con work-unit commit y RDD por commit), pero **sin worktree, sin feature-doc, sin split kickoff/start, sin preview ni smoke test**. Un tiro y listo (*one-shot*) para el cambio tan chico y tan entendido que toda esa ceremonia es puro overhead.
+This is mala-pata's smallest lane: **bare ODD**. Same method as `/mala-pata-organic-start` (authorize → explore → implement → close, with work-unit commit and RDD per commit), but **no worktree, no feature-doc, no kickoff/start split, no preview or smoke test**. One shot and done (*one-shot*) for a change so small and so well understood that all that ceremony is pure overhead.
 
-> **El protocolo ODD es la fuente de verdad.** Sus pasos, los work-unit commits y la evaluación RDD por commit viven en tu **CLAUDE.md global** (`## Implementation Routing → ### ODD protocol`). Este skill corre el subconjunto mínimo de ese protocolo — la ruta **direct inline**. Si el CLAUDE.md y este skill difieren, **manda el CLAUDE.md**.
+> **The ODD protocol is the source of truth.** Its steps, the work-unit commits and the RDD evaluation per commit live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill runs the minimum subset of that protocol — the **direct inline** route. If the CLAUDE.md and this skill differ, **the CLAUDE.md wins**.
 
-> **Usa workers de ODD (direct inline), NUNCA agentes `sdd-*`.** El preflight `PreToolUse:Agent` de gentle-ai no aplica acá, igual que en `/mala-pata-organic`.
+> **Uses ODD workers (direct inline), NEVER `sdd-*` agents.** The gentle-ai `PreToolUse:Agent` preflight does not apply here, same as in `/mala-pata-organic`.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, do not reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `git` — control de versiones; el work-unit commit es parte del carril. Siempre presente.
-  - `gentle-ai` — motor de RDD por commit (carril ODD). Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `codegraph` — ubicar el símbolo/archivo a tocar sin leer de más. Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
-  - `serena` — navegación/edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
-  - `engram` — continuidad opcional. Fallback: ninguna — shot no deja artefacto durable por diseño. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Mandatory** (no fallback — if missing, STOP and ask to install it, do not start):
+  - `git` — version control; the work-unit commit is part of the lane. Always present.
+  - `gentle-ai` — RDD-per-commit engine (ODD lane). Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `codegraph` — locate the symbol/file to touch without over-reading. Fallback: grep/Read. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — symbol-level navigation/editing. Fallback: codegraph/grep. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `engram` — optional continuity. Fallback: none — shot leaves no durable artifact by design. Install: comes with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Reglas duras
+## Hard rules
 
-> **#1 — Gate de entrada: shot es para lo TRIVIAL y ENTENDIDO, no para lo chico-pero-incierto.** Shot aplica solo si: el Qué/Done son obvios, no hay decisiones que **necesiten diseño**, el blast radius es mínimo (1-3 archivos), no hay migración, ni contrato/endpoint nuevo, ni UI nueva. Una decisión **decidible con una pregunta** (opciones conocidas, el humano elige) NO te saca de shot: hacé esa pregunta y seguí. Solo una decisión que **necesita diseño** (arquitecturas con tradeoffs a investigar) sube a organic/loop. El criterio NO es el conteo de líneas — es la **ausencia de incertidumbre y de ceremonia necesaria**. Si falta algo de eso → NO es shot: rebotá a `/mala-pata-organic` (o `/mala-pata-loop` si hay decisiones de diseño, `/mala-pata-roadmap` si es multi-unidad).
+> **#1 — Entry gate: shot is for the TRIVIAL and UNDERSTOOD, not for the small-but-uncertain.** Shot applies only if: the What/Done are obvious, there are no decisions that **need design**, the blast radius is minimal (1-3 files), no migration, no new contract/endpoint, no new UI. A decision that is **decidable with one question** (known options, the human chooses) does NOT take you out of shot: ask that question and continue. Only a decision that **needs design** (architectures with tradeoffs to investigate) escalates to organic/loop. The criterion is NOT line count — it is the **absence of uncertainty and of necessary ceremony**. If any of that is missing → it is NOT shot: bounce to `/mala-pata-organic` (or `/mala-pata-loop` if there are design decisions, `/mala-pata-roadmap` if it is multi-unit).
 
-> **#2 — NUNCA un worktree. Esto es lo que hace a shot rápido — es el único carril que trabaja in-place.** NO crees ni uses un worktree bajo ninguna circunstancia; crear un worktree es exactamente lo que shot evita (si creés que hace falta uno, no era shot → rebotá a organic/loop). Trabajás in-place, pero **NUNCA tocás `main` directo**. Si estás parado en una rama protegida (`main`/`development`), **branch-first**: creá una rama corta `<tipo>/<slug>` (`fix`/`chore`/`refactor`/`docs`) y commiteá ahí. Si ya estás en una feature branch, commiteá en esa misma. El worktree se saltea; la rama segura NO.
+> **#2 — NEVER a worktree. This is what makes shot fast — it is the only lane that works in-place.** Do NOT create or use a worktree under any circumstance; creating a worktree is exactly what shot avoids (if you think one is needed, it was not shot → bounce to organic/loop). You work in-place, but **NEVER touch `main` directly**. If you are standing on a protected branch (`main`/`development`), **branch-first**: create a short branch `<type>/<slug>` (`fix`/`chore`/`refactor`/`docs`) and commit there. If you are already on a feature branch, commit on that one. The worktree is skipped; the safe branch is NOT.
 
-> **#3 — Rutas absolutas SIEMPRE** en todo comando git/lectura/escritura (`git -C <ABS-repo> …`). Antes de editar o commitear: `git -C <ABS-repo> rev-parse --abbrev-ref HEAD` debe devolver una rama que NO sea `main`/`development`. Si devuelve una protegida, aplicá #2 antes de escribir.
+> **#3 — Absolute paths ALWAYS** in every git/read/write command (`git -C <ABS-repo> …`). Before editing or committing: `git -C <ABS-repo> rev-parse --abbrev-ref HEAD` must return a branch that is NOT `main`/`development`. If it returns a protected one, apply #2 before writing.
 
-> **#4 — Una sola pasada.** No hay kickoff, no hay fase de start, no hay gates ceremoniales. Si te encontrás queriendo abrir un feature-doc, un preview o un smoke test, es señal de que el cambio NO era shot (ver #1) — rebotá a organic.
+> **#4 — A single pass.** There is no kickoff, no start phase, no ceremonial gates. If you find yourself wanting to open a feature-doc, a preview or a smoke test, it is a sign the change was NOT shot (see #1) — bounce to organic.
 
-## Flujo (ODD direct-inline, en una pasada)
+## Flow (ODD direct-inline, in one pass)
 
-1. **Autorizar (ODD paso 1).** ¿El pedido autoriza un cambio? Investigación/explicación/review/comparación = read-only → respondé directo, sin tocar nada. Solo si autoriza cambio, seguís.
-2. **Rama segura (sin worktree) — Regla #2/#3.** `git -C <ABS-repo> rev-parse --abbrev-ref HEAD`. Si es `main`/`development` → `git -C <ABS-repo> switch -c <tipo>/<slug>` (branch-first) y confirmá el tipo en una línea. Si ya estás en una feature → quedate ahí. No se crea worktree.
-3. **Entender (1-3 archivos).** Ubicá lo que hay que tocar (codegraph/serena, o grep/Read de fallback). **Si necesitás 4+ archivos, o aparece una decisión de diseño, o el blast radius crece → PARÁ** (Regla #1): no es shot, rebotá a `/mala-pata-organic`.
-4. **Editar + checks.** Aplicá el cambio con el **modo TDD del proyecto**: si strict TDD está on, Red → Green → Refactor; si no, checks funcionales puntuales. Corré el **check que prueba este cambio** (no la suite entera, salvo que sea barata). Nunca des por hecho sin ver el check en verde.
-5. **Work-unit commit.** `git -C <ABS-repo>` con pathspec explícito y Conventional Commit. Si **RDD está on**, tras el commit corré `gentle-ai review assess --cwd <ABS-repo> --json` y seguí el plan nativo (en trivial casi siempre da passive). El detalle completo del RDD vive en el ODD protocol del CLAUDE.md — no lo reimplementes.
-6. **Cerrar.** Reportá el resultado verificado + el check que corriste + próximo paso en 1-2 líneas. **Push, PR y merge quedan a decisión del humano** (shot no abre PR solo salvo que lo pidas). Sin feature-doc ni tabla ceremonial — un cierre de una línea alcanza.
+1. **Authorize (ODD step 1).** Does the request authorize a change? Investigation/explanation/review/comparison = read-only → answer directly, touching nothing. Only if it authorizes a change, you continue.
+2. **Safe branch (no worktree) — Rule #2/#3.** `git -C <ABS-repo> rev-parse --abbrev-ref HEAD`. If it is `main`/`development` → `git -C <ABS-repo> switch -c <type>/<slug>` (branch-first) and confirm the type in one line. If you are already on a feature → stay there. No worktree is created.
+3. **Understand (1-3 files).** Locate what must be touched (codegraph/serena, or grep/Read as fallback). **If you need 4+ files, or a design decision appears, or the blast radius grows → STOP** (Rule #1): it is not shot, bounce to `/mala-pata-organic`.
+4. **Edit + checks.** Apply the change with the **project's TDD mode**: if strict TDD is on, Red → Green → Refactor; otherwise, targeted functional checks. Run the **check that proves this change** (not the whole suite, unless it is cheap). Never consider it done without seeing the check green.
+5. **Work-unit commit.** `git -C <ABS-repo>` with explicit pathspec and a Conventional Commit. If **RDD is on**, after the commit run `gentle-ai review assess --cwd <ABS-repo> --json` and follow the native plan (for a trivial change it almost always yields passive). The full RDD detail lives in the CLAUDE.md ODD protocol — do not reimplement it.
+6. **Close.** Report the verified result + the check you ran + next step in 1-2 lines. **Push, PR and merge are left to the human's decision** (shot does not open a PR on its own unless you ask). No feature-doc or ceremonial table — a one-line close is enough.
 
-## Guard de escape (Regla #1, pero a mitad de camino)
+## Escape guard (Rule #1, but midway)
 
-Si arrancaste como shot y a mitad descubrís que el cambio NO era trivial (apareció una decisión, el blast radius creció, hace falta diseñar o migrar) → **PARÁ, no fuerces shot**. No commitees algo a medias o roto; dejá el trabajo en la rama y recomendá subir a `/mala-pata-organic` (o `/mala-pata-loop` si hay decisiones de diseño). Forzar shot sobre algo que creció es exactamente lo que este carril evita.
+If you started as shot and midway you discover the change was NOT trivial (a decision appeared, the blast radius grew, design or migration is needed) → **STOP, do not force shot**. Do not commit something half-done or broken; leave the work on the branch and recommend escalating to `/mala-pata-organic` (or `/mala-pata-loop` if there are design decisions). Forcing shot on something that grew is exactly what this lane avoids.
 
-## Qué NO hace shot
+## What shot does NOT do
 
-- NO crea worktree.
-- NO escribe feature-doc ni kickoff.
-- NO hace preview ni smoke test (si el cambio los necesita, no era shot).
-- NO despacha agentes `sdd-*`.
-- NO pushea, abre PR ni mergea por su cuenta — eso queda al humano.
+- Does NOT create a worktree.
+- Does NOT write a feature-doc or kickoff.
+- Does NOT do preview or smoke test (if the change needs them, it was not shot).
+- Does NOT dispatch `sdd-*` agents.
+- Does NOT push, open a PR or merge on its own — that is left to the human.

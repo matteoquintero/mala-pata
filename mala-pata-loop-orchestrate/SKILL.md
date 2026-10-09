@@ -1,112 +1,112 @@
 ---
 name: mala-pata-loop-orchestrate
-description: Planificador READ-ONLY de un lote de kickoffs SDD — analiza varios kickoffs y devuelve un plan de arranque (olas, paralelismo, conflictos de archivo/migración, splits recomendados, diferidos) + comandos copy-paste. NO crea worktrees, NO adelanta branches, NO lanza sesiones — eso lo hace /mala-pata-loop-orchestrate-start.
+description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several kickoffs and returns a start plan (waves, parallelism, file/migration conflicts, recommended splits, deferrals) + copy-paste commands. It does NOT create worktrees, does NOT advance branches, does NOT launch sessions — /mala-pata-loop-orchestrate-start does that.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
-# /mala-pata-loop-orchestrate — Planificar un LOTE de kickoffs (READ-ONLY)
+# /mala-pata-loop-orchestrate — Plan a BATCH of kickoffs (READ-ONLY)
 
-Sos el **planificador** del lote. Te pasan **varios kickoffs** y devolvés un **plan de arranque**: en
-qué **olas** correrlos, qué **paralelizar** y qué **NO**, dónde hay **conflicto de archivo/migración**,
-qué kickoff **conviene partir en dos**, cuáles **diferir** por bajo valor, y los comandos listos para
-pegar.
+You are the batch **planner**. You are handed **several kickoffs** and you return a **start plan**: in
+which **waves** to run them, what to **parallelize** and what **NOT**, where there is a **file/migration
+conflict**, which kickoff **is worth splitting in two**, which to **defer** for low value, and the commands ready to
+paste.
 
-> **Este skill NO ejecuta nada**: no crea worktrees, no adelanta branches, no escribe launch configs,
-> no abre sesiones. Es SOLO análisis + plan. Para **lanzar** el lote usá `/mala-pata-loop-orchestrate-start`
-> (separación de responsabilidades, igual que `loop` vs `loop-start`).
+> **This skill executes NOTHING**: it does not create worktrees, does not advance branches, does not write launch configs,
+> does not open sessions. It is ONLY analysis + plan. To **launch** the batch use `/mala-pata-loop-orchestrate-start`
+> (separation of responsibilities, same as `loop` vs `loop-start`).
 
-NO corrés los ciclos SDD acá (eso lo hace `/mala-pata-loop-start` por kickoff). Este comando
-**planifica el lote**; el lanzamiento vive en el skill hermano.
+You do NOT run the SDD cycles here (that is done by `/mala-pata-loop-start` per kickoff). This command
+**plans the batch**; the launch lives in the sibling skill.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, do not reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `git` — lectura de ramas y detección de conflictos. Instalar: siempre presente; no requiere instalación.
-  - `gentle-ai` — motor SDD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir con la lista explícita de kickoffs. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Mandatory** (no fallback — if missing, STOP and ask to install it, do not start):
+  - `git` — reading branches and detecting conflicts. Install: always present; requires no installation.
+  - `gentle-ai` — SDD engine. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `engram` — persistent memory and continuity pointer. Fallback: continue with the explicit list of kickoffs. Install: comes with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Paso 1 — Cargar los kickoffs
-Input (acepta cualquiera de estas formas):
-- **Lista explícita de rutas** (formato actual): rutas absolutas a los `.md` de kickoff que dejó `/mala-pata-loop` en `mala-pata/kickoffs/` (dentro del repo).
-- **Auto-descubrir**: si no se pasa lista, listá `mala-pata/kickoffs/*.md` (o por un prefijo/módulo si lo indican, ej. "todos los de sentencias").
-- **Legacy** (kickoffs viejos, solo compatibilidad): ids de engram (`#6717 #6712 …`) o topic_keys (`sdd/<name>/kickoff`).
+## Step 1 — Load the kickoffs
+Input (accepts any of these forms):
+- **Explicit list of paths** (current format): absolute paths to the kickoff `.md` files that `/mala-pata-loop` left in `mala-pata/kickoffs/` (inside the repo).
+- **Auto-discover**: if no list is passed, list `mala-pata/kickoffs/*.md` (or by a prefix/module if they indicate one, e.g. "todos los de sentencias").
+- **Legacy** (old kickoffs, compatibility only): engram ids (`#6717 #6712 …`) or topic_keys (`sdd/<name>/kickoff`).
 
-Para cada uno: si es ruta → `Read` directo. Si es legacy → `mem_search` → `mem_get_observation`; si lo que devuelve es el puntero liviano (`Kickoff en archivo: <ruta>`) en vez del contenido completo, seguí esa ruta y leé el archivo.
-Si alguno no se encuentra → avisá y seguí con el resto (no inventes contexto).
+For each one: if it is a path → `Read` directly. If it is legacy → `mem_search` → `mem_get_observation`; if what it returns is the lightweight pointer (`Kickoff in file: <path>`) instead of the full content, follow that path and read the file.
+If any is not found → warn and continue with the rest (do not invent context).
 
-## Paso 2 — Extraer los metadatos que gobiernan la orquestación
-De cada kickoff sacá:
-- `change-name`, `size`, `depends_on` (duro/blando).
-- **Áreas/archivos afectados** (sección "Referencias"/"Áreas afectadas") → clave para detectar choques.
-- **¿Migración?** (seed/DDL sí/no).
-- **Severidad/valor** (alta / baja / "evaluar si amerita").
-- **branch base** declarada en el kickoff.
-- **Fases**: casi todos son SDD (`explore→propose→spec→design→tasks→apply→verify→archive`).
-  Las **únicas fases NO-SDD** son la **cola final** de `/mala-pata-loop-start` (Paso 4): **PR →
-  revisión de pipeline/CI → cleanup**. Usá esta conciencia de fases para ubicar la frontera
-  paralelo/serie (ver Paso 3).
+## Step 2 — Extract the metadata that governs orchestration
+From each kickoff take:
+- `change-name`, `size`, `depends_on` (hard/soft).
+- **Affected areas/files** ("References"/"Affected areas" section) → key for detecting clashes.
+- **Migration?** (seed/DDL yes/no).
+- **Severity/value** (high / low / "evaluar si amerita").
+- **base branch** declared in the kickoff.
+- **Phases**: almost all are SDD (`explore→propose→spec→design→tasks→apply→verify→archive`).
+  The **only NON-SDD phases** are the **final tail** of `/mala-pata-loop-start` (Step 4): **PR →
+  pipeline/CI review → cleanup**. Use this phase awareness to place the
+  parallel/serial boundary (see Step 3).
 
-## Paso 3 — Analizar (reglas del plan)
-1. **Grafo de dependencias** (`depends_on`) → orden topológico. Una dependencia dura = el
-   dependiente no entra a **Apply** hasta que el proveedor cierre **design** (la convención/contrato).
-2. **Conflicto por archivo compartido**: intersectá las áreas afectadas. Dos kickoffs que editan
-   el MISMO archivo **no pueden hacer Apply en paralelo** (conflicto de merge) → serializá su Apply
-   o escaloná. La **planeación** (explore→design) SÍ puede ir en paralelo (no escribe código).
-3. **Colisión de migraciones**: si ≥2 seedean migración y van en paralelo → el número es **provisional,
-   no una reserva**: el primero que mergea se lo queda y los demás renumeran al integrar (ver
-   `/mala-pata-loop-start`, Paso 4.1-bis). La verdad de los números tomados es **git** (medí las ramas),
-   NO un registry en engram; los kickoffs traen su número provisional en el frontmatter
-   `migrations_reserved`. Nunca confiar en el número de archivo ni en un registry.
-4. **Triage por valor**: los marcados "evaluar si amerita"/baja severidad → **diferilos** fuera del
-   primer lote (o cerralos en propose sin código). No los metas en la ola 1.
-5. **Split (SOLO recomendar)**: si un kickoff mezcla 2 concerns independientes o es size L con dos
-   entregables separables → **recomendá** partirlo en A/B con el motivo. NO crees los kickoffs
-   partidos (eso lo decide el usuario).
-6. **Cola final compartida**: si varios cambios van al mismo destino, decidí si conviene **un PR
-   consolidado** o **PRs separados**; recordá que la cola final (PR/CI/clean) de cada ciclo NO se
-   paraleliza a ciegas (no mergear con CI en rojo; un solo PR activo por trabajo).
-7. **Frescura de la branch base (solo DETECTAR y AVISAR — no arreglar acá)**: por cada branch base
-   distinta del lote, `git fetch origin <base>` y comparar `git rev-parse <base>` vs
-   `origin/<base>`. Si el local está ATRÁS, marcalo en el plan: "`<base>` local atrás de origin —
-   `/mala-pata-loop-orchestrate-start` va a adelantar los worktrees antes de lanzar". El arreglo real
-   (ff/rebase de los worktrees) lo hace el skill de start; acá solo se reporta para que el usuario lo
-   sepa antes de lanzar.
+## Step 3 — Analyze (plan rules)
+1. **Dependency graph** (`depends_on`) → topological order. A hard dependency = the
+   dependent does not enter **Apply** until the provider closes **design** (the convention/contract).
+2. **Conflict by shared file**: intersect the affected areas. Two kickoffs that edit
+   the SAME file **cannot Apply in parallel** (merge conflict) → serialize their Apply
+   or stagger them. **Planning** (explore→design) CAN go in parallel (it does not write code).
+3. **Migration collision**: if ≥2 seed a migration and run in parallel → the number is **provisional,
+   not a reservation**: the first to merge keeps it and the others renumber on integration (see
+   `/mala-pata-loop-start`, Step 4.1-bis). The truth about taken numbers is **git** (measure the branches),
+   NOT a registry in engram; the kickoffs carry their provisional number in the frontmatter
+   `migrations_reserved`. Never trust the file number nor a registry.
+4. **Triage by value**: those marked "evaluar si amerita"/low severity → **defer them** out of the
+   first batch (or close them at propose without code). Do not put them in wave 1.
+5. **Split (ONLY recommend)**: if a kickoff mixes 2 independent concerns or is size L with two
+   separable deliverables → **recommend** splitting it into A/B with the reason. Do NOT create the
+   split kickoffs (that is the user's decision).
+6. **Shared final tail**: if several changes go to the same destination, decide whether **one consolidated
+   PR** or **separate PRs** is better; remember that the final tail (PR/CI/clean) of each cycle is NOT
+   blindly parallelized (do not merge with red CI; a single active PR per piece of work).
+7. **Base branch freshness (only DETECT and WARN — do not fix here)**: for each distinct base branch
+   in the batch, `git fetch origin <base>` and compare `git rev-parse <base>` vs
+   `origin/<base>`. If the local is BEHIND, flag it in the plan: "`<base>` local behind origin —
+   `/mala-pata-loop-orchestrate-start` will advance the worktrees before launching". The real fix
+   (ff/rebase of the worktrees) is done by the start skill; here it is only reported so the user
+   knows before launching.
 
-## Paso 4 — Salida: PLAN en tabla de olas + comandos + handoff a start
-Devolvé SIEMPRE:
-1. **Tabla de olas**: `Ola | kickoff (#id) | fase de arranque | paraleliza con | frontera (hasta qué
-   fase en paralelo) | conflicto/nota`.
-2. **Comandos copy-paste** por ola, para correr cada ciclo a mano si el usuario NO quiere lanzar en Warp:
+## Step 4 — Output: PLAN as a wave table + commands + handoff to start
+ALWAYS return:
+1. **Wave table**: `Wave | kickoff (#id) | start phase | parallelizes with | boundary (up to what
+   phase in parallel) | conflict/note`.
+2. **Copy-paste commands** per wave, to run each cycle by hand if the user does NOT want to launch in Warp:
    ```
    /mala-pata-loop-start sdd/<change-name>/kickoff
    ```
-   (Todos entran por **Explore**; aclaralo. La diferencia es la ola y hasta qué fase puede avanzar
-   en paralelo.)
-3. **Handoff a start**: la línea para lanzar el lote (o una ola) en Warp con el skill hermano:
+   (All enter through **Explore**; make that clear. The difference is the wave and up to which phase it can advance
+   in parallel.)
+3. **Handoff to start**: the line to launch the batch (or a wave) in Warp with the sibling skill:
    ```
-   /mala-pata-loop-orchestrate-start <kickoffs-de-la-ola-a-lanzar>
+   /mala-pata-loop-orchestrate-start <kickoffs-of-the-wave-to-launch>
    ```
-   Aclarale al usuario: `orchestrate` solo planifica; para crear worktrees + abrir sesiones use
+   Make clear to the user: `orchestrate` only plans; to create worktrees + open sessions use
    `orchestrate-start`.
-4. **Advertencias**: choques de archivo, colisión de migración, dependencias, splits recomendados,
-   diferidos, coordinación de la cola final, y **frescura de base** (Paso 3.7).
+4. **Warnings**: file clashes, migration collision, dependencies, recommended splits,
+   deferrals, final tail coordination, and **base freshness** (Step 3.7).
 
-## Reglas duras
-- **NO** ejecutes nada mutante: sin worktrees, sin ff/rebase, sin launch config, sin abrir sesiones.
-  Si el usuario pide "lanzá / orquestá de verdad", derivá a `/mala-pata-loop-orchestrate-start`.
-- **NO** crees los kickoffs de un split (solo recomendás).
-- El `git fetch`/comparación del Paso 3.7 es lo ÚNICO que toca red/git, y es READ-ONLY (fetch + rev-parse).
-- Rutas ABSOLUTAS en los comandos; relativas solo al hablarle al usuario.
+## Hard rules
+- **DO NOT** execute anything mutating: no worktrees, no ff/rebase, no launch config, no opening sessions.
+  If the user asks "lanzá / orquestá de verdad", redirect to `/mala-pata-loop-orchestrate-start`.
+- **DO NOT** create the kickoffs of a split (you only recommend).
+- The `git fetch`/comparison of Step 3.7 is the ONLY thing that touches network/git, and it is READ-ONLY (fetch + rev-parse).
+- ABSOLUTE paths in the commands; relative only when talking to the user.
 
-## Compatibilidad de runtime
-El análisis, las olas y los comandos son portables a cualquier CLII. El handoff a Warp/Claude solo
-aplica cuando el runtime es Claude con Warp; en otro CLI, devolvé el plan y los comandos y omití el
-handoff de `orchestrate-start`.
+## Runtime compatibility
+The analysis, the waves and the commands are portable to any CLI. The handoff to Warp/Claude only
+applies when the runtime is Claude with Warp; in another CLI, return the plan and the commands and omit the
+`orchestrate-start` handoff.

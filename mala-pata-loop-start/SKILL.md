@@ -1,86 +1,86 @@
 ---
 name: mala-pata-loop-start
-description: Inicia y corre el CICLO SDD a partir de la ruta del archivo de kickoff que dejó /mala-pata-loop — explore → propose → spec → design → tasks → preview → apply → verify → archive, una fase por vez (secuencial, spec y design NO en paralelo), interactivo con gate por fase. Preview es un gate humano OBLIGATORIO entre tasks y apply (recorrido en cristiano + anti-duplicación). El init lo garantiza /mala-pata-loop (una vez por proyecto). La planeación va ANTES de tocar código. El brief es insumo del ciclo, NO una orden de implementar directo.
+description: Starts and runs the SDD CYCLE from the path of the kickoff file that /mala-pata-loop left — explore → propose → spec → design → tasks → preview → apply → verify → archive, one phase at a time (sequential, spec and design NOT in parallel), interactive with a gate per phase. Preview is a MANDATORY human gate between tasks and apply (plain-language walkthrough + anti-duplication). The init is guaranteed by /mala-pata-loop (once per project). Planning goes BEFORE touching code. The brief is input to the cycle, NOT an order to implement directly.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
-# /mala-pata-loop-start — Corre el CICLO SDD desde un archivo de kickoff
+# /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
 
-Kickoff: **entrada entregada por el CLI**
+Kickoff: **input delivered by the CLI**
 
-Tu trabajo: leer el *kickoff* que dejó `/mala-pata-loop` y **correr el CICLO SDD completo, fase por fase, UNA POR UNA (secuencial, nunca en paralelo)**:
+Your job: read the *kickoff* that `/mala-pata-loop` left and **run the COMPLETE SDD CYCLE, phase by phase, ONE AT A TIME (sequential, never in parallel)**:
 
 `explore → propose → spec → design → tasks → preview → apply → verify → archive`
 
-(El *init* —una vez por proyecto— ya lo garantizó `/mala-pata-loop`. El *explore* de acá **profundiza en el código real del worktree**; el kickoff fue solo la reinterpretación a alto nivel.) Cada fase cierra con **resumen + PAUSA** esperando OK antes de la siguiente. Toda la planeación (explore→propose→spec→design→tasks) va **antes** de escribir una línea de código.
+(The *init* —once per project— was already guaranteed by `/mala-pata-loop`. The *explore* here **goes deeper into the real code of the worktree**; the kickoff was only the high-level reinterpretation.) Each phase closes with **summary + PAUSE** waiting for OK before the next one. All the planning (explore→propose→spec→design→tasks) goes **before** writing a single line of code.
 
-> **Regla dura #1 — NO implementes directo.** Está prohibido escribir código, migraciones o crear archivos de implementación **antes de que el PREVIEW esté aprobado** (el gate final antes de código: tasks primero, luego preview). El "plan de fases" del brief es material para la fase de Tasks, NO la señal para empezar a codear. Si te encontrás explorando para "ir resolviendo la tarea", frená: estás saltando el ciclo.
-> **Regla dura #2 — SIEMPRE tu propio worktree + tu propia rama nueva, aunque el brief diga reusar.** El ciclo corre en un worktree DEDICADO a este change, sobre una rama NUEVA `<tipo>/<change-name>` creada off la `branch_base`. **NUNCA in-place sobre una rama integradora/compartida, NUNCA reusando el worktree de otra feature — aunque el comando de arranque del brief apunte a un worktree existente o use una integradora como rama de trabajo.** Si el brief dice eso, está MAL: override — creá un worktree fresco y propio off la base con rama nueva `<tipo>/<change-name>`, y avisá en una línea que corregiste el brief. La `branch_base` sí sale del brief tal cual (puede ser `main`/`development` o una feature en curso — branchás off ella y consolidás al merge en el cierre). Del comando de arranque del brief reusás la base y los symlinks (`.env`/`node_modules`), no el worktree ni la rama de trabajo. **Único reuse válido**: el worktree PROPIO de ESTE change (mismo change-name) en un resume. El único carril que trabaja SIN worktree es `/mala-pata-shot`. Si el brief no trae base/symlinks, PARÁ y pedilo al orquestador.
+> **Hard rule #1 — do NOT implement directly.** It is forbidden to write code, migrations or create implementation files **before the PREVIEW is approved** (the final gate before code: tasks first, then preview). The brief's "phase plan" is material for the Tasks phase, NOT the signal to start coding. If you catch yourself exploring in order to "go solving the task", stop: you are skipping the cycle.
+> **Hard rule #2 — ALWAYS your own worktree + your own new branch, even if the brief says to reuse.** The cycle runs in a worktree DEDICATED to this change, on a NEW branch `<type>/<change-name>` created off the `branch_base`. **NEVER in-place on an integration/shared branch, NEVER reusing another feature's worktree — even if the brief's startup command points to an existing worktree or uses an integration branch as the working branch.** If the brief says that, it is WRONG: override — create a fresh worktree of your own off the base with a new branch `<type>/<change-name>`, and warn in one line that you corrected the brief. The `branch_base` does come from the brief as is (it may be `main`/`development` or a feature in progress — you branch off it and consolidate at merge in the closing). From the brief's startup command you reuse the base and the symlinks (`.env`/`node_modules`), not the worktree nor the working branch. **Only valid reuse**: THIS change's OWN worktree (same change-name) on a resume. The only lane that works WITHOUT a worktree is `/mala-pata-shot`. If the brief does not bring base/symlinks, STOP and ask the orchestrator for it.
 
-> **Agnóstico de stack.** Los ejemplos concretos de este comando (`.env`, `node_modules`, `npm`, `TEST_DB_URL`, Storybook, `gh`) son del stack Node/Postgres/GitHub. **Mapealos al stack real del proyecto** (entorno/DB de pruebas, gestor de deps, archivos de config/secrets, workshop de componentes, host de PRs según lo que el proyecto use). La convención del proyecto manda sobre cualquier ejemplo.
+> **Stack-agnostic.** The concrete examples in this command (`.env`, `node_modules`, `npm`, `TEST_DB_URL`, Storybook, `gh`) are from the Node/Postgres/GitHub stack. **Map them to the project's real stack** (test environment/DB, dependency manager, config/secrets files, component workshop, PR host according to what the project uses). The project's convention rules over any example.
 
-> **Regla dura #3 — hay EXACTAMENTE UN gate de preflight obligatorio: el preflight canónico de gentle-ai SDD (3 preguntas), preguntado UNA sola vez en el Paso 2 (sub-paso nuevo, ver Paso 2.9), en la sesión raíz/padre interactiva, ANTES del primer dispatch de un Agent `sdd-*`.** No es opcional ni discrecional de este skill: desde gentle-ai 3.7, el hook `PreToolUse:Agent` (`gentle-ai sdd-preflight-hook`) **rechaza todo dispatch `sdd-*`** si no encuentra, en el transcript en vivo de la sesión actual, un `AskUserQuestion` real y byte-exacto ya respondido por el humano — ni el kickoff, ni engram, ni ningún estado en disco lo satisfacen. Las preferencias opinionadas de mala-pata (ritmo interactivo, artefactos en engram, PR ask-on-risk) se siguen llevando, pero ahora como la **recomendación** dentro del texto de cada pregunta (tomada del bloque `sdd_preflight` del kickoff) — el humano sigue eligiendo, porque el hook exige una respuesta real y las labels/orden de las opciones las fija gentle-ai (no se pueden anotar ni reordenar, ver Paso 2.9). Las otras interacciones humanas del ciclo se mantienen igual: confirmación de branch base (Paso 2.2) y destino del PR/merge (Paso 4). **RDD sigue sin correr en el ciclo SDD** — es del carril organic/ODD (ver `mala-pata-organic`), así que acá no hay gate de receipt. Fuera de estos tres puntos (preflight canónico, branch base, destino de PR/merge) no inventes gates nuevos — si se te ocurre armar un menú adicional de selección antes de arrancar el ciclo, es señal de que estás agregando algo fuera de este skill.
+> **Hard rule #3 — there is EXACTLY ONE mandatory preflight gate: gentle-ai SDD's canonical preflight (3 questions), asked ONLY ONCE in Step 2 (new sub-step, see Step 2.9), in the interactive root/parent session, BEFORE the first dispatch of an `sdd-*` Agent.** It is not optional nor discretionary for this skill: since gentle-ai 3.7, the `PreToolUse:Agent` hook (`gentle-ai sdd-preflight-hook`) **rejects every `sdd-*` dispatch** if it does not find, in the live transcript of the current session, a real, byte-exact `AskUserQuestion` already answered by the human — neither the kickoff, nor engram, nor any state on disk satisfies it. mala-pata's opinionated preferences (interactive pace, artifacts in engram, PR ask-on-risk) are still carried, but now as the **recommendation** inside the text of each question (taken from the kickoff's `sdd_preflight` block) — the human still chooses, because the hook demands a real answer and the labels/order of the options are fixed by gentle-ai (they cannot be annotated or reordered, see Step 2.9). The other human interactions of the cycle stay the same: base branch confirmation (Step 2.2) and PR/merge destination (Step 4). **RDD still does not run in the SDD cycle** — it belongs to the organic/ODD lane (see `mala-pata-organic`), so there is no receipt gate here. Outside these three points (canonical preflight, base branch, PR/merge destination) do not invent new gates — if you think of building an additional selection menu before starting the cycle, it is a sign that you are adding something outside this skill.
 
-> **Regla dura #4 — el objetivo se define ANTES de preview, nunca EN preview. Alarma de debate.** El preview existe para revisar **si lo que se va a hacer está bien**, NO para discutir **si el objetivo está bien** — el QUÉ ya tuvo que quedar cerrado en explore/propose/spec. Durante las fases de planeación (explore→spec), si notás que se está **debatiendo mucho el QUÉ** — vuelven preguntas sobre el objetivo, el alcance se mueve, aparecen "¿y esto también?" que no cierran, o la misma decisión se re-discute más de una vez — eso es la señal de que **el objetivo no quedó bien definido** (tarjetas rojas que se colaron por el gate de `/mala-pata-loop`, ver su Paso 0). NO sigas empujando hacia adelante: **devolvé el ciclo a explore o propose** para volver a fijar el QUÉ, y recién cuando esté cerrado seguís. Un objetivo con el QUÉ todavía en discusión **NO puede llegar a preview**. Esto no es re-correr fases por gusto — planear sobre un objetivo movedizo garantiza tirar el plan después.
+> **Hard rule #4 — the objective is defined BEFORE preview, never IN preview. Debate alarm.** Preview exists to review **whether what is going to be done is right**, NOT to discuss **whether the objective is right** — the WHAT already had to be closed in explore/propose/spec. During the planning phases (explore→spec), if you notice that the WHAT is **being debated a lot** — questions about the objective keep coming back, the scope moves, "and this too?" questions appear that do not close, or the same decision is re-discussed more than once — that is the signal that **the objective was not well defined** (red cards that slipped through `/mala-pata-loop`'s gate, see its Step 0). Do NOT keep pushing forward: **send the cycle back to explore or propose** to fix the WHAT again, and only when it is closed do you continue. An objective with the WHAT still under discussion **CANNOT reach preview**. This is not re-running phases for fun — planning on a moving objective guarantees throwing the plan away later.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, don't reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `gentle-ai` — agentes `sdd-*`. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
-  - `serena` — navegación y edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el brief en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Required** (no fallback — if missing, STOP and ask for it to be installed, do not start):
+  - `gentle-ai` — `sdd-*` agents. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `codegraph` — code graph (anchoring and structure). Fallback: grep/Read. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — symbol-level navigation and editing. Fallback: codegraph/grep. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `engram` — persistent memory and continuity pointer. Fallback: continue without the pointer; the brief in the file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
-## Paso 1 — Cargar el brief
+## Step 1 — Load the brief
 
-**Formato actual (default)**: `entrada entregada por el CLI` es una **ruta absoluta a un archivo `.md`** (el que `/mala-pata-loop` escribe en `mala-pata/kickoffs/<change-name>.md`, dentro del repo).
+**Current format (default)**: `input delivered by the CLI` is an **absolute path to a `.md` file** (the one `/mala-pata-loop` writes to `mala-pata/kickoffs/<change-name>.md`, inside the repo).
 
-1. Si la entrada es una ruta absoluta (empieza con `/`) → `Read` directo sobre ese archivo. Si el archivo no existe → **PARÁ** y pedí la ruta correcta. No inventes el contexto.
-2. Leé el frontmatter (change_name, profile, project, branch, branch_base, worktree, depends_on, paralelizable_con, migrations_reserved) y TODO el cuerpo: reglas del método, contexto del proyecto, contrato, reinterpretación técnica, arquitectura, skills condicionales, **decisiones abiertas**, plan de fases, Definition of Done.
+1. If the input is an absolute path (starts with `/`) → `Read` directly on that file. If the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
+2. Read the frontmatter (change_name, profile, project, branch, branch_base, worktree, depends_on, parallelizable_with, migrations_reserved) and the WHOLE body: method rules, project context, contract, technical reinterpretation, architecture, conditional skills, **open decisions**, phase plan, Definition of Done.
 
-**Formato legacy (kickoffs creados antes de este cambio — solo por compatibilidad, no lo uses para kickoffs nuevos)**: si la entrada NO es una ruta absoluta, puede venir como **(a)** un id de engram (`#1234` o `1234`), **(b)** un topic_key (`sdd/<change-name>/kickoff`), o **(c)** el formato combinado viejo `sdd/<change-name>/kickoff · engram #<id>`.
-3. Con `#<número>` (casos a/c) → `mem_get_observation(id: <número>)` DIRECTO, nunca `mem_search`.
-4. Con topic_key puro (caso b) → `mem_search` por el topic_key → `mem_get_observation`. Si lo que devuelve es el **puntero liviano nuevo** (`Kickoff en archivo: <ruta>`) en vez del contenido completo → seguí esa ruta y andá al punto 1.
-5. **Auto-migración one-shot**: si por la vía legacy obtuviste el contenido COMPLETO desde engram (kickoff pre-migración), escribilo al formato nuevo (`mala-pata/kickoffs/<change-name>.md`) y actualizá la observación de engram al puntero de una línea — así ese kickoff queda migrado y la próxima vez entra por la vía normal. Después seguí con ese archivo.
-6. Si no se encuentra nada → **PARÁ** y pedí el identificador correcto.
+**Legacy format (kickoffs created before this change — only for compatibility, do not use it for new kickoffs)**: if the input is NOT an absolute path, it may come as **(a)** an engram id (`#1234` or `1234`), **(b)** a topic_key (`sdd/<change-name>/kickoff`), or **(c)** the old combined format `sdd/<change-name>/kickoff · engram #<id>`.
+3. With `#<number>` (cases a/c) → `mem_get_observation(id: <number>)` DIRECTLY, never `mem_search`.
+4. With a pure topic_key (case b) → `mem_search` by the topic_key → `mem_get_observation`. If what it returns is the **new light pointer** (`Kickoff in file: <path>`) instead of the full content → follow that path and go to point 1.
+5. **One-shot auto-migration**: if through the legacy route you obtained the FULL content from engram (pre-migration kickoff), write it to the new format (`mala-pata/kickoffs/<change-name>.md`) and update the engram observation to the one-line pointer — that way that kickoff is migrated and next time it enters through the normal route. Then continue with that file.
+6. If nothing is found → **STOP** and ask for the correct identifier.
 
-**Retome de un SDD pausado en Preview**: apenas cargado el brief, chequeá `mem_search("sdd/<change-name>/state")`. Si el ítem EXACTO dice `paused-at-preview` (lo deja el gate "Detener" de `sdd-preview`) → NO re-corras las fases de planeación: hacé el preflight del Paso 2 y saltá DIRECTO al gate de Preview (Paso 3, fase 6) re-presentando el artefacto `sdd/<change-name>/preview` ya persistido. `/sdd-continue` (comando de gentle-ai) NO conoce la fase preview — el retome es por acá. Si en cambio el ítem EXACTO dice `objective-not-ready-at-preview` (bounce de objetivo desde el preview, ver Regla dura #4 y `sdd-preview`) → el QUÉ quedó abierto: **NO saltes a preview**; hacé el preflight y **re-entrá por explore/propose** para redefinir el objetivo antes de volver a avanzar.
+**Resuming an SDD paused in Preview**: as soon as the brief is loaded, check `mem_search("sdd/<change-name>/state")`. If the EXACT item says `paused-at-preview` (left by `sdd-preview`'s "Stop" gate) → do NOT re-run the planning phases: do the Step 2 preflight and jump DIRECTLY to the Preview gate (Step 3, phase 6) re-presenting the already-persisted `sdd/<change-name>/preview` artifact. `/sdd-continue` (a gentle-ai command) does NOT know the preview phase — the resume goes through here. If instead the EXACT item says `objective-not-ready-at-preview` (objective bounce from the preview, see Hard rule #4 and `sdd-preview`) → the WHAT was left open: **do NOT jump to preview**; do the preflight and **re-enter through explore/propose** to redefine the objective before advancing again.
 
-## Paso 2 — Preflight + preparación del entorno (siguiendo el brief, sin decidir)
-1. **¿Ya estás en el worktree del brief?** `git branch --show-current`. Si coincide con el branch del brief → saltá al punto 5.
-2. **Confirmación de branch base — SIEMPRE preguntá antes de crear el worktree**: el brief trae la base en su frontmatter (`branch_base`), ya propuesta en el kickoff. Antes de correr el comando de arranque, **confirmala con el humano en una línea** ("worktree off `<base>` — ¿dale?"). Cualquier rama es válida con el OK — `main`/`development` (default de integración) o una feature en curso si el trabajo construye sobre ella. **No bloquees por la rama** (esa rigidez ya rompió arranques reales, ej. base `feature/caja`); lo prohibido es crear el worktree SIN confirmar. Con el OK seguís al punto 3; si el humano corrige la base, actualizá el frontmatter del kickoff antes de seguir.
-3. **Si el worktree no existe o estás en otra branch** → **preparalo ejecutando el comando de arranque del brief TAL CUAL** (crea el worktree off el base branch ya validado + symlinkea `.env` y `node_modules`). Esto NO es "decidir el entorno": es ejecutar lo que el brief ya definió. Solo PARÁS si el brief no trae arranque completo (sin base branch) o si la base no pasó el guard del punto 2.
-4. **Rutas ABSOLUTAS SIEMPRE — nunca comandos "pelados".** La cwd del shell **se resetea entre comandos** a tu directorio base, que suele ser el **REPO PRINCIPAL, no el worktree** (aunque hayas hecho `cd`). Por eso un `cd <worktree> && …` vale SOLO para ese comando, y cualquier `git`/`npm`/escritura **sin ruta explícita corre sobre el repo principal** — mezcla tu trabajo con el de otras ramas o barre archivos ajenos que estén sueltos en el working tree del main (pasó de verdad: un agente pusheó a su feature archivos del main que otra sesión había dejado ahí).
-   - Regla dura: **TODO** comando referencia el worktree por ruta absoluta — `git -C <ABS-worktree> …` (incluidos `add`, `status`, `commit`, `push`, `worktree`, `rev-parse`), `npm --prefix <ABS-worktree> …`, y paths absolutos en toda lectura/escritura.
-   - **PROHIBIDO** un `git add`/`commit`/`status`/`push` pelado, y prohibido usar `cd <worktree> && git …` como sustituto de `-C`.
-   - Antes de CUALQUIER escritura o commit, confirmá sobre qué repo estás parado: `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree, no el main. Si devuelve el main, PARÁ: estás por escribir en el lugar equivocado.
-4.5. **Chequeo de worktree desfasado (una línea, antes de operar)**: confirmá que el worktree está en su path canónico `<ABS-repo>-worktrees/<change-name>` y que `git worktree list` lo muestra ahí, resolviendo en disco. Si el id registrado != el folder, o el path no resuelve (alguien lo renombró con `mv`), avisá y ofrecé `git worktree repair <path>` (o `git worktree prune` si se borró) antes de seguir. **NUNCA uses `mv` para renombrar un worktree** — usá `git worktree move`.
-5. **Entorno ejecutable**: verificá que los untracked que el stack necesita estén resueltos en el worktree (config/secrets + dependencias — p.ej. `.env` y `node_modules`, o el equivalente del proyecto). Si falta un symlink → recreálo con el mismo comando del arranque (punto 3). No corras tests/migraciones sin esto.
-6. **Init ya hecho** (lo garantiza `/mala-pata-loop`, una vez por proyecto) — chequeo de EXISTENCIA EXACTA, no exploración: `mem_search(query: "sdd-init/{project}")` devuelve varios resultados por ranking difuso (otros kickoffs/artefactos del proyecto). **Quedate ÚNICAMENTE con el ítem cuyo título/topic_key sea EXACTAMENTE `sdd-init/{project}`; el resto son falsos positivos del ranking — NO los leas ni los consideres contexto de esta tarea.** Con ese ítem exacto: `mem_get_observation` y leé `strict_tdd` (si `true`, NO NEGOCIABLE). Si el ítem exacto NO aparece → avisá al orquestador; no corras el init.
-7. **Cargá EXACTAMENTE los skills que el kickoff eligió por objetivo (Paso 2 de `/mala-pata-loop`), ni más ni menos.** Base: `clean-architecture` y `solid` siempre; `clean-ddd-hexagonal` + `design-patterns` solo si el objetivo toca backend/dominio. Condicionales: los de la sección "Skills condicionales" del kickoff (ej. `database-design`, `ui-ux-pro-max`, `heuristic-evaluation`, `rag-*`, etc. — según lo que el kickoff listó para ESTE objetivo). Vía el tool **Skill**, uno por nombre (no todos en una llamada); los de plugin usan el nombre `plugin:skill` del listado. **No agregues skills que el kickoff no eligió** — la selección enfocada ya se hizo al generar el brief; cargar de más solo hace ruido.
-8. **No explores el código para "ir resolviendo"** — solo lo mínimo que necesite la fase de Spec/Design.
+## Step 2 — Preflight + environment preparation (following the brief, without deciding)
+1. **Are you already in the brief's worktree?** `git branch --show-current`. If it matches the brief's branch → jump to point 5.
+2. **Base branch confirmation — ALWAYS ask before creating the worktree**: the brief carries the base in its frontmatter (`branch_base`), already proposed in the kickoff. Before running the startup command, **confirm it with the human in one line** ("worktree off `<base>` — go ahead?"). Any branch is valid with the OK — `main`/`development` (integration default) or a feature in progress if the work builds on it. **Do not block because of the branch** (that rigidity already broke real startups, e.g. base `feature/caja`); what is forbidden is creating the worktree WITHOUT confirming. With the OK you continue to point 3; if the human corrects the base, update the kickoff's frontmatter before continuing.
+3. **If the worktree does not exist or you are on another branch** → **prepare it by running the brief's startup command AS IS** (it creates the worktree off the already-validated base branch + symlinks `.env` and `node_modules`). This is NOT "deciding the environment": it is running what the brief already defined. You only STOP if the brief does not bring a complete startup (no base branch) or if the base did not pass the guard of point 2.
+4. **ABSOLUTE paths ALWAYS — never "bare" commands.** The shell's cwd **resets between commands** to your base directory, which is usually the **MAIN REPO, not the worktree** (even if you did `cd`). That is why a `cd <worktree> && …` is valid ONLY for that command, and any `git`/`npm`/write **without an explicit path runs on the main repo** — it mixes your work with that of other branches or sweeps up foreign files that are loose in main's working tree (it really happened: an agent pushed to its feature files from main that another session had left there).
+   - Hard rule: **EVERY** command references the worktree by absolute path — `git -C <ABS-worktree> …` (including `add`, `status`, `commit`, `push`, `worktree`, `rev-parse`), `npm --prefix <ABS-worktree> …`, and absolute paths in every read/write.
+   - **FORBIDDEN** a bare `git add`/`commit`/`status`/`push`, and forbidden to use `cd <worktree> && git …` as a substitute for `-C`.
+   - Before ANY write or commit, confirm which repo you are standing on: `git -C <ABS-worktree> rev-parse --show-toplevel` must return the worktree, not main. If it returns main, STOP: you are about to write in the wrong place.
+4.5. **Drifted worktree check (one line, before operating)**: confirm that the worktree is at its canonical path `<ABS-repo>-worktrees/<change-name>` and that `git worktree list` shows it there, resolving on disk. If the registered id != the folder, or the path does not resolve (someone renamed it with `mv`), warn and offer `git worktree repair <path>` (or `git worktree prune` if it was deleted) before continuing. **NEVER use `mv` to rename a worktree** — use `git worktree move`.
+5. **Executable environment**: verify that the untracked files the stack needs are resolved in the worktree (config/secrets + dependencies — e.g. `.env` and `node_modules`, or the project's equivalent). If a symlink is missing → recreate it with the same startup command (point 3). Do not run tests/migrations without this.
+6. **Init already done** (guaranteed by `/mala-pata-loop`, once per project) — EXACT EXISTENCE check, not exploration: `mem_search(query: "sdd-init/{project}")` returns several results by fuzzy ranking (other kickoffs/artifacts of the project). **Keep ONLY the item whose title/topic_key is EXACTLY `sdd-init/{project}`; the rest are false positives of the ranking — do NOT read them nor consider them context for this task.** With that exact item: `mem_get_observation` and read `strict_tdd` (if `true`, NON-NEGOTIABLE). If the exact item does NOT appear → warn the orchestrator; do not run the init.
+7. **Load EXACTLY the skills the kickoff chose by objective (Step 2 of `/mala-pata-loop`), no more and no less.** Base: `clean-architecture` and `solid` always; `clean-ddd-hexagonal` + `design-patterns` only if the objective touches backend/domain. Conditionals: those in the kickoff's "Skills condicionales" section (e.g. `database-design`, `ui-ux-pro-max`, `heuristic-evaluation`, `rag-*`, etc. — according to what the kickoff listed for THIS objective). Via the **Skill** tool, one per name (not all in one call); plugin ones use the `plugin:skill` name from the listing. **Do not add skills the kickoff did not choose** — the focused selection was already done when generating the brief; loading extra only adds noise.
+8. **Do not explore the code to "go solving"** — only the minimum that the Spec/Design phase needs.
 
-### Paso 2.9 — Gate de preflight canónico de gentle-ai (OBLIGATORIO, una sola vez)
+### Step 2.9 — gentle-ai canonical preflight gate (MANDATORY, only once)
 
-Antes del **primer** dispatch de un Agent `sdd-*` (o sea, antes de la fase Explore del Paso 3), hacé **UNA sola llamada** a `AskUserQuestion` con exactamente 3 preguntas single-select, en la sesión raíz/padre (nunca desde un subagente — un subagente jamás puede portar esta autoridad, el hook lee el transcript de la sesión que dispara el Agent). Sin esto, `gentle-ai sdd-preflight-hook` va a rechazar el dispatch de `sdd-explore`.
+Before the **first** dispatch of an `sdd-*` Agent (that is, before the Explore phase of Step 3), make **ONE single call** to `AskUserQuestion` with exactly 3 single-select questions, in the root/parent session (never from a subagent — a subagent can never carry this authority, the hook reads the transcript of the session that fires the Agent). Without this, `gentle-ai sdd-preflight-hook` will reject the `sdd-explore` dispatch.
 
-**Forma exacta, byte-exacta — no la alteres:**
+**Exact shape, byte-exact — do not alter it:**
 
-- Los textos de pregunta empiezan literalmente con `Gentle AI SDD preflight 1/3:`, `Gentle AI SDD preflight 2/3:` y `Gentle AI SDD preflight 3/3:` (el validador usa el regex `/^Gentle AI SDD preflight \d\/3:\s*/`). Lo que va DESPUÉS del marcador es libre — ahí metés la recomendación del kickoff.
-- Los `header` de cada grupo son EXACTAMENTE: `Pace`, `Artifacts`, `PR strategy`.
-- Las labels de las opciones son EXACTAS y van EN ESTE ORDEN — el validador compara por índice, así que NO reordenes ni le agregues sufijos tipo "(Recomendado)":
-  - Q1 Pace: `Interactive`, luego `Automatic`.
-  - Q2 Artifacts: `OpenSpec`, luego `Engram`, luego `Both`.
-  - Q3 PR strategy: `Ask me`, luego `Single PR`, luego `Auto`.
-- Descripciones canónicas (usalas tal cual):
+- The question texts literally start with `Gentle AI SDD preflight 1/3:`, `Gentle AI SDD preflight 2/3:` and `Gentle AI SDD preflight 3/3:` (the validator uses the regex `/^Gentle AI SDD preflight \d\/3:\s*/`). What comes AFTER the marker is free — that is where you put the kickoff's recommendation.
+- The `header` of each group is EXACTLY: `Pace`, `Artifacts`, `PR strategy`.
+- The option labels are EXACT and go IN THIS ORDER — the validator compares by index, so do NOT reorder nor add suffixes like "(Recommended)":
+  - Q1 Pace: `Interactive`, then `Automatic`.
+  - Q2 Artifacts: `OpenSpec`, then `Engram`, then `Both`.
+  - Q3 PR strategy: `Ask me`, then `Single PR`, then `Auto`.
+- Canonical descriptions (use them as is):
   - Interactive: `Confirm before each SDD phase advances.`
   - Automatic: `Advance through SDD phases without per-phase confirmation.`
   - OpenSpec: `Track this change with OpenSpec proposal, spec, design, and task files.`
@@ -90,13 +90,13 @@ Antes del **primer** dispatch de un Agent `sdd-*` (o sea, antes de la fase Explo
   - Single PR: `Deliver the change as a single pull request.`
   - Auto: `Chain pull requests automatically as work completes.`
 
-**Plantilla literal del payload** (copiala tal cual, solo completando la recomendación entre `<>` en cada texto de pregunta):
+**Literal payload template** (copy it as is, only filling in the recommendation between `<>` in each question text):
 
 ```
 AskUserQuestion({
   questions: [
     {
-      question: "Gentle AI SDD preflight 1/3: Ritmo del ciclo — el kickoff recomienda: <Interactive|Automatic>",
+      question: "Gentle AI SDD preflight 1/3: Cycle pace — the kickoff recommends: <Interactive|Automatic>",
       header: "Pace",
       multiSelect: false,
       options: [
@@ -105,7 +105,7 @@ AskUserQuestion({
       ]
     },
     {
-      question: "Gentle AI SDD preflight 2/3: Artefactos de tracking — el kickoff recomienda: <OpenSpec|Engram|Both>",
+      question: "Gentle AI SDD preflight 2/3: Tracking artifacts — the kickoff recommends: <OpenSpec|Engram|Both>",
       header: "Artifacts",
       multiSelect: false,
       options: [
@@ -115,7 +115,7 @@ AskUserQuestion({
       ]
     },
     {
-      question: "Gentle AI SDD preflight 3/3: Estrategia de PR — el kickoff recomienda: <Ask me|Single PR|Auto>",
+      question: "Gentle AI SDD preflight 3/3: PR strategy — the kickoff recommends: <Ask me|Single PR|Auto>",
       header: "PR strategy",
       multiSelect: false,
       options: [
@@ -128,134 +128,134 @@ AskUserQuestion({
 })
 ```
 
-**De dónde sale la recomendación**: leé el frontmatter del kickoff, bloque `sdd_preflight:` (`pace` / `artifacts` / `pr_strategy` — ver `/mala-pata-loop`, Paso 4). Mapeo de tokens a labels: Pace → `interactive`→`Interactive`, `automatic`→`Automatic`; Artifacts → `openspec`→`OpenSpec`, `engram`→`Engram`, `hybrid`→`Both`; PR strategy → `ask-on-risk`→`Ask me`, `single-pr`→`Single PR`, `auto-chain`→`Auto`. Inyectá esa label como recomendación en el texto de la pregunta correspondiente (ej.: `... — el kickoff recomienda: Engram`). **Si el kickoff NO trae bloque `sdd_preflight`** (kickoff legacy), recomendá los defaults de mala-pata: `Interactive` / `Engram` / `Ask me`.
+**Where the recommendation comes from**: read the kickoff's frontmatter, `sdd_preflight:` block (`pace` / `artifacts` / `pr_strategy` — see `/mala-pata-loop`, Step 4). Token-to-label mapping: Pace → `interactive`→`Interactive`, `automatic`→`Automatic`; Artifacts → `openspec`→`OpenSpec`, `engram`→`Engram`, `hybrid`→`Both`; PR strategy → `ask-on-risk`→`Ask me`, `single-pr`→`Single PR`, `auto-chain`→`Auto`. Inject that label as the recommendation in the text of the corresponding question (e.g.: `... — the kickoff recommends: Engram`). **If the kickoff does NOT bring a `sdd_preflight` block** (legacy kickoff), recommend mala-pata's defaults: `Interactive` / `Engram` / `Ask me`.
 
-**Reglas duras de este gate:**
-- Exactamente 3 preguntas, en UNA sola llamada — nunca 3 llamadas separadas ni más/menos preguntas.
-- Labels byte-exactas y en el orden canónico de arriba — nunca reordenar, nunca agregar sufijos ("(Recomendado)" u otro) a una label. La recomendación va SOLO en el texto de la pregunta, después del marcador.
-- Tiene que correr en la sesión raíz/padre — un subagente nunca puede satisfacer este gate.
-- **NUNCA escribas ni dupliques manualmente el bloque `## SDD Session Preflight`** — el runtime lo antepone automáticamente al prompt del hijo cuando el preflight se resuelve con éxito.
+**Hard rules of this gate:**
+- Exactly 3 questions, in ONE single call — never 3 separate calls nor more/fewer questions.
+- Byte-exact labels in the canonical order above — never reorder, never add suffixes ("(Recommended)" or any other) to a label. The recommendation goes ONLY in the question text, after the marker.
+- It has to run in the root/parent session — a subagent can never satisfy this gate.
+- **NEVER manually write or duplicate the `## SDD Session Preflight` block** — the runtime automatically prepends it to the child's prompt when the preflight resolves successfully.
 
-Con la respuesta del humano, el hook ya tiene lo que necesita: seguí directo al Paso 3 (dispatch de `sdd-explore`).
+With the human's answer, the hook already has what it needs: continue straight to Step 3 (dispatch of `sdd-explore`).
 
-## Paso 3 — CICLO SDD, una fase por vez (cada fase: resumen + PAUSA + OK)
-Corré las fases EN ORDEN, **una por una** (nunca dos juntas, nunca spec y design en paralelo), reusando los skills `sdd-*` del proyecto y persistiendo cada artefacto en engram (`sdd/<change-name>/<artefacto>`). No avances de fase sin el OK del usuario.
+## Step 3 — SDD CYCLE, one phase at a time (each phase: summary + PAUSE + OK)
+Run the phases IN ORDER, **one by one** (never two together, never spec and design in parallel), reusing the project's `sdd-*` skills and persisting each artifact in engram (`sdd/<change-name>/<artifact>`). Do not advance a phase without the user's OK.
 
-**Mecanismo de ejecución (NO deducir de otro lado)**: cada fase se ejecuta con el tool **Agent**, `subagent_type` = el nombre entre paréntesis de esa fase (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-preview`, `sdd-apply`, `sdd-verify`, `sdd-archive`) — NUNCA cargando el SKILL.md de esa fase en el contexto actual con el tool Skill (eso ejecutaría la fase inline, sin el aislamiento de contexto que las fases de apply/verify necesitan). `model` = el mapeado para esa fase en la tabla Model Assignments de `~/.claude/skills/_shared/sdd-orchestrator-workflow.md` (la superficie lazy-loaded que CLAUDE.md referencia — la tabla NO vive en CLAUDE.md mismo). **Excepción mala-pata (esa tabla es de gentle-ai y no conoce a `sdd-preview`)**: para `sdd-preview` usá **`opus`** — es la fase adversarial de más criterio del ciclo, va en el mismo tier que propose/design, no en el default. Si la tabla no está disponible para las demás fases, usar `sonnet`.
+**Execution mechanism (do NOT deduce from elsewhere)**: each phase is executed with the **Agent** tool, `subagent_type` = the name in parentheses of that phase (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-preview`, `sdd-apply`, `sdd-verify`, `sdd-archive`) — NEVER by loading that phase's SKILL.md into the current context with the Skill tool (that would run the phase inline, without the context isolation that the apply/verify phases need). `model` = the one mapped for that phase in the Model Assignments table of `~/.claude/skills/_shared/sdd-orchestrator-workflow.md` (the lazy-loaded surface that CLAUDE.md references — the table does NOT live in CLAUDE.md itself). **mala-pata exception (that table is gentle-ai's and does not know `sdd-preview`)**: for `sdd-preview` use **`opus`** — it is the most judgment-heavy adversarial phase of the cycle, it goes in the same tier as propose/design, not in the default. If the table is not available for the other phases, use `sonnet`.
 
-1. **Explore** (`sdd-explore`) — investigá el **código y contexto real del worktree** para fundamentar la proposal: estado actual, approaches, riesgos, qué reutilizar. Lee el kickoff como insumo. No escribe código. Persistí `sdd/<change-name>/explore`. → **GATE**.
-2. **Propose** (`sdd-propose`) — proposal de la change (intent, scope, enfoque), apoyada en el explore + kickoff. Persistí `sdd/<change-name>/proposal`. → **GATE**.
-3. **Spec** (`sdd-spec`) — requisitos + escenarios (delta specs). Lee la proposal. Persistí `sdd/<change-name>/spec`. → **GATE**.
-4. **Design** (`sdd-design`) — enfoque técnico y decisiones de arquitectura. **Acá se RESUELVEN, con el usuario, las decisiones abiertas del brief.** Lee proposal + spec (corre DESPUÉS de spec, no en paralelo). Persistí `sdd/<change-name>/design`. → **GATE**.
-5. **Tasks** (`sdd-tasks`) — checklist ordenado y atómico (incluí **Fase 0 de componentes** si hay UI). Lee spec + design. Persistí `sdd/<change-name>/tasks`. → **GATE de aprobación del plan**. Aprobado, pasa a **Preview** (NO directo a Apply). **Hasta acá y durante Preview: CERO código, CERO migraciones, CERO setup.**
-6. **Preview** (`sdd-preview`) — recorrido humano OBLIGATORIO entre tasks y apply (vía Agent, mismo mecanismo de arriba): traduce el plan a lenguaje humano y detecta duplicación / arquitectura mal pensada / flujos hardcodeados. **Precondición (Regla dura #4)**: antes de lanzar preview, confirmá que el QUÉ está cerrado — sin tarjetas rojas de objetivo abiertas ni decisiones de alcance todavía en debate. Si el objetivo sigue en discusión, NO lances preview: volvé a explore/propose. Preview asume objetivo definido; revisa el plan, no el objetivo. El propio `sdd-preview` lee tasks + design (+ spec + proposal + **el código real del worktree**) y decide en un self-assessment **cuántos revisores ciegos correr (0, 1 o 2)** — ya NO depende de que `sdd-tasks` lo recomiende. NO escribe código. Persistí `sdd/<change-name>/preview`. → **GATE OBLIGATORIO anti-sello**: SIEMPRE interactivo, **inmune al modo automático** (aunque hayan pedido "auto hasta X", esta fase FRENA igual) — corra o no audit. El orquestador presenta el gate que trae el artefacto (preguntas dirigidas + disposición por hallazgo REUSAR/REFACTOR/IGNORAR cuando hubo audit — nunca un "OK global"). **Apply queda ATADO a las dispositions aprobadas.** Recién con el preview aprobado se pasa a Apply.
-6.5. **Gate de frescura del worktree** (entre preview aprobado y apply, ANTES de escribir una sola línea) — **auto-actualizar-y-avisar, NO es una pausa humana salvo conflicto real**. Entre que se creó el worktree (Paso 2) y este punto pasó toda la planeación (a veces horas o días de gates), así que la base pudo avanzar. Como las fases 1-6 **no escriben código**, el branch del worktree no tiene commits propios y actualizarlo es un **fast-forward sin riesgo**. Chequeá SIEMPRE:
-   1. `git -C <ABS-worktree> fetch origin <base>` (el `<base>` es el `branch_base` del kickoff).
-   2. `git -C <ABS-worktree> rev-list --left-right --count origin/<base>...HEAD` → `A` (base adelante) `B` (worktree adelante).
-   3. **A=0** → worktree al día. Seguí a apply (una línea opcional: "worktree al día con `<base>`").
-   4. **A>0 y B=0** (caso normal — la planeación no escribió nada) → **fast-forward automático**: `git -C <ABS-worktree> merge --ff-only origin/<base>`. **Avisá en UNA línea** ("la base `<base>` avanzó `A` commits; worktree actualizado por fast-forward") y seguí a apply. Actualizás solo, no pedís OK.
-   5. **A>0 y B>0** (el worktree YA tiene commits propios — típico al RETOMAR a mitad de apply) → **única situación que FRENA**: ya no es ff, es rebase/merge con posible conflicto. Reportá y ofrecé `git -C <ABS-worktree> rebase origin/<base>`; si hay conflictos, dejá el worktree como está y esperá decisión humana. **Nunca fuerces** (`--force`, `reset --hard`, `--no-verify`).
-   6. **Cruce con migraciones**: si `A>0` y este change tiene migración, una rama hermana pudo haber mergeado su migración en ese avance → dispará temprano la re-verificación de número del Paso 4.1-bis (medí git). Si tu número provisional se lo llevó otra rama, renumerá (regenerá) **ANTES de apply**, no al merge — es más barato descubrirlo acá.
-   7. Tras el fast-forward, reconfirmá el entorno ejecutable (los symlinks `.env`/`node_modules` sobreviven a un ff, pero verificá que sigan resueltos) antes de arrancar apply.
-7. **Apply** (`sdd-apply`) — recién ahora se escribe código. Por cada task: **STRICT TDD** (Red → Green → Refactor) + **verify 100%** (0 warnings/critical). Migración con el número **provisional** del kickoff (aún NO es final — se confirma o renumera al merge, ver Paso 4.1-bis), validada **según la convención de pruebas del proyecto** (round-trip si aplica). Persistí `apply-progress` (MERGE, no overwrite). Al cerrar cada lote/fase → resumen + PAUSA.
-   - Fase 0 (si hay UI) — **OBLIGATORIO Storybook-first + Atomic Design + reuse-first** (error recurrente: se crea sin esto):
-     - **ANTES de construir, auditá la librería/workshop del proyecto y listá REUSA / ADAPTA / NUEVO por componente** — reusá o componé sobre lo existente, solo creá lo que no existe.
-     - Construí con **Atomic Design**: **átomo → molécula → organismo**, en ese orden; nada de organismos monolíticos. Una story por componente con sus estados/variantes.
-     - **REGLA DURA — NUNCA escribas specs de PRESENTACIÓN antes de la aprobación visual.** El **STRICT TDD de Apply NO aplica** a la Fase 0 visual. (Error real cometido en `paso-4-cycle-detail-modal-rediseno`: se escribieron 49 specs verdes sobre un layout que el humano después rechazó — trabajo a la basura y, peor, el TDD "verde" dio falsa sensación de avance.) Separá las specs en dos categorías:
-       - **COMPORTAMIENTO** (qué servicio/canal se llama y con qué argumentos, validaciones, secuencia de la transacción, permisos, estado del modelo) → **sí** va con TDD antes de la aprobación visual; **sobrevive** cualquier rediseño.
-       - **PRESENTACIÓN** (`data-testid` estructurales, cantidad/orden de secciones, clases CSS, medidas de viewport, presencia/ausencia de bloques en el DOM) → **PROHIBIDO escribirlas antes del OK visual**; mueren con el layout. Se escriben **después**, contra el diseño ya aprobado.
-       - Test de categoría, ante la duda: *¿esta aserción sigue siendo verdad si el humano elige otro layout?* Si la respuesta es no → es presentación → va después.
-     - La Fase 0 visual se construye con **stories + fixtures SOLAMENTE** (cero specs de layout) — lo más barata posible de tirar a la basura, porque para eso está el gate.
-     - Corolario para **Spec/Design**: los criterios de éxito presentacionales (medidas, `data-testid`, conteo de secciones) quedan marcados como **provisionales** hasta que pase el gate visual; no los conviertas en invariantes de TDD antes de ese OK.
-     - **No ofrezcas variantes de layout que sean la misma caja con el contenido reordenado.** Si las alternativas comparten el mismo componente interno sin rediseñar, no son alternativas de diseño: son la misma pantalla. Comprometete con UNA dirección y mostrala.
-     - Esperá **APROBACIÓN** antes de seguir; aprobados, el resto avanza sin más aprobaciones de componentes.
-8. **Verify** (`sdd-verify`) — verificación final vs spec/tasks + checklist de **Definition of Done**. Debe pasar al **100%**. Persistí `sdd/<change-name>/verify-report`. → **GATE**.
-9. **Archive** (`sdd-archive`) — solo con verify en verde: sincronizá delta specs → specs principales, cerrá la change. Persistí `sdd/<change-name>/archive-report`.
+1. **Explore** (`sdd-explore`) — investigate the **real code and context of the worktree** to ground the proposal: current state, approaches, risks, what to reuse. Reads the kickoff as input. Does not write code. Persist `sdd/<change-name>/explore`. → **GATE**.
+2. **Propose** (`sdd-propose`) — the change's proposal (intent, scope, approach), backed by the explore + kickoff. Persist `sdd/<change-name>/proposal`. → **GATE**.
+3. **Spec** (`sdd-spec`) — requirements + scenarios (delta specs). Reads the proposal. Persist `sdd/<change-name>/spec`. → **GATE**.
+4. **Design** (`sdd-design`) — technical approach and architecture decisions. **This is where the brief's open decisions are RESOLVED, with the user.** Reads proposal + spec (runs AFTER spec, not in parallel). Persist `sdd/<change-name>/design`. → **GATE**.
+5. **Tasks** (`sdd-tasks`) — ordered, atomic checklist (include **Phase 0 of components** if there is UI). Reads spec + design. Persist `sdd/<change-name>/tasks`. → **Plan approval GATE**. Once approved, it moves to **Preview** (NOT directly to Apply). **Up to here and during Preview: ZERO code, ZERO migrations, ZERO setup.**
+6. **Preview** (`sdd-preview`) — MANDATORY human walkthrough between tasks and apply (via Agent, same mechanism as above): translates the plan into human language and detects duplication / badly thought-out architecture / hardcoded flows. **Precondition (Hard rule #4)**: before launching preview, confirm that the WHAT is closed — no open objective red cards nor scope decisions still under debate. If the objective is still under discussion, do NOT launch preview: go back to explore/propose. Preview assumes a defined objective; it reviews the plan, not the objective. `sdd-preview` itself reads tasks + design (+ spec + proposal + **the real code of the worktree**) and decides in a self-assessment **how many blind reviewers to run (0, 1 or 2)** — it NO longer depends on `sdd-tasks` recommending it. It does NOT write code. Persist `sdd/<change-name>/preview`. → **MANDATORY anti-rubber-stamp GATE**: ALWAYS interactive, **immune to automatic mode** (even if they asked for "auto up to X", this phase STOPS anyway) — whether or not there is an audit. The orchestrator presents the gate that the artifact brings (directed questions + disposition per finding REUSE/REFACTOR/IGNORE when there was an audit — never a "global OK"). **Apply stays TIED to the approved dispositions.** Only with the preview approved do you move on to Apply.
+6.5. **Worktree freshness gate** (between approved preview and apply, BEFORE writing a single line) — **auto-update-and-notify, it is NOT a human pause unless there is a real conflict**. Between when the worktree was created (Step 2) and this point all the planning went by (sometimes hours or days of gates), so the base may have advanced. Since phases 1-6 **do not write code**, the worktree's branch has no commits of its own and updating it is a **risk-free fast-forward**. ALWAYS check:
+   1. `git -C <ABS-worktree> fetch origin <base>` (the `<base>` is the kickoff's `branch_base`).
+   2. `git -C <ABS-worktree> rev-list --left-right --count origin/<base>...HEAD` → `A` (base ahead) `B` (worktree ahead).
+   3. **A=0** → worktree up to date. Continue to apply (an optional line: "worktree up to date with `<base>`").
+   4. **A>0 and B=0** (normal case — planning wrote nothing) → **automatic fast-forward**: `git -C <ABS-worktree> merge --ff-only origin/<base>`. **Warn in ONE line** ("base `<base>` advanced `A` commits; worktree updated by fast-forward") and continue to apply. You update on your own, you do not ask for OK.
+   5. **A>0 and B>0** (the worktree ALREADY has commits of its own — typical when RESUMING mid-apply) → **the only situation that STOPS**: it is no longer ff, it is rebase/merge with possible conflict. Report and offer `git -C <ABS-worktree> rebase origin/<base>`; if there are conflicts, leave the worktree as is and wait for a human decision. **Never force** (`--force`, `reset --hard`, `--no-verify`).
+   6. **Cross-check with migrations**: if `A>0` and this change has a migration, a sibling branch may have merged its migration in that advance → fire early the number re-verification of Step 4.1-bis (measure git). If your provisional number was taken by another branch, renumber (regenerate) **BEFORE apply**, not at merge — it is cheaper to discover it here.
+   7. After the fast-forward, reconfirm the executable environment (the `.env`/`node_modules` symlinks survive an ff, but verify they are still resolved) before starting apply.
+7. **Apply** (`sdd-apply`) — only now is code written. For each task: **STRICT TDD** (Red → Green → Refactor) + **100% verify** (0 warnings/critical). Migration with the kickoff's **provisional** number (it is NOT yet final — it is confirmed or renumbered at merge, see Step 4.1-bis), validated **according to the project's testing convention** (round-trip if applicable). Persist `apply-progress` (MERGE, not overwrite). On closing each batch/phase → summary + PAUSE.
+   - Phase 0 (if there is UI) — **MANDATORY Storybook-first + Atomic Design + reuse-first** (recurring error: things get created without this):
+     - **BEFORE building, audit the project's library/workshop and list REUSES / ADAPTS / NEW per component** — reuse or compose on top of what exists, only create what does not exist.
+     - Build with **Atomic Design**: **atom → molecule → organism**, in that order; no monolithic organisms. One story per component with its states/variants.
+     - **HARD RULE — NEVER write PRESENTATION specs before visual approval.** Apply's **STRICT TDD does NOT apply** to the visual Phase 0. (Real error committed in `paso-4-cycle-detail-modal-rediseno`: 49 green specs were written on a layout that the human later rejected — work thrown in the trash and, worse, the "green" TDD gave a false sense of progress.) Split the specs into two categories:
+       - **BEHAVIOR** (which service/channel is called and with what arguments, validations, transaction sequence, permissions, model state) → **yes**, it goes with TDD before the visual approval; it **survives** any redesign.
+       - **PRESENTATION** (structural `data-testid`, number/order of sections, CSS classes, viewport measurements, presence/absence of blocks in the DOM) → **FORBIDDEN to write them before the visual OK**; they die with the layout. They are written **after**, against the already-approved design.
+       - Category test, when in doubt: *is this assertion still true if the human picks another layout?* If the answer is no → it is presentation → it goes after.
+     - The visual Phase 0 is built with **stories + fixtures ONLY** (zero layout specs) — as cheap as possible to throw in the trash, because that is what the gate is for.
+     - Corollary for **Spec/Design**: presentational success criteria (measurements, `data-testid`, section count) stay marked as **provisional** until the visual gate passes; do not turn them into TDD invariants before that OK.
+     - **Do not offer layout variants that are the same box with the content reordered.** If the alternatives share the same inner component without redesigning, they are not design alternatives: they are the same screen. Commit to ONE direction and show it.
+     - Wait for **APPROVAL** before continuing; once approved, the rest advances without further component approvals.
+8. **Verify** (`sdd-verify`) — final verification vs spec/tasks + **Definition of Done** checklist. It must pass at **100%**. Persist `sdd/<change-name>/verify-report`. → **GATE**.
+9. **Archive** (`sdd-archive`) — only with verify green: sync delta specs → main specs, close the change. Persist `sdd/<change-name>/archive-report`.
 
-> Si en cualquier punto aparece una decisión no resuelta, **subila a la fase de Design y consultá** — no la resuelvas codeando.
+> If at any point an unresolved decision appears, **raise it to the Design phase and consult** — do not resolve it by coding.
 
-## Paso 4 — Cierre: PR, revisión de pipeline/CI y limpieza (post-ciclo, una sub-fase por vez, mismo rigor de GATE que Paso 3 — nunca te quedes esperando pasivo a que el humano te lo pida, vos chequeás y anunciás)
+## Step 4 — Closing: PR, pipeline/CI review and cleanup (post-cycle, one sub-phase at a time, same GATE rigor as Step 3 — never sit passively waiting for the human to ask you, you check and announce)
 
-### 4.1 — Reporte de cierre
-Tras Verify (100%) + Archive, reportá estado — **Done** (evidencia: TDD verde, verify 100%) o **parcial** (qué falta y por qué). `verify-report` ya quedó en engram. Es solo resumen — seguís directo a 4.2, sin esperar OK acá.
+### 4.1 — Closing report
+After Verify (100%) + Archive, report status — **Done** (evidence: TDD green, verify 100%) or **partial** (what is missing and why). `verify-report` is already in engram. It is only a summary — you go straight on to 4.2, without waiting for OK here.
 
-### 4.1-bis — Migraciones: re-verificar y renumerar antes de integrar (solo si el change tocó migraciones)
-Si este change creó una migración, su número era **provisional** (ver Paso 3 fase 7 y el kickoff). **Justo antes de integrar** — no al abrir el PR, sino lo más cerca posible del merge real (regla del proyecto "el primero que mergea se lo queda") — re-medí git:
-1. Listá los números ocupados en la rama base Y en las ramas hermanas en vuelo (con el comando del proyecto — ej. `git ls-tree -r --name-only <rama> -- <carpeta-migraciones>`). **NO cuentes archivos en disco.**
-2. **Si tu número provisional sigue libre** → confirmalo y seguí a 4.2.
-3. **Si una hermana ya lo tomó (mergeó primero)** → **renumerá al próximo libre**. El CÓMO es del stack (lo sabe `sdd-init`): con un migrador de estado encadenado (journal/snapshots, ej. drizzle-kit) **NO es renombrar archivos — es regenerar** (borrar la migración + su snapshot, revertir la entrada del journal, `git pull` de la base con el ganador, regenerar contra el esquema, re-escribir el rollback pareado) y **re-correr el round-trip**. Recién con el número final y el round-trip verde seguís a 4.2.
-4. Si el PR queda abierto esperando merge humano y mientras tanto mergea una hermana → **repetí este chequeo antes del merge final**. Dejalo anotado en el PR body.
-No sigas a 4.2 sin el número de migración confirmado (o renumerado + round-trip verde).
+### 4.1-bis — Migrations: re-verify and renumber before integrating (only if the change touched migrations)
+If this change created a migration, its number was **provisional** (see Step 3 phase 7 and the kickoff). **Right before integrating** — not when opening the PR, but as close as possible to the real merge (the project rule "the first to merge keeps it") — re-measure git:
+1. List the numbers occupied in the base branch AND in the sibling in-flight branches (with the project's command — e.g. `git ls-tree -r --name-only <branch> -- <migrations-folder>`). **Do NOT count files on disk.**
+2. **If your provisional number is still free** → confirm it and continue to 4.2.
+3. **If a sibling already took it (merged first)** → **renumber to the next free one**. The HOW belongs to the stack (`sdd-init` knows it): with a chained-state migrator (journal/snapshots, e.g. drizzle-kit) it is **NOT renaming files — it is regenerating** (delete the migration + its snapshot, revert the journal entry, `git pull` of the base with the winner, regenerate against the schema, re-write the paired rollback) and **re-run the round-trip**. Only with the final number and the round-trip green do you continue to 4.2.
+4. If the PR stays open waiting for human merge and in the meantime a sibling merges → **repeat this check before the final merge**. Leave it noted in the PR body.
+Do not continue to 4.2 without the migration number confirmed (or renumbered + round-trip green).
 
-### 4.1-ter — Smoke test con datos sembrados → GATE OBLIGATORIO (solo si aplica)
-Prueba manual rápida de que la funcionalidad REAL se cumple, con datos ya sembrados — para que el humano no tenga que construir el fixture a mano. Es el gate de aceptación HUMANA que falta entre la prueba de máquina (verify) y el PR. Corre entre 4.1-bis y 4.2.
+### 4.1-ter — Smoke test with seeded data → MANDATORY GATE (only if applicable)
+A quick manual test that the REAL functionality is met, with data already seeded — so the human does not have to build the fixture by hand. It is the HUMAN acceptance gate that is missing between the machine test (verify) and the PR. It runs between 4.1-bis and 4.2.
 
-1. **Gate de aplicabilidad — proponé vos, confirma el humano (una línea).** Derivá la propuesta de la forma del cambio y del campo `smoke_test` del kickoff:
-   - **Se SALTA** (proponé "no"): refactor puro, config, docs, chore, util interno sin superficie que un humano ejercite, **cambios puramente visuales/presentacionales** (layout, colores, hover, spacing — la aprobación visual ya los cubre), o cuando verify ya cubre el caso end-to-end con datos. Un cambio MIXTO (visual + comportamiento) no se salta por la parte visual: pesa la parte de comportamiento.
-   - **Corre** (proponé "sí"): el change agrega/altera comportamiento que un humano ejercería corriendo la app y que verify no prueba end-to-end con datos reales.
-   - Si el kickoff trae `smoke_test.needed: yes|no`, respetalo; con `auto`, proponé y esperá el OK en una línea. Si "no" → registralo y seguí a 4.2.
+1. **Applicability gate — you propose, the human confirms (one line).** Derive the proposal from the shape of the change and from the kickoff's `smoke_test` field:
+   - **It is SKIPPED** (propose "no"): pure refactor, config, docs, chore, internal util with no surface that a human exercises, **purely visual/presentational changes** (layout, colors, hover, spacing — the visual approval already covers them), or when verify already covers the end-to-end case with data. A MIXED change (visual + behavior) is not skipped because of the visual part: the behavior part weighs.
+   - **It runs** (propose "yes"): the change adds/alters behavior that a human would exercise by running the app and that verify does not test end-to-end with real data.
+   - If the kickoff brings `smoke_test.needed: yes|no`, respect it; with `auto`, propose and wait for the OK in one line. If "no" → record it and continue to 4.2.
 
-2. **Guion + receta de seed — orquestá `mala-pata-walkthrough` (carril QA/UAT).** No escribas tu propio guion: pedile a `mala-pata-walkthrough` el recorrido de este change. Devuelve SIEMPRE el **bloque de acceso** (URL de prueba + credenciales + servidor corriendo contra la test DB), la **tabla fija** `# | Given (ruta) | When | Then`, y —si toca DB— el apartado **`## Seed`** (receta de fixtures derivada de los `Given` + el `smoke_test.data` del kickoff). Corre ANTES del sembrado, porque el seed lee esa receta.
+2. **Script + seed recipe — orchestrate `mala-pata-walkthrough` (QA/UAT lane).** Do not write your own script: ask `mala-pata-walkthrough` for this change's walkthrough. It ALWAYS returns the **access block** (test URL + credentials + server running against the test DB), the fixed **table** `# | Given (route) | When | Then`, and —if it touches DB— the **`## Seed`** section (fixture recipe derived from the `Given`s + the kickoff's `smoke_test.data`). It runs BEFORE the seeding, because the seed reads that recipe.
 
-3. **Sembrar (solo si toca DB) — delegá en `mala-pata-seed`.** El sembrado lo ejecuta `mala-pata-seed`, que lee el apartado `## Seed` del QA de walkthrough y siembra con el mecanismo del proyecto (`sdd-init`), **idempotente**, contra la **test DB** (nunca prod). Un solo ejecutor para in-cycle (acá) y standalone. Presentá al humano qué quedó sembrado (ids/registros) junto al guion. Si el change no toca DB (UI-only sin datos), saltá el seed.
+3. **Seed (only if it touches DB) — delegate to `mala-pata-seed`.** The seeding is executed by `mala-pata-seed`, which reads the `## Seed` section of the walkthrough's QA and seeds with the project's mechanism (`sdd-init`), **idempotently**, against the **test DB** (never prod). A single executor for in-cycle (here) and standalone. Present to the human what was seeded (ids/records) together with the script. If the change does not touch DB (UI-only with no data), skip the seed.
 
-4. **Confirmación → GATE duro.** Preguntá explícitamente: **"¿Se cumplió la funcionalidad? (sí / no)"**.
-   - **Sí** → registralo y seguí a 4.2.
-   - **No** → NO abras el PR: **reabrí tasks** con lo que falló (vuelve al ciclo: apply, o design si es de fondo), igual que cualquier hallazgo que reabre TODOs.
+4. **Confirmation → hard GATE.** Ask explicitly: **"Was the functionality met? (yes / no)"**.
+   - **Yes** → record it and continue to 4.2.
+   - **No** → do NOT open the PR: **reopen tasks** with what failed (it goes back to the cycle: apply, or design if it is a deep issue), just like any finding that reopens TODOs.
 
-5. **Teardown — opcional, se pregunta (default NO).** Al cerrar el gate, una línea: **"¿Borro los datos que sembré? (default: no)"**. El default es no borrar — la test DB persistente con datos es útil. Si el humano pide borrar, borrá **solo lo que esta corrida sembró** (por los ids/namespace del seed), NUNCA un wipe de la DB entera.
+5. **Teardown — optional, it is asked (default NO).** On closing the gate, one line: **"Do I delete the data I seeded? (default: no)"**. The default is not to delete — a persistent test DB with data is useful. If the human asks to delete, delete **only what this run seeded** (by the seed's ids/namespace), NEVER a wipe of the entire DB.
 
-No sigas a 4.2 sin: (a) el "no aplica" confirmado por el humano, o (b) la confirmación humana de que la funcionalidad se cumplió.
+Do not continue to 4.2 without: (a) the "not applicable" confirmed by the human, or (b) the human's confirmation that the functionality was met.
 
-### 4.2 — Destino del trabajo → **GATE OBLIGATORIO**
-Apenas Verify está en verde, **PARÁ y preguntá vos mismo, sin que el humano te lo tenga que pedir** — **NUNCA asumas PR** ni sigas de largo:
-> ¿Cómo cierro esto: **(a) abrir un PR** (¿hacia qué branch — `main` u otra?), o **(b) merge a una rama feature** (¿cuál, ej. `feature/caja`)?
-- **(a) PR**: chequeá si **ya hay un PR activo** para este trabajo (`gh pr list` / `gh pr view`). Si existe → **consolidá ahí**, no abras un segundo (un solo PR activo). Si no → proponé y **abrí el PR solo con OK** (título, resumen, link a artefactos SDD en engram). **No mergear/cerrar el PR sin pedido explícito** — parás en **CI verde**. (La rama NO se toca en este punto: recién se borra en el cleanup y SOLO una vez mergeada — ver 4.5.)
-- **(b) Merge a rama feature**: integrá el branch del SDD en la rama feature indicada **solo con OK** del usuario. Commits con **pathspec explícito**. (Una vez hecho el merge, la rama del SDD queda integrada → se borra en el cleanup, 4.5.)
-- En ambos casos: si hay conflictos o CI rojo → **PARÁ y reportá**, no fuerces.
-No sigas al cierre sin la respuesta explícita del humano a esta pregunta.
+### 4.2 — Destination of the work → **MANDATORY GATE**
+As soon as Verify is green, **STOP and ask yourself, without the human having to ask you** — **NEVER assume a PR** nor carry on past it:
+> How do I close this: **(a) open a PR** (towards which branch — `main` or another?), or **(b) merge into a feature branch** (which one, e.g. `feature/caja`)?
+- **(a) PR**: check whether there is **already an active PR** for this work (`gh pr list` / `gh pr view`). If it exists → **consolidate there**, do not open a second one (a single active PR). If not → propose and **open the PR only with OK** (title, summary, link to SDD artifacts in engram). **Do not merge/close the PR without an explicit request** — you stop at **green CI**. (The branch is NOT touched at this point: it is only deleted in the cleanup and ONLY once merged — see 4.5.)
+- **(b) Merge into a feature branch**: integrate the SDD's branch into the indicated feature branch **only with the user's OK**. Commits with **explicit pathspec**. (Once the merge is done, the SDD's branch is integrated → it is deleted in the cleanup, 4.5.)
+- In both cases: if there are conflicts or red CI → **STOP and report**, do not force.
+Do not continue to the closing without the human's explicit answer to this question.
 
-### 4.3 — (sin Gate RDD en el ciclo SDD)
-**RDD NO corre en el loop/SDD.** Desde gentle-ai v3, RDD es nativo del carril **ODD** — evalúa por *work-unit commit* (`gentle-ai review assess`), no en el cierre de un ciclo SDD. Quien lo orquesta es **`mala-pata-organic`** (ver ahí). El ciclo SDD cierra sin gate de receipt: de **4.2** (destino + OK del humano) pasás directo a **4.4** (CI). Si algún día querés una review sobre un PR de SDD puntual, la corrés a mano por fuera — no es un gate del ciclo.
+### 4.3 — (no RDD Gate in the SDD cycle)
+**RDD does NOT run in the loop/SDD.** Since gentle-ai v3, RDD is native to the **ODD** lane — it evaluates per *work-unit commit* (`gentle-ai review assess`), not at the closing of an SDD cycle. The one that orchestrates it is **`mala-pata-organic`** (see there). The SDD cycle closes without a receipt gate: from **4.2** (destination + human's OK) you go straight to **4.4** (CI). If someday you want a review on a specific SDD PR, you run it by hand outside — it is not a gate of the cycle.
 
-### 4.4 — Revisión de pipeline/CI → chequeo PROACTIVO tuyo, no pasivo
-Tras abrir el PR (o mergear), **vos mismo revisás el estado del run activamente** — no esperés a que el humano te pregunte "¿y el CI?" ni asumas que quedó verde. Usá la herramienta del proyecto (GitHub Actions → `gh run list`/`gh run view`; Azure DevOps → `az pipelines runs list`/`az pipelines runs show`; GitLab → su CLI/API; Jenkins/otros → lo que corresponda). Confirmá que **TODAS las etapas** del run relevante quedan en verde antes de anunciar nada.
-- Si algo está **rojo** → **PARÁ**, traé el log del paso que falló y reportá el **error exacto**. No marques "Done" con el pipeline en rojo.
-- Si la change incluye **migraciones/DDL**: verificá explícitamente que el paso equivalente a `migrate` del deploy pasó (suele ser el que más se rompe). Si falla, reportá el motivo puntual (conflicto de grafo, data-migration, etc.).
-- Distinguí fallo de **infra** (transitorio/reintentable) de fallo de **la change** (hay que arreglar antes de cerrar).
-- Si el proyecto NO tiene CI/pipeline → dejalo explícito y seguí (no inventes uno).
-No sigas a 4.5 sin confirmar vos mismo que el pipeline relevante está en verde (o que no hay pipeline).
+### 4.4 — Pipeline/CI review → your PROACTIVE check, not passive
+After opening the PR (or merging), **you yourself actively review the run's status** — do not wait for the human to ask you "and the CI?" nor assume it turned out green. Use the project's tool (GitHub Actions → `gh run list`/`gh run view`; Azure DevOps → `az pipelines runs list`/`az pipelines runs show`; GitLab → its CLI/API; Jenkins/others → whatever applies). Confirm that **ALL stages** of the relevant run are green before announcing anything.
+- If something is **red** → **STOP**, bring the log of the step that failed and report the **exact error**. Do not mark "Done" with the pipeline red.
+- If the change includes **migrations/DDL**: explicitly verify that the deploy's `migrate`-equivalent step passed (it is usually the one that breaks the most). If it fails, report the specific reason (graph conflict, data-migration, etc.).
+- Distinguish an **infra** failure (transient/retryable) from a failure **of the change** (it has to be fixed before closing).
+- If the project does NOT have CI/pipeline → leave it explicit and continue (do not invent one).
+Do not continue to 4.5 without confirming yourself that the relevant pipeline is green (or that there is no pipeline).
 
-### 4.5 — Limpieza → **GATE OBLIGATORIO, chequeo PROACTIVO tuyo — nunca esperes a que te lo pidan**
-En cuanto 4.4 cierra en verde, **chequeá vos mismo el estado** (`gh pr view` del PR, o `git log` de la rama feature) — el disparador es que 4.4 dio verde, **NO** que el usuario te lo diga o te lo recuerde. Apenas confirmes PR cerrado/mergeado (o merge a la feature hecho) **anunciá explícitamente**:
-> "PR/merge cerrado y CI en verde. Listo para hacer la limpieza (matar procesos, borrar worktree, borrar rama local+remota). ¿Procedo?"
+### 4.5 — Cleanup → **MANDATORY GATE, your PROACTIVE check — never wait for them to ask**
+As soon as 4.4 closes green, **check the status yourself** (`gh pr view` of the PR, or `git log` of the feature branch) — the trigger is that 4.4 came out green, **NOT** that the user tells you or reminds you. As soon as you confirm PR closed/merged (or merge into the feature done) **announce explicitly**:
+> "PR/merge closed and CI green. Ready to do the cleanup (kill processes, delete worktree, delete local+remote branch). Shall I proceed?"
 
-Recién con el OK del humano (o si el perfil está corriendo en modo automático explícito pedido por el humano — nunca por default), **desde fuera del worktree** (repo principal/orquestador — no podés remover el worktree donde estás parado):
-- **Matá procesos/servidores** en background que dejaste para este SDD (dev server, test/vitest watch, etc.).
-- `git worktree remove <ABS-worktree>` + `git worktree prune` (los symlinks `.env`/`node_modules` se van con la carpeta — **no toca** el target del repo principal).
-- Borrá temporales / artefactos de build que hayan quedado.
-- **Borrá la rama mergeada — local Y remota — como parte ESTÁNDAR del cleanup** (una rama ya integrada es código muerto; no requiere pedido aparte más allá del OK de arriba). Local: `git branch -d <branch>` (usa `-d`, no `-D`: `-d` falla si NO está mergeada, protegiéndote). Remota: `git push origin --delete <branch>` (o `az repos ref delete` / equivalente del proyecto). **Excepción — NO borres la rama si la integración NO ocurrió**: PR apenas abierto sin merge, PR abandonado, o merge que no llegó a verde. En esos casos la rama tiene trabajo no integrado → pedí OK explícito por separado antes de borrar. (Si al mergear el PR ya usaste `--delete-source-branch`, la remota ya no existe — solo limpiás la local.)
-- **Datos sembrados (4.1-ter):** NO hagas wipe de la test DB acá — su borrado ya se decidió en el gate de smoke test (default: no borrar). Si en 4.1-ter se pidió borrar y se difirió, borrá acá solo lo que esa corrida sembró.
-- Confirmá que no quedó nada corriendo ni colgado.
+Only with the human's OK (or if the profile is running in explicit automatic mode requested by the human — never by default), **from outside the worktree** (main repo/orchestrator — you cannot remove the worktree where you are standing):
+- **Kill background processes/servers** that you left for this SDD (dev server, test/vitest watch, etc.).
+- `git worktree remove <ABS-worktree>` + `git worktree prune` (the `.env`/`node_modules` symlinks go away with the folder — it **does not touch** the main repo's target).
+- Delete temporary files / build artifacts that were left over.
+- **Delete the merged branch — local AND remote — as a STANDARD part of the cleanup** (an already-integrated branch is dead code; it needs no separate request beyond the OK above). Local: `git branch -d <branch>` (use `-d`, not `-D`: `-d` fails if it is NOT merged, protecting you). Remote: `git push origin --delete <branch>` (or `az repos ref delete` / the project's equivalent). **Exception — do NOT delete the branch if the integration did NOT happen**: PR just opened without merge, abandoned PR, or a merge that did not reach green. In those cases the branch has unintegrated work → ask for explicit separate OK before deleting. (If when merging the PR you already used `--delete-source-branch`, the remote no longer exists — you only clean the local one.)
+- **Seeded data (4.1-ter):** do NOT wipe the test DB here — its deletion was already decided at the smoke test gate (default: do not delete). If at 4.1-ter deletion was requested and deferred, delete here only what that run seeded.
+- Confirm that nothing was left running or hanging.
 
-## Paso 5 — Resumen final en TABLA (OBLIGATORIO)
+## Step 5 — Final summary as a TABLE (MANDATORY)
 
-Al terminar TODO (verify + archive + PR/merge + CI + limpieza), **cerrá SIEMPRE con una tabla de estado** — no con prosa suelta. Es lo último que ve el usuario y debe leerse de un vistazo. Formato Markdown, una fila por hito, columna izquierda = hito, columna derecha = estado con **emoji** (ok · parcial/con nota · falló/pendiente) + **evidencia concreta** (números, ids, commits — nunca "ok" a secas).
+When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not with loose prose. It is the last thing the user sees and must be readable at a glance. Markdown format, one row per milestone, left column = milestone, right column = status with an **emoji** (ok · partial/with note · failed/pending) + **concrete evidence** (numbers, ids, commits — never a bare "ok").
 
-Filas canónicas (incluí SOLO las que apliquen; NO inventes una fila que no ocurrió):
+Canonical rows (include ONLY those that apply; do NOT invent a row that did not happen):
 
-| Hito | Estado |
+| Milestone | Status |
 |---|---|
-| Ciclo SDD (explore→archive) | Completo |
+| SDD cycle (explore→archive) | Complete |
 | Verify | PASS `<n>/<n>`, `0 CRITICAL` |
-| Smoke test (fixtures + confirmación humana) | funcionalidad OK · o `N/A (no aplicó)` |
-| e2e caso real `<id>` | `<obtenido>` vs `<esperado>` (delta `<%>`), `<detalle>` |
-| No-regresión | `<Nf>/<Ne>` idéntico al baseline |
-| PR `#<n>` → `<branch>` | MERGEADO (merge commit `<sha>`) |
-| CI post-merge (deploy + migrate `<N>`) | VERDE (`<detalle build>`) |
-| Cleanup (worktree + rama local/remota) | Hecho |
+| Smoke test (fixtures + human confirmation) | functionality OK · or `N/A (did not apply)` |
+| e2e real case `<id>` | `<obtained>` vs `<expected>` (delta `<%>`), `<detail>` |
+| No-regression | `<Nf>/<Ne>` identical to baseline |
+| PR `#<n>` → `<branch>` | MERGED (merge commit `<sha>`) |
+| CI post-merge (deploy + migrate `<N>`) | GREEN (`<build detail>`) |
+| Cleanup (worktree + local/remote branch) | Done |
 
-Reglas de la tabla:
-- **Adaptá las filas al change real**: sin migración → quitá el `migrate <N>` de la fila de CI; sin caso e2e real → quitá esa fila; PR vs merge-a-feature → ajustá la fila de destino; proyecto sin CI → fila `CI` con `N/A (proyecto sin pipeline)`.
-- **Nada de verde falso**: si algo quedó parcial/rojo/pendiente, la fila va con /y el motivo puntual — la tabla debe reflejar la verdad del cierre (coherente con la regla de no marcar "Done" con pipeline en rojo).
-- Debajo de la tabla podés agregar 1-3 líneas de follow-ups no bloqueantes si los hay; el resto del detalle ya vive en los artefactos de engram.
+Table rules:
+- **Adapt the rows to the real change**: no migration → remove the `migrate <N>` from the CI row; no real e2e case → remove that row; PR vs merge-to-feature → adjust the destination row; project without CI → `CI` row with `N/A (project without pipeline)`.
+- **No false green**: if something was left partial/red/pending, the row carries the specific reason — the table must reflect the truth of the closing (consistent with the rule of not marking "Done" with a red pipeline).
+- Below the table you can add 1-3 lines of non-blocking follow-ups if there are any; the rest of the detail already lives in the engram artifacts.

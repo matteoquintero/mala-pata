@@ -1,77 +1,77 @@
 ---
 name: mala-pata-triage
-description: Front-door único de mala-pata. Trigger — cualquier pedido de cambio, ANTES de tocar código. Lee el pedido, aplica el gate de forma (Qué + Done + Decisiones), y RESPONDE qué carril/skill correr — `/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop` o `/mala-pata-roadmap` — pasándole al carril elegido el borrador de campos ya inferidos. NO genera archivos, NO crea worktrees, NO ejecuta nada: es un skill de decisión, no de ejecución.
+description: Single front-door of mala-pata. Trigger — any change request, BEFORE touching code. Reads the request, applies the form gate (What + Done + Decisions), and ANSWERS which lane/skill to run — `/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop` or `/mala-pata-roadmap` — handing the chosen lane the draft of already-inferred fields. It does NOT generate files, does NOT create worktrees, does NOT execute anything: it is a decision skill, not an execution one.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
-# /mala-pata-triage — Router de entrada (decide, no ejecuta)
+# /mala-pata-triage — Entry router (decides, does not execute)
 
-Pedido del usuario: **entrada entregada por el CLI**
+User request: **input delivered by the CLI**
 
-Tu único trabajo es **leer el pedido y decidir el carril**, después **responder cuál skill correr**. No generás kickoffs, no escribís archivos, no tocás código. Sos el gate — el mismo gate que documenta el diseño de mala-pata (`DESIGN-organic-loop-v2.md` §3: "el formato estricto ES el router") — separado de los tres carriles que lo consumen.
+Your only job is to **read the request and decide the lane**, then **answer which skill to run**. You do not generate kickoffs, you do not write files, you do not touch code. You are the gate — the same gate documented by mala-pata's design (`DESIGN-organic-loop-v2.md` §3: "the strict format IS the router") — separated from the three lanes that consume it.
 
-> **NO ejecutás nada.** NO creás worktree, NO escribís kickoff, NO corrés fases de ningún ciclo.
-> El resultado es SIEMPRE una de estas cosas: (a) respuesta read-only directa, (b) "→ corré `/mala-pata-shot`" (cambio trivial y entendido), (c) "→ corré `/mala-pata-organic`" con el borrador de campos, (d) "→ corré `/mala-pata-loop`", (e) "→ corré `/mala-pata-roadmap`", o (f) `trabaje vago ` pidiendo lo mínimo.
+> **You execute NOTHING.** Do NOT create a worktree, do NOT write a kickoff, do NOT run phases of any cycle.
+> The result is ALWAYS one of these: (a) a direct read-only answer, (b) "→ run `/mala-pata-shot`" (trivial, understood change), (c) "→ run `/mala-pata-organic`" with the field draft, (d) "→ run `/mala-pata-loop`", (e) "→ run `/mala-pata-roadmap`", or (f) `vague work ` asking for the minimum.
 
-> **Triage no despacha agentes `sdd-*`.** Es un skill de decisión puro — el preflight `PreToolUse:Agent` de gentle-ai no aplica acá, igual que no aplica a `/mala-pata-organic`.
-> **Los carriles siguen invocables directo** si el humano ya sabe cuál es (`/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop`, `/mala-pata-roadmap`). Triage es la entrada recomendada cuando NO sabés por dónde va — no un paso obligatorio.
+> **Triage does not dispatch `sdd-*` agents.** It is a pure decision skill — the gentle-ai `PreToolUse:Agent` preflight does not apply here, just as it does not apply to `/mala-pata-organic`.
+> **The lanes remain directly invokable** if the human already knows which one it is (`/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop`, `/mala-pata-roadmap`). Triage is the recommended entry when you do NOT know where it goes — not a mandatory step.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, do not reinvent)
 
-Este skill no orquesta herramientas duras: solo decide el carril. No tiene requisitos de instalación.
+This skill does not orchestrate hard tools: it only decides the lane. It has no installation requirements.
 
-## Fase 0 — Autorizar (read-only guard)
+## Phase 0 — Authorize (read-only guard)
 
-¿El pedido es un **CAMBIO**? Investigación, explicación, review, auditoría o comparación son **read-only** — no hay carril que decidir, respondé directo desde tu propio conocimiento/exploración y listo (no es un carril de mala-pata).
+Is the request a **CHANGE**? Investigation, explanation, review, audit or comparison are **read-only** — there is no lane to decide, answer directly from your own knowledge/exploration and done (it is not a mala-pata lane).
 
-Solo si hay intención real de cambiar código, seguís al gate.
+Only if there is real intent to change code do you continue to the gate.
 
-Ambigüedad sobre si es cambio → 1 pregunta puntual, parás y esperás.
+Ambiguity about whether it is a change → 1 specific question, you stop and wait.
 
-## Fase 1 — Gate de forma (diagnóstico rápido, no entrevista)
+## Phase 1 — Form gate (quick diagnosis, not an interview)
 
-Evaluá el pedido contra estos tres campos, tal como los definió el diseño original (misma tabla que usa `/mala-pata-organic` y que `/mala-pata-loop` referencia como brújula):
+Evaluate the request against these three fields, as defined by the original design (same table used by `/mala-pata-organic` and which `/mala-pata-loop` references as its compass):
 
-| Campo | Bloquea | Qué prueba |
+| Field | Blocks | What it tests |
 |---|---|---|
-| **Qué** | SÍ | Objetivo = comportamiento/resultado observable y concreto. "Mejorar X" sin blanco concreto → FALLA. |
-| **Done** | SÍ | Definición testeable = el CUÁNDO: "cuando X, pasa Y". |
-| **Decisiones ya tomadas** | SÍ | El approach/arquitectura está DECIDIDO o es obvio. Es EL discriminador de loop. |
-| **Why** | NO | Motivación en 1 línea — se pide, no bloquea. |
-| **Riesgo** | NO (opcional) | Blast radius en una línea. |
-| **Dónde** | NUNCA es gate | Se descubre en la fase Explore de organic/loop-start, no acá. |
+| **What** | YES | Objective = observable, concrete behavior/result. "Improve X" with no concrete target → FAILS. |
+| **Done** | YES | Testable definition = the WHEN: "when X, Y happens". |
+| **Decisions already made** | YES | The approach/architecture is DECIDED or obvious. It is THE discriminator for loop. |
+| **Why** | NO | Motivation in 1 line — it is asked for, does not block. |
+| **Risk** | NO (optional) | Blast radius in one line. |
+| **Where** | NEVER a gate | Discovered in the Explore phase of organic/loop-start, not here. |
 
-Esto es un **diagnóstico desde el texto del pedido**, proporcional al pedido — no un formulario completo. Podés hacer **1 sola pregunta aclaratoria** SOLO si sin ella no podés decidir el carril (ambigüedad bloqueante real). Hacela, parás y esperás la respuesta.
+This is a **diagnosis from the text of the request**, proportional to the request — not a full form. You may ask **just 1 clarifying question** ONLY if without it you cannot decide the lane (real blocking ambiguity). Ask it, stop and wait for the answer.
 
-## Fase 2 — Decidí y respondé el carril
+## Phase 2 — Decide and answer the lane
 
-- **Trivial + entendido + blast radius mínimo** (Qué/Done obvios, sin decisiones, 1-3 archivos, sin migración/contrato/UI nueva) → **shot**.
-  Respondé: `→ corré /mala-pata-shot`. Es ODD sin worktree ni ceremonia, para el cambio más chico. **Frontera con organic**: ante CUALQUIER incertidumbre, decisión, o ceremonia necesaria (diseño, migración, UI nueva) → organic, NO shot. El conteo de líneas no decide; la ausencia de incertidumbre sí.
+- **Trivial + understood + minimal blast radius** (obvious What/Done, no decisions, 1-3 files, no migration/contract/new UI) → **shot**.
+  Answer: `→ run /mala-pata-shot`. It is ODD with no worktree and no ceremony, for the smallest change. **Boundary with organic**: with ANY uncertainty, decision, or necessary ceremony (design, migration, new UI) → organic, NOT shot. Line count does not decide; the absence of uncertainty does.
 
-- **Qué + Done enunciables y Decisiones resueltas/obvias** (pero no tan trivial como para shot) → **organic**.
-  Respondé: `→ corré /mala-pata-organic`, y pasale como borrador los campos que ya inferiste (Qué / Why / Done / Decisiones / Riesgo) para que organic confirme en vez de arrancar de cero.
+- **What + Done statable and Decisions resolved/obvious** (but not trivial enough for shot) → **organic**.
+  Answer: `→ run /mala-pata-organic`, and hand it as a draft the fields you already inferred (What / Why / Done / Decisions / Risk) so organic confirms instead of starting from scratch.
 
-- **Decisión abierta — distinguí si es DECIDIBLE o si NECESITA DISEÑO** (este es el discriminador de loop; NO "hay una decisión → loop"):
-  - **Decidible con una pregunta** (opciones conocidas y el humano elige, preferencia, o llamada de producto) → NO es loop. Hacé **esa** pregunta enfocada, parás y esperás; resuelta → **organic** (o **shot** si además es trivial: 1-3 archivos, sin migración/contrato/UI nueva). Test: *¿puedo enunciar las opciones y me las cierra en una respuesta?*
-  - **Necesita diseño** (varias arquitecturas viables con tradeoffs a investigar, o no se saben las opciones sin explorar) → **loop**. Respondé: `→ corré /mala-pata-loop`. Test: *¿necesito investigar/explorar para siquiera saber las opciones o sus tradeoffs?*
+- **Open decision — distinguish whether it is DECIDABLE or NEEDS DESIGN** (this is the loop discriminator; NOT "there is a decision → loop"):
+  - **Decidable with one question** (known options and the human chooses, a preference, or a product call) → NOT loop. Ask **that** focused question, stop and wait; once resolved → **organic** (or **shot** if it is also trivial: 1-3 files, no migration/contract/new UI). Test: *can I state the options and does one answer close them?*
+  - **Needs design** (several viable architectures with tradeoffs to investigate, or the options are not known without exploring) → **loop**. Answer: `→ run /mala-pata-loop`. Test: *do I need to investigate/explore to even know the options or their tradeoffs?*
 
-- **Qué/Done claros pero el alcance abarca varios ciclos** (multi-loop) → **roadmap**.
-  Respondé: `→ corré /mala-pata-roadmap`.
+- **What/Done clear but the scope spans several cycles** (multi-loop) → **roadmap**.
+  Answer: `→ run /mala-pata-roadmap`.
 
-- **Demasiado vago para siquiera enunciar Qué/Done** (y 1 pregunta no alcanza para arreglarlo) → **NO rutees.** Respondé estilo "trabajo vago", igual que el Paso 0 de `/mala-pata-loop`:
+- **Too vague to even state What/Done** (and 1 question is not enough to fix it) → **do NOT route.** Answer in "vague work" style, same as Step 0 of `/mala-pata-loop`:
 
-  > **trabajo vago ** — necesito al menos: *qué* querés lograr, *dónde* (módulo/feature, si lo sabés) y *cuándo está listo* (criterio verificable, no "que quede bien"). Con eso te digo el carril.
+  > **vague work ** — I need at least: *what* you want to achieve, *where* (module/feature, if you know it) and *when it is done* (verifiable criterion, not "make it look good"). With that I tell you the lane.
 
-  Y parás ahí.
+  And you stop there.
 
-## Fase 3 — No hace nada más
+## Phase 3 — Does nothing else
 
-No creás worktree, no escribís kickoff, no corrés fases de ningún ciclo. Tu respuesta termina en el punto anterior: o el carril + borrador, o el rebote a trabajo vago, o la única pregunta aclaratoria permitida.
+You do not create a worktree, you do not write a kickoff, you do not run phases of any cycle. Your answer ends at the previous point: either the lane + draft, or the bounce to vague work, or the single clarifying question allowed.
 
-**Únicas excepciones** (cuando la respuesta no es solo el ruteo):
-- Fase 0 read-only → quedate en modo lectura, sin decidir carril.
-- Ambigüedad bloqueante real → la única pregunta permitida antes de decidir.
-- Gate demasiado vago → `trabajo vago `.
+**Only exceptions** (when the answer is not just the routing):
+- Phase 0 read-only → stay in read mode, without deciding a lane.
+- Real blocking ambiguity → the only question allowed before deciding.
+- Gate too vague → `vague work `.

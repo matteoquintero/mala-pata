@@ -1,28 +1,28 @@
-# Perfil LITE — S/M en módulo conocido
+# LITE profile — S/M in a known module
 
-## Cuándo elegir LITE
-- Change chico o mediano.
-- Módulo caliente (ya trabajado esta semana o hace poco).
-- Adapta atoms/molecules existentes (no crea componentes nuevos genuinos).
-- Extiende un service existente (no crea service nuevo).
-- Sin riesgo de regresión en flujos críticos.
+## When to choose LITE
+- Small or medium change.
+- Hot module (worked on this week or recently).
+- Adapts existing atoms/molecules (does not create genuinely new components).
+- Extends an existing service (does not create a new service).
+- No regression risk in critical flows.
 
-## Ajustes respecto al método base
+## Adjustments relative to the base method
 
-- **Fase 0 componentes**: obligatoria — audit REUSA/ADAPTA/NUEVO **NO se salta**. Diferencia con FULL/STANDARD: el gate humano es **auto-approve si el audit marca 0 componentes NUEVOS**; si hay ≥1 NUEVO, el gate humano es explícito.
-- **TDD granularidad**: **por feature** — agrupá tasks relacionados (service + selector + wiring de container) y escribí tests al cerrar el grupo. Excepción: lógica pura (VOs, selectors, algoritmos) sigue por task.
-- **Explore**: reutilizar explores previos del mismo módulo si existen en engram; sino explore mínimo (grep-first).
-- **Spec + Design**: **fusionados** en un solo artefacto `sdd/<change>/spec-design`. `sdd-design` incluye escenarios que en STANDARD irían en spec.
-- **sdd-preview**: decide su propio self-assessment; para LITE típicamente 0 salvo que aparezca alguna señal de riesgo real.
-- **Verify**: liviano — suite + build + smoke live. Sin adversarial. (Default por tamaño: sube a normal si `sdd-preview` detectó señales de riesgo — ver `_base.md`.)
-- **Apply**: batches libres.
-- **Storybook / MSW / fixtures**: solo variantes nuevas críticas.
+- **Phase 0 components**: mandatory — the REUSA/ADAPTA/NUEVO audit is **NOT skipped**. Difference from FULL/STANDARD: the human gate is **auto-approve if the audit marks 0 NEW components**; if there is ≥1 NEW, the human gate is explicit.
+- **TDD granularity**: **per feature** — group related tasks (service + selector + container wiring) and write tests when closing the group. Exception: pure logic (VOs, selectors, algorithms) stays per task.
+- **Explore**: reuse previous explores of the same module if they exist in engram; otherwise minimal explore (grep-first).
+- **Spec + Design**: **merged** into a single artifact `sdd/<change>/spec-design`. `sdd-design` includes scenarios that in STANDARD would go in spec.
+- **sdd-preview**: decides its own self-assessment; for LITE typically 0 unless some real risk signal appears.
+- **Verify**: light — suite + build + live smoke. No adversarial. (Default by size: rises to normal if `sdd-preview` detected risk signals — see `_base.md`.)
+- **Apply**: free batches.
+- **Storybook / MSW / fixtures**: only critical new variants.
 
-## Nudges de `/clear`
+## `/clear` nudges
 
-- Entre spec-design y apply.
-- Al gusto del humano en el resto.
+- Between spec-design and apply.
+- At the human's discretion for the rest.
 
-## Costo orden de magnitud
+## Cost order of magnitude
 
 ~120K tokens end-to-end.

@@ -1,79 +1,79 @@
-# Reglas base del SDD — invariantes universales (agnósticas de stack y proyecto)
+# SDD base rules — universal invariants (stack- and project-agnostic)
 
-Aplican a **todos los perfiles** (FULL / STANDARD / LITE / MINIMAL) y a **todos los proyectos**.
+They apply to **all profiles** (FULL / STANDARD / LITE / MINIMAL) and to **all projects**.
 
-## Método (no negociable)
+## Method (non-negotiable)
 
-- **Ejecución interactiva fase por fase**: cada fase cierra con resumen y **pausa** esperando OK del humano antes de la próxima. **El ritmo NO se pregunta como gate aparte** — este es el único ritmo, siempre. El perfil activo (FULL/STANDARD/LITE/MINIMAL) ya define cuánta explicitud tiene cada gate humano puntual (ver perfiles); no hay una pregunta separada de "¿interactivo o automático?". Un modo automático solo existe si el humano lo pide explícitamente y sin que se le ofrezca como opción (ej. "corré automático hasta X") — nunca se presenta como menú.
-  - **Techo de automático por tamaño de objetivo (no negociable)**: aunque el humano lo pida, el modo automático solo se permite en **LITE / MINIMAL**. En **FULL / STANDARD** el ritmo es interactivo fase-por-fase SIEMPRE — no se acepta "auto hasta X". Razón: un objetivo grande corrido en auto **represa todas las confirmaciones en el preview** — el humano llega a un gate con 5-6 fases de decisiones acumuladas que ya no puede revisar de verdad, y el preview deja de ser un checkpoint y pasa a ser un sello. Si el humano de FULL/STANDARD pide auto, respondé en una línea que por el tamaño del objetivo el ciclo va interactivo (y por qué), y seguís fase-por-fase. En cualquier perfil, además, la fase de **preview NUNCA es automática** (ya frena siempre, ver `sdd-preview`).
-- **Artifact store: SIEMPRE `engram`**. NUNCA preguntar `openspec`/`hybrid`/`none` — no es una decisión que se exponga en este setup.
-- **Return envelope por fase**: cada fase devuelve `{ status, resumen, artefactos, riesgos, next_recommended }`.
-- **Init guard**: antes de arrancar, `mem_search("sdd-init/<project>")`. Si no existe, correr `sdd-init` para detectar stack, testing, convenciones y herramientas del proyecto. Esas quedan en engram como contexto del proyecto — **NO en las reglas del SDD**.
-- **Fase 0 (si el change toca UI)**: audit REUSA/ADAPTA/NUEVO + Atomic Design + workshop de componentes (Storybook o el que use el proyecto). El nivel de gate humano lo define el perfil.
-- **TDD**: siempre presente. Granularidad (por task vs por feature) la define el perfil.
-- **Verify**: siempre presente. Profundidad (liviano/normal/pesado): el perfil da el **default**, pero la EVIDENCIA la puede subir — el perfil se eligió por tamaño/costo ANTES de explore, así que no puede ser la última palabra sobre riesgo. Si el self-assessment de `sdd-preview` detectó señales de riesgo real (auth/pagos/permisos/shell/CI/migración de datos, o patrón sin precedente), el verify sube al menos a **normal** aunque el perfil diga liviano. Un fix de auth de 3 archivos es MINIMAL por tamaño pero NO merece el verify más liviano — el volumen nunca decide el riesgo (mismo principio que el conteo de reviewers).
-- **Idempotencia del kickoff**: `mem_search("sdd/<change-name>/kickoff")` antes de crear.
-- **Conflicto en vuelo**: `git worktree list` + revisar branches activos. Si hay solape → confirmar con el humano antes de generar.
-- **Migraciones (si aplican)**: el número es **provisional al autor, final al merge**. La fuente de verdad de los números YA tomados es **git** (medí la rama base + las hermanas en vuelo), NO un registry de reserva en engram (es un lock que las ramas largas no respetan y que driftea). Tomás el próximo libre como provisional para escribir/testear, y renumerás al integrar si una hermana mergeó primero ("el primero que mergea se lo queda"). El CÓMO renumerar depende del migrador del stack (lo sabe `sdd-init`) — con migradores de estado encadenado (journal/snapshots) es **regenerar, no renombrar**. **Nunca** infieras el próximo número contando archivos en disco.
+- **Interactive phase-by-phase execution**: each phase closes with a summary and a **pause** waiting for the human's OK before the next one. **The pace is NOT asked as a separate gate** — this is the only pace, always. The active profile (FULL/STANDARD/LITE/MINIMAL) already defines how explicit each specific human gate is (see profiles); there is no separate "interactive or automatic?" question. An automatic mode only exists if the human explicitly asks for it and without it being offered as an option (e.g. "corré automático hasta X") — it is never presented as a menu.
+  - **Automatic ceiling by objective size (non-negotiable)**: even if the human asks for it, automatic mode is only allowed in **LITE / MINIMAL**. In **FULL / STANDARD** the pace is interactive phase-by-phase ALWAYS — "auto until X" is not accepted. Reason: a large objective run in auto **dams up all the confirmations at the preview** — the human arrives at a gate with 5-6 phases of accumulated decisions they can no longer genuinely review, and the preview stops being a checkpoint and becomes a rubber stamp. If the FULL/STANDARD human asks for auto, answer in one line that because of the objective's size the cycle goes interactive (and why), and you continue phase-by-phase. In any profile, additionally, the **preview** phase is NEVER automatic (it always stops, see `sdd-preview`).
+- **Artifact store: ALWAYS `engram`**. NEVER ask about `openspec`/`hybrid`/`none` — it is not a decision exposed in this setup.
+- **Return envelope per phase**: each phase returns `{ status, resumen, artefactos, riesgos, next_recommended }`.
+- **Init guard**: before starting, `mem_search("sdd-init/<project>")`. If it does not exist, run `sdd-init` to detect the project's stack, testing, conventions and tools. Those remain in engram as project context — **NOT in the SDD rules**.
+- **Phase 0 (if the change touches UI)**: audit REUSA/ADAPTA/NUEVO + Atomic Design + component workshop (Storybook or whichever the project uses). The human gate level is defined by the profile.
+- **TDD**: always present. Granularity (per task vs per feature) is defined by the profile.
+- **Verify**: always present. Depth (light/normal/heavy): the profile gives the **default**, but the EVIDENCE can raise it — the profile was chosen by size/cost BEFORE explore, so it cannot be the last word on risk. If the `sdd-preview` self-assessment detected real risk signals (auth/payments/permissions/shell/CI/data migration, or a pattern without precedent), verify rises to at least **normal** even if the profile says light. A 3-file auth fix is MINIMAL by size but does NOT deserve the lightest verify — volume never decides risk (same principle as the reviewer count).
+- **Kickoff idempotency**: `mem_search("sdd/<change-name>/kickoff")` before creating.
+- **Conflict in flight**: `git worktree list` + review active branches. If there is overlap → confirm with the human before generating.
+- **Migrations (if they apply)**: the number is **provisional for the author, final at merge**. The source of truth for numbers ALREADY taken is **git** (measure the base branch + the sibling branches in flight), NOT a reservation registry in engram (it is a lock that long branches do not respect and that drifts). You take the next free one as provisional to write/test, and renumber on integration if a sibling merged first ("the first to merge keeps it"). HOW to renumber depends on the stack's migrator (`sdd-init` knows it) — with chained-state migrators (journal/snapshots) it is **regenerate, not rename**. **Never** infer the next number by counting files on disk.
 
-## Principios de ingeniería (aplican a todo change)
+## Engineering principles (apply to every change)
 
-- `clean-architecture` — dependencia hacia adentro; dominio sin framework/ORM/web; screaming architecture.
-- `clean-ddd-hexagonal` — `Infrastructure → Application → Domain`; un agregado por transacción; repository por agregado; ports & adapters (nunca controller→repo directo).
-- `solid` — SOLID + object calisthenics; Value Objects para conceptos de dominio (nunca primitivos crudos); YAGNI / KISS / DRY-tras-Rule-of-Three.
-- `design-patterns` — patrones **emergen del refactor**, no se fuerzan; usar vocabulario de patrón al nombrar.
-- `heuristics-and-checklists` — usar **forcing functions** ("no avanza hasta que X"), no recordatorios blandos.
-- **SSOT** — todo literal de dominio vive en UN solo lugar; cero duplicación de la verdad.
+- `clean-architecture` — dependency inward; domain without framework/ORM/web; screaming architecture.
+- `clean-ddd-hexagonal` — `Infrastructure → Application → Domain`; one aggregate per transaction; repository per aggregate; ports & adapters (never controller→repo directly).
+- `solid` — SOLID + object calisthenics; Value Objects for domain concepts (never raw primitives); YAGNI / KISS / DRY-after-Rule-of-Three.
+- `design-patterns` — patterns **emerge from refactoring**, they are not forced; use pattern vocabulary when naming.
+- `heuristics-and-checklists` — use **forcing functions** ("does not advance until X"), not soft reminders.
+- **SSOT** — every domain literal lives in ONE single place; zero duplication of truth.
 
-## Convenciones universales (aplican a todos los proyectos)
+## Universal conventions (apply to all projects)
 
-### Nombres
+### Names
 
-- **`change-name`**: kebab-case, conciso, prefijo de dominio/BC cuando ayude. **Sin** sufijos de versión (`-v2`, `-nuevo` → dejan dead code huérfano). Máx ~40 chars.
-- **Branch**: `<tipo>/<change-name>` — el **tipo se aconseja según el trabajo y el humano lo confirma** (igual que la branch base). Tipos convencionales (Conventional Branch / git-flow): `feature/` (funcionalidad nueva), `fix/` o `bugfix/` (corrección), `hotfix/` (urgencia en prod), `refactor/` (refactor sin cambio de comportamiento), `chore/` (tooling/build/deps), `docs/` (documentación), `release/` (preparar release). lowercase + guiones, corto y descriptivo. **PROHIBIDO `sdd/...`** como prefijo de rama o worktree — es la convención de topic_keys de engram, NO de git. El `<change-name>` (sufijo) es único e igual pase lo que pase con el prefijo — por eso el radar puede localizar la rama por el `branch:` registrado en el kickoff o por sufijo `*/<change-name>`, sin depender del prefijo.
-- **Worktree**: un worktree **por SDD** para aislamiento. **Ruta ÚNICA**: `<ABS-repo>-worktrees/<change-name>` — hermana del repo, **nunca adentro**. El dir es solo `<change-name>` (sin prefijo de tipo, sin `sdd/`), estable para que radar y limpieza lo encuentren.
-  - **Por qué afuera, y no en `.claude/worktrees/`**: un worktree adentro del repo es un árbol de fuentes completo que los recolectores del proyecto encuentran solos. Medido el 2026-09-16 en bodega-ferreteria-colombia: con un solo worktree adentro, `vitest` pasó de 747 archivos de test a **1496** y de 24s a **50s** — cada test corriendo dos veces — y aparecieron **3 fallos falsos** (specs de Playwright ejecutadas por vitest, porque el patrón de exclusión era relativo a la raíz y no alcanzaba la copia). CI no lo reproduce: su checkout es limpio. O sea que el síntoma es "falla local, pasa en CI", y quien lo vea va a buscar la causa en su cambio.
-  - **Distinto de los artefactos mala-pata**: los docs de mala-pata (kickoffs, research, roadmap, walkthroughs) SÍ viven **dentro del repo** bajo `mala-pata/`, versionados para trazabilidad — son markdown, no árboles de fuentes. El worktree va afuera por lo técnico de arriba (es un árbol de fuentes completo que los recolectores del proyecto corren), no por una regla de "nada adentro".
-  - **Nombre estable (evitar worktrees fantasma)**: el basename del worktree debe ser `<change-name>` y coincidir con el id que git registra (`git worktree add` deriva el id del basename del path, así que crear en `<ABS-repo>-worktrees/<change-name>` ya los deja iguales). **NUNCA renombres el worktree con `mv`** — git sigue apuntando al path viejo y sus errores pasan a nombrar carpetas que no existen en disco (ej.: folder `caja` registrado como `feature-caja`). Para moverlo: `git worktree move <viejo> <nuevo>`. Si ya quedó desfasado (un path de `git worktree list` que no resuelve, o id registrado != folder): `git worktree repair <path>` (si se renombró) o `git worktree prune` (si se borró).
+- **`change-name`**: kebab-case, concise, domain/BC prefix when it helps. **No** version suffixes (`-v2`, `-nuevo` → they leave orphaned dead code). Max ~40 chars.
+- **Branch**: `<type>/<change-name>` — the **type is advised according to the work and the human confirms it** (same as the base branch). Conventional types (Conventional Branch / git-flow): `feature/` (new functionality), `fix/` or `bugfix/` (correction), `hotfix/` (prod urgency), `refactor/` (refactor without behavior change), `chore/` (tooling/build/deps), `docs/` (documentation), `release/` (prepare a release). lowercase + hyphens, short and descriptive. **`sdd/...` is FORBIDDEN** as a branch or worktree prefix — it is the engram topic_keys convention, NOT git's. The `<change-name>` (suffix) is unique and the same whatever happens with the prefix — that is why radar can locate the branch by the `branch:` registered in the kickoff or by the suffix `*/<change-name>`, without depending on the prefix.
+- **Worktree**: one worktree **per SDD** for isolation. **SINGLE path**: `<ABS-repo>-worktrees/<change-name>` — sibling to the repo, **never inside**. The dir is just `<change-name>` (no type prefix, no `sdd/`), stable so that radar and cleanup find it.
+  - **Why outside, and not in `.claude/worktrees/`**: a worktree inside the repo is a complete source tree that the project's collectors find on their own. Measured on 2026-09-16 in bodega-ferreteria-colombia: with a single worktree inside, `vitest` went from 747 test files to **1496** and from 24s to **50s** — every test running twice — and **3 false failures** appeared (Playwright specs run by vitest, because the exclusion pattern was relative to the root and did not reach the copy). CI does not reproduce it: its checkout is clean. So the symptom is "fails locally, passes in CI", and whoever sees it will look for the cause in their change.
+  - **Different from mala-pata artifacts**: mala-pata docs (kickoffs, research, roadmap, walkthroughs) DO live **inside the repo** under `mala-pata/`, versioned for traceability — they are markdown, not source trees. The worktree goes outside for the technical reason above (it is a complete source tree that the project's collectors run), not because of a "nothing inside" rule.
+  - **Stable name (avoid ghost worktrees)**: the worktree's basename must be `<change-name>` and match the id git registers (`git worktree add` derives the id from the path's basename, so creating at `<ABS-repo>-worktrees/<change-name>` already leaves them equal). **NEVER rename the worktree with `mv`** — git keeps pointing at the old path and its errors start naming folders that do not exist on disk (e.g.: folder `caja` registered as `feature-caja`). To move it: `git worktree move <viejo> <nuevo>`. If it is already out of sync (a `git worktree list` path that does not resolve, or registered id != folder): `git worktree repair <path>` (if it was renamed) or `git worktree prune` (if it was deleted).
 - **Engram topic keys**: `sdd/<change-name>/{kickoff,explore,proposal,spec,design,tasks,apply-progress,verify-report,archive-report}`.
 
 ### Commits
 
-- **Conventional Commits**: `<tipo>(<scope>): <descripción>` — tipos estándar (`feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `build`, `ci`, `style`). El scope lo define el proyecto (detectado por sdd-init).
-- **SIN atribución de asistente IA** en commits (`Co-Authored-By: Claude`, `Generated with Claude Code`, cualquier trailer similar). El commit lo firma el humano.
-- **NO `git stash`** durante el flujo del SDD — mueve trabajo fuera del historial y complica recuperación en caso de rollback. Usar commits reales (incluso WIP) o dejar en el working tree.
-- **NO `--no-verify`** ni `--no-gpg-sign` — respetar hooks del proyecto salvo pedido explícito del humano.
-- **NO amend a commits publicados** — cada corrección va en un commit nuevo.
+- **Conventional Commits**: `<type>(<scope>): <description>` — standard types (`feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `build`, `ci`, `style`). The scope is defined by the project (detected by sdd-init).
+- **NO AI-assistant attribution** in commits (`Co-Authored-By: Claude`, `Generated with Claude Code`, any similar trailer). The commit is signed by the human.
+- **NO `git stash`** during the SDD flow — it moves work out of history and complicates recovery in case of rollback. Use real commits (even WIP) or leave it in the working tree.
+- **NO `--no-verify`** nor `--no-gpg-sign` — respect the project's hooks unless the human explicitly asks otherwise.
+- **NO amend to published commits** — each correction goes in a new commit.
 
-### Branches y PRs
+### Branches and PRs
 
-- **NUNCA `git push` directo a `main` / `master` / branch de integración**. Siempre por PR (o el mecanismo de review del repo).
-- **PR title**: Conventional Commits format, mismo estilo que los commits.
-- **PR body**: incluir (a) resumen de qué cambia, (b) test plan verificable, (c) link/referencia al kickoff en engram (`sdd/<change-name>/kickoff · engram #<id>`).
-- **Branch base**: default/recomendado `main` o `development`, pero **cualquier rama es válida si el humano la confirma** (ej.: trabajo que construye sobre una feature en curso sale de ESA feature). Lo NO NEGOCIABLE es la **confirmación**: la base SIEMPRE se propone con su razón ("el código vive en X" / "default de integración") y se espera el OK del humano antes de fijarla — nunca se asume en silencio, nunca se bloquea solo por no ser main. Queda registrada explícita en el kickoff (frontmatter `branch_base`), y esa confirmación vale para todo el ciclo.
+- **NEVER `git push` directly to `main` / `master` / integration branch**. Always through a PR (or the repo's review mechanism).
+- **PR title**: Conventional Commits format, same style as the commits.
+- **PR body**: include (a) summary of what changes, (b) verifiable test plan, (c) link/reference to the kickoff in engram (`sdd/<change-name>/kickoff · engram #<id>`).
+- **Base branch**: default/recommended `main` or `development`, but **any branch is valid if the human confirms it** (e.g.: work that builds on a feature in progress comes off THAT feature). What is NON-NEGOTIABLE is the **confirmation**: the base is ALWAYS proposed with its reason ("the code lives in X" / "integration default") and the human's OK is awaited before fixing it — it is never assumed silently, never blocked just for not being main. It is recorded explicitly in the kickoff (frontmatter `branch_base`), and that confirmation holds for the whole cycle.
 
-### Rutas
+### Paths
 
-- **En código**: rutas relativas al workspace (según el resolver del stack — `tsconfig`, `pyproject.toml`, etc.).
-- **En comunicación con el humano**: rutas relativas al repo (no absolutas al filesystem).
-- **En comandos de shell**: rutas absolutas (`git -C <abs>`, `--prefix`, paths absolutos), no `cd` para operar en otro directorio.
+- **In code**: paths relative to the workspace (according to the stack's resolver — `tsconfig`, `pyproject.toml`, etc.).
+- **In communication with the human**: paths relative to the repo (not absolute to the filesystem).
+- **In shell commands**: absolute paths (`git -C <abs>`, `--prefix`, absolute paths), no `cd` to operate in another directory.
 
-## Estructura del kickoff (SSOT)
+## Kickoff structure (SSOT)
 
-Todo kickoff **DEBE** tener:
+Every kickoff **MUST** have:
 
-1. **Perfil activo** — FULL/STANDARD/LITE/MINIMAL, confirmado por el humano en Paso 1.5. Con reasoning de la propuesta y costo estimado (orden de magnitud).
-2. **Metadatos de orquestación** — change-name, branch, worktree, tamaño, depends_on, paralelizable_con, branch base, comando de arranque.
-3. **Contrato del change** — endpoints, shapes, tipos, migraciones del BE si aplica. Específico del change, NO del método.
-4. **Reinterpretación técnica** — objetivo, problema, IN/OUT, criterios de éxito medibles.
-5. **Arquitectura y capas afectadas** — con refs al ARCHITECTURE.md del proyecto (detectado por sdd-init).
-6. **Plan de fases alto nivel** — por objetivo, NO por task. Las tasks las produce `sdd-tasks` en la fase correspondiente.
-7. **Definition of Done** — criterios verificables de cierre.
-8. **Riesgos / decisiones abiertas** — para resolver dentro del SDD.
+1. **Active profile** — FULL/STANDARD/LITE/MINIMAL, confirmed by the human in Step 1.5. With the proposal's reasoning and estimated cost (order of magnitude).
+2. **Orchestration metadata** — change-name, branch, worktree, size, depends_on, parallelizable_with, base branch, start command.
+3. **Change contract** — endpoints, shapes, types, BE migrations if applicable. Specific to the change, NOT to the method.
+4. **Technical reinterpretation** — objective, problem, IN/OUT, measurable success criteria.
+5. **Architecture and affected layers** — with refs to the project's ARCHITECTURE.md (detected by sdd-init).
+6. **High-level phase plan** — by objective, NOT by task. The tasks are produced by `sdd-tasks` in the corresponding phase.
+7. **Definition of Done** — verifiable closing criteria.
+8. **Risks / open decisions** — to resolve within the SDD.
 
-## Qué NO va en las reglas base
+## What does NOT go in the base rules
 
-- Herramientas específicas del stack (regen de tipos, comandos de build/test, librerías de UI/testing, formato de archivos) → las detecta sdd-init y viven en el contexto del proyecto en engram.
-- Contratos concretos de endpoints, tipos, o payloads → viven en el kickoff del change específico.
-- Reglas de proyectos concretos (formato del scope de commits, patrón de branches con prefijos custom, ubicación de worktrees) → viven en el CLAUDE.md del proyecto o en sdd-init.
-- Número de reviewers de `sdd-preview` → lo decide el propio `sdd-preview` en su self-assessment (blast-radius / reuse-first / smells de arquitectura), `sdd-tasks` ya no lo recomienda. El perfil no fuerza número.
+- Stack-specific tools (type regen, build/test commands, UI/testing libraries, file format) → detected by sdd-init and live in the project context in engram.
+- Concrete contracts of endpoints, types, or payloads → live in the specific change's kickoff.
+- Rules of concrete projects (commit scope format, branch pattern with custom prefixes, worktree location) → live in the project's CLAUDE.md or in sdd-init.
+- Number of `sdd-preview` reviewers → decided by `sdd-preview` itself in its self-assessment (blast-radius / reuse-first / architecture smells), `sdd-tasks` no longer recommends it. The profile does not force a number.

@@ -1,295 +1,295 @@
 ---
 name: mala-pata-loop
-description: Reinterpreta una solicitud a términos técnicos, elige perfil de ejecución con el humano, y genera el contexto completo en un archivo markdown (dentro del repo, `mala-pata/kickoffs/`, versionado) para arrancar un SDD interactivo — con solo un puntero de una línea en engram. NO ejecuta el SDD — solo deja el brief listo para que otro agente lo corra.
+description: Reinterprets a request into technical terms, chooses an execution profile with the human, and generates the full context in a markdown file (inside the repo, `mala-pata/kickoffs/`, versioned) to start an interactive SDD — with only a one-line pointer in engram. It does NOT run the SDD — it only leaves the brief ready for another agent to run it.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
-# /mala-pata-loop — Generador de contexto para iniciar un SDD
+# /mala-pata-loop — Context generator to start an SDD
 
-Solicitud del usuario: **entrada entregada por el CLI**
+User request: **input delivered by the CLI**
 
-Tu único trabajo es convertir esa solicitud en un **CONTEXTO TÉCNICO COMPLETO guardado en un archivo markdown** dentro del repo (`mala-pata/kickoffs/`, ver Paso 5) que otro agente consumirá para EJECUTAR un SDD.
+Your only job is to turn that request into a **COMPLETE TECHNICAL CONTEXT saved in a markdown file** inside the repo (`mala-pata/kickoffs/`, see Step 5) that another agent will consume to RUN an SDD.
 
-> **NO inicias el SDD. NO escribís código. NO creás specs/tasks/migraciones reales. NO corrés tests.**
-> Solo producís el *brief* (contexto) y lo persistís en un archivo (con un puntero de una línea en engram para que se pueda buscar). Al terminar, el SDD queda **listo para arrancar**, no arrancado.
+> **You do NOT start the SDD. You do NOT write code. You do NOT create real specs/tasks/migrations. You do NOT run tests.**
+> You only produce the *brief* (context) and persist it in a file (with a one-line pointer in engram so it can be searched). When you finish, the SDD is **ready to start**, not started.
 
-> **Cuándo estás en el carril correcto (frontera con organic).** Llegás a `/mala-pata-loop` cuando **no podés empezar a codear todavía porque falta DISEÑAR** — típicamente porque el gate de `/mala-pata-organic` diagnosticó `Decisiones ya tomadas` sin resolver (fork de arquitectura, contrato/endpoint cuya *forma* hay que decidir, requisitos en disputa). **El tamaño por sí solo NUNCA te manda acá**: un cambio grande pero especificable (podés llenar Qué + Done + Decisiones) va a `/mala-pata-organic`; uno más grande que un solo ciclo va a `/mala-pata-roadmap`. Si al leer el pedido ya sabés qué construir y la arquitectura está decidida, esto NO es loop — devolvelo a `/mala-pata-organic`.
-
----
-
-## Requisitos (orquestar, no reinventar)
-
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
-
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `gentle-ai` — motor SDD. Instalar: `brew install gentleman-programming/tap/gentle-ai`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: seguir sin puntero; el brief en archivo es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
-
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
-
-## Reglas base y perfiles
-
-Este skill se apoya en dos capas de reglas — el kickoff generado **DEBE** inyectar ambas para que el ejecutor las tenga a mano:
-
-- **Reglas base (universales)**: `references/profiles/_base.md` — invariantes del método (Fase 0, TDD, verify, principios de ingeniería) + convenciones universales de commits, branches, rutas, atribución de autoría.
-- **Reglas del perfil activo**: uno de `references/profiles/{full,standard,lite,minimal}.md` — ajusta granularidad de TDD, profundidad de verify, fusión spec+design, reutilización de explores, gate humano de Fase 0.
-
-**Herramientas del stack, convenciones específicas del proyecto y contratos concretos** NO viven aquí — los detecta `sdd-init` y viven en engram como contexto del proyecto (`sdd-init/<project>`) o en el kickoff del change.
+> **When you are on the right lane (border with organic).** You arrive at `/mala-pata-loop` when you **cannot start coding yet because DESIGN is missing** — typically because the `/mala-pata-organic` gate diagnosed unresolved `Decisions already made` (an architecture fork, a contract/endpoint whose *shape* must be decided, disputed requirements). **Size alone NEVER sends you here**: a large but specifiable change (you can fill in What + Done + Decisions) goes to `/mala-pata-organic`; one bigger than a single cycle goes to `/mala-pata-roadmap`. If on reading the request you already know what to build and the architecture is decided, this is NOT loop — send it back to `/mala-pata-organic`.
 
 ---
 
-## Paso 0 — Gate de vaguedad + Definition of Ready (DoR liviano)
+## Requirements (orchestrate, don't reinvent)
 
-Antes de reinterpretar nada, medí si la solicitud está **lista para entrar al ciclo** (Definition of Ready). No es una fase nueva ni un artefacto aparte — es este mismo gate, afilado. La idea, tomada de prácticas probadas (Example Mapping / "Three Amigos" y el criterio *Testable* de INVEST), es simple: **un objetivo mal definido NUNCA debe arrancar el ciclo** — es infinitamente más barato pararlo acá que descubrirlo en preview.
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-### Dos chequeos de readiness
+- **Required** (no fallback — if missing, STOP and ask for it to be installed, do not start):
+  - `gentle-ai` — SDD engine. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `engram` — persistent memory and continuity pointer. Fallback: continue without the pointer; the brief in the file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-**1. Tarjetas rojas (preguntas del QUÉ sin responder).** Una tarjeta roja es cualquier pregunta abierta sobre *qué se quiere* — NO sobre *cómo se implementa* (eso se resuelve en Design, no acá). Ejemplos de rojas: "¿esto incluye también X?", "¿el objetivo es A o B?", "¿qué pasa con el caso Y?". Regla:
-- **0 rojas** → el QUÉ está claro, seguí.
-- **1–2 rojas** → hacé esas preguntas concretas y esperá (nivel "Recuperable" de abajo). No inventes la respuesta.
-- **3+ rojas, o una sola roja que cambia el objetivo entero** → el objetivo NO está definido. NO generes contexto: devolvé el pedido a definición (respondé como "Demasiado vaga", listando las rojas). Meter esto al ciclo con las rojas abiertas es exactamente lo que después hace que el humano y el preview terminen debatiendo el objetivo en la fase equivocada.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
-**2. DoD testeable (criterio *Testable* de INVEST).** El "cuándo está listo" tiene que poder escribirse como algo **verificable**, no como un deseo. Test rápido de cada criterio: *¿alguien que no seas vos podría decir objetivamente si se cumplió o no?*
-- "que funcione bien", "que quede prolijo", "que sea rápido" → NO testeable → es una tarjeta roja (falta el criterio real).
-- "que el endpoint responda <200ms en p95", "que el usuario pueda filtrar por fecha y vea el resultado sin recargar" → testeable → OK.
-- Si el "listo" no se puede volver testeable ni preguntando 1–2 cosas → tratalo como objetivo no definido (Demasiado vaga).
+## Base rules and profiles
 
-### Resolución (los tres niveles de siempre, ahora con los dos chequeos adentro)
+This skill relies on two layers of rules — the generated kickoff **MUST** inject both so the executor has them at hand:
 
-- **Accionable** — 0 rojas y DoD testeable (o falta a lo sumo 1 dato menor) → procedé directo al Paso 1.
-- **Recuperable** — 1–2 rojas, o el DoD se vuelve testeable con 1–2 preguntas → hacé **esas preguntas concretas** y esperá. No inventes alcance.
-- **Demasiado vaga** — falta el objeto mismo ("mejorá la app", "hacelo mejor"), o 3+ rojas, o el "listo" no se puede volver testeable → **NO generes contexto.** Respondé exactamente:
+- **Base rules (universal)**: `references/profiles/_base.md` — method invariants (Phase 0, TDD, verify, engineering principles) + universal conventions for commits, branches, paths, authorship attribution.
+- **Active profile rules**: one of `references/profiles/{full,standard,lite,minimal}.md` — adjusts TDD granularity, verify depth, spec+design merging, explore reuse, human gate of Phase 0.
 
-  > **trabaje vago ** — necesito al menos: *qué* querés lograr, *dónde* (módulo/feature) y *cuándo está listo* (en criterios verificables, no "que quede bien"). [Si hay tarjetas rojas concretas, listalas acá como bullets.] Con eso te armo el contexto.
-
-  Y parás ahí. No reinterpretes ni adivines.
+**Stack tools, project-specific conventions and concrete contracts** do NOT live here — `sdd-init` detects them and they live in engram as project context (`sdd-init/<project>`) or in the change's kickoff.
 
 ---
 
-## Paso 1 — Reinterpretar a términos técnicos
+## Step 0 — Vagueness gate + Definition of Ready (light DoR)
 
-1. Detectá el **proyecto activo** (la herramienta de memoria disponible o el cwd) y leé su arquitectura (`CLAUDE.md`, `ARCHITECTURE.md` o equivalentes).
-2. `mem_search` con keywords de la solicitud (y `mem_get_observation` para lo relevante). Reusá decisiones/convenciones existentes.
-3. Explorá lo mínimo del código para aterrizar la reinterpretación (grep/lectura). No edites nada.
-4. Reescribí la solicitud como **objetivo técnico**: Objetivo, Problema/causa raíz, Alcance IN, Alcance OUT, Criterios de éxito medibles, `change-name` en kebab-case.
-5. **Idempotencia**: `mem_search("sdd/<change-name>/kickoff")`. Si ya existe uno igual/parecido → ofrecé actualizar o cambiar nombre.
-6. **Guard de tamaño / troceo**: un SDD = un objetivo coherente. Si abarca varios, recomendá trocear en N SDDs (con grafo de dependencias) y generá solo el primero.
-7. **Conflicto en vuelo**: `git worktree list` + branches activos. Si hay solape → avisá y confirmá antes de seguir.
-8. **Branch base + tipo de rama — SIEMPRE se proponen y confirman con el humano** (ver `references/profiles/_base.md`):
-   - **Base**: proponé con tu razón — default `main`/`development` (integración), u otra rama si el trabajo construye sobre una feature en curso ("el código vive en X"). Cualquier rama es válida con confirmación; lo prohibido es asumirla en silencio o bloquear solo por no ser main.
-   - **Tipo de rama**: aconsejá el prefijo convencional según QUÉ es el cambio (`feature/` funcionalidad nueva, `fix/`/`bugfix/` corrección, `hotfix/` urgencia prod, `refactor/`, `chore/`, `docs/`, `release/`) y proponé el nombre completo `<tipo>/<change-name>`. **Nunca `sdd/...`**. Ej.: un fix de bug → propuesta `fix/<change-name>`; una feature nueva → `feature/<change-name>`.
-   - **Esperá el OK** antes de fijar `branch:` y `branch_base` en el kickoff. Estas dos confirmaciones pueden ir junto con la del perfil (Paso 1.5) en una sola interacción. La rama de trabajo SIEMPRE es la nueva `<tipo>/<change-name>` y el `worktree` SIEMPRE un dir nuevo por change — nunca pongas una rama integradora como `branch:` ni un worktree a reusar; el ejecutor (loop-start) trabaja aislado en su propio worktree y consolida al merge.
+Before reinterpreting anything, measure whether the request is **ready to enter the cycle** (Definition of Ready). It is not a new phase or a separate artifact — it is this same gate, sharpened. The idea, taken from proven practices (Example Mapping / "Three Amigos" and INVEST's *Testable* criterion), is simple: **a poorly defined objective must NEVER start the cycle** — it is infinitely cheaper to stop it here than to discover it in preview.
+
+### Two readiness checks
+
+**1. Red cards (unanswered questions about the WHAT).** A red card is any open question about *what is wanted* — NOT about *how it is implemented* (that gets resolved in Design, not here). Examples of reds: "does this also include X?", "is the objective A or B?", "what about case Y?". Rule:
+- **0 reds** → the WHAT is clear, continue.
+- **1–2 reds** → ask those concrete questions and wait ("Recoverable" level below). Do not invent the answer.
+- **3+ reds, or a single red that changes the whole objective** → the objective is NOT defined. Do NOT generate context: send the request back to definition (answer as "Too vague", listing the reds). Putting this into the cycle with the reds open is exactly what later makes the human and the preview end up debating the objective in the wrong phase.
+
+**2. Testable DoD (INVEST's *Testable* criterion).** The "when is it done" has to be writable as something **verifiable**, not a wish. Quick test for each criterion: *could someone other than you objectively say whether it was met or not?*
+- "make it work well", "keep it tidy", "make it fast" → NOT testable → it is a red card (the real criterion is missing).
+- "the endpoint responds in <200ms at p95", "the user can filter by date and see the result without reloading" → testable → OK.
+- If the "done" cannot be made testable even by asking 1–2 things → treat it as an undefined objective (Too vague).
+
+### Resolution (the usual three levels, now with the two checks inside)
+
+- **Actionable** — 0 reds and testable DoD (or at most 1 minor piece of data missing) → proceed straight to Step 1.
+- **Recoverable** — 1–2 reds, or the DoD becomes testable with 1–2 questions → ask **those concrete questions** and wait. Do not invent scope.
+- **Too vague** — the object itself is missing ("improve the app", "make it better"), or 3+ reds, or the "done" cannot be made testable → **do NOT generate context.** Answer exactly:
+
+  > **vague work ** — I need at least: *what* you want to achieve, *where* (module/feature) and *when it is done* (in verifiable criteria, not "make it look good"). [If there are concrete red cards, list them here as bullets.] With that I'll build the context.
+
+  And stop there. Do not reinterpret or guess.
 
 ---
 
-## Paso 1.5 — Elegir perfil de ejecución (gate humano)
+## Step 1 — Reinterpret into technical terms
 
-Estimá el **tamaño** del change y **proponé un perfil** basado en:
+1. Detect the **active project** (the available memory tool or the cwd) and read its architecture (`CLAUDE.md`, `ARCHITECTURE.md` or equivalents).
+2. `mem_search` with keywords from the request (and `mem_get_observation` for what is relevant). Reuse existing decisions/conventions.
+3. Explore the minimum of the code to ground the reinterpretation (grep/reading). Do not edit anything.
+4. Rewrite the request as a **technical objective**: Objective, Problem/root cause, Scope IN, Scope OUT, measurable Success criteria, `change-name` in kebab-case.
+5. **Idempotency**: `mem_search("sdd/<change-name>/kickoff")`. If one that is equal/similar already exists → offer to update it or rename.
+6. **Size / splitting guard**: one SDD = one coherent objective. If it spans several, recommend splitting into N SDDs (with a dependency graph) and generate only the first.
+7. **In-flight conflict**: `git worktree list` + active branches. If there is overlap → warn and confirm before continuing.
+8. **Base branch + branch type — ALWAYS proposed and confirmed with the human** (see `references/profiles/_base.md`):
+   - **Base**: propose it with your reason — default `main`/`development` (integration), or another branch if the work builds on a feature in progress ("the code lives in X"). Any branch is valid with confirmation; what is forbidden is assuming it silently or blocking just because it is not main.
+   - **Branch type**: advise the conventional prefix according to WHAT the change is (`feature/` new functionality, `fix/`/`bugfix/` correction, `hotfix/` prod urgency, `refactor/`, `chore/`, `docs/`, `release/`) and propose the full name `<type>/<change-name>`. **Never `sdd/...`**. E.g.: a bug fix → proposal `fix/<change-name>`; a new feature → `feature/<change-name>`.
+   - **Wait for the OK** before setting `branch:` and `branch_base` in the kickoff. These two confirmations can go together with the profile one (Step 1.5) in a single interaction. The working branch is ALWAYS the new `<type>/<change-name>` and the `worktree` is ALWAYS a new dir per change — never put an integration branch as `branch:` nor a worktree to reuse; the executor (loop-start) works isolated in its own worktree and consolidates at merge.
 
-- Cuántos containers, services, tipos, tests toca.
-- Si el módulo ya se exploró recientemente (existe `sdd/<...>/explore` en engram del mismo módulo).
-- Si hay componentes UI nuevos genuinos (no solo adaptaciones).
-- Si hay contrato BE nuevo (endpoints, migraciones, cambio de shape).
-- Riesgo de regresión en flujos críticos.
+---
 
-Los 4 perfiles disponibles:
+## Step 1.5 — Choose execution profile (human gate)
 
-| Perfil | Cuándo | Costo aprox |
+Estimate the **size** of the change and **propose a profile** based on:
+
+- How many containers, services, types, tests it touches.
+- Whether the module was explored recently (an `sdd/<...>/explore` of the same module exists in engram).
+- Whether there are genuinely new UI components (not just adaptations).
+- Whether there is a new BE contract (endpoints, migrations, shape change).
+- Regression risk in critical flows.
+
+The 4 available profiles:
+
+| Profile | When | Approx cost |
 |---|---|---|
-| **FULL** | Change L, primer paso en el módulo, contrato BE nuevo, riesgo alto | ~500K tokens |
-| **STANDARD** | Change M típico, módulo conocido, aditivo sobre contrato existente | ~250K tokens |
-| **LITE** | Change S/M en módulo caliente, adapta atoms/molecules | ~120K tokens |
-| **MINIMAL** | Fix chico, refactor mecánico, migración de tipo | ~70K tokens |
+| **FULL** | L change, first step in the module, new BE contract, high risk | ~500K tokens |
+| **STANDARD** | Typical M change, known module, additive on an existing contract | ~250K tokens |
+| **LITE** | S/M change in a hot module, adapts atoms/molecules | ~120K tokens |
+| **MINIMAL** | Small fix, mechanical refactor, type migration | ~70K tokens |
 
-Presentá la propuesta al humano con **la función de preguntas interactiva disponible en el CLI**:
+Present the proposal to the human with **the interactive question function available in the CLI**:
 
-- **Pregunta**: "¿Qué perfil usamos para este SDD?"
-- **Opciones**: los 4 perfiles con descripción corta (una línea cada uno).
-- **Recomendación** (etiquetá con "(Recomendado)" y ponelo como primera opción): la que corresponde a tu estimación.
-- En el reasoning, escribí una línea corta explicando **por qué recomendás ese perfil** (ej: "módulo `X` ya explorado esta semana, sin componentes nuevos, cambio aditivo → LITE").
+- **Question**: "Which profile do we use for this SDD?"
+- **Options**: the 4 profiles with a short description (one line each).
+- **Recommendation** (label it "(Recommended)" and put it as the first option): the one matching your estimate.
+- In the reasoning, write a short line explaining **why you recommend that profile** (e.g.: "module `X` already explored this week, no new components, additive change → LITE").
 
-**No continúes** hasta que el humano confirme. Si elige "Other", tomá su respuesta como el perfil (validá que sea uno de los 4).
+**Do not continue** until the human confirms. If they choose "Other", take their answer as the profile (validate that it is one of the 4).
 
 ---
 
-## Paso 2 — Elegir skills SEGÚN EL OBJETIVO (enfocado, no una lista fija)
+## Step 2 — Choose skills ACCORDING TO THE OBJECTIVE (focused, not a fixed list)
 
-El ejecutor va a cargar exactamente los skills que este kickoff liste — así que elegilos **por el Alcance IN del objetivo**, no "por si acaso". Menos y precisos > muchos y genéricos (un set inflado hace al agente más lento y gasta tokens sin mejorar el resultado).
+The executor will load exactly the skills this kickoff lists — so choose them **by the objective's Scope IN**, not "just in case". Few and precise > many and generic (an inflated set makes the agent slower and burns tokens without improving the result).
 
-### Base del método (motor de ingeniería)
+### Method base (engineering engine)
 
-- **Siempre** (aplican a cualquier código): `clean-architecture`, `solid`.
-- **Si el objetivo toca lógica de backend/dominio** (no para un cambio puramente visual/estático): + `clean-ddd-hexagonal`, `design-patterns`.
+- **Always** (apply to any code): `clean-architecture`, `solid`.
+- **If the objective touches backend/domain logic** (not for a purely visual/static change): + `clean-ddd-hexagonal`, `design-patterns`.
 
-### Condicionales por dominio — elegí SOLO las señaladas por el objetivo
+### Conditionals by domain — choose ONLY those signaled by the objective
 
-| Señal en el objetivo (Alcance IN) | Skills a cargar |
+| Signal in the objective (Scope IN) | Skills to load |
 |---|---|
-| **DB**: schema, migración, query, modelo de datos, índices | `database-design` |
-| **UI/frontend**: pantalla, componente, formulario, flujo de usuario | `ui-ux-pro-max`, `heuristic-evaluation` |
-| **Diseño visual** nuevo / rediseño / branding / "que no parezca IA" | `frontend-design`, `impeccable` |
-| **Color / tokens / paletas** | `color-expert` |
-| **Animación / micro-interacción / transición / scroll** | `motion-design` (+ `gsap-*` / `threejs-*` **solo si el stack los usa**) |
-| **Diagramas** de arquitectura/flujo/estados | `archify` o `diagram-design` |
+| **DB**: schema, migration, query, data model, indexes | `database-design` |
+| **UI/frontend**: screen, component, form, user flow | `ui-ux-pro-max`, `heuristic-evaluation` |
+| New **visual design** / redesign / branding / "so it doesn't look like AI" | `frontend-design`, `impeccable` |
+| **Color / tokens / palettes** | `color-expert` |
+| **Animation / micro-interaction / transition / scroll** | `motion-design` (+ `gsap-*` / `threejs-*` **only if the stack uses them**) |
+| **Diagrams** of architecture/flow/states | `archify` or `diagram-design` |
 | **Charts / dashboards / data viz** | `dataviz` |
-| **Docs** para humanos (runbook, guía) / doc de prueba o de cliente | `cognitive-doc-design` / `mala-pata-walkthrough` |
-| **RAG / búsqueda / embeddings** | `rag-architect`, `rag-retrieval`, `hybrid-search-implementation` |
-| **App LLM / agentes / prompts / tools** | `llm-app-patterns`, `prompt-engineering-patterns`, `ai-engineer`, `multi-agent-patterns`, `tool-design` |
-| **Evaluación de modelos / LLM-judge / métricas** | `advanced-evaluation`, `evaluation`, `evolutionary-metric-ranking` |
-| **Memoria de agentes / persistencia cross-sesión** | `memory-systems` |
-| **Diseño de sistema grande / build-vs-buy / descomposición** | `software-architect` |
-| **Seguridad / revisión de vulnerabilidades** | `security-review` |
-| **Librería/framework/API** (setup, versión, sintaxis) | `context7` (ya es regla global — nombralo en el kickoff si es central al objetivo) |
+| **Docs** for humans (runbook, guide) / test doc or customer doc | `cognitive-doc-design` / `mala-pata-walkthrough` |
+| **RAG / search / embeddings** | `rag-architect`, `rag-retrieval`, `hybrid-search-implementation` |
+| **LLM app / agents / prompts / tools** | `llm-app-patterns`, `prompt-engineering-patterns`, `ai-engineer`, `multi-agent-patterns`, `tool-design` |
+| **Model evaluation / LLM-judge / metrics** | `advanced-evaluation`, `evaluation`, `evolutionary-metric-ranking` |
+| **Agent memory / cross-session persistence** | `memory-systems` |
+| **Large system design / build-vs-buy / decomposition** | `software-architect` |
+| **Security / vulnerability review** | `security-review` |
+| **Library/framework/API** (setup, version, syntax) | `context7` (it is already a global rule — name it in the kickoff if it is central to the objective) |
 
-### Reglas de selección (no negociables)
+### Selection rules (non-negotiable)
 
-1. **Por objetivo, no por reflejo**: si el Alcance IN no lo menciona, no lo cargues. Ej.: un fix de query NO carga `ui-ux-pro-max`; un rediseño de pantalla NO carga `rag-*`.
-2. **Techo ~3-4 condicionales.** Si te salen más, probablemente el objetivo es demasiado grande → trocealo (Paso 1.6), no cargues de todo.
-3. **Cada skill elegido va en el kickoff** (sección "Skills condicionales") **con UNA línea de por qué** (qué parte del objetivo lo justifica). El ejecutor carga esa lista literal.
-4. **Solo skills que EXISTAN** en la sesión (mirá `<available_skills>`); nunca inventes un nombre. Algunos son de plugin → usá el nombre `plugin:skill` tal como aparece en el listado. Los stack-specific (`gsap-*`, `threejs-*`, `go-testing`, `neon-postgres`) solo si `sdd-init` confirma que el stack los usa.
+1. **By objective, not by reflex**: if the Scope IN does not mention it, do not load it. E.g.: a query fix does NOT load `ui-ux-pro-max`; a screen redesign does NOT load `rag-*`.
+2. **Ceiling ~3-4 conditionals.** If you end up with more, the objective is probably too big → split it (Step 1.6), do not load everything.
+3. **Every chosen skill goes in the kickoff** (section "Skills condicionales") **with ONE line of why** (which part of the objective justifies it). The executor loads that list literally.
+4. **Only skills that EXIST** in the session (look at `<available_skills>`); never invent a name. Some are plugin skills → use the `plugin:skill` name exactly as it appears in the listing. The stack-specific ones (`gsap-*`, `threejs-*`, `go-testing`, `neon-postgres`) only if `sdd-init` confirms the stack uses them.
 
-**Init guard**: `mem_search("sdd-init/<project>")`. Si NO existe → correr `sdd-init` para detectar stack, convenciones, testing, `strict_tdd`. Si ya existe → reusá (es lo que te dice qué stack-specific aplican).
-
----
-
-## Paso 3 — Número de migración: provisional al autor, final al merge (si aplica)
-
-Si el change necesita migraciones de DB, **NO reserves un número como lock**. La fuente de verdad de los números YA tomados es **git, no engram** — un registry de reserva es un lock que las ramas largas no respetan y que además driftea (se lo vio decir "próximo libre 0071" cuando el real era 0003). En cambio:
-
-1. **Medí git, no un registry**: mirá qué números ocupan la rama base Y las ramas hermanas en vuelo — con el comando del proyecto para listar migraciones (ej. `git ls-tree -r --name-only <rama> -- <carpeta-de-migraciones>`; la carpeta y el esquema exactos los sabe `sdd-init`). **Nunca infieras el próximo contando archivos en disco** (la numeración puede no ser contigua).
-2. **Tomá el próximo libre como PROVISIONAL**: es el número con el que vas a escribir el archivo y correr el round-trip, pero **no es final** — si otra rama hermana mergea antes, este change renumera al integrar (ver `/mala-pata-loop-start`, Paso 4.1-bis). Regla del proyecto: "el primero que mergea se lo queda".
-3. **Registralo en el kickoff como provisional-en-disputa, no como reserva**: en `migrations_reserved` del frontmatter poné el número provisional + la nota "final al merge; 1° que mergea se lo queda; re-verificar contra hermanas justo antes del merge". Si hay varias ramas peleando el mismo número, listalas.
-4. **El CÓMO renumerar es del stack, no de acá**: si el proyecto usa un migrador con estado encadenado (journal/snapshots, ej. drizzle-kit), renumerar **NO es renombrar archivos — es regenerar**. Ese detalle vive en `sdd-init/<project>` / el `CLAUDE.md` del repo, no en estas reglas.
-
-Si no necesita migraciones, dejalo explícito ("no aplica") en el kickoff.
+**Init guard**: `mem_search("sdd-init/<project>")`. If it does NOT exist → run `sdd-init` to detect stack, conventions, testing, `strict_tdd`. If it already exists → reuse it (it is what tells you which stack-specific ones apply).
 
 ---
 
-## Paso 4 — Construir el kickoff
+## Step 3 — Migration number: provisional for the author, final at merge (if applicable)
 
-El kickoff es un **archivo markdown**, no una entrada de engram — sin límite práctico de longitud, así que sé tan detallado como el change lo pida. El orden de las secciones está pensado a propósito, no es solo estético: **el contexto/background va primero, el pedido/instrucción va al final**. Es la práctica documentada por Anthropic para prompts largos que mezclan referencia + instrucción — "queries at the end can improve response quality by up to 30%, especially with complex, multidocument inputs" ([Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)). No reordenes las secciones aunque te parezca más prolijo de otra forma.
+If the change needs DB migrations, **do NOT reserve a number as a lock**. The source of truth for numbers ALREADY taken is **git, not engram** — a reservation registry is a lock that long-lived branches do not respect and that also drifts (it was seen saying "next free 0071" when the real one was 0003). Instead:
 
-Armá el brief con esta estructura, **INYECTANDO** los MDs de reglas:
+1. **Measure git, not a registry**: look at which numbers the base branch AND the sibling in-flight branches occupy — with the project's command to list migrations (e.g. `git ls-tree -r --name-only <branch> -- <migrations-folder>`; the exact folder and scheme are known by `sdd-init`). **Never infer the next one by counting files on disk** (numbering may not be contiguous).
+2. **Take the next free one as PROVISIONAL**: it is the number you will write the file with and run the round-trip, but it is **not final** — if another sibling branch merges first, this change renumbers when integrating (see `/mala-pata-loop-start`, Step 4.1-bis). Project rule: "the first to merge keeps it".
+3. **Record it in the kickoff as provisional-in-dispute, not as a reservation**: in `migrations_reserved` in the frontmatter put the provisional number + the note "final at merge; 1st to merge keeps it; re-verify against siblings right before the merge". If several branches are fighting for the same number, list them.
+4. **HOW to renumber belongs to the stack, not here**: if the project uses a migrator with chained state (journal/snapshots, e.g. drizzle-kit), renumbering is **NOT renaming files — it is regenerating**. That detail lives in `sdd-init/<project>` / the repo's `CLAUDE.md`, not in these rules.
+
+If it does not need migrations, leave it explicit ("N/A") in the kickoff.
+
+---
+
+## Step 4 — Build the kickoff
+
+The kickoff is a **markdown file**, not an engram entry — no practical length limit, so be as detailed as the change requires. The section order is deliberate, not just aesthetic: **context/background goes first, the request/instruction goes last**. This is the practice documented by Anthropic for long prompts mixing reference + instruction — "queries at the end can improve response quality by up to 30%, especially with complex, multidocument inputs" ([Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)). Do not reorder the sections even if another order seems tidier to you.
+
+Assemble the brief with this structure, **INJECTING** the rules MDs:
 
 ```markdown
 ---
 change_name: <change-name>
 profile: <PERFIL>
 project: <project>
-branch: <tipo>/<change-name>   # tipo confirmado (feature|fix|hotfix|refactor|chore|docs|release) — nunca sdd/
+branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
 branch_base: main|development
-worktree: <ruta absoluta sugerida>
-depends_on: <change-name(s)|ninguno>
-paralelizable_con: <change-name(s)|ninguno>
-migrations_reserved: <número(s) provisional(es) + "final al merge; 1° que mergea se lo queda"|no aplica>
-smoke_test:                 # ¿necesita prueba manual con datos sembrados tras apply? (lo confirma loop-start, Paso 4.1-ter)
-  needed: auto             # auto|yes|no — auto = loop-start propone y el humano confirma
-  data: <escenario/datos a sembrar, o "a definir">
-sdd_preflight:              # recomendaciones que el runner (loop-start) usa como default de la pregunta canónica del hook
-  pace: interactive        # interactive|automatic — FULL/STANDARD => interactive; LITE/MINIMAL pueden ser automatic
-  artifacts: engram        # engram|openspec|both — default engram para este usuario
+worktree: <suggested absolute path>
+depends_on: <change-name(s)|none>
+parallelizable_with: <change-name(s)|none>
+migrations_reserved: <provisional number(s) + "final at merge; first to merge keeps it"|N/A>
+smoke_test:                 # does it need manual testing with seeded data after apply? (confirmed by loop-start, Step 4.1-ter)
+  needed: auto             # auto|yes|no — auto = loop-start proposes and the human confirms
+  data: <scenario/data to seed, or "a definir">
+sdd_preflight:              # recommendations the runner (loop-start) uses as the default of the hook's canonical question
+  pace: interactive        # interactive|automatic — FULL/STANDARD => interactive; LITE/MINIMAL may be automatic
+  artifacts: engram        # engram|openspec|both — default engram for this user
   pr_strategy: ask-on-risk # ask-on-risk|single-pr|auto-chain — default ask-on-risk
 created_at: <ISO 8601>
 ---
 
 # Kickoff: <change-name>
 
-<!-- ===== CONTEXTO — leer esto antes que el pedido. Es material de referencia. ===== -->
+<!-- ===== CONTEXT — read this before the request. It is reference material. ===== -->
 
-## Reglas del método
-- Base (universales): `references/profiles/_base.md`
-- Perfil activo (**<PERFIL>**): `references/profiles/<perfil>.md` — razón: <una línea corta explicando por qué este perfil>. Costo orden de magnitud: ~<N>K tokens.
+## Method rules
+- Base (universal): `references/profiles/_base.md`
+- Active profile (**<PERFIL>**): `references/profiles/<perfil>.md` — reason: <one short line explaining why this profile>. Order-of-magnitude cost: ~<N>K tokens.
 
-## Contexto del proyecto
-`sdd-init/<project>` — engram #<id> (stack, testing, convenciones ya detectadas; no las repitas acá).
+## Project context
+`sdd-init/<project>` — engram #<id> (stack, testing, conventions already detected; do not repeat them here).
 
-## Comando de arranque
-El comando COMPLETO y ejecutable que crea el entorno (worktree off la branch base + symlinks de config/deps del stack). `loop-start` lo ejecuta TAL CUAL, sin decidir nada — si falta, el ejecutor PARA (Regla dura #2 de loop-start).
+## Startup command
+The COMPLETE and executable command that creates the environment (worktree off the base branch + config/deps symlinks of the stack). `loop-start` runs it AS IS, without deciding anything — if missing, the executor STOPS (Hard rule #2 of loop-start).
 
 ```bash
-# Branch = el <tipo>/<change-name> confirmado (frontmatter `branch:`) · worktree dir = <change-name> (sin prefijo) · nunca sdd/
+# Branch = the confirmed <type>/<change-name> (frontmatter `branch:`) · worktree dir = <change-name> (no prefix) · never sdd/
 git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <branch> <branch_base>
 ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>-worktrees/<change-name>/node_modules
-# (ajustar symlinks al stack real del proyecto)
+# (adjust symlinks to the project's real stack)
 ```
 
-## Contrato del change
-- Endpoints, shapes, tipos, migraciones (si BE tiene entrega asociada).
-- Refs a artefactos previos (kickoffs BE, decisiones en engram).
+## Change contract
+- Endpoints, shapes, types, migrations (if BE has an associated delivery).
+- Refs to previous artifacts (BE kickoffs, decisions in engram).
 
-## Reinterpretación técnica
-- Objetivo:
-- Problema / causa raíz:
-- Alcance IN:
-- Alcance OUT:
+## Technical reinterpretation
+- Objective:
+- Problem / root cause:
+- Scope IN:
+- Scope OUT:
 
-## Arquitectura y capas afectadas
-- BCs/capas del proyecto + refs a ARCHITECTURE.md.
+## Architecture and affected layers
+- Project BCs/layers + refs to ARCHITECTURE.md.
 
-## Skills condicionales adicionales (Paso 2)
-- Lista de skills cargados según dominio (UI, RAG, LLM, etc.).
+## Additional conditional skills (Step 2)
+- List of skills loaded according to domain (UI, RAG, LLM, etc.).
 
-## Riesgos / decisiones abiertas
-- Lista para resolver dentro del SDD (Design es donde se resuelven con el humano, no acá).
+## Risks / open decisions
+- List to resolve within the SDD (Design is where they are resolved with the human, not here).
 
-<!-- ===== EL PEDIDO — va al final a propósito. Es la instrucción que el ejecutor ejecuta. ===== -->
+<!-- ===== THE REQUEST — goes last on purpose. It is the instruction the executor carries out. ===== -->
 
-## Plan de fases alto nivel
-- Fase 0 (si toca UI): audit REUSA/ADAPTA/NUEVO + Storybook + gate humano según perfil.
-- Fase 1..N: objetivos coherentes, NO tasks (esas las produce `sdd-tasks`).
+## High-level phase plan
+- Phase 0 (if it touches UI): REUSES/ADAPTS/NEW audit + Storybook + human gate according to profile.
+- Phase 1..N: coherent objectives, NOT tasks (those are produced by `sdd-tasks`).
 
 ## Definition of Done
-Criterios verificables, no bullets vagos — usá Given/When/Then para el comportamiento observable, agregá lo procedural del método debajo:
+Verifiable criteria, not vague bullets — use Given/When/Then for observable behavior, add the procedural part of the method below:
 
-- [ ] Given <estado inicial>, When <acción del usuario/sistema>, Then <resultado observable y verificable>.
-- [ ] (repetí un ítem por criterio de éxito real del pedido — el que definiste en "Reinterpretación técnica")
-- [ ] Todas las tasks con TDD verde según granularidad del perfil.
-- [ ] Verify pasa según profundidad del perfil.
-- [ ] PR abierto contra la branch base, sin push directo a integración.
-- [ ] Kickoff referenciado en el PR body (ruta del archivo — ver Paso 5).
+- [ ] Given <initial state>, When <user/system action>, Then <observable and verifiable result>.
+- [ ] (repeat one item per real success criterion of the request — the one you defined in "Technical reinterpretation")
+- [ ] All tasks with TDD green according to the profile's granularity.
+- [ ] Verify passes according to the profile's depth.
+- [ ] PR opened against the base branch, no direct push to integration.
+- [ ] Kickoff referenced in the PR body (file path — see Step 5).
 ```
 
-El kickoff DEBE incluir el frontmatter completo y el bloque "Reglas del método" con las rutas a los MDs — el ejecutor los lee al arrancar. No comprimas la Definition of Done para que "quepa": ya no hay presupuesto de caracteres, usá el espacio que el change necesite.
+The kickoff MUST include the full frontmatter and the "Method rules" block with the paths to the MDs — the executor reads them at startup. Do not compress the Definition of Done so that it "fits": there is no longer a character budget, use the space the change needs.
 
-`sdd_preflight` son solo RECOMENDACIONES — NO satisfacen el hook de preflight de gentle-ai (que exige un `AskUserQuestion` real y en vivo en la sesión del runner); `mala-pata-loop-start` las lee para pre-llenar el texto de recomendación de la pregunta canónica obligatoria del hook. Derivá `pace` del perfil: FULL/STANDARD → `interactive`; LITE/MINIMAL pueden ir `automatic`.
+`sdd_preflight` are only RECOMMENDATIONS — they do NOT satisfy gentle-ai's preflight hook (which requires a real, live `AskUserQuestion` in the runner's session); `mala-pata-loop-start` reads them to pre-fill the recommendation text of the hook's mandatory canonical question. Derive `pace` from the profile: FULL/STANDARD → `interactive`; LITE/MINIMAL may go `automatic`.
 
-**`smoke_test`** captura temprano si el change probablemente necesite una prueba manual con datos sembrados después del apply (gate de `loop-start`, Paso 4.1-ter). Default `needed: auto` — `loop-start` propone sí/no según la forma del cambio y el humano confirma; poné `yes`/`no` acá solo si ya lo sabés. En `data`, una línea con el escenario a sembrar (ej. "un pedido en estado BORRADOR con 2 ítems"), o "a definir". El seed siempre usa el mecanismo del proyecto y corre contra la test DB.
+**`smoke_test`** captures early whether the change will probably need manual testing with seeded data after apply (`loop-start` gate, Step 4.1-ter). Default `needed: auto` — `loop-start` proposes yes/no according to the shape of the change and the human confirms; put `yes`/`no` here only if you already know. In `data`, one line with the scenario to seed (e.g. "an order in DRAFT state with 2 items"), or "a definir". The seed always uses the project's mechanism and runs against the test DB.
 
 ---
 
-## Paso 5 — Persistir y responder (cierre obligatorio: resumen + kickoff)
+## Step 5 — Persist and respond (mandatory closing: summary + kickoff)
 
-El kickoff vive en un **archivo, no en engram** — así nunca se sube al repo del proyecto por accidente, y no tiene el límite práctico de longitud de una observación de engram. Esto es específico del kickoff: el resto del ciclo (explore, propose, spec, design, tasks, preview, apply-progress, verify-report, archive-report) sigue persistiendo en engram exactamente como siempre — no lo toques.
+The kickoff lives in a **file, not in engram** — so it is never pushed to the project repo by accident, and it does not have the practical length limit of an engram observation. This is specific to the kickoff: the rest of the cycle (explore, propose, spec, design, tasks, preview, apply-progress, verify-report, archive-report) keeps persisting in engram exactly as always — do not touch it.
 
-1. **Ubicación — dentro del repo, versionado (trazabilidad)**: `mala-pata/kickoffs/<change-name>.md` (relativo a la raíz del repo, `git rev-parse --show-toplevel`; `mkdir -p` si no existe).
-2. Escribí el kickoff completo del Paso 4 en `mala-pata/kickoffs/<change-name>.md`.
-3. **Puntero liviano en engram** (solo para que `mem_search`/radar lo sigan encontrando — la idempotencia del Paso 1 punto 5 depende de esto): `mem_save` con `topic_key: "sdd/<change-name>/kickoff"`, `type: "architecture"`, contenido de **una sola línea**: `Kickoff en archivo: <ruta absoluta>`. No dupliques el contenido del kickoff acá — el archivo es la única fuente de verdad.
-4. Si reservaste migraciones, confirmá que el registry quedó actualizado.
-5. **Tu respuesta al humano es un cierre OBLIGATORIO y estándar (resumen + kickoff)** — no es opcional ni "solo la ruta". Todo el resumen sale del kickoff que acabás de escribir, sin inventar nada. Emití exactamente esta estructura:
+1. **Location — inside the repo, versioned (traceability)**: `mala-pata/kickoffs/<change-name>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` if it does not exist).
+2. Write the complete kickoff from Step 4 to `mala-pata/kickoffs/<change-name>.md`.
+3. **Light pointer in engram** (only so `mem_search`/radar keep finding it — the idempotency of Step 1 point 5 depends on this): `mem_save` with `topic_key: "sdd/<change-name>/kickoff"`, `type: "architecture"`, **single-line** content: `Kickoff in file: <absolute path>`. Do not duplicate the kickoff's content here — the file is the only source of truth.
+4. If you reserved migrations, confirm that the registry was updated.
+5. **Your response to the human is a MANDATORY, standard closing (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, inventing nothing. Emit exactly this structure:
 
-   - Título: `**Kickoff listo — <change-name>**`
-   - Resumen (una línea por ítem):
-     - **Qué:** <una línea>
-     - **Perfil:** <FULL/STANDARD/LITE/MINIMAL>
-     - **Base → rama:** <base> → <tipo>/<change-name>
-     - **Worktree:** <ruta absoluta>
-     - **DoD:** <criterio testeable, una línea>
-     - **Migración / Fases:** <migración reservada si aplica> · <n> fases
-   - **Kickoff:** `<ruta absoluta del .md>`
-   - **Siguiente paso** (en bloque de código, copy-paste):
+   - Title: `**Kickoff listo — <change-name>**`
+   - Summary (one line per item):
+     - **What:** <one line>
+     - **Profile:** <FULL/STANDARD/LITE/MINIMAL>
+     - **Base → branch:** <base> → <type>/<change-name>
+     - **Worktree:** <absolute path>
+     - **DoD:** <testable criterion, one line>
+     - **Migration / Phases:** <reserved migration if applicable> · <n> phases
+   - **Kickoff:** `<absolute path of the .md>`
+   - **Next step** (in a code block, copy-paste):
 
      ```
-     /mala-pata-loop-start <ruta absoluta del .md>
+     /mala-pata-loop-start <absolute path of the .md>
      ```
 
-   Este bloque es la ÚNICA forma de cerrar en el happy path.
+   This block is the ONLY way to close on the happy path.
 
-**Únicas excepciones** (cuando la respuesta NO es el bloque de cierre):
-- Gate de vaguedad → responder `trabaje vago ` (Paso 0).
-- Idempotencia / conflicto en vuelo → una línea de aviso + la pregunta, antes de crear.
-- Paso 1.5 y Paso 1.8 → la función de preguntas interactiva disponible en el CLI para elegir perfil y confirmar la branch base (idealmente en UNA sola interacción; son las únicas preguntas permitidas antes del kickoff).
-- Engram no disponible para el puntero → el archivo ya es la fuente de verdad, seguí igual; avisá en una línea que el puntero no quedó guardado (afecta la idempotencia futura, no el kickoff en sí).
+**Only exceptions** (when the response is NOT the closing block):
+- Vagueness gate → answer `vague work ` (Step 0).
+- Idempotency / in-flight conflict → a one-line warning + the question, before creating.
+- Step 1.5 and Step 1.8 → the interactive question function available in the CLI to choose the profile and confirm the base branch (ideally in a SINGLE interaction; they are the only questions allowed before the kickoff).
+- Engram not available for the pointer → the file is already the source of truth, continue anyway; warn in one line that the pointer was not saved (it affects future idempotency, not the kickoff itself).

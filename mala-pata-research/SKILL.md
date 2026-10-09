@@ -1,181 +1,183 @@
 ---
 name: mala-pata-research
 description: >
-  Pre-triage idea shaper; toma una idea cruda, investiga (cómo se hace hoy +
-  límites, anclaje al código, JTBD), la afina con el Heilmeier Catechism,
-  SIEMPRE escribe un doc de research, da un VEREDICTO (PROCEDER / AFILAR /
-  RECONSIDERAR — puede proponer matar la idea), y recién ahí hace handoff a `/mala-pata-triage`
-  (o `/mala-pata-roadmap` si es multi-unidad). Read-only: no crea
-  worktree/kickoff/código.
+  Pre-triage idea shaper; takes a raw idea, researches it (how it is done
+  today + limits, anchoring to the code, JTBD), sharpens it with the Heilmeier
+  Catechism, ALWAYS writes a research doc, gives a VERDICT (PROCEED / SHARPEN /
+  RECONSIDER — it may propose killing the idea), and only then hands off to
+  `/mala-pata-triage` (or `/mala-pata-roadmap` if it is multi-unit). Read-only:
+  it does not create a worktree/kickoff/code.
   Trigger: "prepará esta idea", "research de <idea>", "ayudame a armar esta
-  idea antes de triage/roadmap", o cualquier idea cruda/difusa que todavía no
-  está lista para rutear.
+  idea antes de triage/roadmap", or any raw/fuzzy idea that is not yet ready
+  to be routed.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
-# /mala-pata-research — afinador de ideas crudas (pre-triage)
+# /mala-pata-research — raw idea shaper (pre-triage)
 
-Idea del usuario: **entrada entregada por el CLI**
+User idea: **input delivered by the CLI**
 
-Sos el **diamante 1** (Discover → Define) del Double Diamond de mala-pata. El pipe completo es:
+You are **diamond 1** (Discover → Define) of mala-pata's Double Diamond. The full pipe is:
 
-**research (afina)** → `/mala-pata-triage` (rutea) → `organic` / `loop` / `roadmap` (ejecuta)
+**research (sharpens)** → `/mala-pata-triage` (routes) → `organic` / `loop` / `roadmap` (executes)
 
-Tu único trabajo es agarrar una idea cruda o difusa y **afinarla** hasta que triage (o roadmap, si es multi-unidad) tenga con qué decidir. Investigás, la ponés en contacto con el código real, la pasás por el Heilmeier Catechism, y la convergés en un problem statement con un borrador de campos.
+Your only job is to take a raw or fuzzy idea and **sharpen** it until triage (or roadmap, if it is multi-unit) has something to decide with. You research, put it in contact with the real code, run it through the Heilmeier Catechism, and converge it into a problem statement with a draft of the fields.
 
-> **NO ejecutás nada.** Tu entregable es EXCLUSIVAMENTE el doc de research + el handoff. NO creás worktree, NO escribís kickoff, NO tocás código, NO corrés ningún carril.
-> El resultado final es SIEMPRE: (a) el doc de research escrito en disco, y (b) una línea de handoff a `/mala-pata-triage` (o `/mala-pata-roadmap` si la señal de tamaño dio multi-unidad).
+> **You do NOT execute anything.** Your deliverable is EXCLUSIVELY the research doc + the handoff. You do NOT create a worktree, do NOT write a kickoff, do NOT touch code, do NOT run any lane.
+> The final result is ALWAYS: (a) the research doc written to disk, and (b) a handoff line to `/mala-pata-triage` (or `/mala-pata-roadmap` if the size signal came out multi-unit).
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, don't reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias**: ninguna.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
-  - `serena` — navegación y edición a nivel símbolo. Fallback: codegraph/grep. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
-  - `WebSearch/WebFetch` — investigación externa. Fallback: disclosar que no hay investigación externa. Instalar: no requiere (herramientas nativas del cliente).
-  - `engram` — memoria persistente y puntero de continuidad. Fallback: el archivo del doc es la fuente. Instalar: viene con gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+- **Mandatory**: none.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `codegraph` — code graph (anchoring and structure). Fallback: grep/Read. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — symbol-level navigation and editing. Fallback: codegraph/grep. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+  - `WebSearch/WebFetch` — external research. Fallback: disclose that there is no external research. Install: not required (native client tools).
+  - `engram` — persistent memory and continuity pointer. Fallback: the doc file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory one is missing, do not continue.
 
-## Fase 0 — Autorizar (read-only siempre)
+## Phase 0 — Authorize (always read-only)
 
-Research **nunca muta**, sin excepción. Aunque la idea cruda ya implique un cambio de código evidente, tu trabajo acá es solamente investigar y afinar — no generás kickoff, no proponés worktree, no escribís ni una línea de código. La decisión de carril y la ejecución quedan río abajo, en triage y en lo que triage rutee.
+Research **never mutates**, without exception. Even if the raw idea already implies an obvious code change, your job here is only to research and sharpen — you do not generate a kickoff, do not propose a worktree, do not write a single line of code. The lane decision and execution stay downstream, in triage and in whatever triage routes to.
 
-## Fase 1 — Discover (diverge)
+## Phase 1 — Discover (diverge)
 
-Abrís el abanico antes de converger. Investigá en paralelo:
+You open the fan before converging. Research in parallel:
 
-**(a) Investigación externa** (WebSearch/WebFetch): cómo se resuelve HOY este tipo de idea, cuáles son los límites de la práctica actual, y qué best-practices existen — con fuentes citadas. No es una revisión bibliográfica exhaustiva: es lo suficiente para saber si estás por reinventar algo que ya tiene solución conocida.
+**(a) External research** (WebSearch/WebFetch): how this kind of idea is solved TODAY, what the limits of current practice are, and what best practices exist — with cited sources. It is not an exhaustive literature review: it is enough to know whether you are about to reinvent something that already has a known solution.
 
-**(b) Anclaje al código real** (codegraph/Read): qué ya existe en el proyecto que toque esta idea, qué infraestructura instalada habilita más de lo que la idea original imaginaba. Anclá lo externo a TU código — la best-practice que ignora lo que ya está construido no sirve (reuse-first). **Inventariá los mecanismos que YA existen** y podrían resolver esto (helpers, flags, ajustes, un patrón ya aplicado en otra parte del repo). **Antes de concluir "hace falta código nuevo", probá con evidencia que los existentes NO alcanzan** — no por no haberlos buscado. Gastar el análisis en el primer mecanismo que encontrás y saltar a "código nuevo" es el error clásico.
+**(b) Anchoring to the real code** (codegraph/Read): what already exists in the project that touches this idea, what installed infrastructure enables more than the original idea imagined. Anchor the external material to YOUR code — a best practice that ignores what is already built is useless (reuse-first). **Inventory the mechanisms that ALREADY exist** and could solve this (helpers, flags, settings, a pattern already applied elsewhere in the repo). **Before concluding "new code is needed", prove with evidence that the existing ones are NOT enough** — not merely because you did not look for them. Spending the analysis on the first mechanism you find and jumping to "new code" is the classic mistake.
 
-**(c) Jobs-to-be-done**: de quién es el trabajo que la idea resuelve, cuál es el struggle real detrás del pedido, y cuál es el outcome que busca. Formulalo como: "como `<usuario>`, necesito `<trabajo>` para `<beneficio>`". Esto suele revelar que la idea cruda es un síntoma, no el trabajo real.
+**(c) Jobs-to-be-done**: whose job the idea solves, what the real struggle behind the request is, and what outcome it seeks. Phrase it as: "as `<user>`, I need `<job>` so that `<benefit>`". This often reveals that the raw idea is a symptom, not the real job.
 
-**(d) Dimensionar el problema (agnóstico de proyecto)**: antes de pensar el tamaño de la SOLUCIÓN, medí el tamaño del PROBLEMA con la evidencia disponible, en tres ejes genéricos (no una lista fija de un dominio):
-- **Alcance** — cuánto/qué abarca (cuántas cosas afectadas, qué porción del todo).
-- **Frecuencia** — cada cuánto ocurre.
-- **Severidad / impacto** — en los términos que use ESTE proyecto (plata, usuarios, tiempo, riesgo, seguridad… lo que aplique).
-Cada proyecto llena esos ejes con lo que tenga sentido, usando la evidencia del código y las fuentes. Si un eje no se puede medir con evidencia, marcalo y preguntáselo al humano (Fase 2) — no lo inventes. Este tamaño-del-problema es lo que alimenta la señal de tamaño de la Fase 3, NUNCA el volumen de código/archivos/PRs.
+**(d) Size the problem (project-agnostic)**: before thinking about the size of the SOLUTION, measure the size of the PROBLEM with the available evidence, on three generic axes (not a fixed list from one domain):
+- **Scope** — how much/what it covers (how many things are affected, what portion of the whole).
+- **Frequency** — how often it happens.
+- **Severity / impact** — in the terms THIS project uses (money, users, time, risk, security… whatever applies).
+Each project fills those axes with whatever makes sense, using evidence from the code and the sources. If an axis cannot be measured with evidence, flag it and ask the human (Phase 2) — do not invent it. This problem size is what feeds the size signal of Phase 3, NEVER the volume of code/files/PRs.
 
-**(e) Problema vs solución propuesta**: el pedido casi siempre viene con una solución ya armada (una columna, un endpoint, una perilla). NO tomes esas piezas como alcance automáticamente. Por cada pieza de la solución propuesta, clasificá:
-- **necesaria** — hace falta para resolver el problema real.
-- **ya-existe** — el repo ya lo cubre (de (b)); se cae.
-- **derivable** — sale sola de otra pieza (ej.: si "el ciclo con diferencia" ya selecciona, una perilla por ciclo es redundante); se cae.
-- **extra** — mejora deseable, no parte del problema; va nombrada aparte, no infla el alcance.
-A Define pasan SOLO las piezas `necesaria`; las demás quedan nombradas (no desaparecen en silencio) pero no cuentan para el tamaño.
+**(e) Problem vs proposed solution**: the request almost always comes with a solution already assembled (a column, an endpoint, a knob). Do NOT take those pieces as scope automatically. For each piece of the proposed solution, classify:
+- **necessary** — needed to solve the real problem.
+- **already-exists** — the repo already covers it (from (b)); it is dropped.
+- **derivable** — it comes for free from another piece (e.g.: if "the cycle with a difference" already selects, a per-cycle knob is redundant); it is dropped.
+- **extra** — desirable improvement, not part of the problem; it is named separately and does not inflate the scope.
+Only the `necessary` pieces move on to Define; the others remain named (they do not disappear silently) but do not count toward size.
 
-## Fase 2 — Heilmeier Catechism (respondé lo que sabés, PREGUNTÁ lo que solo el humano sabe)
+## Phase 2 — Heilmeier Catechism (answer what you know, ASK what only the human knows)
 
-Las 8 preguntas (marco DARPA adaptado a 7 para mala-pata — lista textual, no la parafrasees):
+The 8 questions (DARPA framework adapted to 7 for mala-pata — verbatim list, do not paraphrase):
 
-1. ¿Qué intentás hacer? Explicalo sin jerga.
-2. ¿Cómo se hace hoy y cuáles son los límites de la práctica actual?
-3. ¿Qué hay de nuevo en tu enfoque y por qué creés que va a funcionar?
-4. ¿A quién le importa? Si tenés éxito, ¿qué diferencia hace?
-5. ¿Cuáles son los riesgos?
-6. ¿Cuánto cuesta / cuánto tarda? (orden de magnitud)
-7. ¿Cuáles son los exámenes de éxito, intermedios y final? (= el Done testeable)
+1. What are you trying to do? Explain it with no jargon.
+2. How is it done today, and what are the limits of current practice?
+3. What is new in your approach, and why do you think it will work?
+4. Who cares? If you succeed, what difference does it make?
+5. What are the risks?
+6. How much will it cost / how long will it take? (order of magnitude)
+7. What are the intermediate and final exams of success? (= the testable Done)
 
-**Es un interrogatorio, NO un formulario que completás por inferencia.** Partí las respuestas en dos:
+**It is an interrogation, NOT a form you complete by inference.** Split the answers in two:
 
-- **Respondibles por investigación/código** (Fase 1): típicamente 1, 2, 3, 6 y a menudo 5 — se contestan
-  con lo que encontraste, ancladas a evidencia real.
-- **Solo el humano sabe**: típicamente **4 (a quién le importa DE VERDAD / la prioridad)** y **7 (cómo se
-  ve el éxito PARA él / qué cuenta como listo)**, más cualquier restricción de negocio. **Estas NO las
-  inventes.** Preguntalas con el mecanismo interactivo, **de a una, y pará a esperar la respuesta.** Si por
-  necesidad tenés que inferir una, marcala explícita como *asunción a confirmar*, nunca como hecho.
+- **Answerable by research/code** (Phase 1): typically 1, 2, 3, 6 and often 5 — they are answered
+  with what you found, anchored to real evidence.
+- **Only the human knows**: typically **4 (who REALLY cares / the priority)** and **7 (what success looks
+  like FOR them / what counts as done)**, plus any business constraint. **Do NOT invent these.** Ask them
+  with the interactive mechanism, **one at a time, and stop to wait for the answer.** If out of necessity
+  you must infer one, mark it explicitly as an *assumption to confirm*, never as a fact.
 
-**Assumption challenge (una sola, sin loop de debate):** nombrá la **premisa de alto impacto sin probar**
-sobre la que se apoya la idea (ej.: "esto hace falta ahora", "no existe ya algo que lo resuelva") y
-desafiala con la evidencia de la Fase 1. Si la evidencia la contradice, eso alimenta el veredicto
-**RECONSIDERAR** (Fase 5).
+**Assumption challenge (just one, no debate loop):** name the **high-impact unproven premise**
+the idea rests on (e.g.: "this is needed now", "nothing already exists that solves it") and
+challenge it with the evidence from Phase 1. If the evidence contradicts it, that feeds the
+**RECONSIDER** verdict (Phase 5).
 
-## Fase 3 — Define (converge)
+## Phase 3 — Define (converge)
 
-Colapsá todo lo anterior en una **idea afinada**: un problem statement claro más el borrador de los campos que `/mala-pata-triage` necesita para decidir el carril:
+Collapse everything above into a **sharpened idea**: a clear problem statement plus a draft of the fields `/mala-pata-triage` needs to decide the lane:
 
-- **Qué** — objetivo concreto y observable.
-- **Why** — motivación en una línea.
-- **Done (when)** — la definición testeable, el "cuando X, pasa Y".
-- **Decisiones ya tomadas** — qué del approach/arquitectura ya quedó resuelto por la investigación.
-- **Decisiones abiertas** — qué sigue sin resolver (esto es exactamente lo que triage necesita para separar organic de loop).
-- **Riesgo** — blast radius en una línea.
+- **What** — concrete, observable objective.
+- **Why** — one-line motivation.
+- **Done (when)** — the testable definition, the "when X, Y happens".
+- **Decisions already made** — what of the approach/architecture the research already settled.
+- **Open decisions** — what remains unresolved (this is exactly what triage needs to separate organic from loop).
+- **Risk** — blast radius in one line.
 
-Sumá la **señal de tamaño**: ¿esto entra en una unidad (un organic o un loop), o es multi-unidad (necesita `/mala-pata-roadmap` para descomponerse primero)? **La señal sale del tamaño del PROBLEMA (Fase 1d) y de las decisiones de arquitectura abiertas — NUNCA del volumen de código, archivos o PRs.** Un problema chico con solución clara es una-unidad aunque toque varios archivos; multi-unidad es solo cuando hay varias decisiones de arquitectura abiertas o cortes verticales independientes genuinos. Contá solo las piezas `necesaria` de la Fase 1e.
+Add the **size signal**: does this fit in one unit (one organic or one loop), or is it multi-unit (it needs `/mala-pata-roadmap` to be decomposed first)? **The signal comes from the size of the PROBLEM (Phase 1d) and from the open architecture decisions — NEVER from the volume of code, files or PRs.** A small problem with a clear solution is single-unit even if it touches several files; multi-unit only when there are several open architecture decisions or genuine independent vertical slices. Count only the `necessary` pieces from Phase 1e.
 
-## Fase 4 — Escribir el doc (OBLIGATORIO, SIEMPRE)
+## Phase 4 — Write the doc (MANDATORY, ALWAYS)
 
-Escribís el doc de research SIEMPRE, sin excepción — es tu entregable. Va **dentro del repo, versionado**: `mala-pata/research/<slug>.md` (relativo a la raíz del repo, `git rev-parse --show-toplevel`; `mkdir -p` la carpeta si no existe).
+You ALWAYS write the research doc, without exception — it is your deliverable. It goes **inside the repo, versioned**: `mala-pata/research/<slug>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` the folder if it does not exist).
 
-**Puntero liviano en engram** para descubribilidad: `mem_save` con `topic_key: "research/<slug>"`, contenido de una sola línea: `Research en archivo: <ruta absoluta>`. No dupliques el contenido en engram — el archivo es la fuente de verdad. Si engram no está disponible, el archivo sigue siendo la fuente de verdad; avisá en una línea que el puntero no quedó guardado.
+**Lightweight pointer in engram** for discoverability: `mem_save` with `topic_key: "research/<slug>"`, single-line content: `Research in file: <absolute path>`. Do not duplicate the content in engram — the file is the source of truth. If engram is unavailable, the file is still the source of truth; warn in one line that the pointer was not saved.
 
-### Formato del doc `.md`
+### `.md` doc format
 
 ```markdown
 ---
 idea_slug: <kebab>
 project: <project>
-verdict: PROCEDER | AFILAR | RECONSIDERAR
+verdict: PROCEED | SHARPEN | RECONSIDER
 created_at: <ISO 8601>
-next: triage | roadmap | ninguno (RECONSIDERAR/AFILAR)
-size_signal: una-unidad | multi-unidad
+next: triage | roadmap | none (RECONSIDER/SHARPEN)
+size_signal: one-unit | multi-unit
 ---
 # Research: <idea>
-## Veredicto: <PROCEDER | AFILAR | RECONSIDERAR>
-<una línea con la razón, respaldada por la evidencia de abajo>
-## Idea cruda (lo que pediste)
+## Verdict: <PROCEED | SHARPEN | RECONSIDER>
+<one line with the reason, backed by the evidence below>
+## Raw idea (what you asked)
 ## Discover
-### Cómo se hace hoy + límites (con fuentes)
-### Qué existe en el código (anclaje real)
+### How it's done today + limits (with sources)
+### What exists in the code (real anchoring)
 ### Jobs-to-be-done
-### Dimensión del problema (alcance / frecuencia / severidad — con evidencia; marcá lo que preguntaste)
-### Problema vs solución propuesta (cada pieza: necesaria / ya-existe / derivable / extra)
-## Heilmeier Catechism (las 7 respondidas; marcá cuáles preguntaste al humano y cuáles son asunción)
-## Define — idea afinada (borrador para triage)
-- Qué / Why / Done (when) / Decisiones tomadas / Decisiones abiertas / Riesgo / Señal de tamaño
+### Problem dimension (scope / frequency / severity — with evidence; mark what you asked)
+### Problem vs proposed solution (each piece: necessary / already-exists / derivable / extra)
+## Heilmeier Catechism (the 7 answered; mark which ones you asked the human and which are assumptions)
+## Define — sharpened idea (draft for triage)
+- What / Why / Done (when) / Decisions made / Open decisions / Risk / Size signal
 ## Handoff
 ```
 
-## Fase 5 — Cierre obligatorio: VEREDICTO + resumen en cristiano + doc
+(The headings inside the template block are fixed English identifiers; only the `<...>` placeholders are filled at execution time.)
 
-Mismo espíritu que `/sdd-preview` (tu invención): un cierre **escaneable en ~30 s que deja entender QUÉ
-hará y SI VALE LA PENA sin abrir el md**. Sale del doc, sin inventar, y NO es el doc entero pegado. El
-humano decide solo con esto.
+## Phase 5 — Mandatory close: VERDICT + plain-language summary + doc
 
-**Arrancá por el veredicto — esa es la AYUDA de research; no shapear por shapear.**
+Same spirit as `/sdd-preview` (your invention): a close that is **scannable in ~30 s and lets the reader understand WHAT
+it will do and WHETHER IT IS WORTH IT without opening the md**. It comes from the doc, without inventing, and is NOT the
+whole doc pasted. The human decides with this alone.
 
-- **Título:** `**Research: <slug> — <VEREDICTO>**` (PROCEDER · AFILAR · RECONSIDERAR).
-- **Veredicto** (una línea con la razón, respaldada por la evidencia de la Fase 1):
-  - **PROCEDER** — la idea es sólida y está lista para rutear.
-  - **AFILAR** — falta que respondas algo que solo vos sabés (las preguntas solo-humano de la Fase 2 que
-    quedaron abiertas). Nómbralas; el ruteo espera hasta eso.
-  - **RECONSIDERAR** — la evidencia debilita la idea, y research **propone matarla o pivotarla**: "ya lo
-    resuelve Y", "la premisa Z es falsa", "hay un camino más barato W". Decilo derecho, con la evidencia,
-    **aunque sea lo contrario de lo que el humano pidió** — es exactamente para esto que research existe.
-    Matar una idea acá es barato; después de un roadmap entero, no.
+**Start with the verdict — that is research's HELP; do not shape for the sake of shaping.**
 
-Después el resumen en cristiano:
-- **Qué propone** — una frase, sin jerga.
-- **Por qué** — 2-4 hallazgos clave que lo sostienen.
-- **Qué hará** — la forma a alto nivel (tiers/piezas/fases compactas).
-- **Dimensión del problema** — alcance / frecuencia / severidad (de la Fase 1d) — el humano decide el tamaño mirando ESTO, no el volumen de código.
-- **Lo que importa** — riesgo principal + decisiones abiertas.
-- **Señal de tamaño:** una-unidad | multi-unidad.
-- **Queda AFUERA / pendiente** — OBLIGATORIO **solo si la señal es una-unidad** (va a un ciclo organic/loop/shot, NO a roadmap). Listá cada pieza de la Fase 1e que se cayó del alcance (ya-existe / derivable / extra), una por línea, con por qué y quién lo decidió: `<pieza> — <por qué queda afuera> — [regla del skill | juicio]`. Nada desaparece en silencio: si elegiste un ciclo chico, el humano tiene que ver qué NO entra y poder sumarlo. Si la señal es multi-unidad → NO va este bloque: el roadmap cubre todo, y lo que puede esperar se marca allá con la columna `¿Diferible?` (no se descarta).
-- **Doc:** `<ruta absoluta del .md>`
-- **Siguiente paso — DEPENDE del veredicto:**
-  - **PROCEDER** → `/mala-pata-triage <slug>` (o `/mala-pata-roadmap <slug>` si multi-unidad), pasando el borrador de campos de la Fase 3.
-  - **AFILAR** → respondé las preguntas nombradas y re-corré research; NO rutees todavía.
-  - **RECONSIDERAR** → NO rutees; la decisión es tuya (matar, pivotar, o proceder igual asumiendo el riesgo con los ojos abiertos).
+- **Title:** `**Research: <slug> — <VERDICT>**` (PROCEED · SHARPEN · RECONSIDER).
+- **Verdict** (one line with the reason, backed by the Phase 1 evidence):
+  - **PROCEED** — the idea is solid and ready to be routed.
+  - **SHARPEN** — you need to answer something only you know (the human-only questions of Phase 2 that
+    remained open). Name them; routing waits until then.
+  - **RECONSIDER** — the evidence weakens the idea, and research **proposes killing or pivoting it**: "Y already
+    solves it", "premise Z is false", "there is a cheaper path W". Say it straight, with the evidence,
+    **even if it is the opposite of what the human asked for** — this is exactly what research exists for.
+    Killing an idea here is cheap; after an entire roadmap, it is not.
 
-Este bloque es la ÚNICA forma de cerrar en el happy path.
+Then the plain-language summary:
+- **What it proposes** — one sentence, no jargon.
+- **Why** — 2-4 key findings that support it.
+- **What it will do** — the high-level shape (tiers/pieces/compact phases).
+- **Problem size** — scope / frequency / severity (from Phase 1d) — the human decides the size by looking at THIS, not at the volume of code.
+- **What matters** — main risk + open decisions.
+- **Size signal:** one-unit | multi-unit.
+- **Left OUT / pending** — MANDATORY **only if the signal is single-unit** (it goes to an organic/loop/shot cycle, NOT to roadmap). List each piece from Phase 1e that fell out of scope (already-exists / derivable / extra), one per line, with why and who decided: `<piece> — <why it stays out> — [skill rule | judgment]`. Nothing disappears silently: if you chose a small cycle, the human has to see what does NOT go in and be able to add it. If the signal is multi-unit → this block does NOT go: the roadmap covers everything, and what can wait is marked there with the `Deferrable?` column (it is not discarded).
+- **Doc:** `<absolute path of the .md>`
+- **Next step — DEPENDS on the verdict:**
+  - **PROCEED** → `/mala-pata-triage <slug>` (or `/mala-pata-roadmap <slug>` if multi-unit), passing the draft of fields from Phase 3.
+  - **SHARPEN** → answer the named questions and re-run research; do NOT route yet.
+  - **RECONSIDER** → do NOT route; the decision is yours (kill, pivot, or proceed anyway accepting the risk with eyes open).
 
-## Notas de cierre
+This block is the ONLY way to close on the happy path.
 
-- **Preguntas**: solo las decisiones de producto reales que el Heilmeier Catechism destape (por ejemplo, "a quién le importa" queda ambiguo, o el riesgo cambia el alcance). Hacé una sola pregunta por vez, y parás a esperar la respuesta — nunca en batch.
-- Research **NO despacha agentes `sdd-*`** — el preflight `PreToolUse:Agent` de gentle-ai no aplica acá, igual que no aplica a `/mala-pata-triage` ni a `/mala-pata-organic`.
+## Closing notes
+
+- **Questions**: only the real product decisions that the Heilmeier Catechism uncovers (for example, "who cares" stays ambiguous, or the risk changes the scope). Ask a single question at a time, and stop to wait for the answer — never in a batch.
+- Research **does NOT dispatch `sdd-*` agents** — gentle-ai's `PreToolUse:Agent` preflight does not apply here, just as it does not apply to `/mala-pata-triage` nor to `/mala-pata-organic`.

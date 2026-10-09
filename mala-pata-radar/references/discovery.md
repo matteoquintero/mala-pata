@@ -1,31 +1,31 @@
-# Fase A del radar — descubrimiento SOLO engram, foco en ACTIVOS
+# Radar Phase A — engram-ONLY discovery, focused on ACTIVE ones
 
-> Esta fase NO usa git. Lee SOLO el ciclo del SDD en la memoria (engram) y arma
-> la lista de **candidatos ACTIVOS** — los que NO están claramente cerrados ni
-> cancelados. Esa lista pasa a la **Fase B** (mismo radar,
-> `state-derivation.md`), que confirma merge/branch/stale con git.
+> This phase does NOT use git. It reads ONLY the SDD cycle in memory (engram) and builds
+> the list of **ACTIVE candidates** — those that are NOT clearly closed nor
+> cancelled. That list goes to **Phase B** (same radar,
+> `state-derivation.md`), which confirms merge/branch/stale with git.
 >
-> **La Fase A propone, la Fase B confirma.** Un candidato que en realidad ya se
-> mergeó (sin `archive-report` en memoria) puede aparecer acá como activo; NO es
-> un error — la Fase B lo reclasifica con git aguas abajo.
+> **Phase A proposes, Phase B confirms.** A candidate that was actually
+> merged (with no `archive-report` in memory) may show up here as active; it is NOT
+> an error — Phase B reclassifies it with git downstream.
 >
-> Stack: memoria = engram MCP (`mem_search`, `mem_get_observation`).
+> Stack: memory = engram MCP (`mem_search`, `mem_get_observation`).
 
-## Límite conocido (declaralo SIEMPRE en el banner de salida)
+## Known limit (ALWAYS declare it in the output banner)
 
-`mem_search` es semántico (FTS5), topa en **20 resultados** por búsqueda y NO
-tiene enumeración por topic_key ni paginación. **No existe forma de listar el
-100% de los SDD con engram.** Por eso esta fase apunta al set ACTIVO (chico y
-reciente, donde el recall alcanza), NO a un inventario exhaustivo. Si el humano
-necesita la foto de un SDD específico que no apareció, que lo pase por lista
-explícita (la Fase B lo toma directo, sin este límite).
+`mem_search` is semantic (FTS5), caps at **20 results** per search and has NO
+enumeration by topic_key nor pagination. **There is no way to list 100% of the SDDs
+with engram.** That is why this phase targets the ACTIVE set (small and
+recent, where recall is enough), NOT an exhaustive inventory. If the human
+needs the picture of a specific SDD that did not show up, they should pass it via an explicit
+list (Phase B takes it directly, without this limit).
 
 ---
 
-## Fase 1 — Descubrir candidatos activos (engram, sistemático)
+## Step 1 — Discover active candidates (engram, systematic)
 
-Corré búsquedas-ancla por las fases que indican ACTIVIDAD, con `limit: 20` y
-`match_mode: "any"` (más recall):
+Run anchor searches for the phases that indicate ACTIVITY, with `limit: 20` and
+`match_mode: "any"` (more recall):
 
 ```
 mem_search(query="sdd apply-progress",  limit=20, match_mode="any")
@@ -34,51 +34,51 @@ mem_search(query="sdd preview",          limit=20, match_mode="any")
 mem_search(query="sdd tasks",            limit=20, match_mode="any")
 mem_search(query="sdd kickoff",          limit=20, match_mode="any")
 ```
-Si conocés el dominio, sumá el término (`sdd <dominio> preview`, etc.).
-De cada hit, extraé `<change>` del título `sdd/<change>/<fase>`. Unión =
-candidatos. **Loop-until-dry**: repetí con términos variados hasta que 2
-búsquedas seguidas no aporten `<change>` nuevo.
+If you know the domain, add the term (`sdd <domain> preview`, etc.).
+From each hit, extract `<change>` from the title `sdd/<change>/<phase>`. Union =
+candidates. **Loop-until-dry**: repeat with varied terms until 2
+consecutive searches contribute no new `<change>`.
 
-## Fase 2 — Ciclo de cada candidato `C` (nunca un solo hit)
+## Step 2 — Cycle of each candidate `C` (never a single hit)
 
 ```
 mem_search(query="C", limit=20)
 ```
-Quedate con TODAS las `sdd/C/<fase>`. `fase(C)` = la más avanzada. Orden:
+Keep ALL the `sdd/C/<phase>`. `phase(C)` = the most advanced. Order:
 ```
 kickoff · explore · proposal · spec · design · tasks · preview
 · apply-progress · verify-report · archive-report · state
 ```
-Confirmá cierre/cancelación con el contenido:
+Confirm closure/cancellation with the content:
 ```
-mem_get_observation(id=<fase más avanzada>)
-mem_get_observation(id=<state, si existe>)
+mem_get_observation(id=<most advanced phase>)
+mem_get_observation(id=<state, if it exists>)
 ```
 
-## Fase 3 — Filtro (solo ciclo)
+## Step 3 — Filter (cycle only)
 
-Descartá de la tabla (NO son candidatos activos):
-- `cancelado`: `state`/decisión dice ABANDONADO → contalo aparte.
-- `cerrado en ciclo`: existe `archive-report` → contalo aparte (la Fase B dirá si
-  además está mergeado/limpio).
+Discard from the table (they are NOT active candidates):
+- `cancelado`: `state`/decision says ABANDONED → count it separately.
+- `cerrado en ciclo`: an `archive-report` exists → count it separately (Phase B will say whether
+  it is also merged/clean).
 
-Los que quedan = **candidatos ACTIVOS**, con su 🚦:
-| 🚦 | fase(C) |
-|----|---------|
-| 🟢 | apply-progress / verify-report (con código) |
-| 🔵 | kickoff … preview (en planning) |
+The ones that remain = **ACTIVE candidates**, with their status light:
+| Light | phase(C) |
+|-------|----------|
+| GREEN | apply-progress / verify-report (with code) |
+| BLUE | kickoff … preview (in planning) |
 
 ---
 
-## Salida de esta fase — la LISTA, no una tabla
+## Output of this phase — the LIST, not a table
 
-Esta fase NO imprime tabla propia: su resultado es la **lista filtrada de
-candidatos activos** (+ el conteo de "otros vistos": archivados/cancelados),
-que pasa directo a la Fase B (`state-derivation.md`). La ÚNICA tabla que ve el
-humano es la final de `table-format.md`, ya diagnosticada con git.
+This phase does NOT print its own table: its result is the **filtered list of
+active candidates** (+ the count of "others seen": archived/cancelled),
+which goes straight to Phase B (`state-derivation.md`). The ONLY table the
+human sees is the final one from `table-format.md`, already diagnosed with git.
 
-Lo que esta fase aporta al banner final: el disclaimer **best-effort (engram
-≤20/búsqueda)** cuando el descubrimiento corrió, y la línea de conteo
-`Otros vistos (no exhaustivo): ✔️ <n> con archive-report · ❌ <m> cancelados.`
+What this phase contributes to the final banner: the **best-effort (engram
+≤20/search)** disclaimer when discovery ran, and the count line
+`Others seen (non-exhaustive): CLOSED <n> with archive-report · CANCELLED <m> cancelled.`
 
-Si un dato no se pudo leer en vivo, `?`; NO inventes.
+If a datum could not be read live, `?`; do NOT invent.

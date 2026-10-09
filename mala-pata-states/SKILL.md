@@ -1,132 +1,132 @@
 ---
 name: mala-pata-states
-description: Dado un feature por nombre, extrae del código su(s) máquina(s) de estado (enum + guards) y las dibuja con archify (lifecycle) como HTML fiel para inspección visual humana — onboarding y detección de transiciones rotas. Read-only sobre el código del proyecto (no lo modifica); NO despacha sdd-*.
+description: Given a feature by name, extracts its state machine(s) from the code (enum + guards) and draws them with archify (lifecycle) as a faithful HTML for human visual inspection — onboarding and detection of broken transitions. Read-only on the project's code (does not modify it); does NOT dispatch sdd-*.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
-# mala-pata-states — Diagrama fiel de máquina de estados
+# mala-pata-states — Faithful state machine diagram
 
 Trigger: "máquina de estados de \<feature\>", "diagramá los estados de X", "mala-pata-states \<feature\>".
 
-Este skill produce un diagrama, no un análisis. Es read-only sobre el código del proyecto objetivo: lee el enum de estados y las transiciones reales, y las dibuja — no modifica ni una línea del código que inspecciona. Usa workers de ODD (direct/delegated) para su propia ejecución; NO despacha agentes `sdd-*` — el preflight hook de gentle-ai no aplica acá. Rutas absolutas siempre, tanto para leer el proyecto objetivo como para invocar archify.
+This skill produces a diagram, not an analysis. It is read-only on the target project's code: it reads the state enum and the real transitions, and draws them — it does not modify a single line of the code it inspects. It uses ODD workers (direct/delegated) for its own execution; it does NOT dispatch `sdd-*` agents — the gentle-ai preflight hook does not apply here. Absolute paths always, both for reading the target project and for invoking archify.
 
-## Requisitos (orquestar, no reinventar)
+## Requirements (orchestrate, do not reinvent)
 
-mala-pata orquesta herramientas de comunidad — no las reimplementa. Chequeá al arrancar:
+mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Obligatorias** (sin fallback — si falta, PARÁ y pedí instalarla, no arranques):
-  - `archify` — renderer del diagrama (es una skill, no un binario), sin fallback. Instalar: `npx skills add tt-a1i/archify -g`.
-- **Recomendadas** (con fallback — si falta, avisá en una línea y seguí degradado):
-  - `codegraph` — grafo del código (anclaje y estructura). Fallback: grep/Read. Instalar: CLI npm global; init por proyecto con `gentle-ai codegraph init --cwd <repo>`.
-  - `serena` — extraer enum y transiciones. Fallback: grep/Read. Instalar: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
+- **Mandatory** (no fallback — if missing, STOP and ask to install it, do not start):
+  - `archify` — diagram renderer (it is a skill, not a binary), no fallback. Install: `npx skills add tt-a1i/archify -g`.
+- **Recommended** (with fallback — if missing, warn in one line and continue degraded):
+  - `codegraph` — code graph (anchoring and structure). Fallback: grep/Read. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
+  - `serena` — extract enum and transitions. Fallback: grep/Read. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
 
-Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si falta una obligatoria, no sigas.
+Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Principios duros (no negociables)
+## Hard principles (non-negotiable)
 
-- **FIDELIDAD sobre prolijidad**: se dibuja lo que el código HACE, no lo que debería hacer. Si una transición falta en el código, falta en el diagrama — nunca se inventan estados ni transiciones para que se vea completo. Un diagrama que miente es peor que no tener diagrama.
-- **ORTOGONAL**: una máquina chica por concern, nunca una god-machine. Si un feature mezcla dimensiones (ej: estado de fulfillment + estado de pago), se separan en máquinas o columnas distintas.
-- **MÍNIMO**: un estado existe SOLO si cambia qué acciones están permitidas. Todo lo demás es metadata, no estado. Los pseudo-estados (flags, timestamps, etiquetas combinadas) se degradan a metadata/cards, no se dibujan como nodos.
-- **El skill NO juzga ni reporta** ("no me digas qué está roto") — produce el visual fiel; el HUMANO detecta el problema mirando. Nunca una salida tipo "la transición X está rota".
-- **Alcance v1 = máquinas de estado con enum explícito** (estados viven en un enum/union y las transiciones en guards/servicios de dominio). Estado implícito o disperso queda FUERA de v1 — se documenta como extensión futura, y si un feature no tiene un enum explícito, el skill lo dice y para, en vez de adivinar.
+- **FIDELITY over tidiness**: you draw what the code DOES, not what it should do. If a transition is missing in the code, it is missing in the diagram — states or transitions are never invented to make it look complete. A diagram that lies is worse than no diagram.
+- **ORTHOGONAL**: one small machine per concern, never a god-machine. If a feature mixes dimensions (e.g.: fulfillment state + payment state), they are separated into distinct machines or columns.
+- **MINIMAL**: a state exists ONLY if it changes which actions are allowed. Everything else is metadata, not state. Pseudo-states (flags, timestamps, combined labels) are degraded to metadata/cards, not drawn as nodes.
+- **The skill does NOT judge nor report** ("don't tell me what is broken") — it produces the faithful visual; the HUMAN detects the problem by looking. Never an output like "transition X is broken".
+- **v1 scope = state machines with an explicit enum** (states live in an enum/union and transitions in domain guards/services). Implicit or scattered state is OUT of v1 — it is documented as a future extension, and if a feature has no explicit enum, the skill says so and stops, instead of guessing.
 
-## Fase 0 — Input + guard
+## Phase 0 — Input + guard
 
-La entrada es un nombre de feature (ej: `pedido`). Read-only sobre el código del proyecto objetivo — este skill no escribe ni edita nada del proyecto que inspecciona.
+The input is a feature name (e.g.: `pedido`). Read-only on the target project's code — this skill does not write nor edit anything of the project it inspects.
 
-1. Resolvé el project root del proyecto objetivo: `git rev-parse --show-toplevel`.
-2. Si CodeGraph está disponible para ese proyecto (`<project-root>/.codegraph/`), usalo para ubicar el enum de estados y sus referencias (regla global de CodeGraph: preferir `codegraph_explore` / la CLI de solo lectura antes de Grep/Read amplio). Si no está disponible, usar Grep/Read directo.
-3. Si el feature no existe o no hay ningún candidato a enum de estados, decilo y parar — no hay diagrama que producir.
+1. Resolve the target project's project root: `git rev-parse --show-toplevel`.
+2. If CodeGraph is available for that project (`<project-root>/.codegraph/`), use it to locate the state enum and its references (global CodeGraph rule: prefer `codegraph_explore` / the read-only CLI before broad Grep/Read). If it is not available, use direct Grep/Read.
+3. If the feature does not exist or there is no state enum candidate, say so and stop — there is no diagram to produce.
 
-## Fase 1 — Extraer del código (anclado, v1 = enum explícito)
+## Phase 1 — Extract from the code (anchored, v1 = explicit enum)
 
-Localizá el/los enum(s) de estados del feature (ej: `PedidoEstado`) y las transiciones reales: guards, servicios de dominio, compare-and-swap sobre el campo de estado (`WHERE estado = <esperado>`), o cualquier otro mecanismo de guarda que el código use.
+Locate the feature's state enum(s) (e.g.: `PedidoEstado`) and the real transitions: guards, domain services, compare-and-swap on the state field (`WHERE estado = <esperado>`), or any other guard mechanism the code uses.
 
-Para cada transición registrá: `from`, `to`, y la condición/guard/acción que la dispara (incluida cualquier nota relevante, ej. el error que lanza un guard).
+For each transition record: `from`, `to`, and the condition/guard/action that triggers it (including any relevant note, e.g. the error a guard throws).
 
-Si el feature NO tiene un enum explícito de estados — decilo y PARÁ. v1 no soporta estado implícito ni disperso; queda como extensión futura, no como best-effort.
+If the feature has NO explicit state enum — say so and STOP. v1 does not support implicit nor scattered state; it stays as a future extension, not as best-effort.
 
-Se dibuja lo REAL: una transición que no existe en el código no se dibuja, aunque "tendría sentido" que existiera.
+You draw the REAL: a transition that does not exist in the code is not drawn, even if it "would make sense" for it to exist.
 
-## Fase 2 — Ortogonal + mínimo (el filtro de calidad)
+## Phase 2 — Orthogonal + minimal (the quality filter)
 
-Aplicá los principios duros antes de tocar el JSON:
+Apply the hard principles before touching the JSON:
 
-- ¿Hay dimensiones combinadas? (ej: estado de fulfillment + estado de pago del mismo feature) → se separan en máquinas o columnas/lanes distintas, nunca una sola máquina que las mezcle.
-- ¿Algún "estado" candidato no cambia qué acciones se permiten? → es metadata: va a `cards`, no a `states`.
-- ¿Hay un estado combinado/bisagra (ej: `enviado_a_caja_parcialmente`)? → se evalúa igual que en bodega: si no habilita/deshabilita acciones distintas de sus vecinos, se describe en una `card`, no se dibuja como nodo propio.
+- Are there combined dimensions? (e.g.: fulfillment state + payment state of the same feature) → they are separated into distinct machines or columns/lanes, never a single machine mixing them.
+- Does any candidate "state" not change which actions are allowed? → it is metadata: it goes to `cards`, not to `states`.
+- Is there a combined/hinge state (e.g.: `enviado_a_caja_parcialmente`)? → it is evaluated the same as in bodega: if it does not enable/disable actions different from its neighbors, it is described in a `card`, not drawn as its own node.
 
-El resultado son 1..N máquinas chicas y legibles, nunca una god-machine.
+The result is 1..N small, readable machines, never a god-machine.
 
-## Fase 3 — Construir el JSON archify `lifecycle`
+## Phase 3 — Build the archify `lifecycle` JSON
 
-Mapeá el resultado de las fases 1-2 al esquema `lifecycle` de archify (`schema_version: 1`, `diagram_type: "lifecycle"`):
+Map the result of phases 1-2 to archify's `lifecycle` schema (`schema_version: 1`, `diagram_type: "lifecycle"`):
 
-- `states[]`: cada estado real → `id`, `type` (`start` / `active` / `decision` / `waiting` / `success` / `failure`, según corresponda), `label`, `sublabel` (el valor real del enum), `lane`, `col`, y opcionalmente `step`, `tag`, `width`.
-- `transitions[]`: cada transición real → `id`, `from`, `to`, `label`, `variant` (ej. `security` para rechazos, `dashed` para ramas condicionales, `emphasis` para transiciones con guard relevante), `guard`/`note` cuando aplique, `fromSide`/`toSide`, y `route` solo si hace falta.
-- `lanes[]`: una lane por dimensión ortogonal o por agrupación lógica (flujo principal, ramas, terminales), según lo que salió de la Fase 2.
-- `cards[]`: la metadata degradada (estados combinados, invariantes, notas de guard) y cualquier nota aclaratoria — nunca conclusiones tipo "esto está roto".
-- `meta`: `title` descriptivo, `quality_profile: "showcase"`, y `viewBox` acorde al tamaño real del diagrama.
+- `states[]`: each real state → `id`, `type` (`start` / `active` / `decision` / `waiting` / `success` / `failure`, as appropriate), `label`, `sublabel` (the real enum value), `lane`, `col`, and optionally `step`, `tag`, `width`.
+- `transitions[]`: each real transition → `id`, `from`, `to`, `label`, `variant` (e.g. `security` for rejections, `dashed` for conditional branches, `emphasis` for transitions with a relevant guard), `guard`/`note` when applicable, `fromSide`/`toSide`, and `route` only if needed.
+- `lanes[]`: one lane per orthogonal dimension or per logical grouping (main flow, branches, terminals), according to what came out of Phase 2.
+- `cards[]`: the degraded metadata (combined states, invariants, guard notes) and any clarifying note — never conclusions like "this is broken".
+- `meta`: descriptive `title`, `quality_profile: "showcase"`, and a `viewBox` matching the real size of the diagram.
 
-Respetá los gotchas documentados por archify para `lifecycle`: las columnas de fase `0..4` ocupan el riel principal; una columna de evento/terminal `N` en `0..2` se alinea exactamente debajo de la columna principal `N + 2`; un estado recuperable usa `type: "failure"` más una transición real de vuelta al estado activo (no un estado terminal fantasma).
+Respect the gotchas documented by archify for `lifecycle`: phase columns `0..4` occupy the main rail; an event/terminal column `N` in `0..2` aligns exactly below main column `N + 2`; a recoverable state uses `type: "failure"` plus a real transition back to the active state (not a phantom terminal state).
 
-### Sobre conocido-bueno de archify (construí ADENTRO, no thrashees)
+### Known-good archify envelope (build INSIDE it, do not thrash)
 
-El viewport que aprieta es **1440x900** (los demás — 1600/1920/2048 — entran solos). Construí dentro de este sobre para que `visual-check` pase en la PRIMERA render, en vez de iterar a ciegas:
+The viewport that squeezes is **1440x900** (the others — 1600/1920/2048 — fit on their own). Build inside this envelope so that `visual-check` passes on the FIRST render, instead of iterating blindly:
 
-- **`viewBox` alto = 566 fijo.** Es el piso duro de archify (rechaza cualquier valor menor con `viewBox/1 must be >= 566`). No es una palanca — no intentes bajarlo.
-- **`viewBox` ancho ~1040-1100 (default 1080).** archify escala la fuente con `930 / viewBoxWidth`; anchos en esa banda mantienen la fuente proyectada `>= 6px`. Ensanchar de más baja la fuente por debajo de 6px y falla readability.
-- **Máximo 3 cards.** La 4a card envuelve a una segunda fila (~+62px) y overflowea 1440x900 (`scrollHeight` 962 > 900). Si tenés más de 3 hallazgos, **fusionálos en 3 cards** (varios items por card), no agregues una 4a.
-- **Presupuesto de altura:** a 1440 de ancho, `alto_SVG = 1440 x 566 / viewBoxW` (~754px con 1080) + chrome (título/toolbar/cards, ~146px) tiene que quedar `<= 900`.
-- **Overflow = señal de SPLIT (principio ORTOGONAL).** Si una sola máquina no entra ni en el sobre, es evidencia de god-machine → partila en varias máquinas/diagramas (Fase 2), no la encajes a la fuerza. El fix del overflow ES el principio del skill, no una excepción.
+- **`viewBox` height = 566 fixed.** It is archify's hard floor (it rejects any smaller value with `viewBox/1 must be >= 566`). It is not a lever — do not try to lower it.
+- **`viewBox` width ~1040-1100 (default 1080).** archify scales the font with `930 / viewBoxWidth`; widths in that band keep the projected font `>= 6px`. Widening too much lowers the font below 6px and fails readability.
+- **Maximum 3 cards.** The 4th card wraps to a second row (~+62px) and overflows 1440x900 (`scrollHeight` 962 > 900). If you have more than 3 findings, **merge them into 3 cards** (several items per card), do not add a 4th.
+- **Height budget:** at 1440 width, `SVG_height = 1440 x 566 / viewBoxW` (~754px with 1080) + chrome (title/toolbar/cards, ~146px) must end up `<= 900`.
+- **Overflow = SPLIT signal (ORTHOGONAL principle).** If a single machine does not fit even in the envelope, it is evidence of a god-machine → split it into several machines/diagrams (Phase 2), do not force it in. The overflow fix IS the skill's principle, not an exception.
 
-## Fase 4 — Validar y entregar con archify
+## Phase 4 — Validate and deliver with archify
 
-Corré estos comandos con rutas absolutas, desde el directorio de la skill archify (`/Users/matteoquintero/.agents/skills/archify`):
-
-```bash
-node bin/archify.mjs validate lifecycle <ruta-absoluta-json> --quality showcase --json
-```
-
-Debe dar `ok: true` (showcase completo: 9 checks de artefacto, 0 errores de composición, 0 warnings — un receipt con solo 4 checks es validación básica, no aceptación showcase).
+Run these commands with absolute paths, from the archify skill's directory (`/Users/matteoquintero/.agents/skills/archify`):
 
 ```bash
-node bin/archify.mjs deliver lifecycle <ruta-absoluta-json> <ruta-absoluta-html> --quality showcase --json
+node bin/archify.mjs validate lifecycle <absolute-path-json> --quality showcase --json
 ```
 
-Es el comando de aceptación final: congela el JSON exacto, renderiza y chequea ese snapshot, y commitea el HTML de forma atómica.
+It must give `ok: true` (full showcase: 9 artifact checks, 0 composition errors, 0 warnings — a receipt with only 4 checks is basic validation, not showcase acceptance).
 
 ```bash
-node bin/archify.mjs visual-check <ruta-absoluta-html>
+node bin/archify.mjs deliver lifecycle <absolute-path-json> <absolute-path-html> --quality showcase --json
 ```
 
-Debe pasar — es evidencia de navegador real sobre el HTML entregado, sin volver a renderizar.
+It is the final acceptance command: it freezes the exact JSON, renders and checks that snapshot, and commits the HTML atomically.
 
-### Playbook de remediación (si `visual-check` da `containment fail` — ordenado, sin loops ciegos)
+```bash
+node bin/archify.mjs visual-check <absolute-path-html>
+```
 
-archify solo detecta el overflow de altura en este paso lento (Chrome), no en `validate`. Si falla containment, seguí este orden exacto (no tunees al azar):
+It must pass — it is real-browser evidence on the delivered HTML, without re-rendering.
 
-1. **Primero achicá el chrome:** fusioná a `<= 3` cards y acortá los items. Es la causa más común (la card que envuelve a una 2a fila) y no toca ni fuente ni geometría. Re-entregá y re-chequeá.
-2. Si sigue y el que no entra es el SVG: **ensanchá `viewBoxW`** (baja el alto proyectado a 1440). NUNCA bajes el alto de 566 (piso duro) ni la fuente de 6px.
-3. Si aún no entra en el sobre: es god-machine → **partí la máquina** (Fase 2, principio ortogonal), no sigas tuneando geometría.
-4. **Una sola corrida de `visual-check` por cambio** — nunca loops a ciegas. Leé `scrollHeight` vs `innerHeight` en el `.visual-check.json` para saber cuántos px sobran antes de tocar nada.
+### Remediation playbook (if `visual-check` gives `containment fail` — ordered, no blind loops)
 
-Default de salida (si el usuario no pide otra ruta): `<project-root>/docs/diagrams/<feature>-states.{json,html}` (mismo patrón que `bodega-ferreteria-colombia/docs/diagrams/lifecycle.json`). El `.json` es versionable y editable; el `.html` es el entregable.
+archify only detects height overflow in this slow step (Chrome), not in `validate`. If containment fails, follow this exact order (do not tune at random):
 
-## Fase 5 — Cierre (sin juzgar)
+1. **First shrink the chrome:** merge to `<= 3` cards and shorten the items. It is the most common cause (the card that wraps to a 2nd row) and touches neither font nor geometry. Re-deliver and re-check.
+2. If it persists and the one that does not fit is the SVG: **widen `viewBoxW`** (lowers the projected height at 1440). NEVER lower the 566 height (hard floor) nor the 6px font.
+3. If it still does not fit in the envelope: it is a god-machine → **split the machine** (Phase 2, orthogonal principle), do not keep tuning geometry.
+4. **A single `visual-check` run per change** — never blind loops. Read `scrollHeight` vs `innerHeight` in the `.visual-check.json` to know how many px are left over before touching anything.
 
-Presentá:
+Default output (if the user does not ask for another path): `<project-root>/docs/diagrams/<feature>-states.{json,html}` (same pattern as `bodega-ferreteria-colombia/docs/diagrams/lifecycle.json`). The `.json` is versionable and editable; the `.html` is the deliverable.
 
-- La ruta absoluta del HTML entregado.
-- Un resumen de QUÉ se dibujó: cuántas máquinas, cuántos estados y transiciones por máquina, y qué se degradó a metadata/cards y por qué (ej: "`enviado_a_caja_parcialmente` se degradó a card porque no habilita ninguna acción distinta de `cerrado`").
+## Phase 5 — Close (without judging)
 
-Nunca un veredicto de "esto está roto" ni una lista de hallazgos — eso lo hace el humano abriendo el HTML.
+Present:
 
-Único caso de "no puedo": el feature no tiene enum explícito de estados. Ahí el cierre es decir exactamente eso y que v1 no lo soporta (extensión futura), no un intento de best-effort sobre estado implícito.
+- The absolute path of the delivered HTML.
+- A summary of WHAT was drawn: how many machines, how many states and transitions per machine, and what was degraded to metadata/cards and why (e.g.: "`enviado_a_caja_parcialmente` was degraded to a card because it does not enable any action different from `cerrado`").
 
-## Extensión futura (fuera de v1)
+Never a verdict of "this is broken" nor a list of findings — the human does that by opening the HTML.
 
-Extracción de estado implícito o disperso (flags booleanos combinados, estado reconstruido desde múltiples columnas sin enum, máquinas que solo existen en documentación) — grado-investigación, no cubierto por este skill. Si aparece un caso así, se documenta como decisión abierta para una futura iteración del skill, no se improvisa una heurística.
+The only "I cannot" case: the feature has no explicit state enum. There the close is to say exactly that and that v1 does not support it (future extension), not a best-effort attempt on implicit state.
+
+## Future extension (out of v1)
+
+Extraction of implicit or scattered state (combined boolean flags, state reconstructed from multiple columns without an enum, machines that exist only in documentation) — research-grade, not covered by this skill. If such a case appears, it is documented as an open decision for a future iteration of the skill, not an improvised heuristic.

@@ -6,11 +6,13 @@ description: >
   tasks + design and decides its own audit mode (0, 1 or 2 blind reviewers) — it does not depend
   on sdd-tasks requesting it. Trigger: when the orchestrator launches the preview phase between
   `sdd-tasks` and `sdd-apply`.
-license: MIT
+license: Apache-2.0
 metadata:
-  author: mala-pata
-  version: "3.5"
+  author: matteoquintero
+  version: "3.6.0"
 ---
+
+# sdd-preview â pre-apply executive summary (hard human gate)
 
 ## Requirements (orchestrate, don't reinvent)
 

@@ -4,7 +4,7 @@ description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # /mala-pata-loop-orchestrate — Plan a BATCH of kickoffs (READ-ONLY)
@@ -45,7 +45,7 @@ If any is not found → warn and continue with the rest (do not invent context).
 ## Step 2 — Extract the metadata that governs orchestration
 From each kickoff take:
 - `change-name`, `size`, `depends_on` (hard/soft).
-- **Affected areas/files** ("References"/"Affected areas" section) → key for detecting clashes.
+- **Affected areas/files** (the "Architecture and affected layers" section — BCs/layers + ARCHITECTURE.md refs; cross-check "Technical reinterpretation" Scope IN) → key for detecting clashes.
 - **Migration?** (seed/DDL yes/no).
 - **Severity/value** (high / low / "evaluar si amerita").
 - **base branch** declared in the kickoff.

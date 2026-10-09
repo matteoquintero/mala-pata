@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: mala-pata
-  version: "3.2"
+  version: "3.3"
 ---
 
 ## Requirements (orchestrate, don't reinvent)
@@ -185,7 +185,7 @@ Preview reviews **the plan**, not **the objective** — the WHAT must already ha
 
 - **Plan-level** (duplication, over-engineering, hardcoded flow, wrong layer, ignored reuse, badly thought-out task) → this is what preview DOES dispose of: REUSE / REFACTOR / IGNORE, or it goes through "Adjust" if it needs a specific plan fix. Normal path.
 - **Objective-level** (the finding is not "the plan is wrong" but "the plan solves the wrong objective / the objective is not defined / half the scope is missing / the DoD is not testable and it is not a simple reword") → **do NOT dispose of it** (it is not REUSE/REFACTOR/IGNORE) and **do NOT send it through "Adjust"** (Adjust is for the plan or for a DoD reword, never for redefining the WHAT). An objective defect that reaches this point means it slipped through the origin gate. The correct disposition is to **stop and send it back**:
-  - The gate offers **Stop** with explicit reason `objetivo-no-listo → explore/propose`.
+  - The gate offers **Stop** with explicit reason `objective-not-ready → explore/propose`.
   - The orchestrator marks `sdd/<change>/state = "objective-not-ready-at-preview"` (with the absolute path of the live worktree, just like the normal pause) and the cycle goes back to **explore or propose** to redefine the WHAT.
   - The plan is NOT re-audited, the preview is NOT re-gated. It is an **escape backwards**, not a round-trip: it does not violate "single pass" (the preview ends here; what follows is planning from further back, not another preview round).
 
@@ -208,7 +208,7 @@ The gate **ALWAYS** runs, whether or not the audit is active. It is **immune to 
 - **Route depending on the TYPE of adjustment — NOT every adjustment regenerates the plan** (this is what avoids the loop):
   - **Stale DoD / untestable or obsolete criterion** → the orchestrator edits ONLY the Definition of Done section of the kickoff file and **returns STRAIGHT to the preview gate**. It does NOT re-run design/tasks — a criterion adjustment is not a plan defect.
   - **Real plan defect** (duplication, bad architecture, hardcoded flow, badly thought-out task) → then yes, it goes back to `sdd-tasks` or `sdd-design` according to the feedback.
-  - **Objective defect** (the WHAT is wrong/incomplete, not the plan or the DoD wording) → it is NOT "Adjust": it is **Stop with reason `objetivo-no-listo`** and back to explore/propose (see "Objective-level vs plan-level finding"). Adjust never redefines the objective.
+  - **Objective defect** (the WHAT is wrong/incomplete, not the plan or the DoD wording) → it is NOT "Adjust": it is **Stop with reason `objective-not-ready`** and back to explore/propose (see "Objective-level vs plan-level finding"). Adjust never redefines the objective.
   - When in doubt between DoD and plan, it is DoD/gate (cheap path), not regeneration.
 - State in engram: `sdd/<change>/state = "adjustment-requested-at-preview"` with the feedback + the type of route taken.
 

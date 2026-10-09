@@ -111,7 +111,7 @@ Dependency signals (read from kickoff/proposal/design):
 - Same file/service touched by two SDDs (adjacency → blocking risk).
 
 **Kickoff = file, not engram**: the engram observation `sdd/C/kickoff` is just a
-one-line pointer (`Kickoff en archivo: <path>`). To read `depends_on`/base branch
+one-line pointer (`Kickoff in file: <path>`). To read `depends_on`/base branch
 from the kickoff, follow that path with `Read` — the file's YAML frontmatter carries
 `depends_on`, `parallelizable_with` and `branch_base` directly. Only old kickoffs
 (pre-migration) have the full content in engram.

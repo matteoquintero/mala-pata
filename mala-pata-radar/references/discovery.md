@@ -58,7 +58,7 @@ mem_get_observation(id=<state, if it exists>)
 ## Step 3 — Filter (cycle only)
 
 Discard from the table (they are NOT active candidates):
-- `cancelado`: `state`/decision says ABANDONED → count it separately.
+- `CANCELLED`: `state`/decision says ABANDONED → count it separately.
 - `cerrado en ciclo`: an `archive-report` exists → count it separately (Phase B will say whether
   it is also merged/clean).
 

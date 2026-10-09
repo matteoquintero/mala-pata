@@ -4,7 +4,7 @@ description: Corre el CICLO ODD (Organic Driven Development) a partir de la ruta
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-organic-start — Corre el CICLO ODD desde un archivo de kickoff
@@ -56,6 +56,7 @@ Chequeo: `command -v <tool>` (CLI) o `claude mcp list` (MCP, p.ej. serena). Si f
    # (ajustar symlinks al stack real del proyecto)
    ```
 3. **Rutas ABSOLUTAS SIEMPRE** (Regla dura #3) — todo `git`/`npm`/lectura/escritura referencia el worktree por ruta absoluta (`git -C <ABS-worktree> …`, `npm --prefix <ABS-worktree> …`). Antes de cualquier escritura: `git -C <ABS-worktree> rev-parse --show-toplevel` debe devolver el worktree.
+3.5. **Chequeo de nombre de worktree (anti-desfase):** `git -C <ABS-repo> worktree list` — confirmá que el worktree de este change está registrado con un path que **resuelve en disco** y cuyo basename coincide con el `<change-name>`. Si el id registrado no coincide con el folder (resto de un `mv`), avisá en una línea y ofrecé `git worktree repair <path>` antes de seguir; nunca sigas operando sobre un worktree con el registro desfasado.
 4. **Init guard**: `mem_search("sdd-init/{project}")` — quedate solo con el ítem EXACTO. Si no existe → avisá al orquestador; no corras el init acá (`/mala-pata-organic` ya lo garantiza). Con el ítem exacto, confirmá `strict_tdd` contra el `tdd_mode` del kickoff — si difieren, el de `sdd-init` manda (es la fuente en vivo).
 
 ## Paso 3 — Explorar + resolver incertidumbre (ODD 2-3 — **acá se descubre el Dónde**)

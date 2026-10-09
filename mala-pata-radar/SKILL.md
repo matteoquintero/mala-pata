@@ -14,7 +14,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.0.0"
+  version: "4.1.0"
 ---
 
 ## Requisitos (orquestar, no reinventar)
@@ -103,7 +103,12 @@ Ejecutá en orden, sin saltarte pasos (detalle en
 4. **Detectá**: dependencias entre los SDD de la lista, branch stale,
    parqueado/bloqueado, sin instrucción, gate humano pendiente, y falta limpieza
    (mergeado pero worktree/branch vivos — incluidos los `paused-at-preview`, que
-   registran la ruta de su worktree vivo en el `state`).
+   registran la ruta de su worktree vivo en el `state`), y **nombre de worktree
+   desfasado** (el worktree registrado en git no resuelve en disco, o su id
+   `.git/worktrees/<id>` no coincide con el basename del folder — típico de
+   renombrar con `mv`) → sugerí `git worktree repair <path>` si se renombró, o
+   `git worktree prune` si se borró. Es lo que hace que git nombre worktrees
+   fantasma.
 
 ## Salida
 

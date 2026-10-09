@@ -4,7 +4,7 @@ description: Ejecuta un lote de kickoffs SDD EN PARALELO — crea un worktree po
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-loop-orchestrate-start — Lanzar un LOTE de SDD en paralelo
@@ -56,6 +56,8 @@ git -C /ABS worktree add /ABS-worktrees/<change-name> -b feature/<change-name> <
 Después symlinkeá los untracked que el stack necesite (`.env`/`node_modules` o equivalente), igual que
 hace el comando de arranque de un kickoff individual. Para verificar el symlink de `.env` NUNCA lo
 nombres como argumento directo (`ls -la <wt> | grep '\.env'` — ver la regla en loop-start).
+
+**Chequeo de nombre de worktree (anti-desfase):** `git -C <ABS-repo> worktree list` — confirmá que el worktree de este change está registrado con un path que **resuelve en disco** y cuyo basename coincide con el `<change-name>`. Si el id registrado no coincide con el folder (resto de un `mv`), avisá en una línea y ofrecé `git worktree repair <path>` antes de seguir; nunca sigas operando sobre un worktree con el registro desfasado.
 
 ## Paso 2 — Anti-stale: adelantar los worktrees a origin/<base> (OBLIGATORIO)
 `git worktree add` basa el worktree en tu `<base>` LOCAL tal cual esté — y el local suele estar

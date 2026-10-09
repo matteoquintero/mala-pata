@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.0"
+  version: "1.9.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -176,6 +176,7 @@ Then the plain-language summary:
   - **RECONSIDER** → do NOT route; the decision is yours (kill, pivot, or proceed anyway accepting the risk with eyes open).
 
 This block is the ONLY way to close on the happy path.
+- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Closing notes
 

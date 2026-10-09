@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -78,6 +78,7 @@ Routing suggestion (I do NOT execute): <gap> → /mala-pata-research or /mala-pa
 - **One row per gap**, concrete, with real evidence. No evidence → it does not go in the table (it goes to "Questions").
 - **Mandatory tag** `[noted]` or `[inferred]` per row.
 - If there are no gaps: say so explicitly + **which axes you verified** and why they are covered (like preview's empty-audit — not a bare "all good").
+- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Phase 5 — Persist the report (traceability)
 

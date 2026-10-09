@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -95,6 +95,7 @@ Legend: ✓ done = merged to integration (git) · ◐ in progress = live branch/
 - State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.
 - **Concrete evidence** per row (merge SHA, PR#, number of commits ahead, or "no branch") — never a bare "ok".
 - If `gh`/the PR CLI was missing, the banner says so ("PRs not queried; status by branches/merges").
+- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Rules
 

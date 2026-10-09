@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.10.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -101,6 +101,8 @@ Same format as `/mala-pata-loop-start` Step 5: Markdown table, one milestone per
 | PR `#<n>` → `<branch>` | ✓ MERGED (merge commit `<sha>`) |
 | CI post-merge | ✓ GREEN |
 | Cleanup (worktree + branch) | ✓ Done |
+
+**Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Persistence
 

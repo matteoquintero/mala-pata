@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -72,6 +72,8 @@ This is a **diagnosis from the text of the request**, proportional to the reques
   > **vague work ** — I need at least: *what* you want to achieve, *where* (module/feature, if you know it) and *when it is done* (verifiable criterion, not "make it look good"). With that I tell you the lane.
 
   And you stop there.
+
+**Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized. This covers the `→ run /mala-pata-<lane>` line and the draft field labels (What / Why / Done / Decisions / Risk) handed to the lane.
 
 ## Phase 3 — Does nothing else
 

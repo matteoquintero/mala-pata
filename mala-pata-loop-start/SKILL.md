@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -261,4 +261,5 @@ Canonical rows (include ONLY those that apply; do NOT invent a row that did not 
 Table rules:
 - **Adapt the rows to the real change**: no migration → remove the `migrate <N>` from the CI row; no real e2e case → remove that row; PR vs merge-to-feature → adjust the destination row; project without CI → `CI` row with `○ N/A (project without pipeline)`.
 - **No false green**: if something was left partial/red/pending, the row carries the specific reason, prefixed `◐ partial: <reason>` or `✗ red: <reason>` — the table must reflect the truth of the closing (consistent with the rule of not marking "Done" with a red pipeline).
+- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 - Below the table you can add 1-3 lines of non-blocking follow-ups if there are any; the rest of the detail already lives in the engram artifacts.

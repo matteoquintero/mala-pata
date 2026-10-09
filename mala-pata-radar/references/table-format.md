@@ -6,6 +6,8 @@
 > same status-light lexicon, same row order. It is mechanical memory: the
 > human reacts without rereading.
 
+> **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+
 ## 1. Freshness banner (mandatory, always at the top)
 
 ```

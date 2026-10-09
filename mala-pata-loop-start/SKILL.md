@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -240,7 +240,7 @@ Only with the human's OK (or if the profile is running in explicit automatic mod
 
 ## Step 5 — Final summary as a TABLE (MANDATORY)
 
-When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not with loose prose. It is the last thing the user sees and must be readable at a glance. Markdown format, one row per milestone, left column = milestone, right column = status with an **emoji** (ok · partial/with note · failed/pending) + **concrete evidence** (numbers, ids, commits — never a bare "ok").
+When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not with loose prose. It is the last thing the user sees and must be readable at a glance. Markdown format, one row per milestone, left column = milestone, right column = status with a **curated typographic glyph + word, no emoji** (`✓` ok · `◐` partial/with note · `✗` failed · `○` N/A or pending) + **concrete evidence** (numbers, ids, commits — never a bare "ok").
 
 Canonical rows (include ONLY those that apply; do NOT invent a row that did not happen):
 
@@ -248,14 +248,14 @@ Canonical rows (include ONLY those that apply; do NOT invent a row that did not 
 |---|---|
 | SDD cycle (explore→archive) | Complete |
 | Verify | PASS `<n>/<n>`, `0 CRITICAL` |
-| Smoke test (fixtures + human confirmation) | functionality OK · or `N/A (did not apply)` |
+| Smoke test (fixtures + human confirmation) | ✓ functionality OK · or `○ N/A (did not apply)` |
 | e2e real case `<id>` | `<obtained>` vs `<expected>` (delta `<%>`), `<detail>` |
 | No-regression | `<Nf>/<Ne>` identical to baseline |
-| PR `#<n>` → `<branch>` | MERGED (merge commit `<sha>`) |
-| CI post-merge (deploy + migrate `<N>`) | GREEN (`<build detail>`) |
-| Cleanup (worktree + local/remote branch) | Done |
+| PR `#<n>` → `<branch>` | ✓ MERGED (merge commit `<sha>`) |
+| CI post-merge (deploy + migrate `<N>`) | ✓ GREEN (`<build detail>`) |
+| Cleanup (worktree + local/remote branch) | ✓ Done |
 
 Table rules:
-- **Adapt the rows to the real change**: no migration → remove the `migrate <N>` from the CI row; no real e2e case → remove that row; PR vs merge-to-feature → adjust the destination row; project without CI → `CI` row with `N/A (project without pipeline)`.
-- **No false green**: if something was left partial/red/pending, the row carries the specific reason — the table must reflect the truth of the closing (consistent with the rule of not marking "Done" with a red pipeline).
+- **Adapt the rows to the real change**: no migration → remove the `migrate <N>` from the CI row; no real e2e case → remove that row; PR vs merge-to-feature → adjust the destination row; project without CI → `CI` row with `○ N/A (project without pipeline)`.
+- **No false green**: if something was left partial/red/pending, the row carries the specific reason, prefixed `◐ partial: <reason>` or `✗ red: <reason>` — the table must reflect the truth of the closing (consistent with the rule of not marking "Done" with a red pipeline).
 - Below the table you can add 1-3 lines of non-blocking follow-ups if there are any; the rest of the detail already lives in the engram artifacts.

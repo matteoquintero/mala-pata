@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: mala-pata
-  version: "3.3"
+  version: "3.4"
 ---
 
 ## Requirements (orchestrate, don't reinvent)
@@ -48,9 +48,9 @@ The **audit mode and the number of reviewers (0/1/2) do NOT come from the orches
 
 Required reads (parallel + `mem_get_observation` — previews are truncated):
 - `sdd/{change-name}/tasks` (required)
-- `sdd/{change-name}/design` (required)
+- `sdd/{change-name}/design` (required) — OR the merged `sdd/{change-name}/spec-design` written by the LITE/MINIMAL profiles (accept EITHER separate `spec` + `design` OR the merged `spec-design`)
 - `sdd/{change-name}/kickoff` (required — to read the DoD)
-- `sdd/{change-name}/spec`, `sdd/{change-name}/proposal`, `sdd/{change-name}/explore` (context)
+- `sdd/{change-name}/spec` (when not merged into `spec-design`), `sdd/{change-name}/proposal`, `sdd/{change-name}/explore` (context)
 
 Also read the **real worktree code** (Grep/Glob/Read) — do not review in the abstract.
 
@@ -147,7 +147,7 @@ When the self-assessment above decides ≥1 reviewer, this block is added after 
 - <piece 3>: **NEW** — <why no equivalent exists>
 
 ### Architecture smells
-- **high/medium/low**: <description> — `<file:line>` or `<task ref>`
+- **▲ high / medium / · low**: <description> — `<file:line>` or `<task ref>`
 
 ### Silent assumptions
 - <default that Apply would bake in if nobody looks>

@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -87,7 +87,7 @@ Report the **verified result** + every failed/skipped/pending check + next step.
 
 ## Step 8 — Final table (MANDATORY)
 
-Same format as `/mala-pata-loop-start` Step 5: Markdown table, one milestone per row, status (plain text, no emoji) + concrete evidence. Typical rows (only those that apply):
+Same format as `/mala-pata-loop-start` Step 5: Markdown table, one milestone per row, status (curated typographic glyph + word, no emoji: `✓ MERGED`, `✓ GREEN`, `✓ Done`, `○ N/A`; non-green rows `◐ partial: <reason>` / `✗ red: <reason>`) + concrete evidence. Typical rows (only those that apply):
 
 | Milestone | Status |
 |---|---|
@@ -96,11 +96,11 @@ Same format as `/mala-pata-loop-start` Step 5: Markdown table, one milestone per
 | Explore (Where) | `<n>` files/modules touched |
 | Feature-doc (if substantial) | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
 | Apply (TDD if applies) | Red-Green-Refactor, `<n>` tests |
-| Smoke test (fixtures + confirmation) | functionality OK · or `N/A (did not apply)` |
+| Smoke test (fixtures + confirmation) | ✓ functionality OK · or `○ N/A (did not apply)` |
 | Work-unit commits | `<n>` commits · RDD assess: `<granted/passive/…>` |
-| PR `#<n>` → `<branch>` | MERGED (merge commit `<sha>`) |
-| CI post-merge | GREEN |
-| Cleanup (worktree + branch) | Done |
+| PR `#<n>` → `<branch>` | ✓ MERGED (merge commit `<sha>`) |
+| CI post-merge | ✓ GREEN |
+| Cleanup (worktree + branch) | ✓ Done |
 
 ## Persistence
 

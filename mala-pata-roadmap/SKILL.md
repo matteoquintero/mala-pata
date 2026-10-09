@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.7.0"
+  version: "2.8.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -249,7 +249,7 @@ Do not write without approval.
 
 1. **Ask where to save it**, suggesting the default **`mala-pata/roadmap/<slug>.md`**
    (inside the repo under `mala-pata/roadmap/`, versioned — like the rest of the mala-pata artifacts). Allow override.
-2. Write the `.md` with the format below (absolute paths to operate; `mkdir -p` the folder).
+2. Write the `.md` with the format below (absolute paths to operate; `mkdir -p` the folder). Populate `## Objective coverage` (one row per axis, status as approved at the Step-5 gate) and `## Level 2 — broad domain not covered` (the Level-2 checklist) from the Step-5 result — they are persisted so `/mala-pata-gaps` can read them.
 3. **Light pointer in engram** for discoverability: `mem_save` topic_key `sdd/<slug>/roadmap`,
    one-line content `Roadmap in file: <absolute path>`. Do not duplicate the content.
 4. Respond with the file path + the suggested order of phases to pass to `/mala-pata-triage`.
@@ -289,6 +289,21 @@ phases_total: <N>
 > the route of a later one.
 
 Suggested order (topological): 1 → (2 ∥ 3) → …   ·   Parallelizable: {2, 3}
+
+## Objective coverage
+
+| Axis (desired state) | Status | Phases / reason |
+|----------------------|--------|-----------------|
+| <axis 1 name> | covered | Phases 1, 3 |
+| <axis 2 name> | extra-proposal | Phase 7 — not requested; the objective implies it |
+| <axis 3 name> | deferred | <reason> / separate roadmap |
+| <axis 4 name> | → Level 2 | <reason> |
+
+> One row per axis of the desired state (Step 1); status is exactly one of `covered` / `extra-proposal` / `deferred` / `→ Level 2`.
+
+## Level 2 — broad domain not covered
+- [ ] <domain capability 1>
+- [ ] <domain capability 2>
 
 ## Phases in detail
 

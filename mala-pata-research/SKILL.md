@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -151,7 +151,7 @@ whole doc pasted. The human decides with this alone.
 
 **Start with the verdict — that is research's HELP; do not shape for the sake of shaping.**
 
-- **Title:** `**Research: <slug> — <VERDICT>**` (PROCEED · SHARPEN · RECONSIDER).
+- **Title:** `**Research: <slug> — <VERDICT>**` with the verdict carrying a curated glyph: `✓ PROCEED` · `◐ SHARPEN` · `✗ RECONSIDER`. The frontmatter `verdict:` value stays the plain word (PROCEED/SHARPEN/RECONSIDER) for parsing.
 - **Verdict** (one line with the reason, backed by the Phase 1 evidence):
   - **PROCEED** — the idea is solid and ready to be routed.
   - **SHARPEN** — you need to answer something only you know (the human-only questions of Phase 2 that

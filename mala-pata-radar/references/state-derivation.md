@@ -35,7 +35,7 @@ mem_search(query="C")
 Keep ALL the observations whose title is `sdd/C/<phase>`. Phases in
 canonical order:
 ```
-kickoff · explore · proposal · spec · design · tasks · preview
+kickoff · explore · proposal · spec · design · spec-design · tasks · preview
 · apply-progress · verify-report · archive-report · state
 ```
 `memory_phase` = the MOST ADVANCED one present. Partial progress: if `apply-progress`

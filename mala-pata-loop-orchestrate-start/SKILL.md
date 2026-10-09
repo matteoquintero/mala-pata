@@ -4,7 +4,7 @@ description: Executes a batch of SDD kickoffs IN PARALLEL — creates one worktr
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-loop-orchestrate-start — Launch a BATCH of SDDs in parallel
@@ -49,10 +49,11 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
   wave in parallel). Only stagger if the user explicitly asks.
 
 ## Step 1 — One worktree per kickoff (§18, real isolation)
-For each `change-name`, sequentially (so as not to lock the git index):
+For each kickoff, sequentially (so as not to lock the git index), READ `branch:` and `worktree:` from that kickoff's YAML frontmatter and use them **verbatim** (the branch type — `feature|fix|hotfix|refactor|chore|docs|release` — is already encoded in `branch:`; never assume `feature/`):
 ```
-git -C /ABS worktree add /ABS-worktrees/<change-name> -b feature/<change-name> <branch-base>
+git -C /ABS worktree add <worktree> -b <branch> <branch-base>
 ```
+where `<worktree>` is the frontmatter `worktree:` (an absolute path, normally `/ABS-worktrees/<change-name>`) and `<branch>` is the frontmatter `branch:` (e.g. `fix/<change-name>`). This matches the branch check that `/mala-pata-loop-start` performs. Only for legacy kickoffs without these fields, fall back to `/ABS-worktrees/<change-name>` and `feature/<change-name>`.
 Then symlink the untracked files the stack needs (`.env`/`node_modules` or equivalent), the same as
 the start command of an individual kickoff does. To verify the `.env` symlink NEVER
 name it as a direct argument (`ls -la <wt> | grep '\.env'` — see the rule in loop-start).

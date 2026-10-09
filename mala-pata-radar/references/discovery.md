@@ -46,7 +46,7 @@ mem_search(query="C", limit=20)
 ```
 Keep ALL the `sdd/C/<phase>`. `phase(C)` = the most advanced. Order:
 ```
-kickoff · explore · proposal · spec · design · tasks · preview
+kickoff · explore · proposal · spec · design · spec-design · tasks · preview
 · apply-progress · verify-report · archive-report · state
 ```
 Confirm closure/cancellation with the content:

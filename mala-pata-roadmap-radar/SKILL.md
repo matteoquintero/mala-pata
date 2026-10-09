@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -54,7 +54,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 
 For each phase, match against git by its **slug**: a branch or PR whose name is `<slug>` or ends in `/<slug>` (the roadmap's convention: change-name = slug, branch `<type>/<slug>`). Derive the state — **only from git**:
 
-- **done** — the phase's branch is **merged into the freshly fetched integration branch** (confirmed by `git branch --merged <integration>`, a merge commit, or a PR with merged status). Evidence: merge SHA or PR#.
+- **done** — the phase is **merged into the freshly fetched integration branch**. Confirm by ANY of: (1) `git branch --merged <integration>` shows the phase's branch; (2) fallback for when the branch was already deleted by loop-start cleanup (and for squash merges): `git log <integration> --grep <slug>` finds a merge/squash commit mentioning the slug; (3) when `gh` is available, a merged PR for the slug. Evidence: merge/squash commit SHA or PR#, noting "branch deleted after merge" when applicable.
 - **in progress** — the branch or an OPEN PR exists for the slug, with its own commits, but NOT merged. Evidence: branch + number of commits ahead, or open PR#.
 - **pending** — there is no branch nor PR for the slug.
 - **blocked** — it is `pending` BUT at least one of its `Depends on` is NOT `done`. (It is a `pending` that explains why it cannot start yet.)
@@ -78,21 +78,21 @@ Source: roadmap.md + live git · NO engram · <date-time>
 
 | # | Phase | slug | Route | Depends on | Status | Evidence |
 |---|------|------|------|-----------|--------|-----------|
-| 1 | <name> | <slug> | loop:STD | — | done | merge <sha> / PR #<n> |
-| 2 | <name> | <slug> | organic | 1 | in progress | branch <type>/<slug> +<k> commits / PR #<n> |
-| 3 | <name> | <slug> | shot | 1 | pending | no branch |
-| 4 | <name> | <slug> | loop:LITE | 2 | blocked | waits for phase 2 |
+| 1 | <name> | <slug> | loop:STD | — | ✓ done | merge <sha> / PR #<n> |
+| 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits / PR #<n> |
+| 3 | <name> | <slug> | shot | 1 | ○ pending | no branch |
+| 4 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
 
 Ready to start now: <phases whose deps are all done>
   In parallel (can be launched together): { <phase>, <phase> }
 In progress now: <phases with live branch/PR>
 Blocked by dependencies: <phase> → waits for <phase(s)>
 
-Legend: done = merged to integration (git) · in progress = live branch/PR not merged · pending = no branch · blocked = pending with unfinished deps
+Legend: ✓ done = merged to integration (git) · ◐ in progress = live branch/PR not merged · ○ pending = no branch · ✗ blocked = pending with unfinished deps
 ```
 
 - The table carries **one row per roadmap phase**, in the `.md` order. No phase is omitted.
-- **State with text tokens** (`done` / `in progress` / `pending` / `blocked`) — no emojis, no invented colors.
+- State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.
 - **Concrete evidence** per row (merge SHA, PR#, number of commits ahead, or "no branch") — never a bare "ok".
 - If `gh`/the PR CLI was missing, the banner says so ("PRs not queried; status by branches/merges").
 

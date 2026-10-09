@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -36,8 +36,8 @@ Every improvement satisfies them; if the current UI violates them, that is the f
 3. **Grid** — everything aligned to a grid + spacing scale; nothing off-grid.
 4. **White space** — more space between the unrelated than between the related; density serves hierarchy, not filler.
 5. **AA contrast** — fg/bg ≥ 4.5:1 (text), ≥ 3:1 (large UI); never convey state by color alone.
-6. **SVG-only** — icons are always SVG (registry/lucide/heroicons). **Never** emoji as an icon or decoration.
-7. **No emoji** — zero emoticons in the UI (and in whatever you produce).
+6. **SVG-only** — icons are always SVG (registry/lucide/heroicons). **Never** emoji as an icon or decoration. (UI icons stay SVG; curated typographic status glyphs in text/tables are not icons.)
+7. **No emoji** — zero emoticons in the UI (and in whatever you produce). emoji = pictographic (U+1F000–1FAFF), emoji-presentation (`U+2714 U+2718 U+2705 U+274C U+26A0`), U+FE0F/ZWJ; curated typographic glyphs (`✓ ✗ ○ ◐ ● ▲ ▼ → ° · — ≥ ≤ ×`) ARE allowed in text.
 
 ## The judgment (principle catalog — the CORE, in 3 levels of use)
 
@@ -87,12 +87,12 @@ If the project has NO system, propose a minimal one (spacing scale, neutral ramp
 2. **Read the project's system** (previous section) — the concrete values come from there.
 3. **Diagnosis**: what is wrong against the **invariants** (first) and the **judgment** (Level 1-3). Anchor each finding to what is observable ("this block violates hierarchy: 3 focal points compete"; "emoji icons → SVG").
 4. **Advice MD**: write the judgment applied to THIS case — findings + what to change + why (citing the principle). Inline by default; if the human wants to save it, `mala-pata/art/<slug>.md`.
-5. **Apply (optional, if asked)**: in the same run, improve the thing following that MD + the invariants + the project's system. Respect SVG-only, no emoji, project tokens.
+5. **Apply (optional, if asked)**: in the same run, improve the thing following that MD + the invariants + the project's system. Respect SVG-only, the no-emoji invariant (7), project tokens.
 6. **Human gate**: present the before/after or the MD and wait for their OK or adjustments. Their eye rules.
 
 ## What it does NOT do
 - Does NOT decide or propose lanes (organic/loop/shot) — it is orthogonal; the human or triage decides the flow.
 - Does NOT use ui-ux-pro-max's prescriptive palettes/typefaces/styles — only its numbers/rules/anti-patterns.
 - Does NOT invent hex/fonts if the project has a system — read the system.
-- Does NOT add emoji or non-SVG icons, ever (neither in the UI nor in what it produces).
+- Does NOT add emoji (per invariant 7) or non-SVG icons (neither in the UI nor in what it produces).
 - Does NOT dispatch `sdd-*` agents.

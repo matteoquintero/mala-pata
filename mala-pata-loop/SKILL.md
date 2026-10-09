@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -191,7 +191,7 @@ smoke_test:                 # does it need manual testing with seeded data after
   data: <scenario/data to seed, or "a definir">
 sdd_preflight:              # recommendations the runner (loop-start) uses as the default of the hook's canonical question
   pace: interactive        # interactive|automatic — FULL/STANDARD => interactive; LITE/MINIMAL may be automatic
-  artifacts: engram        # engram|openspec|both — default engram for this user
+  artifacts: engram        # engram|openspec|hybrid — default engram for this user
   pr_strategy: ask-on-risk # ask-on-risk|single-pr|auto-chain — default ask-on-risk
 created_at: <ISO 8601>
 ---

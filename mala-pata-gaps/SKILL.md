@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -44,13 +44,13 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 ## Phase 1 — TOTAL objective of the domain
 
-Merge the **desired state** of all the domain's roadmaps: their "## Large objective" + the axes of the **coverage table** (MECE desired state). That set of axes is the **completeness contract** you will measure against. If two roadmaps overlap on an axis, it is a single one (MECE).
+Merge the **desired state** of all the domain's roadmaps: their "## Large objective" + the axes of the **coverage table** — read each roadmap's `## Objective coverage` section (MECE desired state). That set of axes is the **completeness contract** you will measure against. If two roadmaps overlap on an axis, it is a single one (MECE).
 
 ## Phase 2 — The 3 sources of gaps
 
 **(a) Follow-ups already NOTED** (collect them, do not invent them):
-- **Level 2** checklist of each roadmap (broad domain not covered).
-- Axes marked **deferred** or **extra-proposal** that were NOT done.
+- **Level 2** checklist of each roadmap — read its `## Level 2 — broad domain not covered` section.
+- Axes marked **deferred** or **extra-proposal** (status column of `## Objective coverage`) that were NOT done.
 - `TODO` / `FIXME` / notes in the domain's **code** (grep/codegraph).
 
 **(b) Current state of the CODE** (measure, do not assume): for each axis of the objective (Phase 1), what is already implemented and what is not — with `codegraph_explore` / serena / grep. Anchor to `file:line`.

@@ -12,7 +12,7 @@ metadata:
   version: "3.6.0"
 ---
 
-# sdd-preview â pre-apply executive summary (hard human gate)
+# sdd-preview — pre-apply executive summary (hard human gate)
 
 ## Requirements (orchestrate, don't reinvent)
 

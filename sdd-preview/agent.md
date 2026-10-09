@@ -39,6 +39,7 @@ in your invocation message (`reviewer` or `synthesis` — default `reviewer`).
    Target is orientative, not a hard cap — if honesty needs more, say so.
 
 5. If the invocation indicates **audit mode active** (sdd-tasks recommended ≥1 reviewer), also produce:
+   - **Findings & disposition** — a TABLE `# | Finding | Severity | Disposition`, one row per finding, anchored to `file:line`/task ref. Severity uses the glyph + word `▲ high` / `● medium` / `▼ low`; Disposition is one enum + a one-line reason: IGNORE / REFACTOR / ADJUST / REUSE. ALWAYS a table, NEVER a flat numbered list — this is what the human scans to decide.
    - **Blast-radius** (table: file, NEW/MODIFIED/DELETED, ~LOC, public symbol).
    - **Reuse-first** (REUSE/ADAPT/NEW with `file:line`).
    - **Architecture smells** (severity + `file:line` or task ref).

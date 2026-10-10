@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -63,20 +63,41 @@ Same framework as the Gap Analysis of `/mala-pata-roadmap` (Step 4-ter), but **p
 
 ## Phase 4 — Output (fixed format, read-only)
 
+Banner (plain text, fenced):
+
 ```
 Domain gaps: <domain>  ·  roadmaps: <slug, slug, …>  ·  repo: <name>  ·  <date-time>
 Source: mala-pata/ roadmaps + live code
-
-| # | Missing (what) | Objective axis | Evidence | Tag |
-|---|-------------|------------------|-----------|-----|
-| 1 | <what is missing, concrete> | <axis> | <file:line or annotation/roadmap> | [noted] / [inferred] |
-
-Questions (not gaps, evidence was missing to confirm them): <or "none">
-Routing suggestion (I do NOT execute): <gap> → /mala-pata-research or /mala-pata-triage
 ```
 
+**BLUF line** (plain text, immediately below the banner, before the tables — carries the word next to each number):
+
+`Bottom line: <n> gaps · <a> noted · <b> inferred · across <m>/<M> axes covered`
+
+**Coverage table** (MECE — a REAL Markdown table, NEVER fenced; one row per objective axis of the domain, each appears EXACTLY once — this is the anti "all good" proof):
+
+| Objective axis | Verified | Gaps found | Status |
+|---|---|---|---|
+| <axis> | <what proves it covered, or what is missing> | <count> | ✓ covered · ◐ partial · ✗ gap |
+
+`MECE check: axes total: <M> · axes in table: <M> · overlaps: none`
+
+**Findings table** (a REAL Markdown table, NEVER fenced; ordered by `Severity` so triage can pick the top of the backlog):
+
+| # | Missing (what) | Objective axis | Severity | Evidence | Tag |
+|---|---|---|---|---|---|
+| 1 | <what is missing, concrete> | <axis> | ▲ high · ● medium · ▼ low | <file:line or annotation/roadmap> | [noted] · [inferred] |
+
+Then the closing lines (plain text):
+
+`Questions (not gaps, evidence was missing to confirm them): <or "none">`
+`Routing suggestion (I do NOT execute): <gap> → /mala-pata-research or /mala-pata-triage`
+`Structure: gap analysis + MECE / 100% rule. noted/inferred provenance + 3-source model = house method.`
+
 - **One row per gap**, concrete, with real evidence. No evidence → it does not go in the table (it goes to "Questions").
-- **Mandatory tag** `[noted]` or `[inferred]` per row.
+- **Mandatory tag** `[noted]` or `[inferred]` per row (shared provenance vocabulary).
+- **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort the findings table by it (highest first) so the backlog is pick-ready for triage.
+- **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof.
 - If there are no gaps: say so explicitly + **which axes you verified** and why they are covered (like preview's empty-audit — not a bare "all good").
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 

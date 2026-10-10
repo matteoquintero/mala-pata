@@ -4,7 +4,7 @@ description: Executes a batch of SDD kickoffs IN PARALLEL — creates one worktr
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-loop-orchestrate-start — Launch a BATCH of SDDs in parallel
@@ -105,11 +105,19 @@ worktree already had commits and the ff failed, STOP and warn (do not force): th
   Do not invent another mechanism.
 
 ## Step 4 — Report
-Return: worktrees created (+ that they ended up at `origin/<base>`), launch config path, and which tabs
-were created (one per kickoff). Remind of the **Apply order** the plan gave (which merges first) and that
-the other sessions **wait at their gate before Apply** and rebase onto `origin/<base>` on integration.
-The orchestrator (this session) does NOT follow those cycles; the follow-up/gates happen in each tab. Offer
-`mala-pata-radar` to see the batch's progress (it discovers and confirms with git in a single run).
+**BLUF first:** `Launched <n>/<n> sessions · wave <w> · launch config: <path>` (or `✗ partial: <which failed and why>`).
+
+Then the table — one row per kickoff:
+
+| Kickoff | Branch | Worktree | At origin/<base> | Tab | Apply order |
+|---|---|---|---|---|---|
+| <slug> | <type>/<slug> | /ABS-worktrees/<slug> | ✓ <short-sha> | <title> | <1st / 2nd / …> |
+
+Below the table: remind of the **Apply order** (which merges first) and that the other sessions **wait at their gate before Apply** and rebase onto `origin/<base>` on integration. The orchestrator (this session) does NOT follow those cycles; the gates happen in each tab. Offer `mala-pata-radar` to see the batch's progress (it discovers and confirms with git in a single run).
+
+**Emit this block's structural labels verbatim in English** — the BLUF line and the table headers stay English; only the values follow the conversation language.
+
+**Structure:** house method (batch worktree + Warp launch orchestration).
 
 ## Hard rules
 - **LAUNCH THE COMPLETE WAVE** in parallel — do not trim it to "only what has no conflict". Parallelism IS

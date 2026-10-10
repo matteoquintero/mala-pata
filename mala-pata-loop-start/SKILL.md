@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -243,20 +243,22 @@ Only with the human's OK (or if the profile is running in explicit automatic mod
 
 ## Step 5 — Final summary as a TABLE (MANDATORY)
 
-When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not with loose prose. It is the last thing the user sees and must be readable at a glance. Markdown format, one row per milestone, left column = milestone, right column = status with a **curated typographic glyph + word, no emoji** (`✓` ok · `◐` partial/with note · `✗` failed · `○` N/A or pending) + **concrete evidence** (numbers, ids, commits — never a bare "ok").
+When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not loose prose. **BLUF first** — one `Result:` line above the table: `Result: ✓ complete · <n>/<n> milestones` (or `◐ partial` / `✗ blocked` with the reason). Then the table: 3 columns (`Milestone | Status | Evidence`), Status uses the shared workflow lexicon glyph + word (`✓ done` / `◐ partial: <reason>` / `○ pending` / `✗ blocked: <reason>` / `∅ n/a`), specifics in the **Evidence** column — never a bare "ok". Same shape as `/mala-pata-organic-start` Step 8.
 
 Canonical rows (include ONLY those that apply; do NOT invent a row that did not happen):
 
-| Milestone | Status |
-|---|---|
-| SDD cycle (explore→archive) | Complete |
-| Verify | PASS `<n>/<n>`, `0 CRITICAL` |
-| Smoke test (fixtures + human confirmation) | ✓ functionality OK · or `○ N/A (did not apply)` |
-| e2e real case `<id>` | `<obtained>` vs `<expected>` (delta `<%>`), `<detail>` |
-| No-regression | `<Nf>/<Ne>` identical to baseline |
-| PR `#<n>` → `<branch>` | ✓ MERGED (merge commit `<sha>`) |
-| CI post-merge (deploy + migrate `<N>`) | ✓ GREEN (`<build detail>`) |
-| Cleanup (worktree + local/remote branch) | ✓ Done |
+| Milestone | Status | Evidence |
+|---|---|---|
+| SDD cycle (explore→archive) | ✓ done | complete |
+| Verify | ✓ done | PASS `<n>/<n>`, `0 CRITICAL` |
+| Smoke test (fixtures + human confirmation) | ✓ done / ∅ n/a | functionality OK, or did not apply |
+| e2e real case `<id>` | ✓ done | `<obtained>` vs `<expected>` (delta `<%>`) |
+| No-regression | ✓ done | `<Nf>/<Ne>` identical to baseline |
+| PR `#<n>` → `<branch>` | ✓ done | MERGED (merge commit `<sha>`) |
+| CI post-merge (deploy + migrate `<N>`) | ✓ done | GREEN (`<build detail>`) |
+| Cleanup (worktree + local/remote branch) | ✓ done | branch + worktree removed |
+
+**Structure:** Definition of Done + information radiator (Cockburn).
 
 Table rules:
 - **Adapt the rows to the real change**: no migration → remove the `migrate <N>` from the CI row; no real e2e case → remove that row; PR vs merge-to-feature → adjust the destination row; project without CI → `CI` row with `○ N/A (project without pipeline)`.

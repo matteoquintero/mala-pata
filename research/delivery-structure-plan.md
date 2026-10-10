@@ -28,6 +28,8 @@ with a `Structure:` footer citing it (or honestly labelled `house method`).
   findings/status/coverage; BLUF/Minto — verdict/decision line FIRST, evidence after.
 - **Every emitter output carries at least ONE table** — even shot (a compact one-row table). This
   overrides the earlier "shot = no table" note.
+- **Tables render as REAL Markdown tables, NEVER inside a ``` code fence** — a fenced table shows raw
+  pipes and does not render as a bordered table. Only banner/BLUF/legend/footer lines are plain text.
 
 > Open glyph confirmations: `∅` for n/a and the Attention set above. All are typographic (not emoji):
 > `∅` U+2205, `→` U+2192, `◆` U+25C6, `‖` U+2016, `·` U+00B7. Add them to the allowed whitelist.

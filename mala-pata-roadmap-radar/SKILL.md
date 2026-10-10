@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -72,24 +72,29 @@ Derivation rules:
 
 ## Output — fixed format (ALWAYS identical)
 
-```
-Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>
-Source: roadmap.md + live git · NO engram · <date-time>
+**Render the table as a REAL Markdown table — NEVER inside a ``` code fence** (a fenced table shows raw pipes and does not render). The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real Markdown table. The format, in order:
 
-Bottom line: ✓ <d> · ◐ <p> · ○ <q> · ✗ <b>  (of <N> phases)
-Ready to start now: <phases whose deps are all done>  ·  in parallel: { <phase>, <phase> }
-In progress now: <phases with live branch/PR>  ·  Blocked: <phase> → waits for <phase(s)>
+Banner (2 lines):
+`Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`
+`Source: roadmap.md + live git · NO engram · <date-time>`
+
+BLUF (3 lines):
+`Bottom line: ✓ <d> · ◐ <p> · ○ <q> · ✗ <b>  (of <N> phases)`
+`Ready to start now: <phases whose deps are all done>  ·  in parallel: { <phase>, <phase> }`
+`In progress now: <phases with live branch/PR>  ·  Blocked: <phase> → waits for <phase(s)>`
+
+Then the real table:
 
 | # | Phase | slug | Route | Depends on | Status | Evidence |
-|---|------|------|------|-----------|--------|-----------|
+|---|---|---|---|---|---|---|
 | 1 | <name> | <slug> | loop:STD | — | ✓ done | merge <sha> / PR #<n> |
-| 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits / PR #<n> |
+| 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits |
 | 3 | <name> | <slug> | shot | 1 | ○ pending | no branch |
 | 4 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
 
-Legend: ✓ done = merged to integration (git) · ◐ in progress = live branch/PR not merged · ○ pending = no branch · ✗ blocked = pending with unfinished deps
-Structure: information radiator (Cockburn) + workflow-state lexicon.
-```
+Then the closing lines (plain text):
+`Legend: ✓ done = merged to integration (git) · ◐ in progress = live branch/PR not merged · ○ pending = no branch · ✗ blocked = pending with unfinished deps`
+`Structure: information radiator (Cockburn) + workflow-state lexicon.`
 
 - The table carries **one row per roadmap phase**, in the `.md` order. No phase is omitted.
 - State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.

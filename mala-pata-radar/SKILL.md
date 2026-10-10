@@ -14,7 +14,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.7.0"
+  version: "4.8.0"
 ---
 
 # /mala-pata-radar — SDD radar (discover + diagnose, read-only)
@@ -100,7 +100,7 @@ Execute in order, without skipping steps (detail in
    or topic_key), never by fuzzy semantics. Collect which artifacts exist and their
    latest revision. (The kickoff is a file: the engram observation is a
    pointer `Kickoff in file: <path>` — follow it with `Read`.)
-3. **Derive phase + status light LIVE** with the state machine of
+3. **Derive phase + State/Attention LIVE** with the state machine of
    `state-derivation.md`. Hard rule: **merge is NEVER believed from an
    archive-report or apply-progress** — it is confirmed against the freshly fetched
    integration branch.
@@ -113,8 +113,8 @@ Execute in order, without skipping steps (detail in
 ## Output
 
 Exactly the format of [references/table-format.md](references/table-format.md):
-freshness banner (+ the best-effort disclaimer if Phase A ran) + 7-column
-table + status-light legend + evidence block (for each SDD, the
+freshness banner (+ the best-effort disclaimer if Phase A ran) + 8-column
+table + State + Attention legend + evidence block (for each SDD, the
 memory identifier + SHA/branch that back the state). Same format,
 same order, same lexicon, **always** — mechanical memory for the human. If
 Phase A saw archived/cancelled ones, close with ONE count line "others seen",

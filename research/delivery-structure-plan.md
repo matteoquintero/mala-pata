@@ -167,7 +167,7 @@ core-vs-complete/Deferrable/Level-1-2/tentative-route, kickoff brief fields, gap
 
 - [x] 1 research   - [x] 2 triage   - [x] 3 shot   - [x] 4 organic   - [x] 5 organic-start
 - [x] 6 loop   - [x] 7 loop-start   - [ ] 8 loop-orchestrate (paused)   - [ ] 9 loop-orchestrate-start (paused)
-- [x] 10 roadmap   - [x] 11 roadmap-radar   - [ ] 12 radar (v2)   - [ ] 13 gaps
+- [x] 10 roadmap   - [x] 11 roadmap-radar   - [x] 12 radar (v2)   - [ ] 13 gaps
 - [ ] 14 walkthrough   - [ ] 15 states   - [ ] 16 seed   - [ ] 17 sdd-preview   - [ ] 18 art
 
 Each applied skill: bump its MINOR version, keep emoji-free (whitelist glyphs only), sync + commit.

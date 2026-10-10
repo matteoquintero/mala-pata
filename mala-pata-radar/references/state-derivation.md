@@ -1,4 +1,4 @@
-# LIVE phase + status-light derivation
+# LIVE phase + State/Attention derivation
 
 Everything is re-derived every run. Two sources, neither cached:
 - **VCS (git)** = truth about branch/merge/cleanup.
@@ -79,32 +79,32 @@ With `<branch>` resolved (call it that below):
 
 ## Step D — State machine (first match wins, top to bottom)
 
-1. **CANCELLED** — there is a `state` artifact/decision that marks it cancelled
+1. **State ∅ n/a · Attention ∅ none** — CANCELLED — there is a `state` artifact/decision that marks it cancelled
    (`ABANDONED` is a manual/legacy marker — no current skill emits it; do not
    treat it as a live token). Next action: none.
-2. **CLOSED** — merged into integration AND no remote branch AND no local worktree/
+2. **State ✓ done · Attention ∅ none** — CLOSED — merged into integration AND no remote branch AND no local worktree/
    branch. Next action: none.
-3. **MERGED (cleanup pending)** — merged into integration BUT worktree or
+3. **State ✓ done · Attention ⊗ cleanup pending** — MERGED (cleanup pending) — merged into integration BUT worktree or
    branch (local/remote) are still alive. Next action: clean up.
-4. **RED: READY FOR PR** — apply complete + verify PASS (and/or archive) BUT NOT
+4. **State ◐ in progress · Attention → needs you now** — READY FOR PR — apply complete + verify PASS (and/or archive) BUT NOT
    merged (code on branch, absent from integration). Next action: open
    PR / merge. If `stale` (B small, A large): add "WARNING: update branch +
    re-verify before the PR".
-5. **RED: APPLY/VERIFY NOT CLOSED** — apply-progress complete without verify, or verify
+5. **State ◐ in progress · Attention → needs you now** — APPLY/VERIFY NOT CLOSED — apply-progress complete without verify, or verify
    PASS without archive. Next action: run the missing phase (verify / archive).
-6. **YELLOW: HUMAN GATE** — the last artifact is a `preview` with no later approval
+6. **State ◐ in progress · Attention ◆ awaiting gate** — HUMAN GATE — the last artifact is a `preview` with no later approval
    decision, OR a preview state emitted by `sdd-preview` (read by loop-start):
    `paused-at-preview` (resumable pause → next action: resume the preview) or
    `objective-not-ready-at-preview` (→ next action: go back to explore/propose to
    fix the objective, then re-run preview), OR `verify-report` with unresolved CRITICAL/WARNING, OR
    a decision that asks for explicit human input. Next action: review/approve.
-7. **ORANGE: PARKED/BLOCKED** — depends on another SDD in the list not yet merged
+7. **State ✗ blocked · Attention ‖ parked** — PARKED/BLOCKED — depends on another SDD in the list not yet merged
    (BLOCKED), OR there is a pause note (adjacency/sibling worktree without merge), OR
    a stale branch that blocks. Next action: unblock (name the blocker).
-8. **BLACK: NO INSTRUCTION** — cycle stuck with no clear next step: partial apply-progress
+8. **State ✗ blocked · Attention → needs you now** — NO INSTRUCTION — cycle stuck with no clear next step: partial apply-progress
    (X/Y) without continuation nor pending gate, or planning stopped midway
    with no gate and no recent activity. Next action: the human defines what is next.
-9. **GREEN: IN PROGRESS** — advances normally; a phase closed and the next one is auto-runnable
+9. **State ◐ in progress · Attention ∅ none** — IN PROGRESS — advances normally; a phase closed and the next one is auto-runnable
    without a gate. Next action: run the next phase (name it: e.g. "run
    spec", "run tasks").
 
@@ -120,7 +120,7 @@ from the kickoff, follow that path with `Read` — the file's YAML frontmatter c
 `depends_on`, `parallelizable_with` and `branch_base` directly. Only old kickoffs
 (pre-migration) have the full content in engram.
 
-If A depends on B and B is not merged → A goes ORANGE with `Depends = #idxB BLOCKED`.
+If A depends on B and B is not merged → A goes **State ✗ blocked · Attention ‖ parked** with `Depends = #idxB BLOCKED`.
 If B is already merged → show `Depends = #idxB` without BLOCKED (informational).
 
 ## Derivation rules (non-negotiable)

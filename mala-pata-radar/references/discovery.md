@@ -62,11 +62,11 @@ Discard from the table (they are NOT active candidates):
 - `cerrado en ciclo`: an `archive-report` exists → count it separately (Phase B will say whether
   it is also merged/clean).
 
-The ones that remain = **ACTIVE candidates**, with their status light:
-| Light | phase(C) |
-|-------|----------|
-| GREEN | apply-progress / verify-report (with code) |
-| GREEN | kickoff … preview (in planning; the closed lexicon has no separate planning light) |
+The ones that remain = **ACTIVE candidates**, with their State · Attention:
+| State · Attention | phase(C) |
+|-------------------|----------|
+| ◐ in progress · ∅ none | apply-progress / verify-report (with code) |
+| ◐ in progress · ∅ none | kickoff … preview (in planning; the closed lexicon has no separate planning state) |
 
 ---
 
@@ -79,6 +79,6 @@ human sees is the final one from `table-format.md`, already diagnosed with git.
 
 What this phase contributes to the final banner: the **best-effort (engram
 ≤20/search)** disclaimer when discovery ran, and the count line
-`Others seen (non-exhaustive): CLOSED <n> with archive-report · CANCELLED <m> cancelled.`
+`Others seen (non-exhaustive): ✓ <n> done · ∅ none (CLOSED, with archive-report) · ∅ <m> n/a · ∅ none (CANCELLED).`
 
 If a datum could not be read live, `?`; do NOT invent.

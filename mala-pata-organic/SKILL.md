@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.10.0"
+  version: "3.11.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -104,8 +104,8 @@ created_at: <ISO 8601>
 ## Why
 <motivation in 1 line — flows into the feature-doc and the PR>
 
-## Done
-<testable definition — "when X, Y happens" or the check that proves it>
+## DoD
+<testable definition in Given/When/Then — "Given <state>, When <action>, Then <observable result>">
 
 ## Decisions already made
 <approach/architecture decided or obvious — confirm it, do not re-decide it>
@@ -135,12 +135,16 @@ Same as `/mala-pata-loop` (Step 5): the kickoff lives in a **file**, not in engr
 Your reply to the human is a **MANDATORY and standard close (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, without inventing anything. Emit exactly this structure (same format as `/mala-pata-loop` Step 5):
 
 - Title: `**Kickoff ready — <change-name>**`
-- Summary (one line per item):
-  - **What:** <one line>
-  - **Lane:** organic
-  - **Base → branch:** <base> → <type>/<change-name>
-  - **Worktree:** <absolute path>
-  - **DoD:** <testable criterion, one line>
+- Summary — a table:
+
+  | Field | Value |
+  |---|---|
+  | What | <one line> |
+  | Lane | organic |
+  | Base → branch | <base> → <type>/<change-name> |
+  | Worktree | <absolute path> |
+  | DoD | Given <state>, When <action>, Then <result> |
+- **DoR:** What ✓ · Why ✓ · DoD ✓ · Decisions ✓
 - **Kickoff:** `<absolute path of the .md>`
 - **Next step** (in a code block, copy-paste):
 
@@ -148,7 +152,9 @@ Your reply to the human is a **MANDATORY and standard close (summary + kickoff)*
   /mala-pata-organic-start <absolute path of the .md>
   ```
 
-Emit the field labels above (Kickoff ready, What, Lane, Base → branch, Worktree, DoD, Kickoff, Next step) **verbatim in English** — they are structural; only the values and any surrounding prose follow the conversation language.
+- **Structure:** DoR-style brief (house method) + BLUF close + Given/When/Then (Fowler).
+
+Emit the field labels above (Kickoff ready, Field, Value, What, Lane, Base → branch, Worktree, DoD, DoR, Kickoff, Next step, Structure) **verbatim in English** — they are structural; only the values and any surrounding prose follow the conversation language.
 
 This block is the ONLY way to close on the happy path.
 

@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -42,7 +42,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 ## Step 1 — Load the kickoff + engram context
 
 1. The input is an **absolute path to an `.md` file** (the one `/mala-pata-organic` wrote in `mala-pata/kickoffs/<change-name>.md`, inside the repo). If it does not start with `/` or the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
-2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`) and body (What, Why, Done, Decisions already made, Risk, Where-hint).
+2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
 3. If `route` is not `organic` → **STOP**: this kickoff is not for this skill (it is probably a `/mala-pata-loop` kickoff, which uses `/mala-pata-loop-start`).
 4. `mem_search("odd/<change_name>/kickoff")` only to confirm the pointer — it is not blocking if it fails, the file is already the source of truth.
 

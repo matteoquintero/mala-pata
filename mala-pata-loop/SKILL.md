@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -242,7 +242,7 @@ ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo
 - Phase 0 (if it touches UI): REUSES/ADAPTS/NEW audit + Storybook + human gate according to profile.
 - Phase 1..N: coherent objectives, NOT tasks (those are produced by `sdd-tasks`).
 
-## Definition of Done
+## DoD
 Verifiable criteria, not vague bullets — use Given/When/Then for observable behavior, add the procedural part of the method below:
 
 - [ ] Given <initial state>, When <user/system action>, Then <observable and verifiable result>.

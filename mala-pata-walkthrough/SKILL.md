@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -50,7 +50,7 @@ If you cannot identify the functionality or where to get it from → **STOP** an
 
 For each unit, collect what ALREADY exists (do not re-derive from scratch):
 - **SDD in engram**: `sdd/<change>/spec` (Given/When/Then scenarios), `design`, `tasks`, and the **kickoff DoD** (already in Given/When/Then).
-- **Organic change (ODD)**: there is no spec. Read the feature-doc `mala-pata/odd/<change>.md` (if it exists) + the organic kickoff's `## Done` (free-text "when X, Y") and DERIVE the Given/When/Then from those (Given = initial state implied by X, When = the action, Then = Y). Do not invent behavior the Done does not state.
+- **Organic change (ODD)**: there is no spec. Read the feature-doc `mala-pata/odd/<change>.md` (if it exists) + the organic kickoff's `## DoD` (now Given/When/Then) and use it directly. Do not invent behavior the DoD does not state.
 - **The real change**: the diff (`gh pr diff <n>` / `git -C <repo> diff <base>...<branch>`), and the **endpoints / screens / commands** that were touched.
 - **Roadmap**: IN/OUT and success criteria of each phase.
 - Keep ONLY the **user-observable behavior**, not the internals. If something is only visible by reading code, it is not walkthrough material.

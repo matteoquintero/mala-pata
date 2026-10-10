@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.12.0"
+  version: "2.13.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -151,6 +151,7 @@ Produce the phase graph with these rules (all of them, none optional):
       cannot be known without exploring) → tentative **loop:PROFILE** (FULL/STANDARD/LITE/MINIMAL).
   - For each loop phase, note **which design decision** makes it loop — it is what triage re-checks
     on arrival (if it is already resolved, the phase becomes organic).
+- **Bias: fewer loops, finer segregation.** `loop` is the heaviest lane (full SDD + design ceremony); prefer **shot > organic > loop**. Mark a phase `loop` ONLY when a design decision is genuinely open AND cannot be isolated into something smaller. When a phase looks like a loop, first try to **split the design-decision into the smallest possible loop** (or resolve it with the one triage question → organic) so the rest become shot/organic. **More, smaller phases that route to shot/organic beat fewer big loops.** Count the loops and justify each — a roadmap that is mostly loops is a smell.
 - **The hard CEILING of size is "fits in ONE unit".** A `loop:FULL` is the ceiling of a
   loop phase; an organic phase fits if the change is already specifiable. **If a phase would be larger
   than a FULL → it is SPLIT.** No exception.
@@ -161,9 +162,7 @@ Produce the phase graph with these rules (all of them, none optional):
   phases do not step on each other or duplicate work.
 - **Dependencies as a DAG**: each phase declares which other phases it depends on. The graph has no cycles.
   Give the suggested topological order (what can be done in parallel, what is sequential).
-- **Anti-over-decomposition**: the FEWEST phases possible on the condition that each one
-  fits in a unit. Not 40 micro-phases; not one giant phase. If you hesitate between 3 large phases or 8
-  small ones, choose the minimum that respects the ceiling (loop:FULL) and context isolation.
+- **Granularity tie-breaker = fewer loops, not fewest phases.** Still no meaningless micro-phases (not 40 fragments) and no one giant phase — but when you hesitate between 3 large phases (some loops) and more smaller ones that route to shot/organic, **prefer the finer split that removes loops**. Each phase must still be a shippable vertical slice that fits in ONE unit and isolates its context. (This deliberately leans finer than "fewest phases" — the goal is fewer LOOPS, not fewer phases.)
 
 ## Step 4-bis — Tentative route vs triage decision (contract)
 
@@ -207,6 +206,7 @@ discovering what was missing). Do the gap analysis:
 - **Core vs complete:** core = the phases with `Deferrable? = no`; complete = all of them. Read it from the `Deferrable?` column — do not recompute. If the core is 1 phase and the DAG has 5, say so explicitly.
 - **Magnitude of the problem:** scope / frequency / severity (from research's "Problem dimension"; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
 - **Cheapest workaround:** the known minimal alternative (an existing tweak, a one-line fix) + its cost, even if it is not the "complete" solution. If it exists, the human has to see it BEFORE approving N phases.
+- **Loops:** `<n>` of `<N>` phases are `loop` (the heaviest lane). Prefer shot/organic; justify each loop by its open design decision. A roadmap that is mostly loops is a smell — segregate finer to convert loops into organic/shot.
 
 Then the **MANDATORY coverage table** (MECE): each axis of the desired state (Step 1) appears with EXACTLY ONE status. No axis missing nor silently slipped into Level 2 — a desired-state axis not in the table is a **silent drop** (gate fails).
 

@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -87,20 +87,26 @@ Report the **verified result** + every failed/skipped/pending check + next step.
 
 ## Step 8 — Final table (MANDATORY)
 
-Same format as `/mala-pata-loop-start` Step 5: Markdown table, one milestone per row, status (curated typographic glyph + word, no emoji: `✓ MERGED`, `✓ GREEN`, `✓ Done`, `○ N/A`; non-green rows `◐ partial: <reason>` / `✗ red: <reason>`) + concrete evidence. Typical rows (only those that apply):
+**BLUF first** — one `Result:` line above the table: `Result: ✓ complete · <n>/<n> milestones` (or `◐ partial` / `✗ blocked` with the reason).
 
-| Milestone | Status |
-|---|---|
-| Authorization | change authorized / read-only |
-| Worktree + base | `<branch>` off `<base>` |
-| Explore (Where) | `<n>` files/modules touched |
-| Feature-doc (if substantial) | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
-| Apply (TDD if applies) | Red-Green-Refactor, `<n>` tests |
-| Smoke test (fixtures + confirmation) | ✓ functionality OK · or `○ N/A (did not apply)` |
-| Work-unit commits | `<n>` commits · RDD assess: `<granted/passive/…>` |
-| PR `#<n>` → `<branch>` | ✓ MERGED (merge commit `<sha>`) |
-| CI post-merge | ✓ GREEN |
-| Cleanup (worktree + branch) | ✓ Done |
+Then the table — one milestone per row, 3 columns. Status uses the shared workflow lexicon glyph + word (`✓ done` / `◐ partial: <reason>` / `○ pending` / `✗ blocked: <reason>` / `∅ n/a`); the specifics go in the **Evidence** column, never a bare "ok". Same shape as `/mala-pata-loop-start` Step 5. Rows that apply:
+
+| Milestone | Status | Evidence |
+|---|---|---|
+| Authorization | ✓ done | change authorized (or read-only) |
+| Worktree + base | ✓ done | `<branch>` off `<base>` |
+| Explore (Where) | ✓ done | `<n>` files/modules touched |
+| Feature-doc (if substantial) | ✓ done | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
+| Apply (TDD if applies) | ✓ done | Red-Green-Refactor, `<n>` tests |
+| Smoke test (fixtures) | ✓ done / ∅ n/a | functionality OK, or did not apply |
+| Work-unit commits | ✓ done | `<n>` commits · RDD assess: `<granted/passive/…>` |
+| PR `#<n>` → `<branch>` | ✓ done | MERGED (merge commit `<sha>`) |
+| CI post-merge | ✓ done | GREEN |
+| Cleanup (worktree + branch) | ✓ done | branch + worktree removed |
+
+**No false green**: any milestone left partial/blocked carries its reason in Status (`◐ partial: <reason>` / `✗ blocked: <reason>`) — never mark `✓ done` over a red pipeline.
+
+**Structure:** Definition of Done + information radiator (Cockburn).
 
 **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 

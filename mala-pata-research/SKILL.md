@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.10.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -101,7 +101,7 @@ Collapse everything above into a **sharpened idea**: a clear problem statement p
 
 - **What** — concrete, observable objective.
 - **Why** — one-line motivation.
-- **Done (when)** — the testable definition, the "when X, Y happens".
+- **DoD** — the testable definition, in Given/When/Then ("Given <state>, When <action>, Then <observable result>").
 - **Decisions already made** — what of the approach/architecture the research already settled.
 - **Open decisions** — what remains unresolved (this is exactly what triage needs to separate organic from loop).
 - **Risk** — blast radius in one line.
@@ -134,11 +134,20 @@ size_signal: one-unit | multi-unit
 ### What exists in the code (real anchoring)
 ### Jobs-to-be-done
 ### Problem dimension (scope / frequency / severity — with evidence; mark what you asked)
-### Problem vs proposed solution (each piece: necessary / already-exists / derivable / extra)
-## Heilmeier Catechism (the 7 answered; mark which ones you asked the human and which are assumptions)
+### Problem vs proposed solution
+| Piece | Class (necessary / already-exists / derivable / extra) | Evidence | Provenance |
+|---|---|---|---|
+| <piece> | <class> | <file:line or source> | [noted] / [inferred] |
+## Heilmeier Catechism
+| # | Question | Answer | Provenance |
+|---|---|---|---|
+| 1 | <question, verbatim from the 7> | <answer> | [asked] / [assumed] / [noted] |
 ## Define — sharpened idea (draft for triage)
-- What / Why / Done (when) / Decisions made / Open decisions / Risk / Size signal
+- What / Why / DoD / Decisions made / Open decisions / Risk / Size signal
+## DoR (hand-off gate): What ✓ · Why ✓ · DoD ✓ · Decisions ✓
 ## Handoff
+
+Structure: Heilmeier Catechism (DARPA) + Double Diamond (Design Council). Verdict / size-signal / Left-OUT = house method.
 ```
 
 (The headings inside the template block are fixed English identifiers; only the `<...>` placeholders are filled at execution time.)
@@ -174,6 +183,7 @@ Then the plain-language summary:
   - **PROCEED** → `/mala-pata-triage <slug>` (or `/mala-pata-roadmap <slug>` if multi-unit), passing the draft of fields from Phase 3.
   - **SHARPEN** → answer the named questions and re-run research; do NOT route yet.
   - **RECONSIDER** → do NOT route; the decision is yours (kill, pivot, or proceed anyway accepting the risk with eyes open).
+- **Structure:** Heilmeier Catechism (DARPA) + Double Diamond (Design Council). Verdict / size-signal / Left-OUT = house method.
 
 This block is the ONLY way to close on the happy path.
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.

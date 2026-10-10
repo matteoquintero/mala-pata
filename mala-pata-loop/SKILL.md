@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.13.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -234,7 +234,10 @@ ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo
 - List of skills loaded according to domain (UI, RAG, LLM, etc.).
 
 ## Risks / open decisions
-- List to resolve within the SDD (Design is where they are resolved with the human, not here).
+| Item | Type | Owner | Provenance |
+|---|---|---|---|
+| <risk or open decision> | risk / open decision | design / human / triage | [noted] / [inferred] |
+(Open decisions are resolved within the SDD — Design is where they are settled with the human, not here.)
 
 <!-- ===== THE REQUEST — goes last on purpose. It is the instruction the executor carries out. ===== -->
 
@@ -272,13 +275,17 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
 5. **Your response to the human is a MANDATORY, standard closing (summary + kickoff)** — it is not optional nor "just the path". The whole summary comes from the kickoff you just wrote, inventing nothing. Emit exactly this structure:
 
    - Title: `**Kickoff ready — <change-name>**`
-   - Summary (one line per item):
-     - **What:** <one line>
-     - **Profile:** <FULL/STANDARD/LITE/MINIMAL>
-     - **Base → branch:** <base> → <type>/<change-name>
-     - **Worktree:** <absolute path>
-     - **DoD:** <testable criterion, one line>
-     - **Migration / Phases:** <reserved migration if applicable> · <n> phases
+   - Summary — a table:
+
+     | Field | Value |
+     |---|---|
+     | What | <one line> |
+     | Profile | <FULL/STANDARD/LITE/MINIMAL> |
+     | Base → branch | <base> → <type>/<change-name> |
+     | Worktree | <absolute path> |
+     | DoD | Given <state>, When <action>, Then <result> |
+     | Migration / Phases | <reserved migration if applicable> · <n> phases |
+   - **DoR:** What ✓ · Why ✓ · DoD ✓ · Decisions ✓
    - **Kickoff:** `<absolute path of the .md>`
    - **Next step** (in a code block, copy-paste):
 
@@ -286,7 +293,9 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
      /mala-pata-loop-start <absolute path of the .md>
      ```
 
-   Emit the field labels above (Kickoff ready, What, Profile, Base → branch, Worktree, DoD, Migration / Phases, Kickoff, Next step) **verbatim in English** — they are structural; only the values and any surrounding prose follow the conversation language.
+   - **Structure:** DoR-style brief (house method) + BLUF close.
+
+   Emit the field labels above (Kickoff ready, Field, Value, What, Profile, Base → branch, Worktree, DoD, DoR, Migration / Phases, Kickoff, Next step, Structure) **verbatim in English** — they are structural; only the values and any surrounding prose follow the conversation language.
 
    This block is the ONLY way to close on the happy path.
 

@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.13.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -98,8 +98,10 @@ Then the table — one milestone per row, 3 columns. Status uses the shared work
 | Explore (Where) | ✓ done | `<n>` files/modules touched |
 | Feature-doc (if substantial) | ✓ done | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
 | Apply (TDD if applies) | ✓ done | Red-Green-Refactor, `<n>` tests |
+| Migrations (if any) | ✓ done / ∅ n/a | provisional `<N>`, re-verified at merge |
 | Smoke test (fixtures) | ✓ done / ∅ n/a | functionality OK, or did not apply |
-| Work-unit commits | ✓ done | `<n>` commits · RDD assess: `<granted/passive/…>` |
+| Work-unit commits | ✓ done | `<n>` commits (Conventional) |
+| RDD per commit (if enabled) | ✓ done / ∅ n/a | assess: `<passive/granted>` · review: `<acknowledged / n-a>` |
 | PR `#<n>` → `<branch>` | ✓ done | MERGED (merge commit `<sha>`) |
 | CI post-merge | ✓ done | GREEN |
 | Cleanup (worktree + branch) | ✓ done | branch + worktree removed |

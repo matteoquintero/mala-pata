@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.13.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -250,7 +250,10 @@ Canonical rows (include ONLY those that apply; do NOT invent a row that did not 
 | Milestone | Status | Evidence |
 |---|---|---|
 | SDD cycle (explore→archive) | ✓ done | complete |
+| Preview gate | ✓ done | approved (1-line comprehension autotest) |
 | Verify | ✓ done | PASS `<n>/<n>`, `0 CRITICAL` |
+| Review per candidate (if RDD on) | ✓ done / ∅ n/a | `<acknowledged / n-a>` |
+| Migrations (if any) | ✓ done / ∅ n/a | final `<N>` (first-to-merge) |
 | Smoke test (fixtures + human confirmation) | ✓ done / ∅ n/a | functionality OK, or did not apply |
 | e2e real case `<id>` | ✓ done | `<obtained>` vs `<expected>` (delta `<%>`) |
 | No-regression | ✓ done | `<Nf>/<Ne>` identical to baseline |

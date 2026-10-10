@@ -4,7 +4,7 @@ description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.5.0"
+  version: "2.6.0"
 ---
 
 # /mala-pata-loop-orchestrate — Plan a BATCH of kickoffs (READ-ONLY)
@@ -79,24 +79,38 @@ From each kickoff take:
    (ff/rebase of the worktrees) is done by the start skill; here it is only reported so the user
    knows before launching.
 
-## Step 4 — Output: PLAN as a wave table + commands + handoff to start
-ALWAYS return:
-1. **Wave table**: `Wave | kickoff (#id) | start phase | parallelizes with | boundary (up to what
-   phase in parallel) | conflict/note`.
-2. **Copy-paste commands** per wave, to run each cycle by hand if the user does NOT want to launch in Warp:
+## Step 4 — Output: PLAN (BLUF) + wave table + warnings table + commands + handoff
+ALWAYS return, in this order:
+
+1. **BLUF line (first):** `Plan: <n> kickoffs → <w> waves · <k> conflicts · recommended: <launch wave 1 | split X | defer Y>`.
+
+2. **Wave table** — waves derive from the dependency network (the `Depends on` column makes it visible):
+
+   | Wave | Kickoff (#id) | Start phase | Depends on | Parallelizes with | Boundary (up to which phase in parallel) | Conflict / note |
+   |---|---|---|---|---|---|---|
+   | 1 | <slug> | explore | — | {<slug>, <slug>} | design | <file clash / migration / none> |
+
+3. **Warnings table** — one row per issue, never a flat list:
+
+   | Type | Kickoffs | Evidence | Recommendation |
+   |---|---|---|---|
+   | file clash / migration collision / dependency / split / deferral / final-tail / base-freshness | <slugs> | <file:line / number / branch behind> | <serialize / renumber / defer / split / ff first> |
+
+4. **Copy-paste commands** per wave (to run each cycle by hand instead of Warp):
    ```
    /mala-pata-loop-start <absolute-path-of-kickoff>.md
    ```
-   (All enter through **Explore**; make that clear. The difference is the wave and up to which phase it can advance
-   in parallel.)
-3. **Handoff to start**: the line to launch the batch (or a wave) in Warp with the sibling skill:
+   (All enter through **Explore**; the difference is the wave and how far it advances in parallel.)
+
+5. **Handoff to start** (Warp launch via the sibling skill):
    ```
    /mala-pata-loop-orchestrate-start <kickoffs-of-the-wave-to-launch>
    ```
-   Make clear to the user: `orchestrate` only plans; to create worktrees + open sessions use
-   `orchestrate-start`.
-4. **Warnings**: file clashes, migration collision, dependencies, recommended splits,
-   deferrals, final tail coordination, and **base freshness** (Step 3.7).
+   `orchestrate` only plans; to create worktrees + open sessions use `orchestrate-start`.
+
+**Emit this block's structural labels verbatim in English** — the BLUF line, both table headers and the command lines stay English; only the values follow the conversation language.
+
+**Structure:** Precedence diagramming / PDM (PMBOK) + wave layering (house method).
 
 ## Hard rules
 - **DO NOT** execute anything mutating: no worktrees, no ff/rebase, no launch config, no opening sessions.

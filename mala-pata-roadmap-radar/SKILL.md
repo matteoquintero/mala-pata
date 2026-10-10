@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -87,14 +87,14 @@ Then the real table:
 
 | # | Phase | slug | Route | Depends on | Status | Evidence |
 |---|---|---|---|---|---|---|
-| 1 | <name> | <slug> | loop:STD | — | ✓ done | merge <sha> / PR #<n> |
+| 1 | <name> | <slug> | loop:STANDARD | — | ✓ done | merge <sha> / PR #<n> |
 | 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits |
 | 3 | <name> | <slug> | shot | 1 | ○ pending | no branch |
 | 4 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
 
 Then the closing lines (plain text):
 `Legend: ✓ done = merged to integration (git) · ◐ in progress = live branch/PR not merged · ○ pending = no branch · ✗ blocked = pending with unfinished deps`
-`Structure: information radiator (Cockburn) + workflow-state lexicon.`
+`Structure: information radiator (Cockburn) + workflow-state lexicon. Live-git state derivation + ready-now computation = house method.`
 
 - The table carries **one row per roadmap phase**, in the `.md` order. No phase is omitted.
 - State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.

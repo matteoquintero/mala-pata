@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.13.0"
+  version: "2.14.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -151,7 +151,21 @@ Produce the phase graph with these rules (all of them, none optional):
       cannot be known without exploring) → tentative **loop:PROFILE** (FULL/STANDARD/LITE/MINIMAL).
   - For each loop phase, note **which design decision** makes it loop — it is what triage re-checks
     on arrival (if it is already resolved, the phase becomes organic).
-- **Bias: fewer loops, finer segregation.** `loop` is the heaviest lane (full SDD + design ceremony); prefer **shot > organic > loop**. Mark a phase `loop` ONLY when a design decision is genuinely open AND cannot be isolated into something smaller. When a phase looks like a loop, first try to **split the design-decision into the smallest possible loop** (or resolve it with the one triage question → organic) so the rest become shot/organic. **More, smaller phases that route to shot/organic beat fewer big loops.** Count the loops and justify each — a roadmap that is mostly loops is a smell.
+- **Split only when the cut PAYS OFF — default to fewer, bigger phases.** The number to minimize is
+  the **LOOP count, not the phase count** (`loop` is the heaviest lane: full SDD + design ceremony).
+  So default to the fewest phases that each still fit in ONE unit, and split a phase ONLY when the cut
+  earns one of these three payoffs:
+    1. **It converts a loop into organic/shot** — carve out the piece that holds the open design
+       decision so it is the ONLY loop, and the rest drop to the cheaper lanes. This is the biggest
+       payoff; it is why the lane preference is **shot > organic > loop**.
+    2. **It unlocks parallelism** — two independent slices that can then run at the same time.
+    3. **It isolates a risky or irreversible piece** (migration, fiscal/contract, security) so that
+       piece ships and is verified on its own.
+  A cut that earns NONE of the three does not justify a new phase — that is over-decomposition. Mark a
+  phase `loop` ONLY when its design decision is genuinely open AND cannot be carved into a smaller loop
+  with the rest downgraded; when a phase looks like a loop, first try payoff #1 (split the
+  design-decision into the smallest possible loop, or close it with the one triage question → organic).
+  Count the loops and justify each — a roadmap that is mostly loops is a smell.
 - **The hard CEILING of size is "fits in ONE unit".** A `loop:FULL` is the ceiling of a
   loop phase; an organic phase fits if the change is already specifiable. **If a phase would be larger
   than a FULL → it is SPLIT.** No exception.
@@ -162,7 +176,12 @@ Produce the phase graph with these rules (all of them, none optional):
   phases do not step on each other or duplicate work.
 - **Dependencies as a DAG**: each phase declares which other phases it depends on. The graph has no cycles.
   Give the suggested topological order (what can be done in parallel, what is sequential).
-- **Granularity tie-breaker = fewer loops, not fewest phases.** Still no meaningless micro-phases (not 40 fragments) and no one giant phase — but when you hesitate between 3 large phases (some loops) and more smaller ones that route to shot/organic, **prefer the finer split that removes loops**. Each phase must still be a shippable vertical slice that fits in ONE unit and isolates its context. (This deliberately leans finer than "fewest phases" — the goal is fewer LOOPS, not fewer phases.)
+- **Tie-breaker + fragmentation floor.** When you hesitate between fewer big phases and more small ones,
+  decide by the payoffs above: prefer the finer split ONLY if it removes a loop or unlocks parallelism —
+  never to raise the phase count for its own sake. The floor that stops fragmentation is the **vertical
+  slice**: every phase must be a shippable, independently testable slice that fits in ONE unit and
+  isolates its context (the IN/OUT and ceiling rules above). A cut that produces something that cannot
+  ship or be verified on its own is too fine — reject it no matter how it affects the loop count.
 
 ## Step 4-bis — Tentative route vs triage decision (contract)
 
@@ -206,7 +225,10 @@ discovering what was missing). Do the gap analysis:
 - **Core vs complete:** core = the phases with `Deferrable? = no`; complete = all of them. Read it from the `Deferrable?` column — do not recompute. If the core is 1 phase and the DAG has 5, say so explicitly.
 - **Magnitude of the problem:** scope / frequency / severity (from research's "Problem dimension"; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
 - **Cheapest workaround:** the known minimal alternative (an existing tweak, a one-line fix) + its cost, even if it is not the "complete" solution. If it exists, the human has to see it BEFORE approving N phases.
-- **Loops:** `<n>` of `<N>` phases are `loop` (the heaviest lane). Prefer shot/organic; justify each loop by its open design decision. A roadmap that is mostly loops is a smell — segregate finer to convert loops into organic/shot.
+- **Loops:** `<n>` of `<N>` phases are `loop` (the heaviest lane). A roadmap that is mostly loops is a smell — apply the 3-payoff split rule (Step 4) to keep loops few and small.
+
+**Loop justification** (one line per `loop` phase — the open design decision that keeps it a loop; a phase with no genuinely open decision is NOT a loop):
+- **<# phase> <name>** — <the design decision that is genuinely open>.
 
 Then the **MANDATORY coverage table** (MECE): each axis of the desired state (Step 1) appears with EXACTLY ONE status. No axis missing nor silently slipped into Level 2 — a desired-state axis not in the table is a **silent drop** (gate fails).
 
@@ -227,11 +249,19 @@ The human signs off on what stays inside (incl. extra-proposals), what is deferr
 
 If the objective is enormous (several large dimensions), explicitly offer the scope decision: **(a)** a multi-dimension roadmap (all), or **(b)** narrow this roadmap to one/some dimensions and the rest in separate roadmaps. The human chooses the scope; you do not decide it alone.
 
-Then present the DAG (phases, **tentative routes** organic/loop/shot, dependencies, order) and **wait for OK before writing the `.md`**. Options: **Approve** (write the roadmap with the confirmed scope), **Adjust** (human corrects dimensions/phases/routes/borders/order/scope, you re-present), **Stop**. Do not write without approval.
+Then present the DAG (phases, **tentative routes** organic/loop/shot, dependencies, order). The order line carries `Suggested order`, `Parallelizable: {…}`, and `Deferred: {…}` (the `Deferrable? = yes` phases, read from the column — do not recompute).
 
-**Structure:** Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route = house method.
+**Split decisions** (optional — include ONLY when non-obvious cuts were made; omit the whole block when every cut was obvious): one row per non-obvious split, showing which payoff of the 3-payoff rule (Step 4) it earns, plus any rejected over-decomposition so the human sees what was deliberately NOT split.
 
-**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`), the order line labels (`Suggested order`, `Parallelizable`), and the table columns (`Phase`, `slug`, `Tentative route`, `Depends on`, `Deferrable?`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
+| Candidate cut | Payoff | Verdict |
+|---|---|---|
+| <cut> | #1 convert loop→organic · #2 parallelism · #3 isolate risky/irreversible · none | accepted · rejected — <reason> |
+
+Then **wait for OK before writing the `.md`**. Options: **Approve** (write the roadmap with the confirmed scope), **Adjust** (human corrects dimensions/phases/routes/borders/order/scope, you re-present), **Stop**. Do not write without approval.
+
+**Structure:** Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route / 3-payoff split rule = house method.
+
+**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Loop justification`, `Split decisions`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`, `Loops`), the order line labels (`Suggested order`, `Parallelizable`, `Deferred`), and the table columns (`Phase`, `slug`, `Tentative route`, `Depends on`, `Deferrable?`, `Candidate cut`, `Payoff`, `Verdict`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
 
 ## Step 6 — Where to save + write the roadmap
 
@@ -277,7 +307,14 @@ phases_total: <N>
 > re-decides shot/organic/loop with the information of the moment (see Step 4-bis). Previous phases may change
 > the route of a later one.
 
-Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2, 3}
+Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2, 3}   ·   Deferred: {4, 5}
+
+## Split decisions (optional)
+<include ONLY when non-obvious cuts were made; omit this section otherwise>
+
+| Candidate cut | Payoff | Verdict |
+|---------------|--------|---------|
+| <cut> | #1 convert loop→organic · #2 parallelism · #3 isolate risky/irreversible · none | accepted · rejected — <reason> |
 
 ## Objective coverage
 
@@ -314,7 +351,7 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 (same for each phase)
 
 ---
-Structure: Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route = house method.
+Structure: Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route / 3-payoff split rule = house method.
 ```
 
 ## Rules

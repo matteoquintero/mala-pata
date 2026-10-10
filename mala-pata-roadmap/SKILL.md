@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.11.0"
+  version: "2.12.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -203,48 +203,33 @@ discovering what was missing). Do the gap analysis:
 
 ## Step 5 — Coverage gate + human gate of the DAG
 
-Before asking for OK, validate **MECE** over the dimensions (no overlaps, no gaps) and show the **MANDATORY
-coverage table**: **each axis of the desired state (Step 1) appears in the table with EXACTLY ONE
-status.** No axis can be missing nor "slip" into Level 2 without being mapped first — an axis of the desired state
-that is not in the table is a **silent drop** (the gate fails). **Hard check: number of axes in the table
-== number of axes in Step 1.**
+**Bottom line first (BLUF — THIS is the decision the human makes; show it BEFORE the coverage detail):**
+- **Core vs complete:** core = the phases with `Deferrable? = no`; complete = all of them. Read it from the `Deferrable?` column — do not recompute. If the core is 1 phase and the DAG has 5, say so explicitly.
+- **Magnitude of the problem:** scope / frequency / severity (from research's "Problem dimension"; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
+- **Cheapest workaround:** the known minimal alternative (an existing tweak, a one-line fix) + its cost, even if it is not the "complete" solution. If it exists, the human has to see it BEFORE approving N phases.
 
-Possible statuses per axis:
-- **covered** → the phase(s) that cover it.
-- **extra-proposal** → the phase(s); the human did not request it but the objective implies it.
-- **deferred** → with reason (or "separate roadmap").
-- **→ Level 2** → with reason: it is an axis of the desired state that is decided to be left in the broad-domain checklist,
-  NOT one that disappears. It must appear here **AND** in the Level 2 list below.
+Then the **MANDATORY coverage table** (MECE): each axis of the desired state (Step 1) appears with EXACTLY ONE status. No axis missing nor silently slipped into Level 2 — a desired-state axis not in the table is a **silent drop** (gate fails).
 
-```
-Objective coverage (desired state → DAG) — ALL the axes of Step 1, one per line:
-- Axis 1 <name> → Phases 1, 3        [covered]
-- Axis 2 <name> → Phase 4            [covered]
-- Axis 3 <name> → Phase 7            [EXTRA-PROPOSAL — you didn't ask for it; the objective implies it]
-- Axis 4 <name> → DEFERRED (reason) / separate roadmap
-- Axis 5 <name> → Level 2 (reason)   [stays as a checklist, not as a phase]
-(… one line for EACH axis of Step 1, no exception — the count must match)
+| Axis (desired state) | Covered by | Status |
+|---|---|---|
+| <axis 1> | Phases 1, 3 | covered |
+| <axis 2> | Phase 4 | covered |
+| <axis 3> | Phase 7 | extra-proposal (you didn't ask; the objective implies it) |
+| <axis 4> | — | deferred (reason / separate roadmap) |
+| <axis 5> | — | → Level 2 (reason) |
 
-Level 2 — broad domain NOT covered (checklist, mark whether something gets promoted to a phase):
+**MECE check:** `axes in Step 1: N · axes in table: N · overlaps: none` — the two counts MUST match.
+
+Level 2 — broad domain NOT covered (checklist; mark whether something gets promoted to a phase):
 - [ ] <domain capability 1>   - [ ] <domain capability 2>   - [ ] …
-```
 
-The human signs off on what stays inside (including the extra-proposals), what is deferred, and whether anything from Level 2
-(or an axis sent to Level 2) gets promoted to a phase. **You propose too much; the human trims.**
+The human signs off on what stays inside (incl. extra-proposals), what is deferred, and whether anything from Level 2 (or an axis sent to Level 2) gets promoted to a phase. **You propose too much; the human trims.**
 
-If the objective is enormous (several large dimensions), explicitly offer the scope decision:
-**(a)** a multi-dimension roadmap (all of them), or **(b)** narrow this roadmap to one/some dimensions and
-the others in separate roadmaps. The human chooses the scope; you do not decide it alone.
+If the objective is enormous (several large dimensions), explicitly offer the scope decision: **(a)** a multi-dimension roadmap (all), or **(b)** narrow this roadmap to one/some dimensions and the rest in separate roadmaps. The human chooses the scope; you do not decide it alone.
 
-**Before asking for OK, show the decision block (MANDATORY — it is what lets over-sizing get caught):**
-- **Core vs complete**: it comes DIRECTLY from the `Deferrable?` column of the table — the **core** is the phases with `Deferrable? = no`; the **complete** is all of them. Do not recompute it: read the column. If the core is 1 phase and the DAG has 5, say so explicitly.
-- **Magnitude of the problem**: scope / frequency / severity (from research's "Problem dimension"; if it did not come, measure it here). A small problem with a large DAG is the alarm signal.
-- **Cheapest workaround**: the known minimal alternative (an already-existing tweak, a one-line fix) and its cost, even if it is not the "complete" solution. If it exists, the human has to see it BEFORE approving N phases.
+Then present the DAG (phases, **tentative routes** organic/loop/shot, dependencies, order) and **wait for OK before writing the `.md`**. Options: **Approve** (write the roadmap with the confirmed scope), **Adjust** (human corrects dimensions/phases/routes/borders/order/scope, you re-present), **Stop**. Do not write without approval.
 
-Then present the DAG (phases, **tentative routes** organic/loop, dependencies, order) and **wait for OK
-before writing the `.md`**. Options: **Approve** (you write the roadmap with the confirmed scope),
-**Adjust** (the human corrects dimensions/phases/routes/borders/order/scope and you re-present), **Stop**.
-Do not write without approval.
+**Structure:** Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route = house method.
 
 **Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`), the order line labels (`Suggested order`, `Parallelizable`), and the table columns (`Phase`, `slug`, `Tentative route`, `Depends on`, `Deferrable?`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
 
@@ -320,12 +305,16 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 - **OUT**: <what it does NOT include — stays for another phase>
 - **DoD** (Given/When/Then):
   - [ ] Given <state>, When <action>, Then <observable result>.
+- **DoR**: What ✓ · DoD ✓ · Decisions ✓ — the phase is ready to route when these hold.
 - **To start**: `/mala-pata-triage <description of this phase>` (triage decides organic/loop/shot with
   the information of the moment; one phase = one unit; use the `slug` above as the change-name so that
   progress can be tracked with `mala-pata-roadmap-radar`).
 
 ### Phase 2 — …
 (same for each phase)
+
+---
+Structure: Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route = house method.
 ```
 
 ## Rules

@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -79,9 +79,9 @@ Banner (2 lines):
 `Source: roadmap.md + live git · NO engram · <date-time>`
 
 BLUF (3 lines):
-`Bottom line: ✓ <d> · ◐ <p> · ○ <q> · ✗ <b>  (of <N> phases)`
-`Ready to start now: <phases whose deps are all done>  ·  in parallel: { <phase>, <phase> }`
-`In progress now: <phases with live branch/PR>  ·  Blocked: <phase> → waits for <phase(s)>`
+`Bottom line: ✓ <d> done · ◐ <p> in progress · ○ <q> pending · ✗ <b> blocked  (of <N> phases)`
+`Ready to start now: phases <list> (deps all done)  ·  launch in parallel: { <phase>, <phase> }`
+`In progress now: <phases, or none>  ·  Blocked: phase <x> (waits for <y>)`
 
 Then the real table:
 

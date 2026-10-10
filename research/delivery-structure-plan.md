@@ -30,6 +30,8 @@ with a `Structure:` footer citing it (or honestly labelled `house method`).
   overrides the earlier "shot = no table" note.
 - **Tables render as REAL Markdown tables, NEVER inside a ``` code fence** — a fenced table shows raw
   pipes and does not render as a bordered table. Only banner/BLUF/legend/footer lines are plain text.
+- **Count / summary lines always carry the WORD, not just glyph + number** — `✓ 2 done · ○ 3 pending`,
+  never `✓ 2 · ○ 3` (glyph + number alone is unreadable; the glyph needs its word next to it).
 
 > Open glyph confirmations: `∅` for n/a and the Attention set above. All are typographic (not emoji):
 > `∅` U+2205, `→` U+2192, `◆` U+25C6, `‖` U+2016, `·` U+00B7. Add them to the allowed whitelist.

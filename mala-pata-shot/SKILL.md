@@ -4,7 +4,7 @@ description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree
@@ -48,11 +48,14 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 3. **Understand (1-3 files).** Locate what must be touched (codegraph/serena, or grep/Read as fallback). **If you need 4+ files, or a design decision appears, or the blast radius grows → STOP** (Rule #1): it is not shot, bounce to `/mala-pata-organic`.
 4. **Edit + checks.** Apply the change with the **project's TDD mode**: if strict TDD is on, Red → Green → Refactor; otherwise, targeted functional checks. Run the **check that proves this change** (not the whole suite, unless it is cheap). Never consider it done without seeing the check green.
 5. **Work-unit commit.** `git -C <ABS-repo>` with explicit pathspec and a Conventional Commit. If **RDD is on**, after the commit run `gentle-ai review assess --cwd <ABS-repo> --json` and follow the native plan (for a trivial change it almost always yields passive). The full RDD detail lives in the CLAUDE.md ODD protocol — do not reimplement it.
-6. **Close (one line, fixed format).** Emit exactly one line:
-   - success → `✓ <change> — Check: <cmd → result> · Commit: <sha> <type(scope): subject> · Next: push/PR is yours`
-   - stopped → `✗ stopped: <why> → /mala-pata-organic`
+6. **Close (compact table — one row).** Emit a single-row table:
 
-   **Push, PR and merge are left to the human** (shot does not open a PR on its own unless you ask). No feature-doc, no table — keeping it to one line is what makes the lane fast. Emit the labels `Check` / `Commit` / `Next` **verbatim in English**; the values follow the conversation language.
+   | Result | Change | Check | Commit | Next |
+   |---|---|---|---|---|
+   | ✓ | <change> | <cmd → result> | <sha> <type(scope): subject> | push/PR is yours |
+
+   If it did NOT finish → the same table with one row starting `✗` and `stopped: <why> → /mala-pata-organic`.
+   **Push, PR and merge are left to the human** (shot does not open a PR unless you ask). Keep it to this one-row table (no feature-doc) — that is what keeps the lane fast. Labels (`Result` / `Change` / `Check` / `Commit` / `Next`) **verbatim in English**; values follow the conversation language.
    **Structure:** Definition of Done + Conventional Commits. The shot lane itself = house method.
 
 ## Escape guard (Rule #1, but midway)

@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -170,14 +170,18 @@ whole doc pasted. The human decides with this alone.
     **even if it is the opposite of what the human asked for** — this is exactly what research exists for.
     Killing an idea here is cheap; after an entire roadmap, it is not.
 
-Then the plain-language summary:
-- **What it proposes** — one sentence, no jargon.
-- **Why** — 2-4 key findings that support it.
-- **What it will do** — the high-level shape (tiers/pieces/compact phases).
-- **Problem size** — scope / frequency / severity (from Phase 1d) — the human decides the size by looking at THIS, not at the volume of code.
-- **What matters** — main risk + open decisions.
-- **Size signal:** one-unit | multi-unit.
-- **Left OUT / pending** — MANDATORY **only if the signal is single-unit** (it goes to an organic/loop/shot cycle, NOT to roadmap). List each piece from Phase 1e that fell out of scope (already-exists / derivable / extra), one per line, with why and who decided: `<piece> — <why it stays out> — [skill rule | judgment]`. Nothing disappears silently: if you chose a small cycle, the human has to see what does NOT go in and be able to add it. If the signal is multi-unit → this block does NOT go: the roadmap covers everything, and what can wait is marked there with the `Deferrable?` column (it is not discarded).
+Then the plain-language summary **as a table** (the verdict stays the line above; this is the required ≥1 table):
+
+| Field | Value |
+|---|---|
+| What it proposes | <one sentence, no jargon> |
+| Why | <2-4 key findings that support it> |
+| What it will do | <high-level shape: tiers / pieces / compact phases> |
+| Problem size | <scope / frequency / severity (Phase 1d) — decide size by THIS, not code volume> |
+| What matters | <main risk + open decisions> |
+| Size signal | one-unit \| multi-unit |
+
+- **Left OUT / pending** — MANDATORY **only if the signal is single-unit** (goes to an organic/loop/shot cycle, NOT roadmap). One line per piece from Phase 1e that fell out of scope (already-exists / derivable / extra): `<piece> — <why it stays out> — [skill rule | judgment]`. Nothing disappears silently. If multi-unit → this block does NOT go (the roadmap covers it with `Deferrable?`).
 - **Doc:** `<absolute path of the .md>`
 - **Next step — DEPENDS on the verdict:**
   - **PROCEED** → `/mala-pata-triage <slug>` (or `/mala-pata-roadmap <slug>` if multi-unit), passing the draft of fields from Phase 3.

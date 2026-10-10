@@ -26,6 +26,8 @@ with a `Structure:` footer citing it (or honestly labelled `house method`).
 - **Footer (one line, last):** `Structure: <Framework> (<url>)` — or `Structure: house method`
 - **Rules carried over:** structural labels emitted VERBATIM in English; tables never flat lists for
   findings/status/coverage; BLUF/Minto — verdict/decision line FIRST, evidence after.
+- **Every emitter output carries at least ONE table** — even shot (a compact one-row table). This
+  overrides the earlier "shot = no table" note.
 
 > Open glyph confirmations: `∅` for n/a and the Attention set above. All are typographic (not emoji):
 > `∅` U+2205, `→` U+2192, `◆` U+25C6, `‖` U+2016, `·` U+00B7. Add them to the allowed whitelist.
@@ -56,7 +58,7 @@ core-vs-complete/Deferrable/Level-1-2/tentative-route, kickoff brief fields, gap
 
 ### 3. shot
 - IMPROVE: one-line fixed close `✓ <change> — Check: <cmd → result> — Commit: <sha> <type(scope): subject>` and `✗ stopped: <why> → /mala-pata-organic`.
-- ADD: English-label guard; short `Structure:` footer. (NO table, NO feature-doc — keep the lane fast.)
+- ADD: English-label guard; short `Structure:` footer. (A compact one-row table, no feature-doc — keep the lane fast.)
 - Footer: `Definition of Done + Conventional Commits`.
 - House: the shot lane itself.
 

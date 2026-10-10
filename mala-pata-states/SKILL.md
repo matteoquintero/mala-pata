@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -116,14 +116,23 @@ Default output (if the user does not ask for another path): `<project-root>/docs
 
 ## Phase 5 — Close (without judging)
 
-Present:
+**BLUF first** (plain line):
+- Happy path: `Drew <n> machine(s) · <s> states · <t> transitions → <absolute HTML path>`.
+- Not supported: `✗ not supported: no explicit state enum (v1 does not extract implicit/scattered state)`.
 
-- The absolute path of the delivered HTML.
-- A summary of WHAT was drawn: how many machines, how many states and transitions per machine, and what was degraded to metadata/cards and why (e.g.: "`enviado_a_caja_parcialmente` was degraded to a card because it does not enable any action different from `cerrado`").
+Then **what was drawn** (a REAL Markdown table, NEVER fenced — one row per machine):
 
-Never a verdict of "this is broken" nor a list of findings — the human does that by opening the HTML.
+| Machine | States | Transitions | Degraded (reason) |
+|---|---|---|---|
+| <machine> | <n> | <m> | <state → card, why> or — |
 
-The only "I cannot" case: the feature has no explicit state enum. There the close is to say exactly that and that v1 does not support it (future extension), not a best-effort attempt on implicit state.
+- The absolute path of the delivered HTML (also in the BLUF line).
+- Never a verdict of "this is broken" nor a list of findings — the human does that by opening the HTML.
+- The only "I cannot" case: the feature has no explicit state enum → say exactly that and that v1 does not support it (future extension), not a best-effort attempt on implicit state.
+
+**Emit every structural label verbatim in English** — section headers, field labels, and table/column headers (`Machine`, `States`, `Transitions`, `Degraded (reason)`) stay English even when the conversation is in the user's language; only the values are localized.
+
+`Structure: Harel statecharts / UML state machine (rendered via archify). Orthogonal+minimal filter + degrade-to-card = house method.`
 
 ## Future extension (out of v1)
 

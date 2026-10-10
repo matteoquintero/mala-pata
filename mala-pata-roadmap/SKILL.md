@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.10.0"
+  version: "2.11.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -246,6 +246,8 @@ before writing the `.md`**. Options: **Approve** (you write the roadmap with the
 **Adjust** (the human corrects dimensions/phases/routes/borders/order/scope and you re-present), **Stop**.
 Do not write without approval.
 
+**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`), the order line labels (`Suggested order`, `Parallelizable`), and the table columns (`Phase`, `slug`, `Tentative route`, `Depends on`, `Deferrable?`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
+
 ## Step 6 — Where to save + write the roadmap
 
 1. **Ask where to save it**, suggesting the default **`mala-pata/roadmap/<slug>.md`**
@@ -290,7 +292,7 @@ phases_total: <N>
 > re-decides shot/organic/loop with the information of the moment (see Step 4-bis). Previous phases may change
 > the route of a later one.
 
-Suggested order (topological): 1 → (2 ∥ 3) → …   ·   Parallelizable: {2, 3}
+Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2, 3}
 
 ## Objective coverage
 

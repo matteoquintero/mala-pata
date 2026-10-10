@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -76,30 +76,35 @@ Hard rule: **if a step cannot be followed by someone who did not write the code,
 
 **Access block (MANDATORY, goes first — without this the lane is not delivered).** So the human can test without breaking anything, the script ALWAYS starts with how to access:
 - **URL**: that of the TEST environment (localhost:<port> or the test env). **NEVER production.**
-- **Test credentials**: the test user/login to use (indicate where they come from; do NOT paste real secrets — the QA lives inside the repo (`mala-pata/walkthroughs/`), Step 6).
+- **Test credentials**: the test user/login to use — **reference the credential SOURCE (the seeder/factory that creates the QA user, `.env.test`, or the secret manager), NEVER the literal value**. The QA file is committed to the repo (`mala-pata/walkthroughs/`, Step 6), so a pasted password / token / API-key would leak into git history. Test environment only.
 - **Server running**: how to bring up the app against the **test DB** and confirm it is up before starting.
 
 **Test table (MANDATORY, fixed format).** From the core, ONE row per scenario — this is the exact format, do not change it:
 
-| # | Given (path) | When | Then (what you must see) |
-|---|--------------|------|-----------------------------|
-| 1 | <concrete initial state + where/route> | <exact action> | <result observable by eye> |
+| # | Given (path) | When | Then (what you must see) | Pass/Fail | Failure signal |
+|---|---|---|---|---|---|
+| 1 | <concrete initial state + where/route> | <exact action> | <result observable by eye> | ✓ pass · ✗ fail | <what is seen if it did NOT work, not just the happy path> |
 
-Below the table, per scenario:
-- **pass/fail checkbox**.
-- **Failure signal**: what is seen if it did NOT work (not just the happy path).
+Below the table, per scenario (`Pass/Fail` and `Failure signal` now live IN the table columns):
 - **Test data and edge cases** explicit.
 - **Regression note**: what should NOT have changed and should be confirmed along the way.
 
 This lane is an **actionable checklist**, not prose. The **access block** and the **table** are ALWAYS mandatory.
 
+`Structure: Diátaxis how-to (internal verification) + BDD Given/When/Then (North). QA access block = house method.`
+
 ## Step 3.5 — `## Seed` section (fixtures recipe, for `mala-pata-seed`)
 
 walkthrough does NOT seed (it stays read-only) — it leaves the **recipe** for `mala-pata-seed` (standalone, on a branch) or the smoke-test gate (in-cycle, 4.1-ter / Step 7) to execute. If the change touches data, add a `## Seed (fixtures)` section to the QA:
-- **Which fixtures** — the minimal initial state needed to run the table, **derived from the core's `Given` + `Test data`** (+ the kickoff's `smoke_test.data` if it exists). Do NOT invent data: if a `Given` is not enough to fix a value, mark it "to confirm".
-- **Mechanism** — what to seed with (the project's seeders/factories detected by `sdd-init`). Name it, do not reimplement it.
-- **Where** — the **test DB** (never prod).
-- **Idempotent** — stable keys so that re-seeding does not collide.
+One row per fixture (a REAL Markdown table, NEVER fenced), **derived from the core's `Given` + `Test data`** (+ the kickoff's `smoke_test.data` if it exists):
+
+| Fixture | Derived from (Given) | Mechanism | Key | Status |
+|---|---|---|---|---|
+| <minimal fixture> | <the core `Given` + `Test data` it comes from> | <project seeder/factory from `sdd-init`> | <stable idempotent key> | ✓ ready · ◐ to confirm |
+
+- **Do NOT invent data** — if a `Given` is not enough to fix a value, its `Status` is `◐ to confirm`, never a guessed value.
+- **Where** — the **test DB** (never prod). **Idempotent** — stable keys so re-seeding does not collide.
+- Name the `Mechanism` (the project's seeders/factories detected by `sdd-init`); do not reimplement it.
 
 This section is the contract that `mala-pata-seed` reads. If the change does NOT touch data (e.g. purely visual), omit it and say so explicitly.
 
@@ -114,6 +119,8 @@ From the **SAME** core, rewrite for the end user:
 
 This lane **NEVER** mentions tests, branches, migrations or anything internal.
 
+`Structure: Diátaxis how-to / tutorial + Living Documentation (Adzic/Martraire).`
+
 ## Step 5 — Screenshots (optional, if the app can be run)
 
 If the stack allows bringing up the app **and the human OKs it**: capture the visual steps with the project's tool (Playwright if available) and replace the placeholders. If it is not possible or not wanted, leave the placeholders marked for the human to complete. **It is not mandatory** to close.
@@ -127,7 +134,13 @@ Diátaxis says **do NOT mix** → **two files**, not one:
 
 ## Step 7 — Human gate
 
-Present the two lanes (short summary + file paths) and **wait for OK or adjustments** before considering it closed. Like everything in the family: do not mark "done" with something unreviewed.
+**BLUF first** (plain line): `Walkthrough: <n> scenarios · 2 files · <k> to confirm`.
+
+Then present the two lanes (short summary + file paths) and **wait for OK or adjustments** before considering it closed. Like everything in the family: do not mark "done" with something unreviewed.
+
+**Emit every structural label verbatim in English** — in BOTH lanes and the `## Seed` block: section headers, field labels (`Access block`, `Test credentials`, `URL`, `Server running`), table/column headers (`Given (path)`, `When`, `Then`, `Pass/Fail`, `Failure signal`, `Fixture`, `Derived from (Given)`, `Mechanism`, `Key`, `Status`), and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+
+`Structure: Diátaxis (Procida) + BDD Given/When/Then (North) + Living Documentation (Adzic/Martraire). QA access block + two-lane split = house method.`
 
 ## Relation to the family
 

@@ -1,0 +1,9 @@
+{
+  "_comment": "Merge into the \"hooks\" object of ~/.gemini/settings.json. Replace __NOTIFY__ with $HOME/.mala-pata/bin/mala-pata-notify. Timeouts are in MILLISECONDS. NOTE: Gemini has no generic idle event — 'waiting' fires on ANY Notification, not only tool-permission.",
+  "AfterAgent": [
+    { "hooks": [{ "type": "command", "command": "__NOTIFY__ --event finished --agent gemini", "timeout": 5000 }] }
+  ],
+  "Notification": [
+    { "hooks": [{ "type": "command", "command": "__NOTIFY__ --event waiting --agent gemini", "timeout": 5000 }] }
+  ]
+}

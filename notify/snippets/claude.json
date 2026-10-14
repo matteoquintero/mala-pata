@@ -1,0 +1,9 @@
+{
+  "_comment": "Merge these into the \"hooks\" object of ~/.claude/settings.json. Replace __NOTIFY__ with $HOME/.mala-pata/bin/mala-pata-notify. install.sh does this automatically.",
+  "Stop": [
+    { "hooks": [{ "type": "command", "command": "__NOTIFY__ --event finished --agent claude-code" }] }
+  ],
+  "Notification": [
+    { "hooks": [{ "type": "command", "command": "__NOTIFY__ --event waiting --agent claude-code" }] }
+  ]
+}

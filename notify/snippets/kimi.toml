@@ -1,0 +1,12 @@
+# Append to ~/.kimi-code/config.toml. Replace __NOTIFY__ with $HOME/.mala-pata/bin/mala-pata-notify.
+# Only documented fields (event / command / timeout) — undocumented fields break Kimi's config load.
+
+[[hooks]]
+event = "Stop"
+command = "__NOTIFY__ --event finished --agent kimi"
+timeout = 5
+
+[[hooks]]
+event = "PermissionRequest"
+command = "__NOTIFY__ --event waiting --agent kimi"
+timeout = 5

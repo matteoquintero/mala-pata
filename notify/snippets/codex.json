@@ -1,0 +1,9 @@
+{
+  "_comment": "Merge into the \"hooks\" object of ~/.codex/hooks.json. Replace __NOTIFY__ with $HOME/.mala-pata/bin/mala-pata-notify. NOTE: editing hooks.json changes its trusted_hash, so Codex may prompt to re-trust the hooks on next launch.",
+  "Stop": [
+    { "hooks": [{ "type": "command", "command": "__NOTIFY__ --event finished --agent codex", "timeout": 5 }] }
+  ],
+  "PermissionRequest": [
+    { "hooks": [{ "type": "command", "command": "__NOTIFY__ --event waiting --agent codex", "timeout": 5 }] }
+  ]
+}

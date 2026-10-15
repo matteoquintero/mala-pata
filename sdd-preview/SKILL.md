@@ -9,7 +9,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.8.0"
+  version: "3.9.0"
 ---
 
 # sdd-preview — pre-apply executive summary (hard human gate)
@@ -94,6 +94,8 @@ A markdown artifact with exactly **4 mandatory sections**, none empty:
 ```markdown
 # Preview: <change-name>
 
+**Bottom line**: <ready to apply | needs adjustment | not ready> · Risk: <▲ high | ● medium | ▼ low> · Audit: <n> findings (<0/1/2> reviewers)
+
 **Profile**: <FULL/STANDARD/LITE/MINIMAL> · **Audit mode**: <active/inactive>
 
 ## What I'll do
@@ -113,7 +115,7 @@ A markdown artifact with exactly **4 mandatory sections**, none empty:
 - <things that can go wrong, things to watch closely — 1-3 lines>
 ```
 
-**Emit every section header, field label, enum/option token and table header VERBATIM in English** — `Preview`, `Profile`, `Audit mode`, `What I'll do`, `Affects`, `DoD (from the kickoff)`, `Risks`, `Findings & disposition`, `Finding` / `Severity` / `Disposition`, the severities `high`/`medium`/`low`, the dispositions `IGNORE`/`REFACTOR`/`ADJUST`/`REUSE`, and the gate options `Approve` / `Adjust` / `Stop` — **even when the conversation is in the user's language**. Only the bullet CONTENT and the VALUES follow the user's language; the labels are structural and are never localized.
+**Emit every section header, field label, enum/option token and table header VERBATIM in English** — `Preview`, `Profile`, `Audit mode`, `What I'll do`, `Affects`, `DoD (from the kickoff)`, `Risks`, `Bottom line`, `Findings & disposition`, `Finding` / `Severity` / `Disposition`, the Reuse-first headers `Piece` / `Verdict` / `Precedent` / `Note` with `REUSES`/`ADAPTS`/`NEW`, the Silent-assumptions headers `Assumption` / `Tag`, the severities `high`/`medium`/`low`, the provenance tags `[inferred]`/`[assumed]`, the dispositions `IGNORE`/`REFACTOR`/`ADJUST`/`REUSE`, and the gate options `Approve` / `Adjust` / `Stop` — **even when the conversation is in the user's language**. Only the bullet CONTENT and the VALUES follow the user's language; the labels are structural and are never localized.
 
 ### Word target per profile
 
@@ -152,16 +154,20 @@ When the self-assessment above decides ≥1 reviewer, this block is added after 
 |---|---|---|---|
 | <path> | NEW/MODIFIED/DELETED | <n> | <symbol> |
 
-### Reuse-first (REUSES / ADAPTS / NEW)
-- <new piece 1>: **REUSES** `<file:line>` — <existing helper that applies>
-- <piece 2>: **ADAPTS** `<file:line>` — <minimal difference>
-- <piece 3>: **NEW** — <why no equivalent exists>
+### Reuse-first (a REAL table, NEVER fenced — one row per new piece)
+| Piece | Verdict | Precedent | Note |
+|---|---|---|---|
+| <piece 1> | REUSES | `<file:line>` | <existing helper that applies> |
+| <piece 2> | ADAPTS | `<file:line>` | <minimal difference> |
+| <piece 3> | NEW | — | <why no equivalent exists> |
 
 ### Architecture smells
-- **▲ high / medium / · low**: <description> — `<file:line>` or `<task ref>`
+- **<▲ high · ● medium · ▼ low>**: <description> — `<file:line>` or `<task ref>`
 
-### Silent assumptions
-- <default that Apply would bake in if nobody looks>
+### Silent assumptions (a REAL table, NEVER fenced — one row per assumption)
+| Assumption | Apply would bake in | Tag |
+|---|---|---|
+| <the default> | <consequence if nobody looks> | [inferred] · [assumed] |
 
 ### Correctness / invariants (money lens — adopt when the domain triggers it)
 Perspectives to adopt, NOT a checklist to tick off — read the plan against the real code looking for:
@@ -179,6 +185,14 @@ Perspectives to adopt, NOT a checklist to tick off — read the plan against the
 - **Findings & disposition is ALWAYS a table** (`# | Finding | Severity | Disposition`), never a flat numbered list — it is what the human scans to decide. Severity uses the glyph + word `▲ high` · `● medium` · `▼ low`; Disposition is one enum + a one-line reason: `IGNORE` · `REFACTOR` · `ADJUST` · `REUSE` (objective-level findings do NOT go in this table — they escape backward, see below). The Blast-radius / Reuse-first / Architecture smells / Silent assumptions are the supporting analysis that feeds this table.
 - Reviewers do NOT see each other's output. Synthesis (merge + dedup) is done afterwards.
 - The **Correctness / invariants** category is MANDATORY when the self-assessment flagged the money/invariants trigger; if it is active and you find nothing, state which invariants you verified and why they are safe (same rule as empty-audit). It is a lens to adopt, not a checklist that replaces free adversarial reading.
+
+## Artifact footer (always last, before the gate)
+
+Close the artifact — after the summary, and after the audit block when present — with the Structure line:
+
+`Structure: BLUF (AR 25-50) + Minto Pyramid for ordering. 4 sections + 0/1/2 self-assessed audit + single-pass anti-loop + autotest gate = house method.`
+
+The **Bottom line** is the preview's own recommendation, NOT the decision — the GATE still runs and the human still decides (a `ready to apply` Bottom line never skips the autotest gate).
 
 ## A SINGLE PASS is the goal (ANTI-LOOP)
 

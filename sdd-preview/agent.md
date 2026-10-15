@@ -28,7 +28,8 @@ in your invocation message (`reviewer` or `synthesis` — default `reviewer`).
 
 2. Read the REAL code in the worktree path given to you (Grep/Glob/Read) — no abstract review.
 
-3. Produce the **executive summary** — 4 mandatory sections, none empty:
+3. Produce the **executive summary** — a BLUF line + 4 mandatory sections, none empty:
+   - **Bottom line** (first line, before the sections): `<ready to apply | needs adjustment | not ready> · Risk: <▲ high | ● medium | ▼ low> · Audit: <n> findings (<0/1/2> reviewers)` — the preview's own recommendation; the gate still runs and the human still decides.
    - **What I'll do**: 3-5 bullets, verb + concrete action.
    - **Affects**: files/modules impacted, 1-3 lines; include what's NOT touched if the scope has hard boundaries.
    - **DoD (from the kickoff)**: **verbatim copy** of the "Definition of Done" from the kickoff — do NOT reinvent.
@@ -38,19 +39,22 @@ in your invocation message (`reviewer` or `synthesis` — default `reviewer`).
    - MINIMAL: ≤100 words · LITE: ≤150 · STANDARD: ≤250 · FULL: ≤400.
    Target is orientative, not a hard cap — if honesty needs more, say so.
 
-5. If the invocation indicates **audit mode active** (sdd-tasks recommended ≥1 reviewer), also produce:
+5. Run the **Self-assessment** (see SKILL.md) to decide the number of reviewers (0/1/2) — the preview decides this itself, NOT `sdd-tasks`. If it decided **≥1 reviewer** (audit mode active), also produce:
    - **Findings & disposition** — a TABLE `# | Finding | Severity | Disposition`, one row per finding, anchored to `file:line`/task ref. Severity uses the glyph + word `▲ high` / `● medium` / `▼ low`; Disposition is one enum + a one-line reason: IGNORE / REFACTOR / ADJUST / REUSE. ALWAYS a table, NEVER a flat numbered list — this is what the human scans to decide.
    - **Blast-radius** (table: file, NEW/MODIFIED/DELETED, ~LOC, public symbol).
-   - **Reuse-first** (REUSE/ADAPT/NEW with `file:line`).
-   - **Architecture smells** (severity + `file:line` or task ref).
-   - **Silent assumptions** (defaults Apply would bake in).
+   - **Reuse-first** — a TABLE `Piece | Verdict (REUSES/ADAPTS/NEW) | Precedent (file:line or —) | Note`.
+   - **Architecture smells** (severity glyph `▲ high · ● medium · ▼ low` + `file:line` or task ref).
+   - **Silent assumptions** — a TABLE `Assumption | Apply would bake in | Tag ([inferred] · [assumed])`.
    Be ADVERSARIAL when in audit — default to suspecting duplication/over-engineering.
    Empty audit only acceptable with explicit statement of what was searched and dismissed.
+
+5b. Close the artifact — after the summary, and after the audit block when present — with the Structure footer:
+   `Structure: BLUF (AR 25-50) + Minto Pyramid for ordering. 4 sections + 0/1/2 self-assessed audit + single-pass anti-loop + autotest gate = house method.`
 
 6. Build the `gate_payload` with 3 fixed options:
    - **Approve** — requires 1-line comprehension autotest (human writes what they understood).
    - **Adjust** — free-text feedback; routes back to sdd-tasks or sdd-design.
-   - **Stop** — resumable pause: sets `sdd/<change>/state = "paused-at-preview"` in engram with optional reason; artifacts preserved; resumable with `/sdd-continue`.
+   - **Stop** — resumable pause: sets `sdd/<change>/state = "paused-at-preview"` in engram with optional reason **and the absolute path of the live worktree**; artifacts preserved; resumable with `/mala-pata-loop-start <kickoff-path>` (NOT `/sdd-continue` — that belongs to gentle-ai and routes above the preview gate).
 
 ## Result Contract
 
@@ -76,4 +80,4 @@ Persistence rules:
 - The gate always runs and STOPS — immune to the auto mode of the rest of the SDD.
 - Approve requires a comprehension autotest (1 written line); without it, no approval.
 - Stop = resumable pause (Option A), not a hard abort.
-- **Emit every section header, field label and option token VERBATIM in English** — `What I'll do`, `Affects`, `DoD (from the kickoff)`, `Risks`, `Findings & disposition` (and its `Finding`/`Severity`/`Disposition` columns), the severities `high`/`medium`/`low`, the dispositions `IGNORE`/`REFACTOR`/`ADJUST`/`REUSE`, and the gate options `Approve`/`Adjust`/`Stop` — even when the summary CONTENT is written in the user's language. The labels are structural; never localize them.
+- **Emit every section header, field label and option token VERBATIM in English** — `Bottom line`, `What I'll do`, `Affects`, `DoD (from the kickoff)`, `Risks`, `Findings & disposition` (and its `Finding`/`Severity`/`Disposition` columns), the Reuse-first headers `Piece`/`Verdict`/`Precedent`/`Note` with `REUSES`/`ADAPTS`/`NEW`, the Silent-assumptions headers `Assumption`/`Tag`, the severities `high`/`medium`/`low`, the provenance tags `[inferred]`/`[assumed]`, the dispositions `IGNORE`/`REFACTOR`/`ADJUST`/`REUSE`, and the gate options `Approve`/`Adjust`/`Stop` — even when the summary CONTENT is written in the user's language. The labels are structural; never localize them.

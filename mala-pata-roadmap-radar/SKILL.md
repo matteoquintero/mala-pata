@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.1"
+  version: "1.8.2"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -72,7 +72,7 @@ Derivation rules:
 
 ## Output — fixed format (ALWAYS identical)
 
-**Render the table as a REAL Markdown table — NEVER inside a ``` code fence, and NEVER narrate the rows in prose (every phase is a table ROW)** (a fenced table shows raw pipes and does not render). The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real Markdown table. The format, in order:
+**Render the table as a REAL Markdown table — NEVER inside a ``` code fence. Emit EXACTLY this shape (reason first, render the table last) — never vertical `Field:/Value:` blocks, never prose; one line per cell** (a fenced table shows raw pipes and does not render). The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real Markdown table. The format, in order:
 
 Banner (2 lines):
 `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`

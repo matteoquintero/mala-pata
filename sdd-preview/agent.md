@@ -40,7 +40,7 @@ in your invocation message (`reviewer` or `synthesis` — default `reviewer`).
    Target is orientative, not a hard cap — if honesty needs more, say so.
 
 5. Run the **Self-assessment** (see SKILL.md) to decide the number of reviewers (0/1/2) — the preview decides this itself, NOT `sdd-tasks`. If it decided **≥1 reviewer** (audit mode active), also produce:
-   - **Findings & disposition** — a TABLE `# | Finding | Severity | Disposition`, one row per finding, anchored to `file:line`/task ref. Severity uses the glyph + word `▲ high` / `● medium` / `▼ low`; Disposition is one enum + a one-line reason: IGNORE / REFACTOR / ADJUST / REUSE. ALWAYS a table, NEVER a flat numbered list or prose (every finding is a row) — this is what the human scans to decide.
+   - **Findings & disposition** — a TABLE `# | Finding | Severity | Disposition`, one row per finding, anchored to `file:line`/task ref. Severity uses the glyph + word `▲ high` / `● medium` / `▼ low`; Disposition is one enum + a one-line reason: IGNORE / REFACTOR / ADJUST / REUSE. ALWAYS a table — NEVER a flat numbered list, prose, or vertical Field:/Value: blocks (reason first, render the table last; one line per cell) — this is what the human scans to decide.
    - **Blast-radius** (table: file, NEW/MODIFIED/DELETED, ~LOC, public symbol).
    - **Reuse-first** — a TABLE `Piece | Verdict (REUSES/ADAPTS/NEW) | Precedent (file:line or —) | Note`.
    - **Architecture smells** (severity glyph `▲ high · ● medium · ▼ low` + `file:line` or task ref).

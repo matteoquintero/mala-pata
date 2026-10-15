@@ -22,7 +22,7 @@ freshly fetched in this run.
 
 ## 2. Table (exactly these 8 columns, this order)
 
-Render it as a REAL Markdown table, NEVER inside a ``` fence, and NEVER narrate the rows in prose — every SDD is a table ROW.
+Render it as a REAL Markdown table, NEVER inside a ``` fence. Emit EXACTLY these columns (reason first, render the table last) — never vertical `Field:/Value:` blocks, never prose; one line per cell, long detail goes below the table.
 
 Immediately ABOVE the table, one mandatory plain-text BLUF line (not fenced), counted by Attention, each count carrying glyph + number + word:
 

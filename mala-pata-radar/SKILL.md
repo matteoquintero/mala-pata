@@ -14,7 +14,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.8.1"
+  version: "4.8.2"
 ---
 
 # /mala-pata-radar — SDD radar (discover + diagnose, read-only)

@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -120,7 +120,7 @@ Default output (if the user does not ask for another path): `<project-root>/docs
 - Happy path: `Drew <n> machine(s) · <s> states · <t> transitions → <absolute HTML path>`.
 - Not supported: `✗ not supported: no explicit state enum (v1 does not extract implicit/scattered state)`.
 
-Then **what was drawn** (a REAL Markdown table, NEVER fenced, never prose — one row per machine):
+Then **what was drawn** (a REAL Markdown table, NEVER fenced; emit EXACTLY this shape — never prose or vertical blocks; one line per cell — one row per machine):
 
 | Machine | States | Transitions | Degraded (reason) |
 |---|---|---|---|

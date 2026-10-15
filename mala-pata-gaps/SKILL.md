@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.9.1"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -94,7 +94,7 @@ NO-GO iff there is ≥1 `Must` OR ≥1 `deferred-but-Must`; GO-with-conditions i
 
 **Reconcile or STOP**: the `<n>` here MUST equal the `<n>` in the `Bottom line` AND the total rows across the three findings tables; and `axis-mapped + off-axis` MUST equal `<n>`. If any of these do not balance, a gap is counted but not listed (or listed but not counted) — **STOP and fix before emitting**. This is the guard that makes a dropped finding impossible (a per-axis coverage count alone does NOT catch it).
 
-**Findings — split by disposition** (REAL Markdown tables, NEVER fenced; each ordered by `Severity`). Every gap lands in EXACTLY ONE of the three. This split IS the point of the skill — do not collapse it back into one list, and NEVER narrate findings in prose/paragraphs: every finding is a table ROW, no exceptions.
+**Findings — split by disposition** (REAL Markdown tables, NEVER fenced; each ordered by `Severity`). Every gap lands in EXACTLY ONE of the three. This split IS the point of the skill — do not collapse it back into one list. Emit EXACTLY these tables (reason first, render the tables last); never prose/paragraphs, never vertical `Field:/Value:` blocks; one line per cell (long detail like `file:line` or the gate stays in its own column, never a multi-sentence cell).
 
 > **Off-axis gaps are first-class.** A finding that maps to NO objective axis (a failure mode no roadmap planned — duplicate send, out-of-order, lost-without-trace) is legitimate: put `off-axis` in its `Objective axis` column, never drop it and never force it into a wrong axis. These are the point of failure-mode hunting, not a coverage defect — they are exactly the gaps the per-axis coverage table cannot see. Every finding row is either `axis-mapped` (names a real axis) or `off-axis`; the two counts sum to the total gaps (see the MECE check).
 

@@ -4,7 +4,7 @@ description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)
@@ -37,7 +37,21 @@ You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent
 2. **Resolve the project's mechanism.** `mem_search("sdd-init/<project>")` → what the project seeds with (seeders/factories/command). If `sdd-init` is not there or does not define a seed mechanism → **STOP** and warn; do not build ad-hoc INSERTs.
 3. **Confirm the test DB** (hard rule above).
 4. **Seed, idempotently.** Run the project's mechanism with the recipe's data. Idempotent: upsert / stable keys / namespaced by change, so that re-running does not clash on constraints nor duplicate rows.
-5. **Report what you seeded.** Concrete list: ids / records / keys that are ready, so that the human (or the gate) goes straight to testing with walkthrough's **table** (`# | Given | When | Then`) and its access block.
+5. **Report what you seeded.**
+
+   **BLUF first** (plain line):
+   - Happy path: `Seeded <n> fixtures into <test DB>`.
+   - Stopped: `✗ stopped: <missing recipe | missing mechanism | unconfirmed test DB>`.
+
+   Then **what you seeded** (a REAL Markdown table, NEVER fenced — one row per fixture), so the human (or the gate) goes straight to testing with walkthrough's **table** (`# | Given | When | Then`) and its access block:
+
+   | Fixture | Records/ids | Key | Mechanism | Target DB | Idempotent |
+   |---|---|---|---|---|---|
+   | <fixture> | <ids/records ready> | <stable idempotent key> | <project seeder/factory> | <test DB — never prod> | ✓ yes · ✗ no |
+
+   **Emit every structural label verbatim in English** — section headers, field labels and table/column headers (`Fixture`, `Records/ids`, `Key`, `Mechanism`, `Target DB`, `Idempotent`) stay English even when the conversation is in the user's language; only the values are localized.
+
+   `Structure: xUnit Test Patterns — fixture setup (Meszaros). Test-DB-never-prod safety rule = house method.`
 
 ## Teardown (optional, asked — default NO)
 

@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -86,9 +86,24 @@ If the project has NO system, propose a minimal one (spacing scale, neutral ramp
 1. **Understand what to improve**: an HTML/component, an artifact, or a whole project. Look at the real UI (or the code/artifact).
 2. **Read the project's system** (previous section) — the concrete values come from there.
 3. **Diagnosis**: what is wrong against the **invariants** (first) and the **judgment** (Level 1-3). Anchor each finding to what is observable ("this block violates hierarchy: 3 focal points compete"; "emoji icons → SVG").
-4. **Advice MD**: write the judgment applied to THIS case — findings + what to change + why (citing the principle). Inline by default; if the human wants to save it, `mala-pata/art/<slug>.md`.
+4. **Advice MD (fixed shape)**: write the judgment applied to THIS case. Inline by default; if the human wants to save it, `mala-pata/art/<slug>.md`. Fixed format:
+
+   **BLUF first** (plain line): `Bottom line: <n> issues (▲ <a> · ● <b> · ▼ <c>) — top fix: <the single highest-leverage change>`.
+
+   Then the **findings table** (a REAL Markdown table, NEVER fenced; **invariants-first** — rows that break a hard invariant come first, then the Level 1-3 judgment; within each group ordered by `Severity`):
+
+   | # | Finding (observable) | Principle violated (cited) | Severity | Change |
+   |---|---|---|---|---|
+   | 1 | <what is observably wrong — "3 focal points compete", "emoji icons"> | <the cited principle: invariant #N / Gestalt / Rams / …> | ▲ high · ● medium · ▼ low | <the concrete change, using the project's tokens> |
+
+   - **One row per finding**, each anchored to something **observable** (not taste-as-fact) and each citing the **principle** it violates — invariant number or the named principle. No vague "it looks off".
+   - **Invariants-first ordering is mandatory**: a broken hard invariant (section above, 1-7) outranks any Level 1-3 finding regardless of severity — fix the invariant before the polish.
+
+   **Emit every structural label verbatim in English** — section headers, field labels and table/column headers (`Bottom line`, `Finding (observable)`, `Principle violated (cited)`, `Severity`, `Change`) stay English even when the conversation is in the user's language; only the values are localized.
+
+   `Structure: Gestalt + Swiss grid (Müller-Brockmann) + Bauhaus + Dieter Rams + Norman + Laws of UX (Yablonski) + Refactoring UI (Wathan/Schoger). Invariants-first ordering + 3-level judgment = house method.`
 5. **Apply (optional, if asked)**: never on `main`/the default branch — work on a branch (if on main/development, `git switch -c <type>/<slug>` first, same safe-branch rule as `mala-pata-shot`). In the same run, improve the thing following that MD + the invariants + the project's system. Respect SVG-only, the no-emoji invariant (7), project tokens.
-6. **Human gate**: present the before/after or the MD and wait for their OK or adjustments. Their eye rules.
+6. **Human gate (ALWAYS the last line)**: after the Advice MD (and the before/after if you applied), close with the human-eye gate — present the MD / before-after and wait for their OK or adjustments. Their eye is the final gate and this line is the **last thing you emit**, after the Structure footer.
 
 ## What it does NOT do
 - Does NOT decide or propose lanes (organic/loop/shot) — it is orthogonal; the human or triage decides the flow.

@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -74,14 +74,17 @@ This is a **diagnosis from the text of the request**, proportional to the reques
   And you stop there.
 
 ### Output format (BLUF — decision first)
+
+Reason through the gate first; the LAST thing you emit is EXACTLY the shape below — same lines, same columns, same order, values filled in. Never replace the table with vertical `Field:/Value:` blocks or with prose.
+
 1. **Decision line (always first):** `Lane: <shot | organic | loop | roadmap> — Reason: <the test that applied, one line>`.
-2. **Draft (only when routing to organic/loop)** — a table, not prose:
+2. **Draft (only when routing to organic/loop)** — copy this table and fill the values. **Every cell is ONE line** — no multi-sentence cells, no `<br>`, no paragraphs; if a value needs more, compress it (the full detail belongs in the kickoff the lane writes, not here):
 
    | Field | Value | Provenance |
    |---|---|---|
-   | What | <concrete objective> | [inferred] / [asked] |
+   | What | <concrete objective, one line> | [inferred] / [asked] |
    | Why | <one line> | [inferred] / [asked] |
-   | DoD | Given <state>, When <action>, Then <result> | [inferred] / [asked] |
+   | DoD | Given <state>, When <action>, Then <result> — one line | [inferred] / [asked] |
    | Decisions | <resolved approach, or "open: needs design → loop"> | [inferred] / [asked] |
    | Risk | <blast radius, one line> | [inferred] / [asked] |
 
@@ -89,7 +92,7 @@ This is a **diagnosis from the text of the request**, proportional to the reques
 3. **DoR line:** `DoR: What ✓ · DoD ✓ · Decisions ✓` (the three blocking fields passed the gate).
 4. **Footer:** `Structure: Definition of Ready + INVEST. Lane routing = house method.`
 
-**Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized. This covers the `→ run /mala-pata-<lane>` line and the draft field labels (What / Why / DoD / Decisions / Risk) handed to the lane.
+**Emit every structural label verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized. This covers the `→ run /mala-pata-<lane>` line and the draft field labels (What / Why / DoD / Decisions / Risk) handed to the lane.
 
 ## Phase 3 — Does nothing else
 

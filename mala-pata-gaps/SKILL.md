@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -32,6 +32,8 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 - **Anchored to evidence, NEVER invented.** Each gap comes from a real annotation or from a reading of the code with `file:line`. If you cannot anchor it, it is not a gap — it is a question, mark it separately.
 - **`[noted]` vs `[inferred]`** for each gap: noted = it was already written (Level-2, deferred, TODO); inferred = the model detected it by cross-checking objective + code. The human trusts each differently — like the `[rule/judgment]` of the other skills.
 - **Disposition `open` / `deferred` / `closed`** per gap — the axis is the GATE, NOT whether it is "actionable" (everything is, eventually). `open` = in the active backlog, nothing stops it. `deferred` = parked on purpose behind an explicit external gate or decision (an ADR, a roadmap gate-phase it depends on, a `¿Diferible?` marker, a `estado: follow-up` / `bloqueado_por` frontmatter) — it carries `Blocked by: <gate>`. `closed` = already absorbed by other work. A gap is `deferred` ONLY with evidence of the parking decision; without it → `open`; if the disposition is genuinely ambiguous it goes to Questions, never guessed. A `deferred` gap is a follow-up that is not ready to route.
+- **Release blocking `Must` / `Should` / `Could`** per gap — a SEPARATE axis from disposition and from severity; it answers *can we ship without this?* (go-live), decided by the **workaround test** (MoSCoW, Clegg/DSDM): a gap is `Must` ONLY if without it the release fails its DoD/core job OR causes harm with **no workaround** (data loss, wrong money, security/legal, a user-facing path broken with no manual mitigation). If ANY workaround or manual mitigation exists → `Should` (real pain, ships) or `Could` (cosmetic), never `Must`. Every `Must` names WHY no workaround exists; every `Should` names the workaround. The question is asked of EVERY gap but the answer is trivial off `open`: a `deferred` gap is `out of this release` (scoped out) EXCEPT the red flag `✗ Must-but-deferred` (a blocker was parked → the release is NOT actually viable — surface it); a `closed` gap is N/A. Keep `Must` ≤ ~60% or it is scope creep (MoSCoW guardrail).
+- **Severity (`▲●▼`) is harm, NOT blocking** — `▲●▼` = how much harm IF it happens; blocking = whether we can ship without it. A high-severity gap WITH a workaround does NOT block. They are different axes; do not conflate them.
 - **Read-only on the code/project.** It does NOT execute phases, does NOT touch code, does NOT create a kickoff/roadmap. But it DOES leave its **own report** in `mala-pata/gaps/<domain>.md` + an engram pointer (like research/roadmap) — for traceability. It suggests routing and ends.
 - **Over-discover, the human trims.** Better to propose one gap too many (marked `[inferred]`) than to stay silent. But never invented.
 
@@ -72,7 +74,13 @@ Domain gaps: <domain>  ·  roadmaps: <slug, slug, …>  ·  repo: <name>  ·  <d
 Source: mala-pata/ roadmaps + live code
 ```
 
-**BLUF line** (plain text, immediately below the banner, before the tables — carries the word next to each number):
+**Release line** (plain text, the HEADLINE — immediately below the banner, before the Bottom line — this is the go/no-go answer the human reads first):
+
+`Release: <GO | NO-GO | GO-with-conditions> · <b> Must (blockers) · <s> Should · <cc> Could · <x> deferred-but-Must`
+
+NO-GO iff there is ≥1 `Must` OR ≥1 `deferred-but-Must`; GO-with-conditions iff no `Must` but ≥1 `Should`; GO iff neither. (go/no-go release readiness.)
+
+**BLUF line** (plain text, immediately below the Release line — carries the word next to each number):
 
 `Bottom line: <n> gaps · <o> open · <d> deferred · <c> closed · across <m>/<M> axes covered`
 
@@ -88,15 +96,19 @@ Source: mala-pata/ roadmaps + live code
 
 **Open gaps — attack now** (nothing parks them):
 
-| # | Missing (what) | Objective axis | Severity | Evidence | Tag |
-|---|---|---|---|---|---|
-| 1 | <what is missing, concrete> | <axis> | ▲ high · ● medium · ▼ low | <file:line or annotation/roadmap> | [noted] · [inferred] |
+| # | Missing (what) | Objective axis | Blocking | Severity | Evidence | Tag |
+|---|---|---|---|---|---|---|
+| 1 | <what is missing, concrete> | <axis> | Must · Should · Could | ▲ high · ● medium · ▼ low | <file:line or annotation/roadmap> | [noted] · [inferred] |
+
+- A `Must` row names WHY no workaround exists; a `Should` row names the workaround (in the Missing/Evidence text). Sort by `Blocking` first (Must → Should → Could), then by `Severity`.
 
 **Deferred gaps — gated** (parked behind an explicit gate; NOT routed until it opens):
 
-| # | Missing (what) | Objective axis | Severity | Blocked by (gate) | Evidence | Tag |
-|---|---|---|---|---|---|---|
-| 1 | <what is missing, concrete> | <axis> | ▲ high · ● medium · ▼ low | <the gate: ADR / external like SPP / gate-phase> | <file:line or annotation> | [noted] · [inferred] |
+| # | Missing (what) | Objective axis | Blocking | Severity | Blocked by (gate) | Evidence | Tag |
+|---|---|---|---|---|---|---|---|
+| 1 | <what is missing, concrete> | <axis> | out of this release · ✗ Must-but-deferred | ▲ high · ● medium · ▼ low | <the gate: ADR / external like SPP / gate-phase> | <file:line or annotation> | [noted] · [inferred] |
+
+- Default `Blocking` for a deferred gap is `out of this release` (it was scoped out). Use `✗ Must-but-deferred` ONLY when a real blocker was parked — that is a contradiction (the release is not actually viable) and it forces NO-GO on the Release line.
 
 **Closed since last run — absorbed** (was a gap in a previous report, now covered — omit if this is the first run or nothing closed):
 
@@ -108,12 +120,13 @@ Then the closing lines (plain text):
 
 `Questions (not gaps, evidence was missing to confirm them): <or "none">`
 `Routing suggestion (I do NOT execute): only OPEN gaps route — <open gap> → /mala-pata-research or /mala-pata-triage. Deferred gaps are NOT routed until their gate opens.`
-`Structure: gap analysis + MECE / 100% rule. open/deferred/closed disposition + noted/inferred provenance + 3-source model = house method.`
+`Structure: gap analysis + MECE / 100% rule + MoSCoW blocking tiers (Clegg/DSDM) + go/no-go release readiness. Workaround-test blocker criterion + deferred-but-Must flag + open/deferred/closed disposition + noted/inferred provenance + 3-source model = house method.`
 
 - **One row per gap**, concrete, with real evidence. No evidence → it does not go in the table (it goes to "Questions").
 - **Mandatory tag** `[noted]` or `[inferred]` per row (shared provenance vocabulary).
 - **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort each findings sub-table by it (highest first) so the backlog is pick-ready for triage.
 - **Disposition split is mandatory** — every gap lands in exactly one of Open / Deferred / Closed; never a single merged list. A `deferred` row MUST carry `Blocked by: <gate>`; if nothing parks it, it is `open`. Only `open` gaps are routed.
+- **Blocking axis + Release line are mandatory** — every `open` gap carries `Must`/`Should`/`Could` by the workaround test (separate from severity); deferred rows carry `out of this release` or the `✗ Must-but-deferred` red flag; closed is N/A. Emit the `Release: <GO | NO-GO | GO-with-conditions>` headline (NO-GO iff ≥1 `Must` or ≥1 `Must-but-deferred`). A `Must` without a named reason-why-no-workaround is not a `Must`.
 - **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof.
 - If there are no gaps: say so explicitly + **which axes you verified** and why they are covered (like preview's empty-audit — not a bare "all good").
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.

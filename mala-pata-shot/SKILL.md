@@ -4,7 +4,7 @@ description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree
@@ -47,7 +47,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 2. **Safe branch (no worktree) — Rule #2/#3.** `git -C <ABS-repo> rev-parse --abbrev-ref HEAD`. If it is `main`/`development` → `git -C <ABS-repo> switch -c <type>/<slug>` (branch-first) and confirm the type in one line. If you are already on a feature → stay there. No worktree is created.
 3. **Understand (1-3 files).** Locate what must be touched (codegraph/serena, or grep/Read as fallback). **If you need 4+ files, or a design decision appears, or the blast radius grows → STOP** (Rule #1): it is not shot, bounce to `/mala-pata-organic`.
 4. **Edit + checks.** Apply the change with the **project's TDD mode**: if strict TDD is on, Red → Green → Refactor; otherwise, targeted functional checks. Run the **check that proves this change** (not the whole suite, unless it is cheap). Never consider it done without seeing the check green.
-5. **Work-unit commit.** `git -C <ABS-repo>` with explicit pathspec and a Conventional Commit. If **RDD is on**, after the commit run `gentle-ai review assess --cwd <ABS-repo> --json` and follow the native plan (for a trivial change it almost always yields passive). The full RDD detail lives in the CLAUDE.md ODD protocol — do not reimplement it.
+5. **Work-unit commit.** `git -C <ABS-repo>` with explicit pathspec and a Conventional Commit **ending with the git trailer `Mala-Pata-Phase: <change-name>`** (blank line, then the trailer — so `mala-pata-roadmap-radar` matches this change by trailer after the branch is deleted in cleanup). If **RDD is on**, after the commit run `gentle-ai review assess --cwd <ABS-repo> --json` and follow the native plan (for a trivial change it almost always yields passive). The full RDD detail lives in the CLAUDE.md ODD protocol — do not reimplement it.
 6. **Close (compact table — one row).** Emit a single-row table:
 
    | Result | Change | Check | Commit | Next |

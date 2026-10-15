@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.13.0"
+  version: "1.14.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -76,7 +76,7 @@ Before the first write: create `mala-pata/odd/<change_name>.md` + its engram mir
 ## Step 6 — Implement task-by-task (ODD 6)
 
 For each task: the **smallest topology** — direct inline (1-3 already-understood files) / delegated direct (understand 4+ or write 2+ non-trivial) — with the **project's TDD mode** (`strict_tdd` from sdd-init) and the applicable checks. Check off the task only after **observing** its result + checks; update the feature-doc and the mirror.
-- **Each task closes with ≥1 work-unit commit on the feature branch**, with tests+docs alongside the behavior, Conventional Commit; record the commit in the feature-doc as evidence.
+- **Each task closes with ≥1 work-unit commit on the feature branch**, with tests+docs alongside the behavior, Conventional Commit **ending with the git trailer `Mala-Pata-Phase: <change-name>`** (blank line, then the trailer — so `mala-pata-roadmap-radar` matches by trailer after branches are cleaned up); record the commit in the feature-doc as evidence.
 - **RDD per commit** (Hard rule #2): after each work-unit commit, if RDD is on → `gentle-ai review assess --cwd <ABS-worktree> --agent claude-code --base-ref <last reviewed boundary> --committed-only --json`; read `review_due`; if it is true, run **verbatim** the `next_transition.command` it returns; the boundary advances on acknowledgement. `false` → record `review_due_reason` and continue. **The full detail (tiers, medium/high consent, continuations) lives in the CLAUDE.md ODD protocol — do not reimplement it.**
 - **Delivery slicing**: forecast ~400 authored lines; strategy `ask-on-risk` (default) / `auto-chain` / `single-pr`; resolve the `work-unit-commits` and `chained-pr` skills by registry name before building PRs.
 

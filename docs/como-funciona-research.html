@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo funciona /mala-pata-research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f5f5f5;
+    --ink: #2d3142;
+    --muted: #4f5d75;
+    --soft: #7a8399;
+    --rule: rgba(45,49,66,0.12);
+    --accent: #eb6c36;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    padding: 48px 32px 40px;
+  }
+  .wrap { max-width: 1152px; margin: 0 auto; }
+  .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 1.75rem;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+  .sub { font-size: 14px; color: var(--muted); margin: 0 0 32px; }
+  svg { display: block; width: 100%; height: auto; }
+  footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--soft);
+  }
+  .t-name { font-family: 'Geist', sans-serif; font-size: 12px; font-weight: 600; fill: #2d3142; text-anchor: middle; }
+  .t-sub  { font-family: 'Geist Mono', monospace; font-size: 9px; fill: #4f5d75; text-anchor: middle; }
+  .t-tag  { font-family: 'Geist Mono', monospace; font-size: 7px; font-weight: 500; letter-spacing: 0.08em; fill: #4f5d75; text-anchor: middle; }
+  .t-tag-a { fill: #eb6c36; }
+  .t-arl  { font-family: 'Geist Mono', monospace; font-size: 8px; letter-spacing: 0.06em; fill: #7a8399; text-anchor: middle; }
+  .t-arl-l { text-anchor: start; }
+  .t-call { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 14px; fill: #2d3142; }
+  .t-leg  { font-family: 'Geist Mono', monospace; font-size: 8px; letter-spacing: 0.14em; fill: #4f5d75; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">PROCESO + ESTRATEGIAS</p>
+  <h1>Cómo funciona /mala-pata-research</h1>
+  <p class="sub">el diamante 1 (Discover -> Define), guiado por Heilmeier y JTBD</p>
+
+  <svg viewBox="0 0 1152 432" role="img" aria-labelledby="como-funciona-research-title como-funciona-research-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="como-funciona-research-title">Cómo funciona /mala-pata-research</title>
+    <desc id="como-funciona-research-desc">Proceso de la skill de research como primer diamante del Double Diamond (Discover a Define), guiado por el Heilmeier Catechism y JTBD: autorizar en solo lectura, investigar, responder las 8 preguntas, afinar la idea y emitir un veredicto de tres salidas (proceder, afilar o reconsiderar).</desc>
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+      </marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/>
+      </marker>
+      <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/>
+      </marker>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+    <!-- Bracket: Double Diamond (diamante 1) over steps 2-4 -->
+    <path d="M 208 120 V 104 H 696 V 120" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
+    <text class="t-call" x="452" y="92" text-anchor="middle">Double Diamond — diamante 1: Discover -&gt; Define</text>
+
+    <!-- Callout leaders (drawn before boxes) -->
+    <path d="M 304 252 Q 304 236 332 220" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
+    <circle cx="332" cy="220" r="2" fill="#2d3142"/>
+    <path d="M 496 252 Q 496 236 500 220" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
+    <circle cx="500" cy="220" r="2" fill="#2d3142"/>
+
+    <!-- Connectors (before boxes) -->
+    <line x1="168" y1="176" x2="208" y2="176" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+    <line x1="344" y1="176" x2="384" y2="176" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+    <line x1="520" y1="176" x2="560" y2="176" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+    <line x1="696" y1="176" x2="736" y2="176" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+
+    <!-- Veredicto exits -->
+    <line x1="896" y1="176" x2="976" y2="176" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+    <rect x="908" y="156" width="56" height="12" rx="2" fill="#f5f5f5"/>
+    <text class="t-arl" x="936" y="165">PROCEDER</text>
+
+    <line x1="816" y1="128" x2="816" y2="80" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+    <rect x="824" y="96" width="76" height="12" rx="2" fill="#f5f5f5"/>
+    <text class="t-arl t-arl-l" x="828" y="105">RECONSIDERAR</text>
+
+    <line x1="816" y1="224" x2="816" y2="296" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+    <rect x="824" y="254" width="48" height="12" rx="2" fill="#f5f5f5"/>
+    <text class="t-arl t-arl-l" x="828" y="263">AFILAR</text>
+
+    <!-- Loop back: AFILAR -> Discover (rounded elbow r=8) -->
+    <path d="M 748 328 H 260 Q 252 328 252 320 V 220" fill="none" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+    <rect x="456" y="308" width="88" height="12" rx="2" fill="#f5f5f5"/>
+    <text class="t-arl" x="500" y="317">REINVESTIGAR</text>
+
+    <!-- Step 1: Fase 0 Autorizar -->
+    <rect x="32" y="132" width="136" height="88" rx="6" fill="#f5f5f5"/>
+    <rect x="32" y="132" width="136" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+    <rect x="72" y="138" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="100" y="147">FASE 0</text>
+    <text class="t-name" x="100" y="170">Autorizar</text>
+    <text class="t-sub" x="100" y="186">solo lectura</text>
+    <text class="t-sub" x="100" y="198">research nunca muta</text>
+
+    <!-- Step 2: Discover -->
+    <rect x="208" y="132" width="136" height="88" rx="6" fill="#f5f5f5"/>
+    <rect x="208" y="132" width="136" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+    <rect x="248" y="138" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="276" y="147">DIVERGE</text>
+    <text class="t-name" x="276" y="170">Discover</text>
+    <text class="t-sub" x="276" y="186">cómo se hace hoy</text>
+    <text class="t-sub" x="276" y="198">anclaje al código real</text>
+    <text class="t-sub" x="276" y="210">+ JTBD</text>
+
+    <!-- Step 3: Heilmeier -->
+    <rect x="384" y="132" width="136" height="88" rx="6" fill="#f5f5f5"/>
+    <rect x="384" y="132" width="136" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+    <rect x="424" y="138" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="452" y="147">FRAMEAR</text>
+    <text class="t-name" x="452" y="170">Heilmeier</text>
+    <text class="t-sub" x="452" y="186">lo humano se pregunta</text>
+    <text class="t-sub" x="452" y="198">no se inventa</text>
+    <text class="t-sub" x="452" y="210">+ assumption-challenge</text>
+
+    <!-- Step 4: Define -->
+    <rect x="560" y="132" width="136" height="88" rx="6" fill="#f5f5f5"/>
+    <rect x="560" y="132" width="136" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+    <rect x="600" y="138" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="628" y="147">CONVERGE</text>
+    <text class="t-name" x="628" y="170">Define</text>
+    <text class="t-sub" x="628" y="186">Qué · Why · Done</text>
+    <text class="t-sub" x="628" y="198">+ Decisiones</text>
+    <text class="t-sub" x="628" y="210">+ señal de tamaño</text>
+
+    <!-- Step 5: Veredicto (decision, focal) -->
+    <polygon points="816,128 896,176 816,224 736,176" fill="#f5f5f5"/>
+    <polygon points="816,128 896,176 816,224 736,176" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1.2"/>
+    <text class="t-name" x="816" y="174">Veredicto</text>
+    <text class="t-sub" x="816" y="190">3 salidas</text>
+
+    <!-- Outcome: RECONSIDERAR -->
+    <rect x="748" y="16" width="136" height="64" rx="6" fill="#f5f5f5"/>
+    <rect x="748" y="16" width="136" height="64" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+    <rect x="788" y="22" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="816" y="31">SALIDA</text>
+    <text class="t-name" x="816" y="52">Matar la idea</text>
+    <text class="t-sub" x="816" y="68">o reencuadrarla</text>
+
+    <!-- Outcome: AFILAR -->
+    <rect x="748" y="296" width="136" height="64" rx="6" fill="#f5f5f5"/>
+    <rect x="748" y="296" width="136" height="64" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+    <rect x="788" y="302" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="816" y="311">SALIDA</text>
+    <text class="t-name" x="816" y="332">Volver a afinar</text>
+    <text class="t-sub" x="816" y="348">falta claridad o datos</text>
+
+    <!-- Outcome: Handoff (PROCEDER) -->
+    <rect x="976" y="120" width="144" height="112" rx="6" fill="#f5f5f5"/>
+    <rect x="976" y="120" width="144" height="112" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+    <rect x="1020" y="126" width="56" height="12" rx="2" fill="transparent" stroke="rgba(79,93,117,0.40)" stroke-width="0.8"/>
+    <text class="t-tag" x="1048" y="135">SALIDA</text>
+    <text class="t-name" x="1048" y="160">Handoff</text>
+    <text class="t-sub" x="1048" y="180">borrador de campos</text>
+    <text class="t-sub" x="1048" y="192">+ doc de research</text>
+    <text class="t-sub" x="1048" y="212">/mala-pata-triage</text>
+    <text class="t-sub" x="1048" y="224">o /mala-pata-roadmap</text>
+
+    <!-- Strategy callouts (italic serif) -->
+    <text class="t-call" x="300" y="268">JTBD: el trabajo real,</text>
+    <text class="t-call" x="300" y="284">no la feature pedida</text>
+    <text class="t-call" x="492" y="268">Heilmeier: 8 preguntas para</text>
+    <text class="t-call" x="492" y="284">framear antes de planear</text>
+
+    <!-- Legend -->
+    <line x1="32" y1="384" x2="1120" y2="384" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+    <text class="t-leg" x="32" y="412">LEYENDA</text>
+
+    <rect x="112" y="400" width="24" height="16" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+    <text class="t-leg" x="144" y="411">PASO</text>
+
+    <polygon points="232,398 244,408 232,418 220,408" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1.2"/>
+    <text class="t-leg" x="256" y="411">DECISIÓN</text>
+
+    <rect x="364" y="400" width="24" height="16" rx="4" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+    <text class="t-leg" x="396" y="411">SALIDA</text>
+
+    <text class="t-call" x="484" y="412">Aa</text>
+    <line x1="508" y1="408" x2="536" y2="408" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
+    <text class="t-leg" x="548" y="411">ESTRATEGIA (CALLOUT)</text>
+
+    <line x1="716" y1="408" x2="748" y2="408" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4"/>
+    <text class="t-leg" x="760" y="411">RETORNO</text>
+  </svg>
+
+  <footer>mala-pata-skills · /mala-pata-research · read-only: no crea worktree, kickoff ni código</footer>
+</div>
+</body>
+</html>

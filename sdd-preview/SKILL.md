@@ -9,7 +9,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.9.0"
+  version: "3.9.1"
 ---
 
 # sdd-preview — pre-apply executive summary (hard human gate)
@@ -182,7 +182,7 @@ Perspectives to adopt, NOT a checklist to tick off — read the plan against the
 - The number of reviewers (1 or 2) was already fixed in the Self-assessment. The orchestrator only does the fan-out according to that number.
 - Reviewers are **adversarial**: default to suspecting duplication/over-engineering; the plan has to prove novelty.
 - **Empty audit forbidden**: if there are no findings, state EXPLICITLY WHAT was looked for and why each thing was discarded.
-- **Findings & disposition is ALWAYS a table** (`# | Finding | Severity | Disposition`), never a flat numbered list — it is what the human scans to decide. Severity uses the glyph + word `▲ high` · `● medium` · `▼ low`; Disposition is one enum + a one-line reason: `IGNORE` · `REFACTOR` · `ADJUST` · `REUSE` (objective-level findings do NOT go in this table — they escape backward, see below). The Blast-radius / Reuse-first / Architecture smells / Silent assumptions are the supporting analysis that feeds this table.
+- **Findings & disposition is ALWAYS a table** (`# | Finding | Severity | Disposition`), never a flat numbered list and never prose/paragraphs (every finding is a row) — it is what the human scans to decide. Severity uses the glyph + word `▲ high` · `● medium` · `▼ low`; Disposition is one enum + a one-line reason: `IGNORE` · `REFACTOR` · `ADJUST` · `REUSE` (objective-level findings do NOT go in this table — they escape backward, see below). The Blast-radius / Reuse-first / Architecture smells / Silent assumptions are the supporting analysis that feeds this table.
 - Reviewers do NOT see each other's output. Synthesis (merge + dedup) is done afterwards.
 - The **Correctness / invariants** category is MANDATORY when the self-assessment flagged the money/invariants trigger; if it is active and you find nothing, state which invariants you verified and why they are safe (same rule as empty-audit). It is a lens to adopt, not a checklist that replaces free adversarial reading.
 

@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.4.1"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -90,7 +90,7 @@ If the project has NO system, propose a minimal one (spacing scale, neutral ramp
 
    **BLUF first** (plain line): `Bottom line: <n> issues (▲ <a> · ● <b> · ▼ <c>) — top fix: <the single highest-leverage change>`.
 
-   Then the **findings table** (a REAL Markdown table, NEVER fenced; **invariants-first** — rows that break a hard invariant come first, then the Level 1-3 judgment; within each group ordered by `Severity`):
+   Then the **findings table** (a REAL Markdown table, NEVER fenced, never prose (every finding is a row); **invariants-first** — rows that break a hard invariant come first, then the Level 1-3 judgment; within each group ordered by `Severity`):
 
    | # | Finding (observable) | Principle violated (cited) | Severity | Change |
    |---|---|---|---|---|

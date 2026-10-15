@@ -4,7 +4,7 @@ description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)
@@ -43,7 +43,7 @@ You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent
    - Happy path: `Seeded <n> fixtures into <test DB>`.
    - Stopped: `✗ stopped: <missing recipe | missing mechanism | unconfirmed test DB>`.
 
-   Then **what you seeded** (a REAL Markdown table, NEVER fenced — one row per fixture), so the human (or the gate) goes straight to testing with walkthrough's **table** (`# | Given | When | Then`) and its access block:
+   Then **what you seeded** (a REAL Markdown table, NEVER fenced, never prose — one row per fixture), so the human (or the gate) goes straight to testing with walkthrough's **table** (`# | Given | When | Then`) and its access block:
 
    | Fixture | Records/ids | Key | Mechanism | Target DB | Idempotent |
    |---|---|---|---|---|---|

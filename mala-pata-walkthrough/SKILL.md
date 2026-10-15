@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.2"
+  version: "1.6.3"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -130,6 +130,7 @@ If the stack allows bringing up the app **and the human OKs it**: capture the vi
 Diátaxis says **do NOT mix** → **two files**, not one:
 - **End customer** (versionable, goes to the repo): advise `docs/guides/<slug>.md` (or the docs convention the project uses). Confirm the folder with the human.
 - **QA/UAT** (internal): advise `mala-pata/walkthroughs/<slug>-qa.md` (inside the repo, versioned, like the rest of mala-pata). Confirm.
+- **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → both docs stranded). Commit BOTH files on a durable branch: a walkthrough for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo los docs — <feature base> o main?` and wait. **Land it:** (a) current branch ≠ target AND worktree clean (`git -C <repo> status --porcelain` empty) → switch to target to write + commit; (b) fallback — dirty/unsafe → write the files and tell the human `commit <paths> on branch <target>`, then stop.
 - **Lightweight pointer in engram**: `mem_save` topic_key `sdd/<change>/walkthrough`, one-line content with the paths of the two files (so the radar and future sessions can find it). If the input was a roadmap without a unique change-name, use the roadmap slug.
 
 ## Step 7 — Human gate

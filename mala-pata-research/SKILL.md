@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -111,6 +111,8 @@ Add the **size signal**: does this fit in one unit (one organic or one loop), or
 ## Phase 4 — Write the doc (MANDATORY, ALWAYS)
 
 You ALWAYS write the research doc, without exception — it is your deliverable. It goes **inside the repo, versioned**: `mala-pata/research/<slug>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` the folder if it does not exist).
+
+**Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the doc is stranded): a research doc tied to a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el research — <feature base> o main?` and wait. **Land it:** (a) if the current branch is not the target AND the worktree is clean (`git -C <repo> status --porcelain` empty), switch to it to write + commit; (b) fallback — if dirty/unsafe, do NOT force it: write the file and tell the human `commit <abs path> on branch <target>`, then stop.
 
 **Lightweight pointer in engram** for discoverability: `mem_save` with `topic_key: "research/<slug>"`, single-line content: `Research in file: <absolute path>`. Do not duplicate the content in engram — the file is the source of truth. If engram is unavailable, the file is still the source of truth; warn in one line that the pointer was not saved.
 

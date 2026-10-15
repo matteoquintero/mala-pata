@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.15.0"
+  version: "2.16.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -265,8 +265,10 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 
 ## Step 6 — Where to save + write the roadmap
 
-1. **Ask where to save it**, suggesting the default **`mala-pata/roadmap/<slug>.md`**
-   (inside the repo under `mala-pata/roadmap/`, versioned — like the rest of the mala-pata artifacts). Allow override.
+1. **Where to save — path + DURABLE branch.**
+   - **Path**: default **`mala-pata/roadmap/<slug>.md`** (inside the repo, versioned — like the rest of the mala-pata artifacts). Allow override.
+   - **Branch — DURABLE, never an ephemeral change/worktree branch.** An ephemeral branch gets deleted in cleanup and the roadmap is stranded (the bug this avoids). Resolve the target: a roadmap for a **feature-in-progress** → that **feature base branch** (it travels with the feature and merges to main with it); a **standalone** objective → the integration default (`main`/`development`); **ambiguous** → ask ONE question `¿En qué rama guardo el roadmap — <feature base> o main?` (recommend the inferred one), then wait.
+   - **Land it there (a, fallback b):** (a) if the current branch is NOT the target AND the worktree is clean (`git -C <repo> status --porcelain` empty), switch to the target to write + commit the doc; (b) **fallback** — if the worktree is dirty or the switch is unsafe/ambiguous, do NOT force it: write the file and tell the human exactly `commit <abs path> on branch <target>`, then stop. **Never commit the roadmap on an ephemeral branch.**
 2. Write the `.md` with the format below (absolute paths to operate; `mkdir -p` the folder). Populate `## Objective coverage` (one row per axis, status as approved at the Step-5 gate) and `## Level 2 — broad domain not covered` (the Level-2 checklist) from the Step-5 result — they are persisted so `/mala-pata-gaps` can read them.
 3. **Light pointer in engram** for discoverability: `mem_save` topic_key `sdd/<slug>/roadmap`,
    one-line content `Roadmap in file: <absolute path>`. Do not duplicate the content.

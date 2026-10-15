@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.14.0"
+  version: "2.15.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -261,7 +261,7 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 
 **Structure:** Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route / 3-payoff split rule = house method.
 
-**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Loop justification`, `Split decisions`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`, `Loops`), the order line labels (`Suggested order`, `Parallelizable`, `Deferred`), and the table columns (`Phase`, `slug`, `Tentative route`, `Depends on`, `Deferrable?`, `Candidate cut`, `Payoff`, `Verdict`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
+**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Loop justification`, `Split decisions`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`, `Loops`), the order line labels (`Suggested order`, `Parallelizable`, `Deferred`), and the table columns (`Phase`, `slug`, `Kind`, `Tentative route`, `Depends on`, `Deferrable?`, `Verify`, `Status`, `Evidence`, `Candidate cut`, `Payoff`, `Verdict`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
 
 ## Step 6 — Where to save + write the roadmap
 
@@ -296,12 +296,12 @@ phases_total: <N>
 
 ## DAG of phases
 
-| # | Phase | slug | Tentative route | Depends on | Deferrable? | Vertical slice (one line) |
-|---|-------|------|-----------------|-----------|-------------|----------------------------|
-| 1 | <name> | <stable-kebab> | loop:STANDARD | — | no (core) | <what it delivers end-to-end> |
-| 2 | <name> | <stable-kebab> | organic | 1 | yes | ... |
-| 4 | <name> | <stable-kebab> | shot | — | yes | ... |
-| 3 | <name> | <stable-kebab> | loop:LITE | 1 | yes | ... |
+| # | Phase | slug | Kind | Tentative route | Depends on | Deferrable? | Vertical slice (one line) |
+|---|-------|------|------|-----------------|-----------|-------------|----------------------------|
+| 1 | <name> | <stable-kebab> | code | loop:STANDARD | — | no (core) | <what it delivers end-to-end> |
+| 2 | <name> | <stable-kebab> | code | organic | 1 | yes | ... |
+| 4 | <name> | <stable-kebab> | ops | — | — | yes | <external infra: Railway env / Neon / Meta setup> |
+| 3 | <name> | <stable-kebab> | code | loop:LITE | 1 | yes | ... |
 
 > **Tentative route = forecast.** On execution, each phase is passed through `/mala-pata-triage`, which
 > re-decides shot/organic/loop with the information of the moment (see Step 4-bis). Previous phases may change
@@ -336,7 +336,9 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 ### Phase 1 — <name>
 - **Tentative route**: loop:STANDARD  ·  **Depends on**: —  ·  **Deferrable?**: no (core) | yes
 - **Deferrable?**: `no` = core, it has to be done for the value to exist; `yes` = can be done later without breaking the core. It is a business PRIORITY axis, distinct from "Depends on" (which is technical). The gate (Step 5) reads this mark for core-vs-complete.
-- **slug**: `<stable-kebab>` — the change-name it will use when executed (branch `<type>/<slug>`); `mala-pata-roadmap-radar` matches progress by this slug. Unique and stable; do not change it between roadmap versions.
+- **Kind**: `code` (git-tracked; the radar derives state from the commit trailer) | `ops` (external infra/manual — Railway/Neon/GitHub/trámite — **no git artifact**).
+- **Verify / Status / Evidence** (ops phases ONLY): `Verify:` how a human confirms it (URL / command / health check) · `Status:` pending | done · `Evidence:` env URL / project id / health 200 / date — maintained as the ops work lands; the radar reads this (provenance `[attested]`), since git cannot see ops phases.
+- **slug**: `<stable-kebab>` — the change-name it will use when executed (branch `<type>/<slug>`). On execution the landing commit carries the trailer `Mala-Pata-Phase: <slug>`, and `mala-pata-roadmap-radar` matches progress **by that trailer** — not by branch or commit subject, because branches get deleted on cleanup. Unique and stable; do not change it between roadmap versions.
 - **Why that route**: <if loop: THE DESIGN decision that makes it loop — what triage re-checks (a decision decidable-with-a-question does NOT go to loop); if organic/shot: "What+Done+Decisions already statable">
 - **IN**: <what this phase includes>
 - **OUT**: <what it does NOT include — stays for another phase>
@@ -367,8 +369,10 @@ Structure: Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dep
 - Each phase of the roadmap is input for ONE pass of `/mala-pata-triage` (which routes it to organic or
   loop with the information of the moment) — never group them.
 - **Stable slug per phase**: assign each phase a unique and stable kebab `slug` (= its change-name when
-  executed; branch `<type>/<slug>`). It is what `mala-pata-roadmap-radar` uses to derive progress
-  against git. Do not change it between roadmap versions.
+  executed; branch `<type>/<slug>`). On execution the landing commit carries the trailer
+  `Mala-Pata-Phase: <slug>`; that trailer (NOT the branch, which gets deleted on cleanup) is what
+  `mala-pata-roadmap-radar` greps to derive progress. For `ops` phases there is no commit — the radar
+  reads their declared `Status`/`Evidence` instead. Do not change it between roadmap versions.
 - **`Deferrable?` per phase**: mark each phase `no` (core — needed for the value to exist) or `yes`
   (can wait without breaking the core). It is business priority, NOT the technical dependency (`Depends on`).
   The gate (Step 5) READS this column for core-vs-complete; it does not recompute it. A roadmap does NOT leave anything

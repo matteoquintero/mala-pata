@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.1"
+  version: "1.9.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -90,9 +90,13 @@ NO-GO iff there is ≥1 `Must` OR ≥1 `deferred-but-Must`; GO-with-conditions i
 |---|---|---|---|
 | <axis> | <what proves it covered, or what is missing> | <count> | ✓ covered · ◐ partial · ✗ gap |
 
-`MECE check: axes total: <M> · axes in table: <M> · overlaps: none`
+`MECE check: axes total: <M> · axes in table: <M> · overlaps: none · gaps: <n> (= Open <o> + Deferred <d> + Closed <c>) · mapping: axis-mapped <x> + off-axis <y> = <n>`
+
+**Reconcile or STOP**: the `<n>` here MUST equal the `<n>` in the `Bottom line` AND the total rows across the three findings tables; and `axis-mapped + off-axis` MUST equal `<n>`. If any of these do not balance, a gap is counted but not listed (or listed but not counted) — **STOP and fix before emitting**. This is the guard that makes a dropped finding impossible (a per-axis coverage count alone does NOT catch it).
 
 **Findings — split by disposition** (REAL Markdown tables, NEVER fenced; each ordered by `Severity`). Every gap lands in EXACTLY ONE of the three. This split IS the point of the skill — do not collapse it back into one list, and NEVER narrate findings in prose/paragraphs: every finding is a table ROW, no exceptions.
+
+> **Off-axis gaps are first-class.** A finding that maps to NO objective axis (a failure mode no roadmap planned — duplicate send, out-of-order, lost-without-trace) is legitimate: put `off-axis` in its `Objective axis` column, never drop it and never force it into a wrong axis. These are the point of failure-mode hunting, not a coverage defect — they are exactly the gaps the per-axis coverage table cannot see. Every finding row is either `axis-mapped` (names a real axis) or `off-axis`; the two counts sum to the total gaps (see the MECE check).
 
 **Open gaps — attack now** (nothing parks them):
 
@@ -127,7 +131,7 @@ Then the closing lines (plain text):
 - **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort each findings sub-table by it (highest first) so the backlog is pick-ready for triage.
 - **Disposition split is mandatory** — every gap lands in exactly one of Open / Deferred / Closed; never a single merged list and never prose (a finding is a table row). A `deferred` row MUST carry `Blocked by: <gate>`; if nothing parks it, it is `open`. Only `open` gaps are routed.
 - **Blocking axis + Release line are mandatory** — every `open` gap carries `Must`/`Should`/`Could` by the workaround test (separate from severity); deferred rows carry `out of this release` or the `✗ Must-but-deferred` red flag; closed is N/A. Emit the `Release: <GO | NO-GO | GO-with-conditions>` headline (NO-GO iff ≥1 `Must` or ≥1 `Must-but-deferred`). A `Must` without a named reason-why-no-workaround is not a `Must`.
-- **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof.
+- **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof. The counts MUST reconcile: `gaps` = total findings rows = `axis-mapped + off-axis` (see the MECE check); if they do not balance, STOP and fix.
 - If there are no gaps: say so explicitly + **which axes you verified** and why they are covered (like preview's empty-audit — not a bare "all good").
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 

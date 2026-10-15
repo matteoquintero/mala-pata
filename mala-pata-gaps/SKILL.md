@@ -1,10 +1,10 @@
 ---
 name: mala-pata-gaps
-description: READ-ONLY completeness auditor for a DOMAIN — given one or several roadmaps of the same domain + the real CODE, it finds what is missing to cover the total objective (follow-ups). Even if all phases are finished, something may be missing. It cross-checks 3 sources — the total objective (roadmaps), the follow-ups already NOTED (Level-2 / deferred / extra proposals not done / TODO-FIXME in code) and the gaps INFERRED from the code (codegraph/serena, anchored to evidence). Each gap comes out tagged [noted] or [inferred] with evidence (file:line or the annotation). It does NOT look only at the .md — it analyzes the code. It does NOT execute phases or touch code — it leaves its report in mala-pata/gaps/<domain>.md (versioned) + an engram pointer, and suggests routing. Different from mala-pata-roadmap-radar (that one is phase status vs git; this one is completeness of the objective). Trigger — "tenemos follow ups", "gaps de <dominio>", "qué falta del dominio <X>", "qué falta para cubrir <objetivo>".
+description: READ-ONLY completeness auditor for a DOMAIN — given one or several roadmaps of the same domain + the real CODE, it finds what is missing to cover the total objective and classifies each gap by disposition — `open` (attack now), `deferred` (parked behind an explicit gate), or `closed` (already absorbed). Even if all phases are finished, something may be missing. It cross-checks 3 sources — the total objective (roadmaps), the follow-ups already NOTED (Level-2 / deferred / extra proposals not done / TODO-FIXME in code) and the gaps INFERRED from the code (codegraph/serena, anchored to evidence). Each gap comes out with a disposition (open/deferred/closed), tagged [noted] or [inferred], with evidence (file:line or the annotation); deferred gaps name the gate that parks them. It does NOT look only at the .md — it analyzes the code. It does NOT execute phases or touch code — it leaves its report in mala-pata/gaps/<domain>.md (versioned) + an engram pointer, and suggests routing. Different from mala-pata-roadmap-radar (that one is phase status vs git; this one is completeness of the objective). Trigger — "tenemos follow ups", "gaps de <dominio>", "qué falta del dominio <X>", "qué falta para cubrir <objetivo>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -31,6 +31,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 - **Anchored to evidence, NEVER invented.** Each gap comes from a real annotation or from a reading of the code with `file:line`. If you cannot anchor it, it is not a gap — it is a question, mark it separately.
 - **`[noted]` vs `[inferred]`** for each gap: noted = it was already written (Level-2, deferred, TODO); inferred = the model detected it by cross-checking objective + code. The human trusts each differently — like the `[rule/judgment]` of the other skills.
+- **Disposition `open` / `deferred` / `closed`** per gap — the axis is the GATE, NOT whether it is "actionable" (everything is, eventually). `open` = in the active backlog, nothing stops it. `deferred` = parked on purpose behind an explicit external gate or decision (an ADR, a roadmap gate-phase it depends on, a `¿Diferible?` marker, a `estado: follow-up` / `bloqueado_por` frontmatter) — it carries `Blocked by: <gate>`. `closed` = already absorbed by other work. A gap is `deferred` ONLY with evidence of the parking decision; without it → `open`; if the disposition is genuinely ambiguous it goes to Questions, never guessed. A `deferred` gap is a follow-up that is not ready to route.
 - **Read-only on the code/project.** It does NOT execute phases, does NOT touch code, does NOT create a kickoff/roadmap. But it DOES leave its **own report** in `mala-pata/gaps/<domain>.md` + an engram pointer (like research/roadmap) — for traceability. It suggests routing and ends.
 - **Over-discover, the human trims.** Better to propose one gap too many (marked `[inferred]`) than to stay silent. But never invented.
 
@@ -52,6 +53,7 @@ Merge the **desired state** of all the domain's roadmaps: their "## Large object
 - **Level 2** checklist of each roadmap — read its `## Level 2 — broad domain not covered` section.
 - Axes marked **deferred** or **extra-proposal** (status column of `## Objective coverage`) that were NOT done.
 - `TODO` / `FIXME` / notes in the domain's **code** (grep/codegraph).
+- **Capture the GATE when a source parks an item** — an ADR/decision, a roadmap gate-phase it depends on, a `¿Diferible?`=yes marker, a `estado: follow-up` / `bloqueado_por` frontmatter. The gate drives the `deferred` disposition and the `Blocked by` field. No explicit parking evidence → the gap is `open`.
 
 **(b) Current state of the CODE** (measure, do not assume): for each axis of the objective (Phase 1), what is already implemented and what is not — with `codegraph_explore` / serena / grep. Anchor to `file:line`.
 
@@ -72,7 +74,7 @@ Source: mala-pata/ roadmaps + live code
 
 **BLUF line** (plain text, immediately below the banner, before the tables — carries the word next to each number):
 
-`Bottom line: <n> gaps · <a> noted · <b> inferred · across <m>/<M> axes covered`
+`Bottom line: <n> gaps · <o> open · <d> deferred · <c> closed · across <m>/<M> axes covered`
 
 **Coverage table** (MECE — a REAL Markdown table, NEVER fenced; one row per objective axis of the domain, each appears EXACTLY once — this is the anti "all good" proof):
 
@@ -82,21 +84,36 @@ Source: mala-pata/ roadmaps + live code
 
 `MECE check: axes total: <M> · axes in table: <M> · overlaps: none`
 
-**Findings table** (a REAL Markdown table, NEVER fenced; ordered by `Severity` so triage can pick the top of the backlog):
+**Findings — split by disposition** (REAL Markdown tables, NEVER fenced; each ordered by `Severity`). Every gap lands in EXACTLY ONE of the three. This split IS the point of the skill — do not collapse it back into one list.
+
+**Open gaps — attack now** (nothing parks them):
 
 | # | Missing (what) | Objective axis | Severity | Evidence | Tag |
 |---|---|---|---|---|---|
 | 1 | <what is missing, concrete> | <axis> | ▲ high · ● medium · ▼ low | <file:line or annotation/roadmap> | [noted] · [inferred] |
 
+**Deferred gaps — gated** (parked behind an explicit gate; NOT routed until it opens):
+
+| # | Missing (what) | Objective axis | Severity | Blocked by (gate) | Evidence | Tag |
+|---|---|---|---|---|---|---|
+| 1 | <what is missing, concrete> | <axis> | ▲ high · ● medium · ▼ low | <the gate: ADR / external like SPP / gate-phase> | <file:line or annotation> | [noted] · [inferred] |
+
+**Closed since last run — absorbed** (was a gap in a previous report, now covered — omit if this is the first run or nothing closed):
+
+| # | Was missing | Now | Evidence |
+|---|---|---|---|
+| 1 | <the prior gap> | covered / already done | <file:line proving it> |
+
 Then the closing lines (plain text):
 
 `Questions (not gaps, evidence was missing to confirm them): <or "none">`
-`Routing suggestion (I do NOT execute): <gap> → /mala-pata-research or /mala-pata-triage`
-`Structure: gap analysis + MECE / 100% rule. noted/inferred provenance + 3-source model = house method.`
+`Routing suggestion (I do NOT execute): only OPEN gaps route — <open gap> → /mala-pata-research or /mala-pata-triage. Deferred gaps are NOT routed until their gate opens.`
+`Structure: gap analysis + MECE / 100% rule. open/deferred/closed disposition + noted/inferred provenance + 3-source model = house method.`
 
 - **One row per gap**, concrete, with real evidence. No evidence → it does not go in the table (it goes to "Questions").
 - **Mandatory tag** `[noted]` or `[inferred]` per row (shared provenance vocabulary).
-- **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort the findings table by it (highest first) so the backlog is pick-ready for triage.
+- **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort each findings sub-table by it (highest first) so the backlog is pick-ready for triage.
+- **Disposition split is mandatory** — every gap lands in exactly one of Open / Deferred / Closed; never a single merged list. A `deferred` row MUST carry `Blocked by: <gate>`; if nothing parks it, it is `open`. Only `open` gaps are routed.
 - **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof.
 - If there are no gaps: say so explicitly + **which axes you verified** and why they are covered (like preview's empty-audit — not a bare "all good").
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.

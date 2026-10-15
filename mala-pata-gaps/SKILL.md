@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.0"
+  version: "1.8.1"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -92,7 +92,7 @@ NO-GO iff there is ≥1 `Must` OR ≥1 `deferred-but-Must`; GO-with-conditions i
 
 `MECE check: axes total: <M> · axes in table: <M> · overlaps: none`
 
-**Findings — split by disposition** (REAL Markdown tables, NEVER fenced; each ordered by `Severity`). Every gap lands in EXACTLY ONE of the three. This split IS the point of the skill — do not collapse it back into one list.
+**Findings — split by disposition** (REAL Markdown tables, NEVER fenced; each ordered by `Severity`). Every gap lands in EXACTLY ONE of the three. This split IS the point of the skill — do not collapse it back into one list, and NEVER narrate findings in prose/paragraphs: every finding is a table ROW, no exceptions.
 
 **Open gaps — attack now** (nothing parks them):
 
@@ -125,7 +125,7 @@ Then the closing lines (plain text):
 - **One row per gap**, concrete, with real evidence. No evidence → it does not go in the table (it goes to "Questions").
 - **Mandatory tag** `[noted]` or `[inferred]` per row (shared provenance vocabulary).
 - **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort each findings sub-table by it (highest first) so the backlog is pick-ready for triage.
-- **Disposition split is mandatory** — every gap lands in exactly one of Open / Deferred / Closed; never a single merged list. A `deferred` row MUST carry `Blocked by: <gate>`; if nothing parks it, it is `open`. Only `open` gaps are routed.
+- **Disposition split is mandatory** — every gap lands in exactly one of Open / Deferred / Closed; never a single merged list and never prose (a finding is a table row). A `deferred` row MUST carry `Blocked by: <gate>`; if nothing parks it, it is `open`. Only `open` gaps are routed.
 - **Blocking axis + Release line are mandatory** — every `open` gap carries `Must`/`Should`/`Could` by the workaround test (separate from severity); deferred rows carry `out of this release` or the `✗ Must-but-deferred` red flag; closed is N/A. Emit the `Release: <GO | NO-GO | GO-with-conditions>` headline (NO-GO iff ≥1 `Must` or ≥1 `Must-but-deferred`). A `Must` without a named reason-why-no-workaround is not a `Must`.
 - **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof.
 - If there are no gaps: say so explicitly + **which axes you verified** and why they are covered (like preview's empty-audit — not a bare "all good").

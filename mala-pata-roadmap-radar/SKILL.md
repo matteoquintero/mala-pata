@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.2"
+  version: "1.9.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -29,7 +29,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 
 ## Hard principles (non-negotiable)
 
-- **Git = truth.** "done" is confirmed ONLY against the freshly fetched integration branch — never by a checkbox in the `.md`, an archive-report, nor memory. A `.md` says what was planned; git says what happened.
+- **Git = truth, for `code` phases.** A `code` phase's "done" is confirmed ONLY against the freshly fetched integration branch (by the `Mala-Pata-Phase` commit trailer) — never by a checkbox in the `.md`, an archive-report, nor memory. A `.md` says what was planned; git says what happened. **`ops` phases are the one exception**: Railway/Neon/GitHub/manual leave NO git artifact, so their `done` is **attested** in the `.md` with mandatory evidence (URL/id/health/date) and tagged `[attested]` — never confused with a git-proven `done`.
 - **Zero cache, zero memory.** Every run re-derives everything from the `.md` + live git. Reporting a state without re-measuring it in this run is forbidden. NO engram.
 - **Read-only.** Never commit, push, merge, destructive fetch nor write. Running this radar is always safe.
 - **You take no attributions.** You only report which phase is in which state and what can start. You NEVER execute nor OFFER to execute a phase (triage, apply, PR, merge). Your output ENDS at the report — closing with "¿arranco X?" is forbidden.
@@ -42,7 +42,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
    - If the input is a path → `Read` directly.
    - If it is a slug/domain → look for `mala-pata/roadmap/<slug>.md` (or the default the roadmap used). If there are several candidates and none was specified → list the available `.md` files and ask which one (a single question, you stop and wait).
    - If it does not exist → say so and STOP; do not invent phases.
-3. From the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **route** (organic/loop:PROFILE/shot), **Depends on**, and from the DAG closing the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
+3. From the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**. From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
 
 ## Phase 1 — Freshness (live git, zero cache)
 
@@ -50,19 +50,27 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 2. Detect and **confirm** the integration branch (do not assume it: `main`/`development`/whichever the repo uses). Note its SHA for the banner.
 3. If there is a `gh`/PR CLI, fetch the repo's list of open/merged PRs.
 
-## Phase 2 — State per phase, live (match by slug)
+## Phase 2 — State per phase, live (code: by commit trailer · ops: by declared status)
 
-For each phase, match against git by its **slug**: a branch or PR whose name is `<slug>` or ends in `/<slug>` (the roadmap's convention: change-name = slug, branch `<type>/<slug>`). Derive the state — **only from git**:
+Branch the derivation by the phase's **kind**:
 
-- **done** — the phase is **merged into the freshly fetched integration branch**. Confirm by ANY of: (1) `git branch --merged <integration>` shows the phase's branch; (2) fallback for when the branch was already deleted by loop-start cleanup (and for squash merges): `git log <integration> --grep <slug>` finds a merge/squash commit mentioning the slug; (3) when `gh` is available, a merged PR for the slug. Evidence: merge/squash commit SHA or PR#, noting "branch deleted after merge" when applicable.
-- **in progress** — the branch or an OPEN PR exists for the slug, with its own commits, but NOT merged. Evidence: branch + number of commits ahead, or open PR#.
-- **pending** — there is no branch nor PR for the slug.
-- **blocked** — it is `pending` BUT at least one of its `Depends on` is NOT `done`. (It is a `pending` that explains why it cannot start yet.)
+**`code` phases — match by the commit trailer, NOT by branch.** Branches are ALWAYS deleted in cleanup, so the durable anchor is the trailer `Mala-Pata-Phase: <slug>` on the landing commit. Derive state from git only:
+- **done** — a commit carrying `Mala-Pata-Phase: <slug>` is reachable from the freshly fetched integration branch: `git -C <repo> log <integration> --grep '^Mala-Pata-Phase: <slug>$' -E --format=%H` returns a SHA (optionally confirm `git merge-base --is-ancestor <sha> <integration>`). Evidence: that commit/merge SHA (+ PR# if `gh` has it) `[git]`.
+- **in progress** — no trailer in integration yet, BUT a live branch or an OPEN PR for the slug exists with its own commits. Evidence: branch +<k> commits, or open PR# `[git]`.
+- **pending** — no trailer in integration and no live branch/PR.
+- **blocked** — `pending` with at least one `Depends on` not `done`.
+- **Fallback (weaker — flag it):** if the slug's landing commit lost the trailer (e.g. a squash that dropped it), fall back to the roadmap's recorded `Evidence` sha/PR# (confirm the sha is an ancestor of integration) or a subject grep `git log <integration> --grep <slug>`; tag the evidence `[git, weak: no trailer]` so the human knows it is a looser match.
+
+**`ops` phases — NO git artifact; read the declared status.** Railway/Neon/GitHub/manual leave nothing in git, so **NEVER mark an `ops` phase `pending`/`blocked` for lacking a branch/trailer.** Read the `.md`'s declared fields:
+- **done** — `Status: done` AND `Evidence` present (URL/id/health/date). Evidence: that string `[attested]`.
+- **pending** — `Status: pending`, OR `done` WITHOUT evidence (attested-without-evidence is NOT done — same honesty rule as gaps). Show the phase's `Verify` so the human can confirm it.
+- **blocked** — pending with at least one `Depends on` not `done`.
 
 Derivation rules:
-- **done is NEVER inferred from the `.md`** nor from a DoD checkbox — only from the real merge in git.
-- `no-slug` phase (old roadmap): do not key it by fuzzy semantics. Mark it `? (no slug)` in Status, with the note "the roadmap did not record a slug; regenerate the roadmap or pass the branch by hand". Do not guess.
-- A merged branch whose worktree/branch is still alive is `done` anyway (the merge rules); you may note it in the evidence as "merged, cleanup pending".
+- **`code` done is NEVER inferred from the `.md`** nor a DoD checkbox — only from the trailer reachable in git. **`ops` done requires declared `Status: done` + evidence** (git cannot prove it); tag it `[attested]`, never `[git]`.
+- **A dependent of a `done` phase is NOT blocked whether the parent is `[git]` or `[attested]`** — an ops `done` satisfies deps exactly like a code `done` (this is what kills the false `blocked` cascade on infra phases).
+- `no-slug` phase (old roadmap with neither slug nor trailer): mark `? (no slug)`, note "regenerate the roadmap or pass the evidence by hand". Do not guess.
+- A code phase whose branch is still alive AND whose trailer is already in integration is `done` anyway; note "merged, cleanup pending" in the evidence.
 
 ## Phase 3 — What can start now + parallel
 
@@ -87,18 +95,19 @@ Then the real table:
 
 | # | Phase | slug | Route | Depends on | Status | Evidence |
 |---|---|---|---|---|---|---|
-| 1 | <name> | <slug> | loop:STANDARD | — | ✓ done | merge <sha> / PR #<n> |
-| 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits |
-| 3 | <name> | <slug> | shot | 1 | ○ pending | no branch |
-| 4 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
+| 1 | <name> | <slug> | loop:STANDARD | — | ✓ done | merge <sha> / PR #<n> [git] |
+| 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits [git] |
+| 3 | <name> | <slug> | shot | 1 | ○ pending | no trailer/branch |
+| 4 | <name> | <slug> | ops | — | ✓ done | <env URL / health 200 / date> [attested] |
+| 5 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
 
 Then the closing lines (plain text):
-`Legend: ✓ done = merged to integration (git) · ◐ in progress = live branch/PR not merged · ○ pending = no branch · ✗ blocked = pending with unfinished deps`
+`Legend: ✓ done = in integration — matched by the Mala-Pata-Phase trailer (code) or declared with evidence (ops) · ◐ in progress = live branch/PR not merged · ○ pending = no trailer/branch (code) or Status pending (ops) · ✗ blocked = pending with unfinished deps · [git] = proven in git · [attested] = ops, human-declared with evidence`
 `Structure: information radiator (Cockburn) + workflow-state lexicon. Live-git state derivation + ready-now computation = house method.`
 
 - The table carries **one row per roadmap phase**, in the `.md` order. No phase is omitted.
 - State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.
-- **Concrete evidence** per row (merge SHA, PR#, number of commits ahead, or "no branch") — never a bare "ok".
+- **Concrete evidence + provenance** per row: `[git]` (trailer/merge SHA, PR#, commits ahead) or `[attested]` (ops — the declared URL/id/health/date) — never a bare "ok". The provenance tag is MANDATORY so a git-proven state is never confused with an attested one.
 - If `gh`/the PR CLI was missing, the banner says so ("PRs not queried; status by branches/merges").
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
@@ -107,6 +116,6 @@ Then the closing lines (plain text):
 - **ZERO cache, ZERO engram.** Re-derive everything from `.md` + git on every run.
 - **READ-ONLY.** Never mutate anything; never execute nor offer to execute a phase.
 - **Merge = git only.** A ticked DoD or an archive-report does NOT prove a merge.
-- **Match by exact slug**, never fuzzy semantics. No slug → `? (no slug)`, do not guess.
+- **Match `code` phases by the commit trailer `Mala-Pata-Phase: <slug>`** (durable; branches are deleted on cleanup), never fuzzy subject semantics; **`ops` phases by their declared `Status`/`Evidence`** (git cannot see them). No slug and no trailer → `? (no slug)`, do not guess.
 - **Fixed format** — same columns, same order, same lexicon, always.
 - **No data**: if there is no roadmap `.md`, ask for it; if there is no git, do not run. Never invent the state of a phase.

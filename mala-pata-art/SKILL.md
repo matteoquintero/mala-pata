@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.2"
+  version: "1.5.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -38,6 +38,7 @@ Every improvement satisfies them; if the current UI violates them, that is the f
 5. **AA contrast** — fg/bg ≥ 4.5:1 (text), ≥ 3:1 (large UI); never convey state by color alone.
 6. **SVG-only** — icons are always SVG (registry/lucide/heroicons). **Never** emoji as an icon or decoration. (UI icons stay SVG; curated typographic status glyphs in text/tables are not icons.)
 7. **No emoji** — zero emoticons in the UI (and in whatever you produce). emoji = pictographic (U+1F000–1FAFF), emoji-presentation (`U+2714 U+2718 U+2705 U+274C U+26A0`), U+FE0F/ZWJ; curated typographic glyphs (`✓ ✗ ○ ◐ ● ▲ ▼ → ° · — ≥ ≤ ×`) ARE allowed in text.
+8. **No decorative left-accent border/stripe** — a colored vertical bar/border on the LEFT edge of a card, callout, panel or list item, used as decoration or as a category/status color, is BANNED — as hard as emoji (#7). It is a generic/AI-design tell. Convey state/category with the existing hierarchy tokens instead (a badge, text weight/color, a full subtle background tint, an icon) — never a left stripe. Borders WITH real structural intent (a full 1px divider between rows, an input outline, a full equal-weight card border) are fine; what is banned is the **decorative left-edge accent**. This applies both to what you PRODUCE and to what you FLAG when reviewing.
 
 ## The judgment (principle catalog — the CORE, in 3 levels of use)
 
@@ -73,7 +74,7 @@ The only thing taken from ui-ux-pro-max; they make the judgment testable:
 - **Touch target**: ≥ 44×44pt (iOS) / 48×48dp (Android).
 - **Type**: body ≥ 16px on mobile; line length ~45-75 characters.
 - **A11y/interaction rules**: `color-not-only` (meaning never by color alone), `visible-focus`, `cursor-pointer` on clickables, viewport without disabled zoom, `no-layout-shift-hover`.
-- **Anti-pattern checklist (the "tells" of generic/AI design, avoid them)**: purple gradients, Inter by default, decorative glassmorphism, bento-grid by default, perfect symmetry, the hero + 3-cards + testimonials + pricing + CTA pattern, generic shadows/borders without intent.
+- **Anti-pattern checklist (the "tells" of generic/AI design, avoid them)**: purple gradients, Inter by default, decorative glassmorphism, bento-grid by default, perfect symmetry, the hero + 3-cards + testimonials + pricing + CTA pattern, generic shadows/borders without intent, **decorative left-accent border/stripe on cards/callouts (hard ban — invariant 8)**.
 
 > **The prescriptive side of ui-ux-pro-max is forbidden**: do NOT use its 161 palettes, its font pairings, or its product→style mappings. The concrete values (which color, which font) come from the **project's system** + the **judgment** above. Its style vocabulary serve only as vocabulary to NAME a direction, not as "apply this style".
 

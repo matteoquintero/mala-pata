@@ -24,8 +24,8 @@ Identity resolution:
 
 Overridable via env:
   MALAPATA_OVERLAY_BIN   (default ~/.claude/hooks/malapata_overlay)
-  MALAPATA_SND_FINISHED  (default /System/Library/Sounds/Frog.aiff)
-  MALAPATA_SND_WAITING   (default /System/Library/Sounds/Funk.aiff)
+  MALAPATA_SND_FINISHED  (if set, forces one sound; else random from FINISHED_POOL)
+  MALAPATA_SND_WAITING   (if set, forces one sound; else random from WAITING_POOL)
 """
 import json
 import os
@@ -39,9 +39,21 @@ OVERLAY = os.environ.get(
     "MALAPATA_OVERLAY_BIN", os.path.expanduser("~/.claude/hooks/malapata_overlay")
 )
 SESSION_NAME = os.path.expanduser("~/.claude/hooks/malapata_session_name.py")
-SND_FINISHED = os.environ.get("MALAPATA_SND_FINISHED", "/System/Library/Sounds/Frog.aiff")
-SND_WAITING = os.environ.get("MALAPATA_SND_WAITING", "/System/Library/Sounds/Funk.aiff")
+SND_DIR = "/System/Library/Sounds"
+# Each event picks a RANDOM sound from its own disjoint pool, so "finished" and
+# "waiting" still sound different. Env MALAPATA_SND_FINISHED / MALAPATA_SND_WAITING,
+# if set, forces a single fixed sound for that event (overrides the pool).
+FINISHED_POOL = ["Glass", "Bottle", "Pop", "Purr", "Ping"]
+WAITING_POOL = ["Submarine", "Morse", "Frog", "Blow"]
 THEMES = ["glass", "frost", "frostw"]
+
+
+def pick_sound(event):
+    env = os.environ.get("MALAPATA_SND_WAITING" if event == "waiting" else "MALAPATA_SND_FINISHED")
+    if env:
+        return env
+    pool = WAITING_POOL if event == "waiting" else FINISHED_POOL
+    return f"{SND_DIR}/{random.choice(pool)}.aiff"
 
 
 def parse_args(argv):
@@ -155,10 +167,10 @@ def main():
     line2 = meta
     if event == "waiting":
         line1 = "te espera — input requerido"
-        sound = SND_WAITING
+        sound = pick_sound("waiting")
     else:  # finished / default
         line1 = "terminó"
-        sound = SND_FINISHED
+        sound = pick_sound("finished")
 
     # Per-agent enricher: claude-code keeps its richer rendering.
     if agent == "claude-code":

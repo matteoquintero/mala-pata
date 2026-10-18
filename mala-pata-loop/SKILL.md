@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.0"
+  version: "1.14.1"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -269,7 +269,7 @@ The kickoff MUST include the full frontmatter and the "Method rules" block with 
 The kickoff lives in a **file, not in engram** — so it is never pushed to the project repo by accident, and it does not have the practical length limit of an engram observation. This is specific to the kickoff: the rest of the cycle (explore, propose, spec, design, tasks, preview, apply-progress, verify-report, archive-report) keeps persisting in engram exactly as always — do not touch it.
 
 1. **Location — inside the repo, versioned (traceability)**: `mala-pata/kickoffs/<change-name>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` if it does not exist).
-   - **Branch — DURABLE (the kickoff's `branch_base`), never an ephemeral branch.** Save/commit the kickoff on the `branch_base` this change builds on (already in the frontmatter) — NOT on an ephemeral change/worktree branch that gets deleted in cleanup and strands the kickoff. **Land it:** (a) if the current branch is not `branch_base` AND the worktree is clean (`git -C <repo> status --porcelain` empty), switch to it to write + commit; (b) fallback — if dirty/unsafe, do NOT force it: write the file and tell the human `commit <abs path> on branch <branch_base>`, then stop.
+   - **Write only — do NOT commit/push.** Write the kickoff file; the skill does NOT create a git commit (auto-committing diverged local `main` from the remote and left kickoffs unpushed). Tell the human the path + that it belongs on the change's `branch_base` (never an ephemeral one) so they commit it with the change in their normal flow.
 2. Write the complete kickoff from Step 4 to `mala-pata/kickoffs/<change-name>.md`.
 3. **Light pointer in engram** (only so `mem_search`/radar keep finding it — the idempotency of Step 1 point 5 depends on this): `mem_save` with `topic_key: "sdd/<change-name>/kickoff"`, `type: "architecture"`, **single-line** content: `Kickoff in file: <absolute path>`. Do not duplicate the kickoff's content here — the file is the only source of truth.
 4. If the change needs migrations, `migrations_reserved` in the frontmatter is provisional (there is no registry): re-measure git right before the merge (Step 3).

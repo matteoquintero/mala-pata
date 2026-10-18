@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.12.0"
+  version: "3.12.1"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -126,7 +126,7 @@ created_at: <ISO 8601>
 Same as `/mala-pata-loop` (Step 5): the kickoff lives in a **file**, not in engram — so it is never pushed to the repo by accident.
 
 1. **Location — inside the repo, versioned (traceability)**: `mala-pata/kickoffs/<change-name>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` if it does not exist).
-   - **Branch — DURABLE (the kickoff's `base`), never an ephemeral branch.** Save/commit the kickoff on the `base` branch this change builds on (already confirmed above, Phase 2) — NOT on an ephemeral change/worktree branch that gets deleted in cleanup and strands the kickoff. **Land it:** (a) if the current branch is not `base` AND the worktree is clean (`git -C <repo> status --porcelain` empty), switch to `base` to write + commit; (b) fallback — if dirty/unsafe, do NOT force it: write the file and tell the human `commit <abs path> on branch <base>`, then stop.
+   - **Write only — do NOT commit/push.** Write the kickoff file; the skill does NOT create a git commit (auto-committing diverged local `main` from the remote and left kickoffs unpushed). Tell the human the path + that it belongs on the change's `base` branch (never an ephemeral one) so they commit it with the change in their normal flow.
 2. Write the full kickoff from Phase 2 to `mala-pata/kickoffs/<change-name>.md`.
 3. **Lightweight pointer in engram**: `mem_save` with `topic_key: "odd/<change-name>/kickoff"`, `type: "architecture"`, **single-line** content: `Kickoff ODD in file: <absolute path>`. Do not duplicate the content here — the file is the sole source of truth.
 4. If engram is unavailable, the file is still the source of truth — warn in one line that the pointer was not saved (it affects future idempotency, not the kickoff itself).

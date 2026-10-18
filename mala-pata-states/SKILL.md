@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.3"
+  version: "1.4.4"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -114,7 +114,7 @@ archify only detects height overflow in this slow step (Chrome), not in `validat
 
 Default output (if the user does not ask for another path): `<project-root>/docs/diagrams/<feature>-states.{json,html}` (same pattern as `bodega-ferreteria-colombia/docs/diagrams/lifecycle.json`). The `.json` is versionable and editable; the `.html` is the deliverable.
 
-**Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the diagram is stranded): a diagram for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el diagrama — <feature base> o main?` and wait. **Land it:** (a) current branch ≠ target AND worktree clean (`git -C <project-root> status --porcelain` empty) → switch to target to write + commit; (b) fallback — dirty/unsafe → write the files and tell the human `commit <paths> on branch <target>`, then stop.
+**Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the diagram is stranded): a diagram for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el diagrama — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the files; the skill does NOT create a commit (auto-committing diverged local main from the remote and left diagrams unpushed). Tell the human the paths + that durable branch so they add them in their normal PR flow.
 
 ## Phase 5 — Close (without judging)
 

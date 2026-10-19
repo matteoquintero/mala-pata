@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.15.0"
+  version: "1.16.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -215,7 +215,7 @@ As soon as Verify is green, **STOP and ask yourself, without the human having to
 > How do I close this: **(a) open a PR** (towards which branch — `main` or another?), or **(b) merge into a feature branch** (which one, e.g. `feature/caja`)?
 - **(a) PR**: check whether there is **already an active PR** for this work (`gh pr list` / `gh pr view`). If it exists → **consolidate there**, do not open a second one (a single active PR). If not → propose and **open the PR only with OK** (title, summary, link to SDD artifacts in engram). **Do not merge/close the PR without an explicit request** — you stop at **green CI**. (The branch is NOT touched at this point: it is only deleted in the cleanup and ONLY once merged — see 4.5.)
 - **(b) Merge into a feature branch**: integrate the SDD's branch into the indicated feature branch **only with the user's OK**. Commits with **explicit pathspec**. (Once the merge is done, the SDD's branch is integrated → it is deleted in the cleanup, 4.5.)
-- **Trailer on the landing commit (both a and b):** the commit that lands this change on integration carries the git trailer `Mala-Pata-Phase: <change-name>` — for a merge-to-feature (b) put it in the merge commit; for a PR (a) include it in the PR description AND the squash-commit message so it reaches git history. `mala-pata-roadmap-radar` matches by that trailer, since the branch is deleted in cleanup (4.5).
+- **Trailers on the landing commit (both a and b):** the commit that lands this change on integration carries these git trailers (each on its OWN line): `Mala-Pata-Phase: <change-name>`, `Mala-Pata-Domain: <domain>`, `Mala-Pata-Roadmap: <slug | none>`, `Mala-Pata-Lane: loop` (domain + roadmap from the kickoff frontmatter) — for a merge-to-feature (b) put them in the merge commit; for a PR (a) include them in the squash-commit message so they reach git history. `mala-pata-roadmap-radar` matches by phase, `mala-pata-domain-radar` by domain, since the branch is deleted in cleanup (4.5).
 - In both cases: if there are conflicts or red CI → **STOP and report**, do not force.
 Do not continue to the closing without the human's explicit answer to this question.
 

@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.2"
+  version: "1.14.3"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -111,6 +111,8 @@ Add the **size signal**: does this fit in one unit (one organic or one loop), or
 ## Phase 4 — Write the doc (MANDATORY, ALWAYS)
 
 You ALWAYS write the research doc, without exception — it is your deliverable. It goes **inside the repo, versioned**: `mala-pata/research/<slug>.md` (relative to the repo root, `git rev-parse --show-toplevel`; `mkdir -p` the folder if it does not exist).
+
+**`domain` is MANDATORY — NEVER write the doc without it.** Research has no base branch yet, so infer the domain from what the idea is FOR (the feature/area it anchors to in the code): a feature-in-progress → that feature; else the functional area; else `main`. If you cannot determine it with confidence, **ASK the user (one question) BEFORE writing** — never leave it blank, never guess.
 
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the doc is stranded): a research doc tied to a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el research — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the file; the skill does NOT create a commit (auto-committing diverged local main from the remote and left docs unpushed). Tell the human the path + that durable branch so they add it in their normal PR flow.
 

@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.15.0"
+  version: "3.16.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -59,6 +59,10 @@ The lane is already decided (route=organic) — this is no longer the gate that 
 | **Decisions already made** | YES | The approach/architecture is DECIDED or obvious. |
 | **Risk** | NO (optional) | Blast radius in one line. |
 | **Where** | NEVER blocks | It is an OUTPUT of the Explore phase of `/mala-pata-organic-start`, not a precondition — in ODD you explore first. The human may leave an optional hint, but it never blocks. |
+
+### Product-discovery — ask the open decisions, do NOT invent them
+
+The real failure here is **inventing the product decisions** instead of asking them — writing a `Decisions`/`Done` the human never confirmed. Before generating the kickoff, do the research-style split (see `/mala-pata-research` Phase 2): which parts of What/Done/Decisions you can answer from the code or the obvious, vs the ones **only the human knows** — the scope-and-behavior calls: what is IN vs OUT, behavior on edge case X, who can do it / permissions, side-effects on other systems or data, what counts as done. For each human-only open decision, **ASK one at a time and WAIT**; never assume it, never fold an assumption into the kickoff as if it were decided. This is ADDITIONAL to the base/branch confirm (Phase 2) — a different question. **Proportional (Hard rule #3)**: a trivial, fully-specified change has zero open product decisions → ask nothing and proceed; only genuine forks get a question. If you catch yourself about to write a scope/behavior the human never confirmed → STOP and ask it first.
 
 ### What to do with the result
 

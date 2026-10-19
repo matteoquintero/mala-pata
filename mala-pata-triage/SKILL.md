@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.10.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -90,6 +90,8 @@ Reason through the gate first; the LAST thing you emit is EXACTLY the shape belo
 
    Add a `change_name: <slug>` row when triage was invoked for a roadmap phase (omit when free-standing).
    Add a `research: <slug>` row when triage came FROM `/mala-pata-research` (the arg is a research slug, or the request names a research doc), so the lane records it in the kickoff and `organic-start`/`loop-start` carries `mala-pata/research/<slug>.md` into the feature's PR, tied to the commit. Omit the row when there was no research (the lane defaults to `research: none`).
+
+   **Open product decisions — flag, do NOT invent.** If a draft field hides a scope/behavior call only the human can make (what is IN vs OUT, who can do it / permissions, side-effects on other systems or data), write the cell as `open: <the question>` instead of guessing a value. The lane (organic/loop) MUST ask these one at a time before locking the kickoff — triage decides the lane and flags them; `/mala-pata-research` is what resolves them fully when the uncertainty is deep. Guessing a product decision and passing it as settled is the failure.
 3. **DoR line:** `DoR: What ✓ · DoD ✓ · Decisions ✓` (the three blocking fields passed the gate).
 4. **Footer:** `Structure: Definition of Ready + INVEST. Lane routing = house method.`
 

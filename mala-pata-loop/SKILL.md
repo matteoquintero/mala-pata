@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.17.0"
+  version: "1.18.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -57,6 +57,8 @@ Before reinterpreting anything, measure whether the request is **ready to enter 
 - "make it work well", "keep it tidy", "make it fast" → NOT testable → it is a red card (the real criterion is missing).
 - "the endpoint responds in <200ms at p95", "the user can filter by date and see the result without reloading" → testable → OK.
 - If the "done" cannot be made testable even by asking 1–2 things → treat it as an undefined objective (Too vague).
+
+**A red card is also an open PRODUCT decision only the human can settle** — not just "is the objective A or B?" but the scope-and-behavior calls: what is IN vs OUT, behavior on edge case X, who can do it / permissions, side-effects on other systems or data. Split them research-style (see `/mala-pata-research` Phase 2): what you can answer from the code vs what **only the human knows**, and ASK the human-only ones **one at a time, waiting** each time. **Inventing one of these instead of asking is the failure mode** — it is exactly what makes preview re-debate the objective later. (Proportional: a trivial, fully-specified change has zero of these → ask nothing and continue.)
 
 ### Resolution (the usual three levels, now with the two checks inside)
 

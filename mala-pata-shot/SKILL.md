@@ -4,7 +4,7 @@ description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.0"
+  version: "1.9.0"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree
@@ -33,7 +33,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 ## Hard rules
 
-> **#1 — Entry gate: shot is for the TRIVIAL and UNDERSTOOD, not for the small-but-uncertain.** Shot applies only if: the What/Done are obvious, there are no decisions that **need design**, the blast radius is minimal (1-3 files), no migration, no new contract/endpoint, no new UI. A decision that is **decidable with one question** (known options, the human chooses) does NOT take you out of shot: ask that question and continue. Only a decision that **needs design** (architectures with tradeoffs to investigate) escalates to organic/loop. The criterion is NOT line count — it is the **absence of uncertainty and of necessary ceremony**. If any of that is missing → it is NOT shot: bounce to `/mala-pata-organic` (or `/mala-pata-loop` if there are design decisions, `/mala-pata-roadmap` if it is multi-unit).
+> **#1 — Entry gate: shot is for the TRIVIAL and UNDERSTOOD, not for the small-but-uncertain.** Shot applies only if: the What/Done are obvious, there are no decisions that **need design**, the blast radius is minimal (1-3 files), no migration, no new contract/endpoint, no new UI. A decision that is **decidable with one question** (known options, the human chooses) does NOT take you out of shot: ask that question and continue — and NEVER **assume** a product decision that shapes the change (scope/behavior/permissions/side-effects); if you would be guessing scope instead of asking, it was not a shot → bounce to organic. Only a decision that **needs design** (architectures with tradeoffs to investigate) escalates to organic/loop. The criterion is NOT line count — it is the **absence of uncertainty and of necessary ceremony**. If any of that is missing → it is NOT shot: bounce to `/mala-pata-organic` (or `/mala-pata-loop` if there are design decisions, `/mala-pata-roadmap` if it is multi-unit).
 
 > **#2 — NEVER a worktree. This is what makes shot fast — it is the only lane that works in-place.** Do NOT create or use a worktree under any circumstance; creating a worktree is exactly what shot avoids (if you think one is needed, it was not shot → bounce to organic/loop). You work in-place, but **NEVER touch `main` directly**. If you are standing on a protected branch (`main`/`development`), **branch-first**: create a short branch `<type>/<slug>` (`fix`/`chore`/`refactor`/`docs`) and commit there. If you are already on a feature branch, commit on that one. The worktree is skipped; the safe branch is NOT.
 

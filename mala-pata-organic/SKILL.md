@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.14.0"
+  version: "3.14.1"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -85,7 +85,7 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 ---
 change_name: <change-name>
 project: <project>
-domain: <owner — the domain/feature this belongs to: caja / clientes / facturacion…; ask if unclear>
+domain: <the FEATURE it belongs to; else (fallback) the functional AREA it touches: pedido / caja / clientes…; else 'main' for a direct-to-main chore with no area. Never blank — ask if unclear>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 route: organic
 base: main|development|<feature-en-curso>   # confirmed with the human — Hard rule #2

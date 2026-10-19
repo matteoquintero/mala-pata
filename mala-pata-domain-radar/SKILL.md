@@ -4,7 +4,7 @@ description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
@@ -29,7 +29,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 ## Hard principles (non-negotiable)
 
 - **Git = truth for status.** Coarse `done`/`in progress`/`pending` is derived from live git (same OPEN matching as roadmap-radar — several equal-weight signals; the `Mala-Pata-Phase` trailer is optional, not required). Never from a `.md` checkbox.
-- **Scope strictly by `domain`.** Only artifacts whose `domain:` (or `Mala-Pata-Domain` trailer) matches the requested domain. **Never mix domains in one run.**
+- **Scope strictly by `domain`.** Only artifacts whose `domain:` (or `Mala-Pata-Domain` trailer) matches the requested domain. **Never mix domains in one run.** (`domain` = the FEATURE it belongs to, else the functional AREA it touches, else `main` — the catch-all bucket for area-less direct-to-main chores.)
 - **Read-only.** Never commit, push, merge, nor execute/offer to execute a lane or another radar. Your output ENDS at the overview.
 - **This is the overview, not the detail.** For a roadmap's phases you emit a one-line rollup + "run roadmap-radar"; you do NOT expand the phase table here.
 

@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.1"
+  version: "1.14.2"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -122,7 +122,7 @@ You ALWAYS write the research doc, without exception — it is your deliverable.
 ---
 idea_slug: <kebab>
 project: <project>
-domain: <the FEATURE it belongs to; else (fallback) the functional AREA it touches: pedido / caja / clientes…; else 'main' for a direct-to-main chore with no area. Never blank — ask if unclear>
+domain: <the FEATURE it belongs to — if it targets a feature branch (feature/<X>) the domain is <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 roadmap: <roadmap-slug if this idea belongs to a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 verdict: PROCEED | SHARPEN | RECONSIDER
 created_at: <ISO 8601>

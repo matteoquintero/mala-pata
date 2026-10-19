@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.16.1"
+  version: "1.16.2"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -83,6 +83,7 @@ Before reinterpreting anything, measure whether the request is **ready to enter 
    - **Base**: propose it with your reason — default `main`/`development` (integration), or another branch if the work builds on a feature in progress ("the code lives in X"). Any branch is valid with confirmation; what is forbidden is assuming it silently or blocking just because it is not main.
    - **Branch type**: advise the conventional prefix according to WHAT the change is (`feature/` new functionality, `fix/`/`bugfix/` correction, `hotfix/` prod urgency, `refactor/`, `chore/`, `docs/`, `release/`) and propose the full name `<type>/<change-name>`. **Never `sdd/...`**. E.g.: a bug fix → proposal `fix/<change-name>`; a new feature → `feature/<change-name>`.
    - **Wait for the OK** before setting `branch:` and `branch_base` in the kickoff. These two confirmations can go together with the profile one (Step 1.5) in a single interaction. The working branch is ALWAYS the new `<type>/<change-name>` and the `worktree` is ALWAYS a new dir per change — never put an integration branch as `branch:` nor a worktree to reuse; the executor (loop-start) works isolated in its own worktree and consolidates at merge.
+   - **Set `domain` from `branch_base`**: `feature/<X>` → `domain: <X>` (the feature — e.g. `feature/caja` → `caja`, even if the change touches facturacion/alegra, which are sub-areas, NOT the domain); `main`/`development` → the functional AREA, else `main`. **If there is ANY doubt, ASK the human — never guess.**
 
 ---
 
@@ -180,7 +181,7 @@ Assemble the brief with this structure, **INJECTING** the rules MDs:
 change_name: <change-name>
 profile: <PERFIL>
 project: <project>
-domain: <the FEATURE it belongs to; else (fallback) the functional AREA it touches: pedido / caja / clientes…; else 'main' for a direct-to-main chore with no area. Never blank — ask if unclear>
+domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If branch_base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
 branch_base: main|development

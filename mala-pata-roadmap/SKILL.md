@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.17.1"
+  version: "2.17.2"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -281,7 +281,7 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 objective: <short title of the large objective>
 slug: <kebab-case>
 project: <project>
-domain: <the FEATURE it belongs to; else (fallback) the functional AREA it touches: pedido / caja / clientes…; else 'main' for a direct-to-main chore with no area. Never blank — ask if unclear>
+domain: <the FEATURE it belongs to — if it is built on a feature branch (feature/<X>) the domain is <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If it is on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 created_at: <ISO 8601>
 phases_total: <N>
 ---

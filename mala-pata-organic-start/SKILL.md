@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.15.0"
+  version: "1.16.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -42,7 +42,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 ## Step 1 — Load the kickoff + engram context
 
 1. The input is an **absolute path to an `.md` file** (the one `/mala-pata-organic` wrote in `mala-pata/kickoffs/<change-name>.md`, inside the repo). If it does not start with `/` or the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
-2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
+2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`, `domain`, `roadmap`, `research`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
 3. If `route` is not `organic` → **STOP**: this kickoff is not for this skill (it is probably a `/mala-pata-loop` kickoff, which uses `/mala-pata-loop-start`).
 4. `mem_search("odd/<change_name>/kickoff")` only to confirm the pointer — it is not blocking if it fails, the file is already the source of truth.
 
@@ -58,6 +58,11 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 3. **ABSOLUTE paths ALWAYS** (Hard rule #3) — every `git`/`npm`/read/write references the worktree by absolute path (`git -C <ABS-worktree> …`, `npm --prefix <ABS-worktree> …`). Before any write: `git -C <ABS-worktree> rev-parse --show-toplevel` must return the worktree.
 3.5. **Drifted worktree check (one line, before operating)**: confirm that the worktree is at its canonical path `<ABS-repo>-worktrees/<change-name>` and that `git worktree list` shows it there, resolving on disk. If the registered id != the folder, or the path does not resolve (someone renamed it with `mv`), warn and offer `git worktree repair <path>` (or `git worktree prune` if it was deleted) before continuing. **NEVER use `mv` to rename a worktree** — use `git worktree move`.
 4. **Init guard**: `mem_search("sdd-init/{project}")` — keep only the EXACT item. If it does not exist → warn the orchestrator; do not run the init here (`/mala-pata-organic` already guarantees it). With the exact item, confirm `strict_tdd` against the kickoff's `tdd_mode` — if they differ, the one from `sdd-init` wins (it is the live source).
+5. **Carry the planning docs into the feature branch (so they land in THIS PR, tied to the commits — no more loose md on base).** The kickoff (and the research it came from) were written **write-only** to the base checkout and are untracked there; the fresh worktree does not contain them. Move them in and commit them **on the feature branch** — this is NOT the write-only rule being broken: that rule forbids committing to `main`/base (which diverged local main); committing to your OWN worktree branch is safe and is exactly what ties the docs to the PR.
+   - **Kickoff**: if `<ABS-repo>/mala-pata/kickoffs/<change_name>.md` exists and is untracked on base → `mkdir -p <ABS-worktree>/mala-pata/kickoffs` then `mv <ABS-repo>/mala-pata/kickoffs/<change_name>.md <ABS-worktree>/mala-pata/kickoffs/<change_name>.md`. If it is already in the worktree (resume) or already tracked on base → nothing to move.
+   - **Research**: only if the kickoff frontmatter has `research: <slug>` (not `none`) and `<ABS-repo>/mala-pata/research/<slug>.md` exists untracked → `mkdir -p <ABS-worktree>/mala-pata/research` then `mv` it the same way into `<ABS-worktree>/mala-pata/research/<slug>.md`.
+   - **Commit on the feature branch** (ABSOLUTE paths — Hard rule #3): `git -C <ABS-worktree> add mala-pata/kickoffs/<change_name>.md [mala-pata/research/<slug>.md]` then `git -C <ABS-worktree> commit -m "docs(mala-pata): carry planning docs for <change_name> into the feature branch"`. One additive commit, separate from the work-unit commits. If nothing was moved (already present/tracked), skip the commit.
+   - **Update the engram pointer** `odd/<change_name>/kickoff` to the new worktree path, and tell the human in one line that the docs now ride in this branch's PR (no longer loose on base).
 
 ## Step 3 — Explore + resolve uncertainty (ODD 2-3 — **this is where the Where is discovered**)
 

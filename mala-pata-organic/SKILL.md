@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.14.2"
+  version: "3.15.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -87,6 +87,7 @@ change_name: <change-name>
 project: <project>
 domain: <the FEATURE it belongs to — from the base: feature/<X> → <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
+research: <research slug if this change came from /mala-pata-research, else none>   # organic-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 route: organic
 base: main|development|<feature-en-curso>   # confirmed with the human — Hard rule #2
 branch: <type>/<change-name>                # type confirmed — never sdd/
@@ -120,6 +121,8 @@ created_at: <ISO 8601>
 ```
 
 (The section headings and frontmatter keys in the template are fixed identifiers read by `/mala-pata-organic-start` and stay as written; only the `<...>` placeholders and comments are prose.)
+
+**Set `research:`** from triage's draft (the `research:` row it adds when the change came from `/mala-pata-research`), or from the human if they ran research directly and name it; otherwise `none`. This is the link `organic-start` uses to carry `mala-pata/research/<slug>.md` into the feature branch so the planning doc lands in the PR, not loose on base.
 
 **`smoke_test` field**: capture early whether the change is likely to need a manual test with seeded data after apply (gate of `organic-start`, Step 7 / 4.1-ter). Default `needed: auto` — `organic-start` proposes yes/no based on the shape of the change and the human confirms; set `yes`/`no` only if you already know. In `data`, one line with the scenario to seed, or "a definir". The seed uses the project's mechanism and runs against the test DB.
 

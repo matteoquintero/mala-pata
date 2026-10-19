@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.0"
+  version: "1.9.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -55,7 +55,7 @@ This is a **diagnosis from the text of the request**, proportional to the reques
 ## Phase 2 — Decide and answer the lane
 
 - **Trivial + understood + minimal blast radius** (obvious What/Done, no decisions, 1-3 files, no migration/contract/new UI) → **shot**.
-  Answer: `→ run /mala-pata-shot`. It is ODD with no worktree and no ceremony, for the smallest change. **Boundary with organic**: with ANY uncertainty, decision, or necessary ceremony (design, migration, new UI) → organic, NOT shot. Line count does not decide; the absence of uncertainty does.
+  Answer: `→ run /mala-pata-shot`. It is ODD with no worktree and no ceremony, for the smallest change. **Boundary with organic**: with ANY uncertainty, decision, or necessary ceremony (design, migration, new UI) → organic, NOT shot. Line count does not decide; the absence of uncertainty does. **Research carry-over**: if triage came FROM `/mala-pata-research`, append the slug to the handoff (`→ run /mala-pata-shot · research: <slug>`) so shot folds `mala-pata/research/<slug>.md` into its work-unit commit (shot has no worktree — the file is already in place, it only gets committed).
 
 - **What + Done statable and Decisions resolved/obvious** (but not trivial enough for shot) → **organic**.
   Answer: `→ run /mala-pata-organic`, and hand it as a draft the fields you already inferred (What / Why / DoD / Decisions / Risk) so organic confirms instead of starting from scratch. The same draft goes to `/mala-pata-loop`. **Optional `change_name`**: when triage was invoked for a roadmap phase (the arg is a slug), add `change_name: <slug>` to the draft so the lane uses it as the change-name; when free-standing, omit it.
@@ -89,6 +89,7 @@ Reason through the gate first; the LAST thing you emit is EXACTLY the shape belo
    | Risk | <blast radius, one line> | [inferred] / [asked] |
 
    Add a `change_name: <slug>` row when triage was invoked for a roadmap phase (omit when free-standing).
+   Add a `research: <slug>` row when triage came FROM `/mala-pata-research` (the arg is a research slug, or the request names a research doc), so the lane records it in the kickoff and `organic-start`/`loop-start` carries `mala-pata/research/<slug>.md` into the feature's PR, tied to the commit. Omit the row when there was no research (the lane defaults to `research: none`).
 3. **DoR line:** `DoR: What ✓ · DoD ✓ · Decisions ✓` (the three blocking fields passed the gate).
 4. **Footer:** `Structure: Definition of Ready + INVEST. Lane routing = house method.`
 

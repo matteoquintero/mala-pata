@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.16.2"
+  version: "1.17.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -183,6 +183,7 @@ profile: <PERFIL>
 project: <project>
 domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If branch_base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
+research: <research slug if this change came from /mala-pata-research, else none>   # loop-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
 branch_base: main|development
 worktree: <suggested absolute path>
@@ -264,6 +265,8 @@ The kickoff MUST include the full frontmatter and the "Method rules" block with 
 `sdd_preflight` are only RECOMMENDATIONS — they do NOT satisfy gentle-ai's preflight hook (which requires a real, live `AskUserQuestion` in the runner's session); `mala-pata-loop-start` reads them to pre-fill the recommendation text of the hook's mandatory canonical question. Derive `pace` from the profile: FULL/STANDARD → `interactive`; LITE/MINIMAL may go `automatic`.
 
 **`smoke_test`** captures early whether the change will probably need manual testing with seeded data after apply (`loop-start` gate, Step 4.1-ter). Default `needed: auto` — `loop-start` proposes yes/no according to the shape of the change and the human confirms; put `yes`/`no` here only if you already know. In `data`, one line with the scenario to seed (e.g. "an order in DRAFT state with 2 items"), or "a definir". The seed always uses the project's mechanism and runs against the test DB.
+
+**`research` field**: set it from triage's draft (the `research:` row it adds when the change came from `/mala-pata-research`), or from the human if they ran research directly and name it; otherwise `none`. This is the link `loop-start` uses to carry `mala-pata/research/<slug>.md` into the feature branch so the planning doc lands in the PR, not loose on base.
 
 ---
 

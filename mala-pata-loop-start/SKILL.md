@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.16.0"
+  version: "1.17.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -45,7 +45,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
 
 1. If the input is an absolute path (starts with `/`) → `Read` directly on that file. If the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
 1.5. **Method-rules paths**: the kickoff's "Method rules" section lists `references/profiles/_base.md` and `references/profiles/<perfil>.md`, relative to the `mala-pata-loop` skill directory. Resolve them against the installed skill dir (e.g. `~/.agent-skills/mala-pata-loop/references/profiles/` or `~/.claude/skills/mala-pata-loop/references/profiles/`), not against the cwd/worktree, and `Read` them.
-2. Read the frontmatter (change_name, profile, project, branch, branch_base, worktree, depends_on, parallelizable_with, migrations_reserved) and the WHOLE body: method rules, project context, contract, technical reinterpretation, architecture, conditional skills, **open decisions**, phase plan, Definition of Done.
+2. Read the frontmatter (change_name, profile, project, domain, roadmap, research, branch, branch_base, worktree, depends_on, parallelizable_with, migrations_reserved) and the WHOLE body: method rules, project context, contract, technical reinterpretation, architecture, conditional skills, **open decisions**, phase plan, Definition of Done.
 
 **Legacy format (kickoffs created before this change — only for compatibility, do not use it for new kickoffs)**: if the input is NOT an absolute path, it may come as **(a)** an engram id (`#1234` or `1234`), **(b)** a topic_key (`sdd/<change-name>/kickoff`), or **(c)** the old combined format `sdd/<change-name>/kickoff · engram #<id>`.
 3. With `#<number>` (cases a/c) → `mem_get_observation(id: <number>)` DIRECTLY, never `mem_search`.
@@ -68,6 +68,11 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
 6. **Init already done** (guaranteed by `/mala-pata-loop`, once per project) — EXACT EXISTENCE check, not exploration: `mem_search(query: "sdd-init/{project}")` returns several results by fuzzy ranking (other kickoffs/artifacts of the project). **Keep ONLY the item whose title/topic_key is EXACTLY `sdd-init/{project}`; the rest are false positives of the ranking — do NOT read them nor consider them context for this task.** With that exact item: `mem_get_observation` and read `strict_tdd` (if `true`, NON-NEGOTIABLE). If the exact item does NOT appear → warn the orchestrator; do not run the init.
 7. **Load EXACTLY the skills the kickoff chose by objective (Step 2 of `/mala-pata-loop`), no more and no less.** Base: `clean-architecture` and `solid` always; `clean-ddd-hexagonal` + `design-patterns` only if the objective touches backend/domain. Conditionals: those in the kickoff's "Additional conditional skills" section (e.g. `database-design`, `ui-ux-pro-max`, `heuristic-evaluation`, `rag-*`, etc. — according to what the kickoff listed for THIS objective). Via the **Skill** tool, one per name (not all in one call); plugin ones use the `plugin:skill` name from the listing. **Do not add skills the kickoff did not choose** — the focused selection was already done when generating the brief; loading extra only adds noise.
 8. **Do not explore the code to "go solving"** — only the minimum that the Spec/Design phase needs.
+9. **Carry the planning docs into the feature branch (so they land in THIS PR, tied to the commits — no more loose md on base).** The kickoff (and the research it came from) were written **write-only** to the base checkout (`mala-pata/kickoffs/<change-name>.md`, and `mala-pata/research/<slug>.md` if any) and are untracked there; the fresh worktree does not contain them. Move them in and commit them **on the feature branch** — this is NOT the write-only rule being broken: that rule forbids committing to `main`/base (which diverged local main); committing to your OWN worktree branch is safe and is exactly what ties the docs to the PR.
+   - **Kickoff**: if `<ABS-repo>/mala-pata/kickoffs/<change-name>.md` exists untracked on base → `mkdir -p <ABS-worktree>/mala-pata/kickoffs` then `mv` it into `<ABS-worktree>/mala-pata/kickoffs/<change-name>.md`. If already in the worktree (resume) or already tracked → nothing to move.
+   - **Research**: only if the kickoff frontmatter has `research: <slug>` (not `none`) and `<ABS-repo>/mala-pata/research/<slug>.md` exists untracked → `mkdir -p <ABS-worktree>/mala-pata/research` then `mv` it into `<ABS-worktree>/mala-pata/research/<slug>.md`.
+   - **Commit on the feature branch** (ABSOLUTE paths — Step 2 point 4, never bare git): `git -C <ABS-worktree> add mala-pata/kickoffs/<change-name>.md [mala-pata/research/<slug>.md]` then `git -C <ABS-worktree> commit -m "docs(mala-pata): carry planning docs for <change-name> into the feature branch"`. One additive commit, separate from the cycle's apply commits. If nothing was moved, skip the commit.
+   - **Update the engram pointer** `sdd/<change-name>/kickoff` to the new worktree path, and tell the human in one line that the docs now ride in this branch's PR (no longer loose on base).
 
 ### Step 2.9 — gentle-ai canonical preflight gate (MANDATORY, only once)
 

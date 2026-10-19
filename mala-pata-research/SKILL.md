@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.1"
+  version: "1.13.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -122,6 +122,7 @@ You ALWAYS write the research doc, without exception — it is your deliverable.
 ---
 idea_slug: <kebab>
 project: <project>
+domain: <owner — the domain/feature this belongs to: caja / clientes / facturacion…; ask if unclear>
 verdict: PROCEED | SHARPEN | RECONSIDER
 created_at: <ISO 8601>
 next: triage | roadmap | none (RECONSIDER/SHARPEN)

@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.1"
+  version: "1.15.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -180,6 +180,7 @@ Assemble the brief with this structure, **INJECTING** the rules MDs:
 change_name: <change-name>
 profile: <PERFIL>
 project: <project>
+domain: <owner — the domain/feature this belongs to: caja / clientes / facturacion…; ask if unclear>
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
 branch_base: main|development
 worktree: <suggested absolute path>

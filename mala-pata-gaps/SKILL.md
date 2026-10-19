@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.3"
+  version: "1.10.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -137,7 +137,7 @@ Then the closing lines (plain text):
 
 ## Phase 5 — Persist the report (traceability)
 
-Write the Phase 4 report to **`mala-pata/gaps/<domain>.md`** (inside the repo, versioned; `mkdir -p` if it does not exist; `<domain>` = the keyword, or a composite slug of the analyzed roadmaps). If it already exists, **update** that file — gaps is a **living backlog** of the domain, not an endless append nor a new file per run. Lightweight pointer in engram: `mem_save` topic_key `gaps/<domain>`, one-line content `Gaps in file: <absolute path>` (do not duplicate the content — the file is the source). If engram is not available, the file is the source; warn in one line.
+Write the Phase 4 report to **`mala-pata/gaps/<domain>.md`** (inside the repo, versioned; `mkdir -p` if it does not exist; `<domain>` = the keyword, or a composite slug of the analyzed roadmaps). **The file STARTS with YAML frontmatter (forward-only, feeds `/mala-pata-domain-radar`):** `domain: <X>` (the keyword — never blank; ANY doubt → ASK the human), `roadmaps: [<slug>, ...]` (the analyzed roadmaps, or `[]`), `release: <GO | NO-GO | GO-with-conditions>` (the Phase 4 Release line), `open: <n>`, `deferred: <n>`, `closed: <n>`, `updated_at: <ISO 8601>`. Those counts + release let domain-radar show the domain-level gaps rollup without re-parsing the body. If it already exists, **update** that file — gaps is a **living backlog** of the domain, not an endless append nor a new file per run. Lightweight pointer in engram: `mem_save` topic_key `gaps/<domain>`, one-line content `Gaps in file: <absolute path>` (do not duplicate the content — the file is the source). If engram is not available, the file is the source; warn in one line.
 
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the report is stranded): a gaps report for a domain under a feature-in-progress → that **feature base branch**; standalone domain → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el reporte de gaps — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the file; the skill does NOT create a commit (auto-committing diverged local main from the remote and left reports unpushed). Tell the human the path + that durable branch so they add it in their normal PR flow.
 

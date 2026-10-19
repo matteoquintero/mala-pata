@@ -4,7 +4,7 @@ description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.2"
+  version: "1.3.0"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)
@@ -52,6 +52,8 @@ You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent
    **Emit every structural label verbatim in English** — section headers, field labels and table/column headers (`Fixture`, `Records/ids`, `Key`, `Mechanism`, `Target DB`, `Idempotent`) stay English even when the conversation is in the user's language; only the values are localized.
 
    `Structure: xUnit Test Patterns — fixture setup (Meszaros). Test-DB-never-prod safety rule = house method.`
+
+6. **Leave a record (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** Write a lightweight record `mala-pata/seeds/<change>.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (**copy it from the walkthrough QA frontmatter you read in step 1**; if that QA has no `domain`, infer FEATURE → area → `main` and **ASK the human on ANY doubt** — never blank), `roadmap: <slug | none>` (from the same QA), `change: <change-name>`, `seeded_at: <ISO 8601>`. Body: one line naming the fixtures seeded and the target test DB (no secrets — reference the mechanism, not credentials). This is how domain-radar sees a change was seeded. **Write only — do NOT commit/push**; name the path to the human. This record is the ONE repo artifact seed leaves — it still writes no app code and still touches only the test DB.
 
 ## Teardown (optional, asked — default NO)
 

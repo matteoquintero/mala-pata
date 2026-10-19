@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.4"
+  version: "1.7.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -130,6 +130,7 @@ If the stack allows bringing up the app **and the human OKs it**: capture the vi
 Diátaxis says **do NOT mix** → **two files**, not one:
 - **End customer** (versionable, goes to the repo): advise `docs/guides/<slug>.md` (or the docs convention the project uses). Confirm the folder with the human.
 - **QA/UAT** (internal): advise `mala-pata/walkthroughs/<slug>-qa.md` (inside the repo, versioned, like the rest of mala-pata). Confirm.
+- **Frontmatter on the QA file (mandatory — forward-only, feeds `/mala-pata-domain-radar`):** the `<slug>-qa.md` STARTS with YAML frontmatter: `domain: <X>` (the FEATURE it belongs to, else the functional AREA it touches, else `main` for area-less direct-to-main chores; **never blank — ANY doubt → ASK the human**, same rule the lanes use), `roadmap: <slug | none>`, `change: <change-name | pr-slug>`, `qa_done: pending`. **`qa_done` is the human QA flag**: it stays `pending` until a human ACTUALLY runs the walkthrough by hand and flips it to `done` — this is the "did the user test this" signal that domain-radar surfaces. **Never set `qa_done: done` yourself** — only the human who ran the QA sets it.
 - **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → both docs stranded). Commit BOTH files on a durable branch: a walkthrough for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo los docs — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the files; the skill does NOT create a commit (auto-committing diverged local main from the remote and left docs unpushed). Tell the human the paths + that durable branch so they add them in their normal PR flow.
 - **Lightweight pointer in engram**: `mem_save` topic_key `sdd/<change>/walkthrough`, one-line content with the paths of the two files (so the radar and future sessions can find it). If the input was a roadmap without a unique change-name, use the roadmap slug.
 

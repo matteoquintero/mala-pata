@@ -1,10 +1,10 @@
 ---
 name: mala-pata-domain-radar
-description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE mala-pata-roadmap-radar. Given a domain (e.g. `caja`), it gathers EVERY mala-pata artifact that belongs to it — research, kickoffs (organics/loops), shots and roadmaps — by the `domain:` frontmatter field + the `Mala-Pata-Domain` commit trailer (so shots, which leave no .md, are found by their commit). It groups them: roadmaps (with a one-line rollup → run roadmap-radar for the phase detail) vs standalone items not under any roadmap. Coarse status (done / in progress / pending) from live git reality. It does NOT replace roadmap-radar (phase detail) nor gaps (completeness); it is the INDEX of a domain. It does NOT orchestrate, execute, or mutate anything. Trigger — "qué se hizo en el dominio <X>", "overview de <dominio>", "todo lo de caja", "domain radar <dominio>".
+description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE mala-pata-roadmap-radar. Given a domain (e.g. `caja`), it gathers EVERY mala-pata artifact that belongs to it — research, kickoffs (organics/loops), shots and roadmaps — by the `domain:` frontmatter field + the `Mala-Pata-Domain` commit trailer (so shots, which leave no .md, are found by their commit). It groups them: roadmaps (with a one-line rollup → run roadmap-radar for the phase detail) vs standalone items not under any roadmap. Coarse status (done / in progress / pending) from live git reality. It ALSO shows a completeness view per change — whether its QA walkthrough was run by hand (the `qa_done` human flag), whether it was seeded, whether its state diagram was drawn — plus the domain-level gaps rollup (Release GO/NO-GO) read from the gaps report. It does NOT replace roadmap-radar (phase detail) nor gaps (the full missing-work audit); it is the INDEX + completeness dashboard of a domain. It does NOT orchestrate, execute, or mutate anything. Trigger — "qué se hizo en el dominio <X>", "overview de <dominio>", "todo lo de caja", "domain radar <dominio>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.1"
+  version: "2.0.0"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
@@ -22,7 +22,7 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 
 - **Mandatory** (no fallback — if missing, STOP): `git` — the live source for status + the `Mala-Pata-Domain` commit trailer. Always present.
 - **Recommended** (with fallback — if missing, warn in one line and continue degraded): `gh` (or the project's PR CLI) — PR status. Fallback: branches/merges only.
-- **Explicit — does NOT use engram.** The artifacts (`mala-pata/{research,kickoffs,roadmap}/*.md`, in the repo) + git are the only sources.
+- **Explicit — does NOT use engram.** The artifacts (`mala-pata/{research,kickoffs,roadmap,walkthroughs,diagrams,seeds,gaps}/*.md`, in the repo) + git are the only sources.
 
 Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 
@@ -40,10 +40,18 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 
 ## Phase 1 — Gather every artifact of the domain (two sources)
 
-**(a) Artifacts with a `.md`** (`domain:` frontmatter field):
+**(a) Artifacts with a `.md`** (`domain:` frontmatter field). Two groups:
+
+*Delivery artifacts* (what was planned/built — these are the inventory rows):
 - `mala-pata/roadmap/*.md` → roadmaps where `domain: <X>`.
 - `mala-pata/kickoffs/*.md` → organic/loop kickoffs where `domain: <X>` (each carries `roadmap: <slug | none>`).
 - `mala-pata/research/*.md` → research docs where `domain: <X>` (with its `verdict:`).
+
+*Completeness artifacts* (did the surrounding work get done — these fill the completeness view, Phase 4):
+- `mala-pata/walkthroughs/*-qa.md` → QA walkthroughs where `domain: <X>` (each carries `change:`, `roadmap:`, and the **`qa_done: pending | done`** human flag).
+- `mala-pata/diagrams/*-states.md` → state-diagram pointers where `domain: <X>` (each carries `change:`/`feature:`).
+- `mala-pata/seeds/*.md` → seed records where `domain: <X>` (each carries `change:`).
+- `mala-pata/gaps/<X>.md` → the domain's gaps report (ONE per domain), reading its frontmatter rollup `release:` / `open:` / `deferred:` / `closed:`.
 
 **(b) Work with NO `.md`** (shots, and anything older) — from git:
 - `git -C <repo> log <integration> --grep '^Mala-Pata-Domain: <X>$' -E` → commits tagged with this domain. These catch **shots** (the minimum lane leaves no kickoff — only a commit) and any change whose artifact is gone. Read their trailers: **`Mala-Pata-Lane`** → the TYPE (`shot`/`organic`/`loop`) — THIS is how a shot, which has no `.md`, is identified as a shot; `Mala-Pata-Phase` → the slug; `Mala-Pata-Roadmap` → whether it belongs to a roadmap.
@@ -64,6 +72,17 @@ Same OPEN logic as `mala-pata-roadmap-radar` Phase 2 (reuse it; do NOT reinvent)
 - **Per roadmap**: a ONE-LINE rollup — `<done>/<total>` phases — plus the pointer to roadmap-radar for the detail. Do NOT expand phases here.
 - **Per standalone item**: its own coarse status (research shows its `verdict` instead).
 
+## Phase 4 — Completeness of the domain (did the surrounding work get done)
+
+Beyond "was it built", show whether each change got its QA, diagram and seed — and the domain-level gaps rollup. This is the "¿se completó todo?" view the inventory alone does not give.
+
+- **Per change** (key by `change:` across the completeness artifacts of Phase 1a, grouped with their delivery item when one exists): resolve three signals from the artifacts, NEVER invented —
+  - **Walkthrough / QA done**: `✓ done` if a `*-qa.md` with `qa_done: done` exists; `○ pending` if the QA exists but `qa_done: pending` (the walkthrough was written but **the human has not tested it by hand yet** — this is the "aviso"); `— none` if no QA for that change.
+  - **Seed**: `✓ seeded` if a seed record exists for the change; `— none` otherwise.
+  - **States diagram**: `✓ drawn` if a diagram pointer exists; `— none` otherwise.
+- **Domain-level gaps** (ONE line, from `mala-pata/gaps/<X>.md` frontmatter): `Release: <GO | NO-GO | GO-with-conditions> · <open> open · <deferred> deferred`. If there is no gaps report → `Gaps: not audited — run /mala-pata-gaps <X>`.
+- Forward-only: a change whose artifacts predate these fields simply shows `— none` in its cells; never infer "done" from the absence of a record.
+
 ## Output — fixed format (ALWAYS identical)
 
 Reason first; the LAST thing you emit is EXACTLY this shape — a BLUF line then ONE real Markdown table (NEVER fenced, never prose, one line per cell).
@@ -72,9 +91,9 @@ Banner (plain text):
 `Domain: <domain>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  <date-time>`
 
 BLUF (plain text, immediately below):
-`Bottom line: <r> roadmaps · <s> standalone · ✓ <d> done · ◐ <p> in progress · ○ <q> pending`
+`Bottom line: <r> roadmaps · <s> standalone · ✓ <d> done · ◐ <p> in progress · ○ <q> pending · QA ✓ <w>/<W> done · Release: <GO | NO-GO | n/a>`
 
-Then the real table (one row per item — roadmaps and standalone — never expand roadmap phases here):
+Then the **inventory** table (one row per item — roadmaps and standalone — never expand roadmap phases here):
 
 | Type | Name / slug | Under roadmap | Status | Detail |
 |---|---|---|---|---|
@@ -84,6 +103,19 @@ Then the real table (one row per item — roadmaps and standalone — never expa
 | organic | <slug> | <roadmap-slug> | ◐ in progress | branch +<k> |
 | shot | <slug> | none | ✓ done | commit <sha> [git] |
 | research | <slug> | none | PROCEED | `mala-pata/research/<slug>.md` |
+
+Then a second BLUF line + the **completeness** table (one row per change — did its QA, seed and diagram get done; `qa_done` is the human "did you actually test it" aviso):
+
+`Completeness: <c> changes · QA ✓ <w> done · ○ <wp> pending · seed ✓ <se> · diagram ✓ <di>`
+
+| Change | Walkthrough / QA done | Seed | States diagram |
+|---|---|---|---|
+| <change> | ✓ done | ✓ seeded | ✓ drawn |
+| <change> | ○ pending (not tested by hand) | — none | ✓ drawn |
+| <change> | — none | — none | — none |
+
+Then the domain-level gaps line (plain text, from `mala-pata/gaps/<X>.md` frontmatter):
+`Gaps: Release <GO | NO-GO | GO-with-conditions> · <open> open · <deferred> deferred → mala-pata/gaps/<X>.md`  — or, if absent: `Gaps: not audited — run /mala-pata-gaps <X>`.
 
 Then the closing lines (plain text):
 `Not tracked here: shots with no Mala-Pata-Domain trailer and no commit match (if any) — say so, do not invent.`
@@ -105,5 +137,6 @@ Then the closing lines (plain text):
 ## Relation to the family
 
 - **Above** `/mala-pata-roadmap-radar` (which details ONE roadmap) and `/mala-pata-radar` (loose SDDs).
-- **Complements** `/mala-pata-gaps` (what is missing) — this shows what exists.
-- Reads the `domain:` and `roadmap:` frontmatter that `/mala-pata-roadmap`, `/mala-pata-research`, `/mala-pata-organic` and `/mala-pata-loop` write, and the `Mala-Pata-Domain` commit trailer that the lanes stamp.
+- **Complements** `/mala-pata-gaps` (what is missing) — this shows what exists AND reads gaps' domain-level rollup for the Release line.
+- Reads the `domain:`/`roadmap:` frontmatter that `/mala-pata-roadmap`, `/mala-pata-research`, `/mala-pata-organic` and `/mala-pata-loop` write; the completeness frontmatter that `/mala-pata-walkthrough` (`qa_done`), `/mala-pata-states` and `/mala-pata-seed` write; the rollup frontmatter `/mala-pata-gaps` writes; and the `Mala-Pata-Domain` commit trailer the lanes stamp.
+- **Forward-only** (except the shared OPEN git matching, which it reuses from roadmap-radar): artifacts predating the completeness fields show `— none`; only `/mala-pata-roadmap-radar` is required to keep working on legacy.

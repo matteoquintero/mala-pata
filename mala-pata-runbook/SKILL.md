@@ -4,14 +4,14 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
 
 Input: **the one delivered by the CLI** — a **task description** (new runbook), or the **path to an existing doc** to adopt and normalize to the standard.
 
-Your job: turn an operational task into a **runbook an agent can execute end to end deterministically** — every implicit action becomes an explicit command/tool call, every vague condition a measurable threshold, every assumed context a declared reference (the "runbooks-as-agent-instructions" pattern). You WRITE the runbook; you do NOT execute it — running it is a separate skill (`/mala-pata-runbook-run`).
+Your job: turn an operational task into a **runbook an agent can execute end to end deterministically** — every implicit action becomes an explicit command/tool call, every vague condition a measurable threshold, every assumed context a declared reference (the "runbooks-as-agent-instructions" pattern). You WRITE the runbook; you do NOT execute it — running it is a separate skill (`/mala-pata-runbook-start`).
 
 > **You never execute the task.** You are read-only on the project: you inspect to write the steps accurately, but you do NOT send the email, create the PR, run the migration, deploy, or touch anything the runbook describes. The runbook is your only deliverable.
 > **Determinism is the whole point.** A good step has an exact action, an exact expected output, and what to do if the output is NOT what was expected. If a step cannot be made verifiable, say so — do not paper over it.
@@ -104,7 +104,7 @@ Emit exactly this, from the runbook you wrote (no invention):
 - **Next step** — run it with the runner:
 
   ```
-  /mala-pata-runbook-run <absolute path>
+  /mala-pata-runbook-start <absolute path>
   ```
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 read-only stance; a blocking open decision (Phase 2) → the single question allowed before writing.
@@ -113,7 +113,7 @@ This block is the only way to close on the happy path. **Only exceptions**: Phas
 
 ## What it does NOT do (invariants)
 
-- Does NOT execute the runbook — that is `/mala-pata-runbook-run`. It never sends the email, opens the PR, runs the migration, or deploys.
+- Does NOT execute the runbook — that is `/mala-pata-runbook-start`. It never sends the email, opens the PR, runs the migration, or deploys.
 - Does NOT run against your real projects — read-only to write the steps accurately; the only thing it writes is the runbook md.
 - Does NOT invent operational decisions — it asks them (Phase 2) or leaves them as explicit `OPEN:` items.
 - Does NOT paste literal secrets — references the credential source.
@@ -121,6 +121,6 @@ This block is the only way to close on the happy path. **Only exceptions**: Phas
 
 ## Relation to the family
 
-- **Pairs with** `/mala-pata-runbook-run` (creator / runner split, like `mala-pata-organic` / `mala-pata-organic-start`).
+- **Pairs with** `/mala-pata-runbook-start` (creator / runner split, like `mala-pata-organic` / `mala-pata-organic-start`).
 - **Indexed by** `/mala-pata-domain-radar` (reads the `domain:` frontmatter, like the other mala-pata artifacts).
 - **Different from** `/mala-pata-walkthrough` (QA/customer test guide for a feature) and `/mala-pata-states` (state diagram): a runbook is an OPERATIONAL procedure to EXECUTE a task deterministically, not a test or a diagram.

@@ -4,7 +4,7 @@ description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
@@ -22,7 +22,7 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 
 - **Mandatory** (no fallback — if missing, STOP): `git` — the live source for status + the `Mala-Pata-Domain` commit trailer. Always present.
 - **Recommended** (with fallback — if missing, warn in one line and continue degraded): `gh` (or the project's PR CLI) — PR status. Fallback: branches/merges only.
-- **Explicit — does NOT use engram.** The artifacts (`mala-pata/{research,kickoffs,roadmap,walkthroughs,diagrams,seeds,gaps}/*.md`, in the repo) + git are the only sources.
+- **Explicit — does NOT use engram.** The artifacts (`mala-pata/{research,kickoffs,roadmap,walkthroughs,diagrams,seeds,gaps,runbooks}/*.md`, in the repo) + git are the only sources.
 
 Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 
@@ -52,6 +52,9 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 - `mala-pata/diagrams/*-states.md` → state-diagram pointers where `domain: <X>` (each carries `change:`/`feature:`).
 - `mala-pata/seeds/*.md` → seed records where `domain: <X>` (each carries `change:`).
 - `mala-pata/gaps/<X>.md` → the domain's gaps report (ONE per domain), reading its frontmatter rollup `release:` / `open:` / `deferred:` / `closed:`.
+
+*Operational assets* (the domain's runbooks — standing procedures, not tied to one change):
+- `mala-pata/runbooks/*.md` → runbooks where `domain: <X>` (each carries `kind:`, `trigger:`, `risk:`, `reversible:`, `last_reviewed:`). These are operational procedures (`/mala-pata-runbook`), surfaced in their own table (Output), not as inventory or completeness rows.
 
 **(b) Work with NO `.md`** (shots, and anything older) — from git:
 - `git -C <repo> log <integration> --grep '^Mala-Pata-Domain: <X>$' -E` → commits tagged with this domain. These catch **shots** (the minimum lane leaves no kickoff — only a commit) and any change whose artifact is gone. Read their trailers: **`Mala-Pata-Lane`** → the TYPE (`shot`/`organic`/`loop`) — THIS is how a shot, which has no `.md`, is identified as a shot; `Mala-Pata-Phase` → the slug; `Mala-Pata-Roadmap` → whether it belongs to a roadmap.
@@ -91,7 +94,7 @@ Banner (plain text):
 `Domain: <domain>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  <date-time>`
 
 BLUF (plain text, immediately below):
-`Bottom line: <r> roadmaps · <s> standalone · ✓ <d> done · ◐ <p> in progress · ○ <q> pending · QA ✓ <w>/<W> done · Release: <GO | NO-GO | n/a>`
+`Bottom line: <r> roadmaps · <s> standalone · ✓ <d> done · ◐ <p> in progress · ○ <q> pending · QA ✓ <w>/<W> done · <rb> runbooks · Release: <GO | NO-GO | n/a>`
 
 Then the **inventory** table (one row per item — roadmaps and standalone — never expand roadmap phases here):
 
@@ -117,6 +120,15 @@ Then a second BLUF line + the **completeness** table (one row per change — did
 Then the domain-level gaps line (plain text, from `mala-pata/gaps/<X>.md` frontmatter):
 `Gaps: Release <GO | NO-GO | GO-with-conditions> · <open> open · <deferred> deferred → mala-pata/gaps/<X>.md`  — or, if absent: `Gaps: not audited — run /mala-pata-gaps <X>`.
 
+Then the **Runbooks** table (one row per runbook of the domain; omit the whole table if there are none):
+
+| Runbook | Kind | Trigger | Risk | Reversible | Last reviewed |
+|---|---|---|---|---|---|
+| <slug> | deploy | "release a main" | high | no | 2026-10-20 |
+| <slug> | recovery | <trigger> | medium | yes | <date> |
+
+- Run one with `/mala-pata-runbook-start <path>` (as text — you do NOT run it). A runbook with a stale `last_reviewed` (older than the domain's recent activity) is worth flagging in one line, not hiding.
+
 Then the closing lines (plain text):
 `Not tracked here: shots with no Mala-Pata-Domain trailer and no commit match (if any) — say so, do not invent.`
 `Structure: information radiator (Cockburn) + workflow-state lexicon. Domain-wide roll-up (roadmap vs standalone) + delegate-detail-to-roadmap-radar = house method.`
@@ -138,5 +150,5 @@ Then the closing lines (plain text):
 
 - **Above** `/mala-pata-roadmap-radar` (which details ONE roadmap) and `/mala-pata-radar` (loose SDDs).
 - **Complements** `/mala-pata-gaps` (what is missing) — this shows what exists AND reads gaps' domain-level rollup for the Release line.
-- Reads the `domain:`/`roadmap:` frontmatter that `/mala-pata-roadmap`, `/mala-pata-research`, `/mala-pata-organic` and `/mala-pata-loop` write; the completeness frontmatter that `/mala-pata-walkthrough` (`qa_done`), `/mala-pata-states` and `/mala-pata-seed` write; the rollup frontmatter `/mala-pata-gaps` writes; and the `Mala-Pata-Domain` commit trailer the lanes stamp.
+- Reads the `domain:`/`roadmap:` frontmatter that `/mala-pata-roadmap`, `/mala-pata-research`, `/mala-pata-organic` and `/mala-pata-loop` write; the completeness frontmatter that `/mala-pata-walkthrough` (`qa_done`), `/mala-pata-states` and `/mala-pata-seed` write; the rollup frontmatter `/mala-pata-gaps` writes; the runbook frontmatter `/mala-pata-runbook` writes (run with `/mala-pata-runbook-start`); and the `Mala-Pata-Domain` commit trailer the lanes stamp.
 - **Forward-only** (except the shared OPEN git matching, which it reuses from roadmap-radar): artifacts predating the completeness fields show `— none`; only `/mala-pata-roadmap-radar` is required to keep working on legacy.

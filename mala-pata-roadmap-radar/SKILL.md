@@ -1,10 +1,10 @@
 ---
 name: mala-pata-roadmap-radar
-description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-pata-radar). Takes a domain's roadmap .md (versioned in the repo, NOT memory), derives the state of EACH phase LIVE against git (done / in progress / pending / blocked), and shows a fixed table + what is ready to start now and which can go in parallel. It does NOT look at engram, does NOT orchestrate, does NOT execute, does NOT mutate anything. Fixed, immutable output format. Trigger — "status del roadmap", "cómo va el roadmap de <dominio>", "avance del roadmap <slug>", or the path/slug of a roadmap.
+description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-pata-radar). Takes a domain's roadmap .md (versioned in the repo, NOT memory), derives the state of EACH phase LIVE against git (done / in progress / pending / blocked), and shows a fixed table + what is ready to start now, which can go in parallel, and the stage-aware next command per ready phase (pipeline triage → lane → -start, as copy-paste text). It does NOT look at engram, does NOT orchestrate, does NOT execute, does NOT mutate anything. Fixed, immutable output format. Trigger — "status del roadmap", "cómo va el roadmap de <dominio>", "avance del roadmap <slug>", or the path/slug of a roadmap.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -32,7 +32,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 - **Git = truth, for `code` phases.** A `code` phase's "done" is confirmed ONLY against the freshly fetched integration branch (by ANY git evidence — a merge, a PR, a slug commit, a delivering artifact, or the OPTIONAL `Mala-Pata-Phase` trailer) — never by a checkbox in the `.md`, an archive-report, nor memory. A `.md` says what was planned; git says what happened. **`ops` phases are the one exception**: Railway/Neon/GitHub/manual leave NO git artifact, so their `done` is **attested** in the `.md` with mandatory evidence (URL/id/health/date) and tagged `[attested]` — never confused with a git-proven `done`.
 - **Zero cache, zero memory.** Every run re-derives everything from the `.md` + live git. Reporting a state without re-measuring it in this run is forbidden. NO engram.
 - **Read-only.** Never commit, push, merge, destructive fetch nor write. Running this radar is always safe.
-- **You take no attributions.** You only report which phase is in which state and what can start. You NEVER execute nor OFFER to execute a phase (triage, apply, PR, merge). Your output ENDS at the report — closing with "¿arranco X?" is forbidden.
+- **You take no attributions.** You only report which phase is in which state and what can start. You NEVER execute nor OFFER to execute a phase (triage, apply, PR, merge). **Emitting the next command as copy-paste TEXT (the stage-aware `triage` → lane → `-start` suggestion of Phase 3) is allowed and is NOT "offering to execute"** — you print it, you never run it and you never ask "¿arranco?". The human copies it if they want. Your output ENDS at the report + that text; closing with "¿arranco X?" is still forbidden.
 - **Fixed format ALWAYS** — same order, same columns, same lexicon, on every run (mechanical memory for the human).
 
 ## Phase 0 — Load the roadmap (git, not memory)
@@ -86,6 +86,13 @@ Derivation rules:
 - **Ready to start now** — phases in state `pending` (not `blocked`) whose dependencies are ALL `done`.
 - **In parallel** — within the "ready now", group those the DAG marks as parallelizable with each other (from the roadmap's `Parallelizable: {..}` block) and that declare no conflict — that is the wave that can be launched together.
 - **In process now** — those already running (so as not to relaunch them).
+- **Next step per ready phase (stage-aware chain — emitted as TEXT in the Output).** The entry is NOT `-start`; follow the real pipeline `triage → lane (loop/organic/shot) → -start`, detecting the stage from the phase's Route + whether a kickoff file exists (read-only; triage leaves no artifact, so "triage done" is inferred from the roadmap having fixed the Route):
+  - **Route undecided / `?`** (no lane fixed → triage not done) → `/mala-pata-triage <slug>` (decide the lane first).
+  - **Route = shot** → `/mala-pata-shot <slug>` (direct, no kickoff).
+  - **Route = organic | loop** → look for the kickoff `mala-pata/kickoffs/<slug>.md`:
+    - kickoff MISSING → the lane creator `/mala-pata-organic <slug>` or `/mala-pata-loop <slug>` (writes the kickoff).
+    - kickoff PRESENT → the runner `/mala-pata-organic-start <abs kickoff path>` or `/mala-pata-loop-start <abs kickoff path>`.
+  - **Route = ops** → no command; verify manually per the phase's `Verify` (attested).
 
 ## Output — fixed format (ALWAYS identical)
 
@@ -109,6 +116,12 @@ Then the real table:
 | 3 | <name> | <slug> | shot | 1 | ○ pending | no trailer/branch |
 | 4 | <name> | <slug> | ops | — | ✓ done | <env URL / health 200 / date> [attested] |
 | 5 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
+
+Then, for the "ready to start now" phases, the **Next step** block (plain text, copy-paste — the radar does NOT run it and does NOT offer to; it only shows the command the human may copy):
+`Next step per ready phase (pipeline triage → lane → start):`
+`  · phase <x> (<slug>, route <lane>): <stage-aware command — see Phase 3>`
+`  · phase <y> (<slug>, route shot): /mala-pata-shot <slug>`
+(one line per ready-now phase; `ops` phases show "verify manually per Verify", no command. In-progress phases with a live kickoff show the `-start` runner to resume.)
 
 Then the closing lines (plain text):
 `Legend: ✓ done = landed in integration — confirmed by git reality (merge / PR / slug commit / artifact / optional trailer) for code, or declared with evidence for ops · ◐ in progress = live branch/PR not merged · ○ pending = NO evidence at all (code) or Status pending (ops) · ? unbound = work exists but not tied to the slug (confirm) · ✗ blocked = pending with unfinished deps · [git] = proven in git · [attested] = ops, human-declared`

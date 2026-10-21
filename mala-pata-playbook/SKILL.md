@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -58,6 +58,7 @@ severity: <levels + indicators, or N/A>
 runbooks: [<slugs of runbooks the branches orchestrate>]
 roles: <who decides / executes / escalates (RACI-lite)>
 owner: <who owns this playbook>
+created_at: <ISO 8601>
 last_reviewed: <ISO 8601>
 ---
 ```

@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.1"
+  version: "1.1.0"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -61,6 +61,7 @@ reversible: yes | no
 idempotent: yes | no               # safe to re-run from the top?
 requires: [<exact CLIs/tools/sessions needed, e.g. az, gh>]
 owner: <who owns this procedure>
+created_at: <ISO 8601>
 last_reviewed: <ISO 8601>
 ---
 ```

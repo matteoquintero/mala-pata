@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.19.0"
+  version: "1.20.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -251,7 +251,9 @@ Only with the human's OK (or if the profile is running in explicit automatic mod
 
 ## Step 5 — Final summary as a TABLE (MANDATORY)
 
-When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not loose prose. **BLUF first** — one `Result:` line above the table: `Result: ✓ complete · <n>/<n> milestones` (or `◐ partial` / `✗ blocked` with the reason). Then the table: 3 columns (`Milestone | Status | Evidence`), Status uses the shared workflow lexicon glyph + word (`✓ done` / `◐ partial: <reason>` / `○ pending` / `✗ blocked: <reason>` / `∅ n/a`), specifics in the **Evidence** column — never a bare "ok". Same shape as `/mala-pata-organic-start` Step 8.
+When EVERYTHING is finished (verify + archive + PR/merge + CI + cleanup), **ALWAYS close with a status table** — not loose prose. **BLUF first** — one `Result:` line above the table: `Result: ✓ complete · <n>/<n> milestones` (or `◐ partial` / `✗ blocked` with the reason).
+
+**Timing line** (below Result): `Cycle: started <ISO> · ended <ISO> · <duration>`. Record `cycle_started_at` back at Step 2 (worktree ready) and `cycle_ended_at` now, and **stamp both on the kickoff frontmatter** (`mala-pata/kickoffs/<change-name>.md`) so the loop's created→ended is persisted (the kickoff's `created_at` = when it was planned). Wall-clock — it includes human-gate and CI waits, not compute time. Then the table: 3 columns (`Milestone | Status | Evidence`), Status uses the shared workflow lexicon glyph + word (`✓ done` / `◐ partial: <reason>` / `○ pending` / `✗ blocked: <reason>` / `∅ n/a`), specifics in the **Evidence** column — never a bare "ok". Same shape as `/mala-pata-organic-start` Step 8.
 
 Canonical rows (include ONLY those that apply; do NOT invent a row that did not happen):
 

@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -86,6 +86,7 @@ Derivation rules:
 - **Ready to start now** — phases in state `pending` (not `blocked`) whose dependencies are ALL `done`.
 - **In parallel** — within the "ready now", group those the DAG marks as parallelizable with each other (from the roadmap's `Parallelizable: {..}` block) and that declare no conflict — that is the wave that can be launched together.
 - **In process now** — those already running (so as not to relaunch them).
+- **Roadmap completion (derived from git, NOT stored)** — the roadmap carries `created_at` (when it was planned); its FINISH time is **derived**: when ALL phases are `done`, it is the **latest git date among the done phases** (the last merge/commit that landed a phase). Roadmaps have no "close" step that writes it back, so report it in the Timeline banner; never invent it, and if not 100% say "in progress, <d>/<N>".
 - **Next step per ready phase (stage-aware chain — emitted as TEXT in the Output).** The entry is NOT `-start`; follow the real pipeline `triage → lane (loop/organic/shot) → -start`, detecting the stage from the phase's Route + whether a kickoff file exists (read-only; triage leaves no artifact, so "triage done" is inferred from the roadmap having fixed the Route):
   - **Route undecided / `?`** (no lane fixed → triage not done) → `/mala-pata-triage <slug>` (decide the lane first).
   - **Route = shot** → `/mala-pata-shot <slug>` (direct, no kickoff).
@@ -98,9 +99,10 @@ Derivation rules:
 
 **Render the table as a REAL Markdown table — NEVER inside a ``` code fence. Emit EXACTLY this shape (reason first, render the table last) — never vertical `Field:/Value:` blocks, never prose; one line per cell** (a fenced table shows raw pipes and does not render). The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real Markdown table. The format, in order:
 
-Banner (2 lines):
+Banner (3 lines):
 `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`
 `Source: roadmap.md + live git · NO engram · <date-time>`
+`Timeline: created <roadmap created_at> · <when 100% done: completed <latest git date among the done phases> (derived from git) — else: in progress, <d>/<N> phases done>`
 
 BLUF (3 lines):
 `Bottom line: ✓ <d> done · ◐ <p> in progress · ○ <q> pending · ✗ <b> blocked  (of <N> phases)`

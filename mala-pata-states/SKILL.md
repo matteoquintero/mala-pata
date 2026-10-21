@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -116,7 +116,7 @@ Default output (if the user does not ask for another path): `<project-root>/docs
 
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the diagram is stranded): a diagram for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el diagrama — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the files; the skill does NOT create a commit (auto-committing diverged local main from the remote and left diagrams unpushed). Tell the human the paths + that durable branch so they add them in their normal PR flow.
 
-**Frontmatter pointer (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** The deliverable (`.json`/`.html`) carries no YAML, so ALSO write a one-screen pointer `mala-pata/diagrams/<feature>-states.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (the FEATURE it belongs to, else the functional AREA, else `main`; **never blank — ANY doubt → ASK the human**, same rule the lanes use), `roadmap: <slug | none>`, `change: <change-name | feature>`, `feature: <feature>`. Body: one line with the delivered `.html` and `.json` paths. This is how domain-radar sees that a domain has its state diagram. Same **write-only** rule — do NOT commit; name the path + the durable branch to the human.
+**Frontmatter pointer (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** The deliverable (`.json`/`.html`) carries no YAML, so ALSO write a one-screen pointer `mala-pata/diagrams/<feature>-states.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (the FEATURE it belongs to, else the functional AREA, else `main`; **never blank — ANY doubt → ASK the human**, same rule the lanes use), `roadmap: <slug | none>`, `change: <change-name | feature>`, `feature: <feature>`, `created_at: <ISO 8601>`. Body: one line with the delivered `.html` and `.json` paths. This is how domain-radar sees that a domain has its state diagram. Same **write-only** rule — do NOT commit; name the path + the durable branch to the human.
 
 ## Phase 5 — Close (without judging)
 

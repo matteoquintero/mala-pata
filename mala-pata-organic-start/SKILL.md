@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.18.0"
+  version: "1.19.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -78,6 +78,8 @@ Optional research only for a **named uncertainty**; 1 question to the human only
 
 Before the first write: create `mala-pata/odd/<change_name>.md` + its engram mirror `odd/<change_name>/tasks` (automatic, without asking permission for tasks/storage). **The kickoff's `Why` FLOWS into the feature-doc** (motivation/context section). Say in **1 line** which feature-doc you created and how many tasks it has. (Content and contract of the doc: ODD protocol in the CLAUDE.md.)
 
+**Timing (macro + per-task).** The feature-doc records `cycle_started_at` (now, when the cycle begins) and, per task, `started_at` / `ended_at`; at close (Step 7) stamp `cycle_ended_at` + the total. The kickoff's `created_at` is when it was **planned**; these are when it **ran**. Wall-clock ISO — **informative, never a gate**; they include waits on human gates and CI, so the per-task boundaries make those waits visible (the total is not compute time).
+
 ## Step 6 — Implement task-by-task (ODD 6)
 
 For each task: the **smallest topology** — direct inline (1-3 already-understood files) / delegated direct (understand 4+ or write 2+ non-trivial) — with the **project's TDD mode** (`strict_tdd` from sdd-init) and the applicable checks. Check off the task only after **observing** its result + checks; update the feature-doc and the mirror.
@@ -93,6 +95,8 @@ Report the **verified result** + every failed/skipped/pending check + next step.
 ## Step 8 — Final table (MANDATORY)
 
 **BLUF first** — one `Result:` line above the table: `Result: ✓ complete · <n>/<n> milestones` (or `◐ partial` / `✗ blocked` with the reason).
+
+**Timing line** (below Result): `Cycle: started <ISO> · ended <ISO> · <duration>` (from the feature-doc's `cycle_started_at`/`cycle_ended_at`; kickoff `created_at` = when it was planned). Wall-clock — it includes human-gate and CI waits, not compute time.
 
 Then the table — one milestone per row, 3 columns. Status uses the shared workflow lexicon glyph + word (`✓ done` / `◐ partial: <reason>` / `○ pending` / `✗ blocked: <reason>` / `∅ n/a`); the specifics go in the **Evidence** column, never a bare "ok". Same shape as `/mala-pata-loop-start` Step 5. Rows that apply:
 

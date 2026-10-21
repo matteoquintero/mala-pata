@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.18.0"
+  version: "1.19.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -246,7 +246,7 @@ Only with the human's OK (or if the profile is running in explicit automatic mod
 - `git worktree remove <ABS-worktree>` + `git worktree prune` (the `.env`/`node_modules` symlinks go away with the folder — it **does not touch** the main repo's target).
 - Delete temporary files / build artifacts that were left over.
 - **Delete the merged branch — local AND remote — as a STANDARD part of the cleanup** (an already-integrated branch is dead code; it needs no separate request beyond the OK above). Local: `git branch -d <branch>` (use `-d`, not `-D`: `-d` fails if it is NOT merged, protecting you). Remote: `git push origin --delete <branch>` (or `az repos ref delete` / the project's equivalent). **Exception — do NOT delete the branch if the integration did NOT happen**: PR just opened without merge, abandoned PR, or a merge that did not reach green. In those cases the branch has unintegrated work → ask for explicit separate OK before deleting. (If when merging the PR you already used `--delete-source-branch`, the remote no longer exists — you only clean the local one.)
-- **Seeded data (4.1-ter):** do NOT wipe the test DB here — its deletion was already decided at the smoke test gate (default: do not delete). If at 4.1-ter deletion was requested and deferred, delete here only what that run seeded.
+- **Seeds vs cycle-only fixtures — different fates.** **Seeds** (the `## Seed` recipe data, namespaced/idempotent) **STAY** — their deletion was already decided at the smoke gate (default: do not delete), and you NEVER wipe the shared test DB. BUT the **ephemeral fixtures this cycle created only for this run DO get cleaned here**: smoke/walkthrough byproducts (records created while clicking through the app), ad-hoc test rows outside the recipe, and any throwaway DB/schema the cycle spun up for its own isolation. Clean ONLY what is **provably this cycle's** — by its change-scoped namespace / ids / run-tag (the smoke tags its byproducts; see `/mala-pata-walkthrough-start`), or a DB/schema the cycle itself created. **Never** a wipe of the shared test DB, **never** another session's data; if ownership is not provable → **leave it and report**, do not guess-delete. Report in one line what was removed vs kept.
 - Confirm that nothing was left running or hanging.
 
 ## Step 5 — Final summary as a TABLE (MANDATORY)

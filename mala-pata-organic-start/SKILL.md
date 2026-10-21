@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the path of th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.17.0"
+  version: "1.18.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -87,7 +87,7 @@ For each task: the **smallest topology** — direct inline (1-3 already-understo
 
 ## Step 7 — Close (ODD 7 + mala-pata close)
 
-Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data — GATE, only if applicable: seed via `/mala-pata-seed`, then run the browser walkthrough via `/mala-pata-walkthrough-start` by its `smoke_delicacy` — low = the agent runs it on its own, medium = runs it + "review the evidence", high = the agent prepares and YOU run the sensitive steps; evidence per phase, a screenshot + trace, lands in `mala-pata/walkthroughs/<slug>/evidence/`, in-repo, never a temp dir)**, 4.2 (PR/merge destination with GATE), 4.4 (proactive CI), 4.5 (cleanup with GATE)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
+Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data — GATE, only if applicable: seed via `/mala-pata-seed`, then run the browser walkthrough via `/mala-pata-walkthrough-start` by its `smoke_delicacy` — low = the agent runs it on its own, medium = runs it + "review the evidence", high = the agent prepares and YOU run the sensitive steps; evidence per phase, a screenshot + trace, lands in `mala-pata/walkthroughs/<slug>/evidence/`, in-repo, never a temp dir)**, 4.2 (PR/merge destination with GATE), 4.4 (proactive CI), 4.5 (cleanup with GATE — includes cleaning the **ephemeral cycle-only DB fixtures** this run created: smoke/walkthrough byproducts, ad-hoc rows, or a throwaway DB/schema, by their change-scoped namespace; **keep the persistent seeds**, never wipe the shared test DB, uncertain ownership → leave + report)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
 **Cleanup exception** if you worked with incremental commits INSIDE the worktree of a feature in progress: that branch/worktree is closed by its own cycle, not organic-start — you only clean up what this skill created.
 
 ## Step 8 — Final table (MANDATORY)

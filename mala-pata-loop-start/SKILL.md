@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.17.0"
+  version: "1.18.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -207,11 +207,13 @@ A quick manual test that the REAL functionality is met, with data already seeded
 
 3. **Seed (only if it touches DB) — delegate to `mala-pata-seed`.** The seeding is executed by `mala-pata-seed`, which reads the `## Seed` section of the walkthrough's QA and seeds with the project's mechanism (`sdd-init`), **idempotently**, against the **test DB** (never prod). A single executor for in-cycle (here) and standalone. Present to the human what was seeded (ids/records) together with the script. If the change does not touch DB (UI-only with no data), skip the seed.
 
-4. **Confirmation → hard GATE.** Ask explicitly: **"Was the functionality met? (yes / no)"**.
+4. **Run it — delegate to `/mala-pata-walkthrough-start` (who runs it = by delicacy).** Do NOT improvise the browser run: hand the walkthrough to `/mala-pata-walkthrough-start`, which reads the QA's `smoke_delicacy` and either runs it itself (**low** → on its own, leaves evidence, no question; **medium** → runs it + flags "review the evidence") or, for **high/delicate** (money, prod-like data, irreversible, judgment), prepares it and hands YOU the step list to run by hand. Evidence — one screenshot + a Playwright trace per phase — lands in `mala-pata/walkthroughs/<slug>/evidence/` (in the repo, never a temp dir). The verdict is by assertions + the console/network gate, not by eyeballing a screenshot. If Playwright MCP is unavailable it falls back to the by-hand path (treated like high). This is the executor twin of the seed in point 3.
+
+5. **Confirmation → hard GATE.** Ask explicitly: **"Was the functionality met? (yes / no)"** (with the evidence from point 4 in hand).
    - **Yes** → record it and continue to 4.2.
    - **No** → do NOT open the PR: **reopen tasks** with what failed (it goes back to the cycle: apply, or design if it is a deep issue), just like any finding that reopens TODOs.
 
-5. **Teardown — optional, it is asked (default NO).** On closing the gate, one line: **"Do I delete the data I seeded? (default: no)"**. The default is not to delete — a persistent test DB with data is useful. If the human asks to delete, delete **only what this run seeded** (by the seed's ids/namespace), NEVER a wipe of the entire DB.
+6. **Teardown — optional, it is asked (default NO).** On closing the gate, one line: **"Do I delete the data I seeded? (default: no)"**. The default is not to delete — a persistent test DB with data is useful. If the human asks to delete, delete **only what this run seeded** (by the seed's ids/namespace), NEVER a wipe of the entire DB.
 
 Do not continue to 4.2 without: (a) the "not applicable" confirmed by the human, or (b) the human's confirmation that the functionality was met.
 

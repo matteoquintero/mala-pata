@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -81,9 +81,11 @@ Hard rule: **if a step cannot be followed by someone who did not write the code,
 
 **Test table (MANDATORY, fixed format).** From the core, ONE row per scenario — emit EXACTLY this table (reason first, render it last); never vertical `Field:/Value:` blocks, never prose; one line per cell, long detail below the table. This is the exact format, do not change it:
 
-| # | Given (path) | When | Then (what you must see) | Pass/Fail | Failure signal |
-|---|---|---|---|---|---|
-| 1 | <concrete initial state + where/route> | <exact action> | <result observable by eye> | ✓ pass · ✗ fail | <what is seen if it did NOT work, not just the happy path> |
+| # | Given (path) | When | Then (what you must see) | Pass/Fail | Failure signal | Evidence |
+|---|---|---|---|---|---|---|
+| 1 | <concrete initial state + where/route> | <exact action> | <result observable by eye> | ✓ pass · ✗ fail | <what is seen if it did NOT work, not just the happy path> | `<NN>-<step>.png` |
+
+- **Evidence** names the per-phase screenshot `/mala-pata-walkthrough-start` will capture into `mala-pata/walkthroughs/<slug>/evidence/` when it runs this walkthrough in a browser (one image per phase). For a by-hand run the human drops the same file there. It is a human record — the pass/fail is the assertion, not the image.
 
 Below the table, per scenario (`Pass/Fail` and `Failure signal` now live IN the table columns):
 - **Test data and edge cases** explicit.
@@ -121,16 +123,16 @@ This lane **NEVER** mentions tests, branches, migrations or anything internal.
 
 `Structure: Diátaxis how-to / tutorial + Living Documentation (Adzic/Martraire).`
 
-## Step 5 — Screenshots (optional, if the app can be run)
+## Step 5 — Screenshots / running it (delegate to `/mala-pata-walkthrough-start`)
 
-If the stack allows bringing up the app **and the human OKs it**: capture the visual steps with the project's tool (Playwright if available) and replace the placeholders. If it is not possible or not wanted, leave the placeholders marked for the human to complete. **It is not mandatory** to close.
+walkthrough **describes**; it does NOT run the browser. Executing this walkthrough in a real browser — one evidence screenshot + a Playwright trace per phase, verdict by assertions, console/network gate — is the job of **`/mala-pata-walkthrough-start`** (the executor twin of `/mala-pata-seed`), which writes the evidence to `mala-pata/walkthroughs/<slug>/evidence/` (in the repo, never a temp dir). It runs standalone or is delegated to by the smoke-test gate. Here you only leave the `Evidence` column filled with each phase's screenshot name so the runner (or a by-hand tester) knows what to capture. Capturing is not mandatory to close this skill.
 
 ## Step 6 — Location and persistence (advise + confirm)
 
 Diátaxis says **do NOT mix** → **two files**, not one:
 - **End customer** (versionable, goes to the repo): advise `docs/guides/<slug>.md` (or the docs convention the project uses). Confirm the folder with the human.
 - **QA/UAT** (internal): advise `mala-pata/walkthroughs/<slug>-qa.md` (inside the repo, versioned, like the rest of mala-pata). Confirm.
-- **Frontmatter on the QA file (mandatory — forward-only, feeds `/mala-pata-domain-radar`):** the `<slug>-qa.md` STARTS with YAML frontmatter: `domain: <X>` (the FEATURE it belongs to, else the functional AREA it touches, else `main` for area-less direct-to-main chores; **never blank — ANY doubt → ASK the human**, same rule the lanes use), `roadmap: <slug | none>`, `change: <change-name | pr-slug>`, `qa_done: pending`. **`qa_done` is the human QA flag**: it stays `pending` until a human ACTUALLY runs the walkthrough by hand and flips it to `done` — this is the "did the user test this" signal that domain-radar surfaces. **Never set `qa_done: done` yourself** — only the human who ran the QA sets it.
+- **Frontmatter on the QA file (mandatory — forward-only, feeds `/mala-pata-domain-radar`):** the `<slug>-qa.md` STARTS with YAML frontmatter: `domain: <X>` (the FEATURE it belongs to, else the functional AREA it touches, else `main` for area-less direct-to-main chores; **never blank — ANY doubt → ASK the human**, same rule the lanes use), `roadmap: <slug | none>`, `change: <change-name | pr-slug>`, `qa_done: pending`, `smoke_delicacy: low | medium | high`. **`smoke_delicacy` decides who runs the browser smoke** (`/mala-pata-walkthrough-start` reads it): `low` → the agent runs it on its own and leaves evidence; `medium` → agent runs it but flags "review the evidence"; `high` → delicate (money / prod-like data / irreversible / judgment) → the agent prepares but the HUMAN runs it. Set it from the change; **ANY doubt → round UP** (never silently let the agent run a delicate flow). **`qa_done` is the human QA flag**: it stays `pending` until a human ACTUALLY runs the walkthrough by hand and flips it to `done` — this is the "did the user test this" signal that domain-radar surfaces. **Never set `qa_done: done` yourself** — only the human who ran the QA sets it.
 - **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → both docs stranded). Commit BOTH files on a durable branch: a walkthrough for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo los docs — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the files; the skill does NOT create a commit (auto-committing diverged local main from the remote and left docs unpushed). Tell the human the paths + that durable branch so they add them in their normal PR flow.
 - **Lightweight pointer in engram**: `mem_save` topic_key `sdd/<change>/walkthrough`, one-line content with the paths of the two files (so the radar and future sessions can find it). If the input was a roadmap without a unique change-name, use the roadmap slug.
 
@@ -140,7 +142,7 @@ Diátaxis says **do NOT mix** → **two files**, not one:
 
 Then present the two lanes (short summary + file paths) and **wait for OK or adjustments** before considering it closed. Like everything in the family: do not mark "done" with something unreviewed.
 
-**Emit every structural label verbatim in English** — in BOTH lanes and the `## Seed` block: section headers, field labels (`Access block`, `Test credentials`, `URL`, `Server running`), table/column headers (`Given (path)`, `When`, `Then`, `Pass/Fail`, `Failure signal`, `Fixture`, `Derived from (Given)`, `Mechanism`, `Key`, `Status`), and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+**Emit every structural label verbatim in English** — in BOTH lanes and the `## Seed` block: section headers, field labels (`Access block`, `Test credentials`, `URL`, `Server running`), table/column headers (`Given (path)`, `When`, `Then`, `Pass/Fail`, `Failure signal`, `Evidence`, `Fixture`, `Derived from (Given)`, `Mechanism`, `Key`, `Status`), and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 `Structure: Diátaxis (Procida) + BDD Given/When/Then (North) + Living Documentation (Adzic/Martraire). QA access block + two-lane split = house method.`
 

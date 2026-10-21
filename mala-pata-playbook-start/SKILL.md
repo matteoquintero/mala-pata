@@ -4,7 +4,7 @@ description: RUNS a playbook created by /mala-pata-playbook — walks its decisi
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)
@@ -32,12 +32,14 @@ Your job: **navigate** the playbook for the situation at hand — classify what 
 ## Phase 0 — Load the playbook
 
 1. Resolve the playbook, slug-first: a **slug** → `<repo-root>/mala-pata/playbooks/<slug>.md` (`git -C <cwd> rev-parse --show-toplevel`); an **absolute path** → use it directly; a **signal** → the `playbooks/<slug>` pointer. Prefer the slug. None resolves → STOP, ask for the slug.
-2. `Read` it in full: frontmatter (`slug`, `domain`, `kind`, `scenario`, `signals`, `severity`, `runbooks`, `roles`, `owner`, `last_reviewed`) and body (Purpose, Entry, Principles, Terrain, Triage, Decision tree, Roles/escalation, Exit, Gotchas, Evidence, Crystallization).
+2. `Read` it in full: frontmatter (`slug`, `domain`, `kind`, `scenario`, `signals`, `severity`, `inputs`, `runbooks`, `roles`, `owner`, `last_reviewed`) and body (Purpose, Entry, Inputs, Principles, Terrain, Triage, Decision tree, Roles/escalation, Exit, Gotchas, Evidence, Crystallization).
 3. If it is not a playbook in this standard (no decision tree) → STOP: route to `/mala-pata-playbook` to normalize, or to `/mala-pata-runbook-start` if it is actually a single-path runbook.
 
 ## Phase 1 — Entry check (are we in this scenario)
 
-Confirm the **entry signals** actually match the situation (thresholds, sustained where required). If they do not → STOP: this is the wrong playbook, do not force it. Load the **terrain/references** you will need to gather evidence.
+**Inputs gate (FIRST, hard).** Read the playbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this playbook needs `excel` and `case_ref`"); do NOT start. Optional inputs use their declared defaults. You cannot gather evidence or walk the tree without the required inputs.
+
+Then confirm the **entry signals** actually match the situation (thresholds, sustained where required). If they do not → STOP: this is the wrong playbook, do not force it. Load the **terrain/references** you will need to gather evidence.
 
 ## Phase 2 — Triage: gather evidence, commit to a route
 

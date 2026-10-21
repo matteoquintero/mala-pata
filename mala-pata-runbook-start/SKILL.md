@@ -4,7 +4,7 @@ description: RUNS a runbook created by /mala-pata-runbook — reads the runbook 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-runbook-start — run a runbook deterministically
@@ -30,10 +30,12 @@ Your job: **execute** the runbook exactly as written. You are the executor count
 ## Phase 0 — Load the runbook
 
 1. Resolve the runbook, slug-first: a **slug** → `<repo-root>/mala-pata/runbooks/<slug>.md` (`git -C <cwd> rev-parse --show-toplevel`); an **absolute path** → use it directly; a **trigger phrase** → the `runbooks/<slug>` engram pointer. Prefer the slug. If none resolves → STOP and ask for the slug. Do not invent steps.
-2. `Read` it in full: frontmatter (`slug`, `domain`, `kind`, `trigger`, `standing_authorization`, `risk`, `reversible`, `idempotent`, `requires`, `owner`, `last_reviewed`) and body (Purpose, When to run, Preconditions, Inputs/references, Safety rails, Steps, Verification, Rollback, Stop/escalation, Evidence).
+2. `Read` it in full: frontmatter (`slug`, `domain`, `kind`, `trigger`, `standing_authorization`, `risk`, `reversible`, `idempotent`, `requires`, `inputs`, `owner`, `last_reviewed`) and body (Purpose, When to run, Preconditions, Inputs/references, Safety rails, Steps, Verification, Rollback, Stop/escalation, Evidence).
 3. If the file is not a runbook in this standard (missing Steps with Expected output) → STOP: it is not runnable; route to `/mala-pata-runbook` to normalize it first.
 
 ## Phase 1 — Preflight (STOP on any failure)
+
+**Inputs gate (FIRST, hard).** Read the runbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this runbook needs `excel` and `case_ref`"); do NOT start. Optional inputs use their declared defaults. You cannot evaluate preconditions or run steps without the required inputs.
 
 1. **Tools/sessions**: every `requires` entry is present and authenticated. Missing → STOP (name what to install/log in).
 2. **Preconditions**: evaluate each gate; every one must be true. Any false → STOP and report which.

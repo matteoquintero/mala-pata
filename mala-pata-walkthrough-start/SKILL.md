@@ -1,15 +1,15 @@
 ---
 name: mala-pata-walkthrough-start
-description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — executes it phase by phase in a real browser via Playwright MCP, leaving EVIDENCE per phase (a screenshot + a Playwright trace) in the repo, with the verdict decided by assertions (not by interpreting the image) and a console/network error gate. Honors the walkthrough's delicacy level: low → the agent runs it and reports with evidence; medium → runs it and flags "review the evidence"; high/delicate → the agent does NOT run the sensitive steps, it seeds + opens the app + hands the step list to the human. Standalone, and also the executor the smoke-test gate delegates to (twin of mala-pata-seed). Trigger — "/mala-pata-walkthrough-start <path>", "corré el smoke de <feature>", "hacé el walkthrough por browser".
+description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — executes it phase by phase in a real browser via Playwright MCP, leaving EVIDENCE per phase (a screenshot + a Playwright trace) in the repo, with the verdict decided by assertions (not by interpreting the image) and a console/network error gate. Honors the walkthrough's delicacy level: low → the agent runs it and reports with evidence; medium → runs it and flags "review the evidence"; high/delicate → the agent does NOT run the sensitive steps, it seeds + opens the app + hands the step list to the human. Standalone, and also the executor the smoke-test gate delegates to (twin of mala-pata-seed). Trigger — "/mala-pata-walkthrough-start <slug>", "corré el smoke de <feature>", "hacé el walkthrough por browser".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
 
-Input: **the one delivered by the CLI** — the path to a walkthrough QA (`mala-pata/walkthroughs/<slug>-qa.md`) or its slug.
+Input: **the one delivered by the CLI** — normally just the **slug** (resolves to `mala-pata/walkthroughs/<slug>-qa.md` from the repo root); an absolute path also works. **Prefer the slug — the full path is a pain, you do not need it.**
 
 Your job: **execute** the QA walkthrough that `/mala-pata-walkthrough` described — drive the real app in a browser, phase by phase, proving each `Then` with an assertion and leaving a human-readable evidence trail. You are the executor counterpart of `/mala-pata-walkthrough` (which describes, read-only), exactly as `/mala-pata-seed` is the executor of its `## Seed` recipe. You run the smoke; you do not decide what counts as critical (that is the delicacy level + the human).
 
@@ -31,7 +31,7 @@ Your job: **execute** the QA walkthrough that `/mala-pata-walkthrough` described
 
 ## Phase 0 — Load the walkthrough
 
-1. Resolve the QA (path, or slug → `mala-pata/walkthroughs/<slug>-qa.md`, or the `sdd/<change>/walkthrough` pointer). None resolves → STOP, ask for the path. If there is no QA → route to `/mala-pata-walkthrough` to create it first (you do not invent scenarios).
+1. Resolve the QA, slug-first: a **slug** → `<repo-root>/mala-pata/walkthroughs/<slug>-qa.md` (`git -C <cwd> rev-parse --show-toplevel`); an **absolute path** → use it directly; or the `sdd/<change>/walkthrough` pointer. Prefer the slug. None resolves → STOP, ask for the slug. If there is no QA → route to `/mala-pata-walkthrough` to create it first (you do not invent scenarios).
 2. Read the frontmatter (`slug`, `domain`, `change`, `smoke_delicacy`, `qa_done`) + the **Access block** (test URL + how to bring the app up + the credential SOURCE) + the **Test table** (the phases: `# | Given | When | Then | Evidence`) + the **`## Seed`** recipe (if present).
 
 ## Phase 1 — Delicacy gate (who runs it)

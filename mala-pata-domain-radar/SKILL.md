@@ -4,7 +4,7 @@ description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.2.0"
+  version: "2.2.1"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
@@ -129,7 +129,7 @@ Then the **Runbooks** table (one row per runbook of the domain; omit the whole t
 | <slug> | deploy | "release a main" | high | no | 2026-10-20 |
 | <slug> | recovery | <trigger> | medium | yes | <date> |
 
-- Run one with `/mala-pata-runbook-start <path>` (as text — you do NOT run it). A runbook with a stale `last_reviewed` (older than the domain's recent activity) is worth flagging in one line, not hiding.
+- Run one with `/mala-pata-runbook-start <slug>` (as text — you do NOT run it; the slug, not the full path). A runbook with a stale `last_reviewed` (older than the domain's recent activity) is worth flagging in one line, not hiding.
 
 Then the **Playbooks** table (one row per playbook of the domain; omit the whole table if there are none):
 
@@ -138,7 +138,7 @@ Then the **Playbooks** table (one row per playbook of the domain; omit the whole
 | <slug> | diagnostic | <one-line scenario> | <n> (+fallback) | <runbook slugs> | <date> |
 | <slug> | incident | <one-line scenario> | <n> | <runbook slugs> | <date> |
 
-- Run one with `/mala-pata-playbook-start <path>` (as text — you do NOT run it). Same stale-`last_reviewed` flag applies.
+- Run one with `/mala-pata-playbook-start <slug>` (as text — you do NOT run it; the slug, not the full path). Same stale-`last_reviewed` flag applies.
 
 Then the closing lines (plain text):
 `Not tracked here: shots with no Mala-Pata-Domain trailer and no commit match (if any) — say so, do not invent.`

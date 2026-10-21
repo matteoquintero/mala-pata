@@ -1,15 +1,15 @@
 ---
 name: mala-pata-playbook-start
-description: RUNS a playbook created by /mala-pata-playbook — walks its decision tree for a real situation: confirms the entry signals, gathers evidence and commits to a route before acting, evaluates each branch's condition against OBSERVED evidence (first match wins; Others is the fallback), then executes that branch inline or hands off to a runbook via /mala-pata-runbook-start. STOPS instead of guessing when the evidence is ambiguous, matches several branches, or fits none. Honors the playbook's principles, gotchas, roles and escalation; verifies the exit criteria; appends a per-case finding. Trigger — "/mala-pata-playbook-start <path>", "corré el playbook <slug>", or the scenario's own signal.
+description: RUNS a playbook created by /mala-pata-playbook — walks its decision tree for a real situation: confirms the entry signals, gathers evidence and commits to a route before acting, evaluates each branch's condition against OBSERVED evidence (first match wins; Others is the fallback), then executes that branch inline or hands off to a runbook via /mala-pata-runbook-start. STOPS instead of guessing when the evidence is ambiguous, matches several branches, or fits none. Honors the playbook's principles, gotchas, roles and escalation; verifies the exit criteria; appends a per-case finding. Trigger — "/mala-pata-playbook-start <slug>", "corré el playbook <slug>", or the scenario's own signal.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)
 
-Input: **the one delivered by the CLI** — an **absolute path to a playbook md** (the one `/mala-pata-playbook` wrote), or the scenario's signal.
+Input: **the one delivered by the CLI** — normally just the **slug** (e.g. `sentencias-reconciliacion-excel`), which resolves to `mala-pata/playbooks/<slug>.md` from the repo root; an absolute path or the scenario's signal also work. **Prefer the slug — the full path is a pain, you do not need it.**
 
 Your job: **navigate** the playbook for the situation at hand — classify what is observed, route to the matching branch, and execute it (inline, or by handing a deterministic leaf to `/mala-pata-runbook-start`). This is the executor counterpart of `/mala-pata-playbook` (which describes, read-only). It is to a playbook what `/mala-pata-runbook-start` is to a runbook — but a playbook branches, so the core act is **choosing the right branch from evidence, not running a fixed sequence**.
 
@@ -31,7 +31,7 @@ Your job: **navigate** the playbook for the situation at hand — classify what 
 
 ## Phase 0 — Load the playbook
 
-1. Input is an **absolute path to a playbook md** (or a signal → resolve via the `playbooks/<slug>` pointer or `mala-pata/playbooks/`). None resolves → STOP, ask for the path.
+1. Resolve the playbook, slug-first: a **slug** → `<repo-root>/mala-pata/playbooks/<slug>.md` (`git -C <cwd> rev-parse --show-toplevel`); an **absolute path** → use it directly; a **signal** → the `playbooks/<slug>` pointer. Prefer the slug. None resolves → STOP, ask for the slug.
 2. `Read` it in full: frontmatter (`slug`, `domain`, `kind`, `scenario`, `signals`, `severity`, `runbooks`, `roles`, `owner`, `last_reviewed`) and body (Purpose, Entry, Principles, Terrain, Triage, Decision tree, Roles/escalation, Exit, Gotchas, Evidence, Crystallization).
 3. If it is not a playbook in this standard (no decision tree) → STOP: route to `/mala-pata-playbook` to normalize, or to `/mala-pata-runbook-start` if it is actually a single-path runbook.
 

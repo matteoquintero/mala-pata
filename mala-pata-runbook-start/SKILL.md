@@ -1,15 +1,15 @@
 ---
 name: mala-pata-runbook-start
-description: RUNS a runbook created by /mala-pata-runbook — reads the runbook md and executes it step by step, deterministically: recomputes context-dependent values at run time, runs each step's exact Action, compares the real output to the Expected output, and on a mismatch follows the step's "If not as expected" (branch or STOP). Honors preconditions, safety rails, timing gates, rollback and stop/escalation; aborts after N failed attempts instead of looping. Authorization is governed by the runbook's standing_authorization + trigger; destructive/remote steps are gated when it is not standing. It executes ONLY what the runbook documents, against ONLY the targets it names. Trigger — "/mala-pata-runbook-start <path>", "corré el runbook <slug>", or the runbook's own trigger phrase.
+description: RUNS a runbook created by /mala-pata-runbook — reads the runbook md and executes it step by step, deterministically: recomputes context-dependent values at run time, runs each step's exact Action, compares the real output to the Expected output, and on a mismatch follows the step's "If not as expected" (branch or STOP). Honors preconditions, safety rails, timing gates, rollback and stop/escalation; aborts after N failed attempts instead of looping. Authorization is governed by the runbook's standing_authorization + trigger; destructive/remote steps are gated when it is not standing. It executes ONLY what the runbook documents, against ONLY the targets it names. Trigger — "/mala-pata-runbook-start <slug>", "corré el runbook <slug>", or the runbook's own trigger phrase.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-runbook-start — run a runbook deterministically
 
-Input: **the one delivered by the CLI** — an **absolute path to a runbook md** (the one `/mala-pata-runbook` wrote to `mala-pata/runbooks/<slug>.md`), or the runbook's own trigger phrase.
+Input: **the one delivered by the CLI** — normally just the **slug** (e.g. `release-a-main`), which resolves to `mala-pata/runbooks/<slug>.md` from the repo root; an absolute path or the runbook's own trigger phrase also work. **Prefer the slug — the full path is a pain, you do not need it.**
 
 Your job: **execute** the runbook exactly as written. You are the executor counterpart of `/mala-pata-runbook` (which describes, read-only): the runbook says WHAT to do and WHAT the expected output is; you DO it and verify each result. This is to a runbook what `/mala-pata-organic-start` is to an organic kickoff.
 
@@ -29,7 +29,7 @@ Your job: **execute** the runbook exactly as written. You are the executor count
 
 ## Phase 0 — Load the runbook
 
-1. The input is an **absolute path to a runbook md** (or a trigger phrase → resolve it to the runbook via the `runbooks/<slug>` engram pointer or `mala-pata/runbooks/`). If no runbook resolves → STOP and ask for the path. Do not invent steps.
+1. Resolve the runbook, slug-first: a **slug** → `<repo-root>/mala-pata/runbooks/<slug>.md` (`git -C <cwd> rev-parse --show-toplevel`); an **absolute path** → use it directly; a **trigger phrase** → the `runbooks/<slug>` engram pointer. Prefer the slug. If none resolves → STOP and ask for the slug. Do not invent steps.
 2. `Read` it in full: frontmatter (`slug`, `domain`, `kind`, `trigger`, `standing_authorization`, `risk`, `reversible`, `idempotent`, `requires`, `owner`, `last_reviewed`) and body (Purpose, When to run, Preconditions, Inputs/references, Safety rails, Steps, Verification, Rollback, Stop/escalation, Evidence).
 3. If the file is not a runbook in this standard (missing Steps with Expected output) → STOP: it is not runnable; route to `/mala-pata-runbook` to normalize it first.
 

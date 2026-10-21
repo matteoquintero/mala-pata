@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.2"
+  version: "1.3.0"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -40,7 +40,7 @@ Creating a playbook is **always read-only**: you write the markdown; you never r
 Do NOT invent the branches or thresholds — surface and ask (the `/mala-pata-research` Phase 2 split: what the code answers vs what only the human knows).
 
 1. **Restate the scenario + the branches** you understood — a short readback: the entry signals and each branch "if <condition> → <action>".
-2. **Ask the open decisions one at a time**, waiting each time: the exact **conditions/thresholds** that distinguish branches (and the sustained period, to avoid flapping), which leaves are deterministic enough to be **runbooks**, **owners/roles** per branch, escalation path + max time, rollback thresholds (who decides/executes), and the **exit criteria** (what declares the scenario resolved). Never assume a branch. **Also pin the minimum run parameters** — the `inputs` contract (required vs optional, each a `<name>` + what it is; its kind — value / file / link / id / number / flag — is whatever this playbook needs, not presumed); the runner refuses to start without the required ones.
+2. **Ask the open decisions one at a time**, waiting each time: the exact **conditions/thresholds** that distinguish branches (and the sustained period, to avoid flapping), which leaves are deterministic enough to be **runbooks**, **owners/roles** per branch, escalation path + max time, rollback thresholds (who decides/executes), and the **exit criteria** (what declares the scenario resolved). Never assume a branch. **Also pin the minimum run parameters** — for EACH one define its `name`, its `type` (value / file / link / id / number / boolean / date / enum / ...), and whether it is `required` or optional (with a `default`); these become the structured frontmatter `inputs`, and the runner refuses to start without the required ones.
 3. Only with those settled, write it. Anything still unknown is an explicit `OPEN:` gap, not a guess.
 
 ## Phase 3 — The standard (what every playbook contains)
@@ -54,9 +54,16 @@ domain: <the operational area/system it covers — else 'main'; NEVER blank, ANY
 kind: incident | diagnostic | reconciliation | decision | recovery
 scenario: <one line: the situation this handles>
 signals: [<observable entry triggers>]
-inputs:            # minimum RUN parameters, pinned when this playbook is created; the runner STOPS if a required one is missing. A parameter's kind — value / file / link / id / number / flag — is whatever THIS playbook needs; NEVER presumed by the standard
-  required: [<name>: <what this parameter is>]
-  optional: [<name>: <what this parameter is> (default: <value>)]
+inputs:            # minimum RUN parameters. EACH parameter is defined HERE, at creation, with its name + type + whether it is required. The runner STOPS if a required one is missing.
+  - name: <param-name>
+    type: <value | file | link | id | number | boolean | date | enum(a|b|c) | ...>   # its kind, DEFINED here per parameter — never presumed
+    required: true            # true | false
+    description: <what this parameter is>
+  - name: <param-name>
+    type: <...>
+    required: false
+    default: <value>          # only when required: false
+    description: <what this parameter is>
 severity: <levels + indicators, or N/A>
 runbooks: [<slugs of runbooks the branches orchestrate>]
 roles: <who decides / executes / escalates (RACI-lite)>
@@ -73,7 +80,7 @@ last_reviewed: <ISO 8601>
 | Purpose / Scenario | ONE scenario this handles (scope to one). |
 | Entry — signals & when | Observable triggers + thresholds (sustained, not instantaneous) + severity classification. |
 | Principles / golden rules | The non-negotiables that govern EVERY branch (e.g. verify in isolation; read the source before assuming; preserve evidence before acting). |
-| Inputs | **The run parameters (the `inputs` contract): required vs optional, each with what it is + how to pass** (each parameter is a `<name>` + what it is; its kind — value / file / link / id / number / flag — is whatever THIS playbook needs, pinned at creation, never presumed) — the runner STOPS if a required one is missing. |
+| Inputs | **The run parameters (the `inputs` contract): each parameter declares `name` + `type` + `required` (+ `description`, and `default` when optional)**, all defined at creation; the `type` (value / file / link / id / number / boolean / date / enum / ...) is pinned per parameter, never presumed. The runner STOPS if a required one is missing. |
 | Terrain / references | Declared context: systems, data sources, models, the levers/knobs, tools, the runbooks leaves can call. |
 | Triage / classify | Gather evidence and **commit to a route before acting** (audit trail); the diagnosis order. |
 | Decision tree | The core — the branch table below. |

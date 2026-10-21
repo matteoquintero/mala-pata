@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.2"
+  version: "1.3.0"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -42,7 +42,7 @@ Creating a runbook is **always read-only** — you write a markdown describing H
 This is the step that makes the runbook correct. Do NOT invent the operational decisions — surface them and ask (the research-backed "test it on someone who didn't write it", applied up front).
 
 1. **Restate the flow in order** — a numbered one-line-per-step readback of what you understood ("Step 1 <action>; Step 2 <action> if <condition>; Step 3 <action> at <agreed time>"). This is the comprehension check.
-2. **Ask the open decisions one at a time** (the `/mala-pata-research` Phase 2 split): what only the human can settle — ambiguous timing/ordering, who is authorized, which recipients, exact thresholds, what counts as done, rollback boundaries, and whether the **trigger is standing authorization** (does one trigger phrase authorize ALL steps without per-step confirmation, or is each destructive/remote step gated?). Ask, WAIT, never assume. **Also pin the minimum run parameters** — the `inputs` contract: what MUST be passed to run (required) vs what has a default (optional), each a `<name>` + what it is (its kind — value / file / link / id / number / flag — is whatever this runbook needs, not presumed). These become the frontmatter `inputs`, and the runner refuses to start without the required ones.
+2. **Ask the open decisions one at a time** (the `/mala-pata-research` Phase 2 split): what only the human can settle — ambiguous timing/ordering, who is authorized, which recipients, exact thresholds, what counts as done, rollback boundaries, and whether the **trigger is standing authorization** (does one trigger phrase authorize ALL steps without per-step confirmation, or is each destructive/remote step gated?). Ask, WAIT, never assume. **Also pin the minimum run parameters** — for EACH one define its `name`, its `type` (value / file / link / id / number / boolean / date / enum / ...), and whether it is `required` or optional (with a `default`). These become the structured frontmatter `inputs`, and the runner refuses to start without the required ones.
 3. Only when the flow and the open decisions are settled, write the runbook. If something stays genuinely unknown, write it as an explicit `OPEN:` gap in the runbook, not a guess.
 
 ## Phase 3 — The standard (what every runbook contains)
@@ -60,9 +60,16 @@ risk: low | medium | high
 reversible: yes | no
 idempotent: yes | no               # safe to re-run from the top?
 requires: [<exact CLIs/tools/sessions needed, e.g. az, gh>]
-inputs:            # minimum RUN parameters, pinned when this runbook is created (distinct from requires = tools); the runner STOPS if a required one is missing. A parameter's kind — value / file / link / id / number / flag — is whatever THIS runbook needs; NEVER presumed by the standard
-  required: [<name>: <what this parameter is>]
-  optional: [<name>: <what this parameter is> (default: <value>)]
+inputs:            # minimum RUN parameters (distinct from requires = tools). EACH parameter is defined HERE, at creation, with its name + type + whether it is required. The runner STOPS if a required one is missing.
+  - name: <param-name>
+    type: <value | file | link | id | number | boolean | date | enum(a|b|c) | ...>   # its kind, DEFINED here per parameter — never presumed
+    required: true            # true | false
+    description: <what this parameter is>
+  - name: <param-name>
+    type: <...>
+    required: false
+    default: <value>          # only when required: false
+    description: <what this parameter is>
 owner: <who owns this procedure>
 created_at: <ISO 8601>
 last_reviewed: <ISO 8601>
@@ -76,7 +83,7 @@ last_reviewed: <ISO 8601>
 | Purpose | One line: the task this executes. |
 | When to run | The trigger + whether it is standing authorization. |
 | Preconditions | Measurable gates that MUST be true before Step 1 (else STOP). |
-| Inputs / references | **The run parameters (the `inputs` contract): required vs optional, each with what it is + how to pass** (each parameter is a `<name>` + what it is; its kind — value / file / link / id / number / flag — is whatever THIS runbook needs, pinned at creation, never presumed by the standard) — the runner STOPS if a required one is missing. Plus the declared context: exact files, env, identifiers, recipients. **Secrets by reference** (the seeder/`.env`/secret manager), NEVER literal values. Context-dependent values named as a rule, not frozen (Phase 1.3). |
+| Inputs / references | **The run parameters (the `inputs` contract): each parameter declares `name` + `type` + `required` (+ `description`, and `default` when optional)**, all defined at creation; the `type` (value / file / link / id / number / boolean / date / enum / ...) is pinned per parameter, never presumed. The runner STOPS if a required one is missing. Plus the declared context: exact files, env, identifiers, recipients. **Secrets by reference** (the seeder/`.env`/secret manager), NEVER literal values. Context-dependent values named as a rule, not frozen (Phase 1.3). |
 | Safety rails | What it must NEVER do (prod guard, read-only scope, "do not merge before the agreed time", destructive/remote steps need the authorization). |
 | Steps | Numbered, sequential. **Each step = Action (exact command/tool) · Expected output (exact, verifiable) · If not as expected (branch or STOP+escalate)**. This is the core. |
 | Verification | The end-state check that proves the whole task succeeded (the DoD). |

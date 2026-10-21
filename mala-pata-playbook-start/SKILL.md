@@ -4,7 +4,7 @@ description: RUNS a playbook created by /mala-pata-playbook — walks its decisi
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.1"
+  version: "1.3.0"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)
@@ -37,7 +37,7 @@ Your job: **navigate** the playbook for the situation at hand — classify what 
 
 ## Phase 1 — Entry check (are we in this scenario)
 
-**Inputs gate (FIRST, hard).** Read the playbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this playbook needs `<param-a>` and `<param-b>`"); do NOT start. Optional inputs use their declared defaults. You cannot gather evidence or walk the tree without the required inputs.
+**Inputs gate (FIRST, hard).** Read the playbook's structured `inputs` (each declares `name` + `type` + `required`). If any `required: true` parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name**; do NOT start. Where practical, check each provided value against its declared `type` and STOP + report a mismatch. Optional inputs fall back to their declared `default`. You cannot gather evidence or walk the tree without the required inputs.
 
 Then confirm the **entry signals** actually match the situation (thresholds, sustained where required). If they do not → STOP: this is the wrong playbook, do not force it. Load the **terrain/references** you will need to gather evidence.
 

@@ -4,7 +4,7 @@ description: RUNS a runbook created by /mala-pata-runbook — reads the runbook 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.1"
+  version: "1.3.0"
 ---
 
 # /mala-pata-runbook-start — run a runbook deterministically
@@ -35,7 +35,7 @@ Your job: **execute** the runbook exactly as written. You are the executor count
 
 ## Phase 1 — Preflight (STOP on any failure)
 
-**Inputs gate (FIRST, hard).** Read the runbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this runbook needs `<param_a>` and `<param_b>`"); do NOT start. Optional inputs use their declared defaults. You cannot evaluate preconditions or run steps without the required inputs.
+**Inputs gate (FIRST, hard).** Read the runbook's structured `inputs` (each declares `name` + `type` + `required`). If any `required: true` parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name**; do NOT start. Where practical, check each provided value against its declared `type` and STOP + report a mismatch. Optional inputs fall back to their declared `default`. You cannot evaluate preconditions or run steps without the required inputs.
 
 1. **Tools/sessions**: every `requires` entry is present and authenticated. Missing → STOP (name what to install/log in).
 2. **Preconditions**: evaluate each gate; every one must be true. Any false → STOP and report which.

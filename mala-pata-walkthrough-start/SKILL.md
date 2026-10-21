@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -49,7 +49,7 @@ Only **medium/high (or unset)** prompt the human about who runs it; **low procee
 1. Confirm the target is the **test env + this worktree's port** (never prod); if you cannot confirm → STOP.
 2. **Seed** the `## Seed` recipe via `/mala-pata-seed` (idempotent, test DB). If the change touches no data, skip.
 3. Bring the app up per the Access block; apply the determinism levers (#2). Confirm it is up (a web-first assertion on the landing page) before Phase 3.
-4. **Tag what the run itself creates (so cleanup can remove it).** Any record the smoke creates while exercising the app (byproducts — e.g. an order created during the flow) is an **ephemeral cycle-only fixture, NOT a seed**: create it under a **cycle/run-scoped namespace** (distinct from the persistent seed namespace) or inside a transaction that rolls back, so the cycle cleanup (`/mala-pata-loop-start` 4.5 / `/mala-pata-organic-start` Step 7) removes exactly those and keeps the seeds. Never write smoke byproducts under the seed's persistent namespace.
+4. **Tag what the run itself creates (so cleanup can remove it).** Any record the smoke creates while exercising the app (byproducts — e.g. a record created as a side effect of the flow) is an **ephemeral cycle-only fixture, NOT a seed**: create it under a **cycle/run-scoped namespace** (distinct from the persistent seed namespace) or inside a transaction that rolls back, so the cycle cleanup (`/mala-pata-loop-start` 4.5 / `/mala-pata-organic-start` Step 7) removes exactly those and keeps the seeds. Never write smoke byproducts under the seed's persistent namespace.
 
 ## Phase 3 — Run phase by phase (Playwright MCP)
 

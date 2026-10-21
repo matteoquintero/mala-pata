@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -33,7 +33,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 ## Phase 0 — Input + guard
 
-The input is a feature name (e.g.: `pedido`). Read-only on the target project's code — this skill does not write nor edit anything of the project it inspects.
+The input is a feature name (e.g.: `<feature>`). Read-only on the target project's code — this skill does not write nor edit anything of the project it inspects.
 
 1. Resolve the target project's project root: `git rev-parse --show-toplevel`.
 2. If CodeGraph is available for that project (`<project-root>/.codegraph/`), use it to locate the state enum and its references (global CodeGraph rule: prefer `codegraph_explore` / the read-only CLI before broad Grep/Read). If it is not available, use direct Grep/Read.
@@ -41,7 +41,7 @@ The input is a feature name (e.g.: `pedido`). Read-only on the target project's 
 
 ## Phase 1 — Extract from the code (anchored, v1 = explicit enum)
 
-Locate the feature's state enum(s) (e.g.: `PedidoEstado`) and the real transitions: guards, domain services, compare-and-swap on the state field (`WHERE estado = <esperado>`), or any other guard mechanism the code uses.
+Locate the feature's state enum(s) (e.g.: `<Feature>State`) and the real transitions: guards, domain services, compare-and-swap on the state field (`WHERE <state_field> = <expected>`), or any other guard mechanism the code uses.
 
 For each transition record: `from`, `to`, and the condition/guard/action that triggers it (including any relevant note, e.g. the error a guard throws).
 
@@ -55,7 +55,7 @@ Apply the hard principles before touching the JSON:
 
 - Are there combined dimensions? (e.g.: fulfillment state + payment state of the same feature) → they are separated into distinct machines or columns/lanes, never a single machine mixing them.
 - Does any candidate "state" not change which actions are allowed? → it is metadata: it goes to `cards`, not to `states`.
-- Is there a combined/hinge state (e.g.: `enviado_a_caja_parcialmente`)? → it is evaluated the same as in bodega: if it does not enable/disable actions different from its neighbors, it is described in a `card`, not drawn as its own node.
+- Is there a combined/hinge state (e.g.: `<partially_<state>>`)? → it is evaluated the same way: if it does not enable/disable actions different from its neighbors, it is described in a `card`, not drawn as its own node.
 
 The result is 1..N small, readable machines, never a god-machine.
 
@@ -112,7 +112,7 @@ archify only detects height overflow in this slow step (Chrome), not in `validat
 3. If it still does not fit in the envelope: it is a god-machine → **split the machine** (Phase 2, orthogonal principle), do not keep tuning geometry.
 4. **A single `visual-check` run per change** — never blind loops. Read `scrollHeight` vs `innerHeight` in the `.visual-check.json` to know how many px are left over before touching anything.
 
-Default output (if the user does not ask for another path): `<project-root>/docs/diagrams/<feature>-states.{json,html}` (same pattern as `bodega-ferreteria-colombia/docs/diagrams/lifecycle.json`). The `.json` is versionable and editable; the `.html` is the deliverable.
+Default output (if the user does not ask for another path): `<project-root>/docs/diagrams/<feature>-states.{json,html}`. The `.json` is versionable and editable; the `.html` is the deliverable.
 
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the diagram is stranded): a diagram for a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el diagrama — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the files; the skill does NOT create a commit (auto-committing diverged local main from the remote and left diagrams unpushed). Tell the human the paths + that durable branch so they add them in their normal PR flow.
 

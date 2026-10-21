@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.3"
+  version: "1.14.4"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -65,7 +65,7 @@ Each project fills those axes with whatever makes sense, using evidence from the
 **(e) Problem vs proposed solution**: the request almost always comes with a solution already assembled (a column, an endpoint, a knob). Do NOT take those pieces as scope automatically. For each piece of the proposed solution, classify:
 - **necessary** — needed to solve the real problem.
 - **already-exists** — the repo already covers it (from (b)); it is dropped.
-- **derivable** — it comes for free from another piece (e.g.: if "the cycle with a difference" already selects, a per-cycle knob is redundant); it is dropped.
+- **derivable** — it comes for free from another piece (e.g.: if piece A already implies the selection, a separate knob for it is redundant); it is dropped.
 - **extra** — desirable improvement, not part of the problem; it is named separately and does not inflate the scope.
 Only the `necessary` pieces move on to Define; the others remain named (they do not disappear silently) but do not count toward size.
 
@@ -124,7 +124,7 @@ You ALWAYS write the research doc, without exception — it is your deliverable.
 ---
 idea_slug: <kebab>
 project: <project>
-domain: <the FEATURE it belongs to — if it targets a feature branch (feature/<X>) the domain is <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
+domain: <the FEATURE it belongs to — if it targets a feature branch (feature/<X>) the domain is <X> (e.g. feature/<X> → <X>, EVEN IF it touches other sub-areas or integrations; those are sub-areas, NOT the domain). If on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 roadmap: <roadmap-slug if this idea belongs to a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 verdict: PROCEED | SHARPEN | RECONSIDER
 created_at: <ISO 8601>

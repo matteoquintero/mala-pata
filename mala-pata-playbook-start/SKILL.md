@@ -4,12 +4,12 @@ description: RUNS a playbook created by /mala-pata-playbook — walks its decisi
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)
 
-Input: **the one delivered by the CLI** — normally just the **slug** (e.g. `sentencias-reconciliacion-excel`), which resolves to `mala-pata/playbooks/<slug>.md` from the repo root; an absolute path or the scenario's signal also work. **Prefer the slug — the full path is a pain, you do not need it.**
+Input: **the one delivered by the CLI** — normally just the **slug** (a kebab-case identifier), which resolves to `mala-pata/playbooks/<slug>.md` from the repo root; an absolute path or the scenario's signal also work. **Prefer the slug — the full path is a pain, you do not need it.**
 
 Your job: **navigate** the playbook for the situation at hand — classify what is observed, route to the matching branch, and execute it (inline, or by handing a deterministic leaf to `/mala-pata-runbook-start`). This is the executor counterpart of `/mala-pata-playbook` (which describes, read-only). It is to a playbook what `/mala-pata-runbook-start` is to a runbook — but a playbook branches, so the core act is **choosing the right branch from evidence, not running a fixed sequence**.
 
@@ -37,7 +37,7 @@ Your job: **navigate** the playbook for the situation at hand — classify what 
 
 ## Phase 1 — Entry check (are we in this scenario)
 
-**Inputs gate (FIRST, hard).** Read the playbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this playbook needs `excel` and `case_ref`"); do NOT start. Optional inputs use their declared defaults. You cannot gather evidence or walk the tree without the required inputs.
+**Inputs gate (FIRST, hard).** Read the playbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this playbook needs `<param-a>` and `<param-b>`"); do NOT start. Optional inputs use their declared defaults. You cannot gather evidence or walk the tree without the required inputs.
 
 Then confirm the **entry signals** actually match the situation (thresholds, sustained where required). If they do not → STOP: this is the wrong playbook, do not force it. Load the **terrain/references** you will need to gather evidence.
 

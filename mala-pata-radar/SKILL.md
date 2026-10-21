@@ -14,7 +14,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.8.2"
+  version: "4.8.3"
 ---
 
 # /mala-pata-radar — SDD radar (discover + diagnose, read-only)
@@ -66,7 +66,7 @@ Two independent dimensions in the CLI input: **scope** (which project/s) and
   explained in the evidence.
 
 **List — which SDDs (optional, combinable with the scope):**
-- **Explicit list**: change-names (`sentencias-mora`), memory identifiers
+- **Explicit list**: change-names (`<change-name>`), memory identifiers
   (`#7280`, `sdd/<change>/tasks`), `all <prefix>-*`, or a mix →
   **skip Phase A** and go straight to Phase B with that list.
 - **Empty or only a prefix/domain** → run Phase A to build the list,

@@ -4,12 +4,12 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.11.1"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
 
-Input: **the CLI's** — a **domain** (keyword, e.g. `facturacion`) or a **list of roadmap slugs** of the same domain.
+Input: **the CLI's** — a **domain** (keyword, e.g. `<domain>`) or a **list of roadmap slugs** of the same domain.
 
 Your job: say **what is missing to cover the TOTAL objective** of a domain — the follow-ups. This is not the phase status (that is `mala-pata-roadmap-radar`); it is **completeness**: even if all phases are "finished", is anything of the objective left uncovered? You answer it by cross-checking the domain's roadmaps with the **real code**.
 

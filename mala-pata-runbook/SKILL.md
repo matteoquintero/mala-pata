@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -35,14 +35,14 @@ Creating a runbook is **always read-only** — you write a markdown describing H
 
 1. **Mode**: a **task description** → create a new runbook. A **path to an existing doc** (e.g. one of the project's `docs/runbooks/*.md`) → **adopt**: read it and map its content onto the standard (Phase 3), keeping what is real.
 2. **Ground it in the real system** (read-only): the exact commands, CLIs, file paths, repo/org/project identifiers, env vars, and tools the task uses. A step that says "deploy" is not a step; `az repos pr set-vote --vote approve ...` with the exact target is. Reuse-first: if the project already has a script/command that does part of this, the step calls IT, not a reinvention.
-3. **Context-dependent values** (clock/timezone, counts, current branch, latest tag): name the **rule** that computes them, not a frozen value — e.g. "read the Bogota clock; pick the first slot from <list> with enough margin". The runner recomputes at run time.
+3. **Context-dependent values** (clock/timezone, counts, current branch, latest tag): name the **rule** that computes them, not a frozen value — e.g. "read the system clock in the relevant timezone; pick the first slot from <list> with enough margin". The runner recomputes at run time.
 
 ## Phase 2 — Confirm understanding, ask the open decisions (BEFORE writing)
 
 This is the step that makes the runbook correct. Do NOT invent the operational decisions — surface them and ask (the research-backed "test it on someone who didn't write it", applied up front).
 
-1. **Restate the flow in order** — a numbered one-line-per-step readback of what you understood ("Step 1 send the email; Step 2 create the PRs if missing; Step 3 merge at the agreed time"). This is the comprehension check.
-2. **Ask the open decisions one at a time** (the `/mala-pata-research` Phase 2 split): what only the human can settle — ambiguous timing/ordering, who is authorized, which recipients, exact thresholds, what counts as done, rollback boundaries, and whether the **trigger is standing authorization** (does one trigger phrase authorize ALL steps without per-step confirmation, or is each destructive/remote step gated?). Ask, WAIT, never assume. **Also pin the minimum run parameters** — the `inputs` contract: what MUST be passed to run (required) vs what has a default (optional), each with how it is passed (e.g. the Excel path, the case's system link). These become the frontmatter `inputs`, and the runner refuses to start without the required ones.
+1. **Restate the flow in order** — a numbered one-line-per-step readback of what you understood ("Step 1 <action>; Step 2 <action> if <condition>; Step 3 <action> at <agreed time>"). This is the comprehension check.
+2. **Ask the open decisions one at a time** (the `/mala-pata-research` Phase 2 split): what only the human can settle — ambiguous timing/ordering, who is authorized, which recipients, exact thresholds, what counts as done, rollback boundaries, and whether the **trigger is standing authorization** (does one trigger phrase authorize ALL steps without per-step confirmation, or is each destructive/remote step gated?). Ask, WAIT, never assume. **Also pin the minimum run parameters** — the `inputs` contract: what MUST be passed to run (required) vs what has a default (optional), each with how it is passed (e.g. an input file path, a target link/id). These become the frontmatter `inputs`, and the runner refuses to start without the required ones.
 3. Only when the flow and the open decisions are settled, write the runbook. If something stays genuinely unknown, write it as an explicit `OPEN:` gap in the runbook, not a guess.
 
 ## Phase 3 — The standard (what every runbook contains)
@@ -52,7 +52,7 @@ Write to `mala-pata/runbooks/<slug>.md` (inside the repo, versioned; `mkdir -p`)
 ```markdown
 ---
 slug: <kebab>
-domain: <the operational area/system it touches (deploy, release, database, whatsapp, <feature>, ...) — else 'main'; NEVER blank, ANY doubt → ASK the human>
+domain: <the operational area/system it touches (deploy, release, database, <system>, <feature>, ...) — else 'main'; NEVER blank, ANY doubt → ASK the human>
 kind: operational | deploy | database | recovery | diagnostic
 trigger: <the phrase/condition that starts it>
 standing_authorization: yes | no   # yes = the trigger authorizes ALL steps without per-step confirmation
@@ -61,8 +61,8 @@ reversible: yes | no
 idempotent: yes | no               # safe to re-run from the top?
 requires: [<exact CLIs/tools/sessions needed, e.g. az, gh>]
 inputs:            # the minimum RUN parameters (distinct from requires = tools); the runner STOPS if a required one is missing
-  required: [<name — what it is + how to pass, e.g. excel=path to the .xlsm, case_ref=the case's system link>]
-  optional: [<name=default, e.g. cut_date=override the projection cutoff>]
+  required: [<name — what it is + how to pass, e.g. <param>=path to the input file, <param>=link/id of the target>]
+  optional: [<name=default, e.g. <param>=<default> — what it overrides>]
 owner: <who owns this procedure>
 created_at: <ISO 8601>
 last_reviewed: <ISO 8601>
@@ -76,7 +76,7 @@ last_reviewed: <ISO 8601>
 | Purpose | One line: the task this executes. |
 | When to run | The trigger + whether it is standing authorization. |
 | Preconditions | Measurable gates that MUST be true before Step 1 (else STOP). |
-| Inputs / references | **The run parameters (the `inputs` contract): required vs optional, each with what it is + how to pass** (e.g. required `excel` = the .xlsm, `case_ref` = the system link; optional `cut_date` = a default) — the runner STOPS if a required one is missing. Plus the declared context: exact files, env, identifiers, recipients. **Secrets by reference** (the seeder/`.env`/secret manager), NEVER literal values. Context-dependent values named as a rule, not frozen (Phase 1.3). |
+| Inputs / references | **The run parameters (the `inputs` contract): required vs optional, each with what it is + how to pass** (e.g. required `<param>` = an input file path, `<param>` = a target link/id; optional `<param>` = a default) — the runner STOPS if a required one is missing. Plus the declared context: exact files, env, identifiers, recipients. **Secrets by reference** (the seeder/`.env`/secret manager), NEVER literal values. Context-dependent values named as a rule, not frozen (Phase 1.3). |
 | Safety rails | What it must NEVER do (prod guard, read-only scope, "do not merge before the agreed time", destructive/remote steps need the authorization). |
 | Steps | Numbered, sequential. **Each step = Action (exact command/tool) · Expected output (exact, verifiable) · If not as expected (branch or STOP+escalate)**. This is the core. |
 | Verification | The end-state check that proves the whole task succeeded (the DoD). |

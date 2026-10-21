@@ -4,12 +4,12 @@ description: RUNS a runbook created by /mala-pata-runbook — reads the runbook 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-runbook-start — run a runbook deterministically
 
-Input: **the one delivered by the CLI** — normally just the **slug** (e.g. `release-a-main`), which resolves to `mala-pata/runbooks/<slug>.md` from the repo root; an absolute path or the runbook's own trigger phrase also work. **Prefer the slug — the full path is a pain, you do not need it.**
+Input: **the one delivered by the CLI** — normally just the **slug** (e.g. `<slug>`), which resolves to `mala-pata/runbooks/<slug>.md` from the repo root; an absolute path or the runbook's own trigger phrase also work. **Prefer the slug — the full path is a pain, you do not need it.**
 
 Your job: **execute** the runbook exactly as written. You are the executor counterpart of `/mala-pata-runbook` (which describes, read-only): the runbook says WHAT to do and WHAT the expected output is; you DO it and verify each result. This is to a runbook what `/mala-pata-organic-start` is to an organic kickoff.
 
@@ -35,11 +35,11 @@ Your job: **execute** the runbook exactly as written. You are the executor count
 
 ## Phase 1 — Preflight (STOP on any failure)
 
-**Inputs gate (FIRST, hard).** Read the runbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this runbook needs `excel` and `case_ref`"); do NOT start. Optional inputs use their declared defaults. You cannot evaluate preconditions or run steps without the required inputs.
+**Inputs gate (FIRST, hard).** Read the runbook's `inputs`. If any **required** parameter was not provided in the invocation (or resolvable from context) → **STOP and ask for the missing ones by name** (e.g. "this runbook needs `<param_a>` and `<param_b>`"); do NOT start. Optional inputs use their declared defaults. You cannot evaluate preconditions or run steps without the required inputs.
 
 1. **Tools/sessions**: every `requires` entry is present and authenticated. Missing → STOP (name what to install/log in).
 2. **Preconditions**: evaluate each gate; every one must be true. Any false → STOP and report which.
-3. **Recompute context values**: resolve each context-dependent input from its rule NOW (e.g. Bogota clock → first time slot with margin). These are the values the run will use.
+3. **Recompute context values**: resolve each context-dependent input from its rule NOW (e.g. the current time, a count, the latest tag). These are the values the run will use.
 4. **Resolve authorization**: read `standing_authorization`. Note which steps are destructive/remote (they will be gated if `no`).
 5. **`OPEN:` items**: if the runbook still has unresolved `OPEN:` gaps that a step depends on → STOP; send back to `/mala-pata-runbook`.
 
@@ -47,7 +47,7 @@ Your job: **execute** the runbook exactly as written. You are the executor count
 
 Emit a one-line-per-step plan with the recomputed values and the hard gates, so the human sees exactly what is about to happen:
 
-`Plan — <slug>: <n> steps · <recomputed values, e.g. deploy slot = 12:30> · timing gate: <step/when> · rollback: <available/none>`
+`Plan — <slug>: <n> steps · <recomputed values, e.g. <value> = <resolved>> · timing gate: <step/when> · rollback: <available/none>`
 
 - If `standing_authorization: yes` and the trigger was given → **proceed to Phase 3 without a per-step gate** (the readback is an announcement, not a question).
 - If `standing_authorization: no` → proceed, but Phase 3 will confirm before each destructive/remote step.

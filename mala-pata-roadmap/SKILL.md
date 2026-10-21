@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.17.2"
+  version: "2.17.3"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -281,7 +281,7 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 objective: <short title of the large objective>
 slug: <kebab-case>
 project: <project>
-domain: <the FEATURE it belongs to — if it is built on a feature branch (feature/<X>) the domain is <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If it is on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
+domain: <the FEATURE it belongs to — if it is built on a feature branch (feature/<X>) the domain is <X> (e.g. feature/<X> → <X>, EVEN IF it touches other sub-areas <Y>/<Z>; those are sub-areas, NOT the domain). If it is on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 created_at: <ISO 8601>
 phases_total: <N>
 ---
@@ -303,7 +303,7 @@ phases_total: <N>
 |---|-------|------|------|-----------------|-----------|-------------|----------------------------|
 | 1 | <name> | <stable-kebab> | code | loop:STANDARD | — | no (core) | <what it delivers end-to-end> |
 | 2 | <name> | <stable-kebab> | code | organic | 1 | yes | ... |
-| 4 | <name> | <stable-kebab> | ops | — | — | yes | <external infra: Railway env / Neon / Meta setup> |
+| 4 | <name> | <stable-kebab> | ops | — | — | yes | <external infra: hosting env / database / third-party platform setup> |
 | 3 | <name> | <stable-kebab> | code | loop:LITE | 1 | yes | ... |
 
 > **Tentative route = forecast.** On execution, each phase is passed through `/mala-pata-triage`, which
@@ -339,7 +339,7 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 ### Phase 1 — <name>
 - **Tentative route**: loop:STANDARD  ·  **Depends on**: —  ·  **Deferrable?**: no (core) | yes
 - **Deferrable?**: `no` = core, it has to be done for the value to exist; `yes` = can be done later without breaking the core. It is a business PRIORITY axis, distinct from "Depends on" (which is technical). The gate (Step 5) reads this mark for core-vs-complete.
-- **Kind**: `code` (git-tracked; the radar derives state from the commit trailer) | `ops` (external infra/manual — Railway/Neon/GitHub/trámite — **no git artifact**).
+- **Kind**: `code` (git-tracked; the radar derives state from the commit trailer) | `ops` (external infra/manual — hosting/database/repo-platform settings/paperwork — **no git artifact**).
 - **Verify / Status / Evidence** (ops phases ONLY): `Verify:` how a human confirms it (URL / command / health check) · `Status:` pending | done · `Evidence:` env URL / project id / health 200 / date — maintained as the ops work lands; the radar reads this (provenance `[attested]`), since git cannot see ops phases.
 - **slug**: `<stable-kebab>` — the change-name it will use when executed (branch `<type>/<slug>`). On execution the landing commit carries the trailer `Mala-Pata-Phase: <slug>`, and `mala-pata-roadmap-radar` matches progress **by that trailer** — not by branch or commit subject, because branches get deleted on cleanup. Unique and stable; do not change it between roadmap versions.
 - **Why that route**: <if loop: THE DESIGN decision that makes it loop — what triage re-checks (a decision decidable-with-a-question does NOT go to loop); if organic/shot: "What+Done+Decisions already statable">

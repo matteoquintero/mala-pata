@@ -4,7 +4,7 @@ description: Executes a batch of SDD kickoffs IN PARALLEL — creates one worktr
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-loop-orchestrate-start — Launch a BATCH of SDDs in parallel
@@ -37,13 +37,13 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 ## Step 0 — Input and confirmation
 - Input: the list of kickoffs of the wave to launch (absolute paths to the `/mala-pata-loop` `.md` files;
-  legacy: engram ids or topic_keys `sdd/<name>/kickoff`) + the **base branch** (default `development`).
+  legacy: engram ids or topic_keys `sdd/<name>/kickoff`) + the **base branch** (default: the project's integration branch).
 - For each kickoff: if it is a path → `Read` directly and take `change_name`/`branch_base` from the YAML frontmatter. If it is legacy → `mem_search` → `mem_get_observation`; if it returns the lightweight pointer (`Kickoff in file: <path>`), follow that path.
 - **Base branch confirmation — ALWAYS, once for the whole wave**: the `branch_base` in each kickoff's
   frontmatter rules (already confirmed with the human when it was created); the wave default only applies to
   legacy kickoffs without frontmatter. In the batch confirmation, show **each kickoff's base** in the
   list ("`<change>` off `<base>`") and wait for a SINGLE OK for the whole wave. Any branch is valid with that
-  OK — do not block any kickoff for not coming off `main`/`development`; if the human corrects a base,
+  OK — do not block any kickoff for not coming off the default/integration branch; if the human corrects a base,
   update that kickoff's frontmatter before launching.
 - If the user did not specify what to launch, launch **all** the kickoffs they passed (the default is the complete
   wave in parallel). Only stagger if the user explicitly asks.
@@ -62,7 +62,7 @@ name it as a direct argument (`ls -la <wt> | grep '\.env'` — see the rule in l
 
 ## Step 2 — Anti-stale: advance the worktrees to origin/<base> (MANDATORY)
 `git worktree add` bases the worktree on your LOCAL `<base>` as it stands — and the local is usually
-**behind** origin (see memory `worktree-nace-viejo-development-stale`). If you launch like that, the sessions'
+**behind** origin (a known stale-base pitfall). If you launch like that, the sessions'
 explore phases conclude on stale code. Therefore, BEFORE opening the tabs:
 ```
 git -C /ABS fetch origin <base>

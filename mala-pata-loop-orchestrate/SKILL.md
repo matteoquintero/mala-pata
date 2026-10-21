@@ -4,7 +4,7 @@ description: READ-ONLY planner for a batch of SDD kickoffs — analyzes several 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.6.0"
+  version: "2.6.1"
 ---
 
 # /mala-pata-loop-orchestrate — Plan a BATCH of kickoffs (READ-ONLY)
@@ -36,8 +36,8 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 ## Step 1 — Load the kickoffs
 Input (accepts any of these forms):
 - **Explicit list of paths** (current format): absolute paths to the kickoff `.md` files that `/mala-pata-loop` left in `mala-pata/kickoffs/` (inside the repo).
-- **Auto-discover**: if no list is passed, list `mala-pata/kickoffs/*.md` (or by a prefix/module if they indicate one, e.g. "todos los de sentencias").
-- **Legacy** (old kickoffs, compatibility only): engram ids (`#6717 #6712 …`) or topic_keys (`sdd/<name>/kickoff`).
+- **Auto-discover**: if no list is passed, list `mala-pata/kickoffs/*.md` (or by a prefix/module if they indicate one, e.g. "todos los de <módulo>").
+- **Legacy** (old kickoffs, compatibility only): engram ids (`#<id1> #<id2> …`) or topic_keys (`sdd/<name>/kickoff`).
 
 For each one: if it is a path → `Read` directly. If it is legacy → `mem_search` → `mem_get_observation`; if what it returns is the lightweight pointer (`Kickoff in file: <path>`) instead of the full content, follow that path and read the file.
 If any is not found → warn and continue with the rest (do not invent context).

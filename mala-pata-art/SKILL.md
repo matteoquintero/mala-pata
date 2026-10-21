@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -79,7 +79,7 @@ The only thing taken from ui-ux-pro-max; they make the judgment testable:
 > **The prescriptive side of ui-ux-pro-max is forbidden**: do NOT use its 161 palettes, its font pairings, or its product→style mappings. The concrete values (which color, which font) come from the **project's system** + the **judgment** above. Its style vocabulary serve only as vocabulary to NAME a direction, not as "apply this style".
 
 ## Read the project's system (agnostic)
-Before proposing concrete values, find the **current project's design system** and treat it as **authoritative**: tokens (CSS vars / Tailwind config), spacing scale, typography, primitives (`Button`/`Card`/`Icon`/etc.), rules (design ESLint), Storybook, `DESIGN.md`/`ARCHITECTURE.md`. If it exists, the concrete values come from there (do not invent hex/fonts). `bodega-ferreteria-colombia` is the **reference exemplar** of a well-built system — do NOT hardcode it; it is the pattern of "what a good system looks like", not the source.
+Before proposing concrete values, find the **current project's design system** and treat it as **authoritative**: tokens (CSS vars / Tailwind config), spacing scale, typography, primitives (`Button`/`Card`/`Icon`/etc.), rules (design ESLint), Storybook, `DESIGN.md`/`ARCHITECTURE.md`. If it exists, the concrete values come from there (do not invent hex/fonts). A well-built system is the **reference pattern** of "what a good system looks like" — never hardcode any specific project as the source.
 
 If the project has NO system, propose a minimal one (spacing scale, neutral ramp, 1 accent, 2 type sizes) BEFORE touching components — and say so.
 

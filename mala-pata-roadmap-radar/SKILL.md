@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.12.1"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -29,7 +29,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 
 ## Hard principles (non-negotiable)
 
-- **Git = truth, for `code` phases.** A `code` phase's "done" is confirmed ONLY against the freshly fetched integration branch (by ANY git evidence — a merge, a PR, a slug commit, a delivering artifact, or the OPTIONAL `Mala-Pata-Phase` trailer) — never by a checkbox in the `.md`, an archive-report, nor memory. A `.md` says what was planned; git says what happened. **`ops` phases are the one exception**: Railway/Neon/GitHub/manual leave NO git artifact, so their `done` is **attested** in the `.md` with mandatory evidence (URL/id/health/date) and tagged `[attested]` — never confused with a git-proven `done`.
+- **Git = truth, for `code` phases.** A `code` phase's "done" is confirmed ONLY against the freshly fetched integration branch (by ANY git evidence — a merge, a PR, a slug commit, a delivering artifact, or the OPTIONAL `Mala-Pata-Phase` trailer) — never by a checkbox in the `.md`, an archive-report, nor memory. A `.md` says what was planned; git says what happened. **`ops` phases are the one exception**: deploy/infra/manual steps leave NO git artifact, so their `done` is **attested** in the `.md` with mandatory evidence (URL/id/health/date) and tagged `[attested]` — never confused with a git-proven `done`.
 - **Zero cache, zero memory.** Every run re-derives everything from the `.md` + live git. Reporting a state without re-measuring it in this run is forbidden. NO engram.
 - **Read-only.** Never commit, push, merge, destructive fetch nor write. Running this radar is always safe.
 - **You take no attributions.** You only report which phase is in which state and what can start. You NEVER execute nor OFFER to execute a phase (triage, apply, PR, merge). **Emitting the next command as copy-paste TEXT (the stage-aware `triage` → lane → `-start` suggestion of Phase 3) is allowed and is NOT "offering to execute"** — you print it, you never run it and you never ask "¿arranco?". The human copies it if they want. Your output ENDS at the report + that text; closing with "¿arranco X?" is still forbidden.
@@ -41,7 +41,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 2. Resolve the roadmap `.md`:
    - If the input is a path → `Read` directly.
    - If it is a **slug** → look for `mala-pata/roadmap/<slug>.md`.
-   - If it is a **domain** (e.g. `caja`) → list `mala-pata/roadmap/*.md` and keep ONLY those whose frontmatter `domain:` matches (the owner field — do NOT guess by filename). Roadmaps of OTHER domains are excluded: **never mix domains in one run.** An old roadmap with no `domain:` → fall back to matching its slug/name and note it was matched heuristically.
+   - If it is a **domain** (e.g. `<domain>`) → list `mala-pata/roadmap/*.md` and keep ONLY those whose frontmatter `domain:` matches (the owner field — do NOT guess by filename). Roadmaps of OTHER domains are excluded: **never mix domains in one run.** An old roadmap with no `domain:` → fall back to matching its slug/name and note it was matched heuristically.
    - If several candidates and none specified → list them and ask which one (one question, stop and wait).
    - If NO roadmap matches → do NOT dead-end: if the domain was built via SDD loops/changes (no roadmap), point to `/mala-pata-radar` (needs no roadmap `.md`); if the roadmap was archived, ask for its path. Do not invent phases.
 3. Read the roadmap's frontmatter `domain:` (the owner — used for scoping above). Then from the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**. From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
@@ -70,7 +70,7 @@ Derive:
 - **`? unbound (confirm)`** — implementing commits CLEARLY exist but cannot be tied to the slug (work landed under another slug/PR): show those commits and ask the human — **NEVER a confident `pending` when work demonstrably exists.**
 - **blocked** — `pending` with at least one `Depends on` not `done`.
 
-**`ops` phases — NO git artifact; read the declared status.** Railway/Neon/GitHub/manual leave nothing in git, so **NEVER mark an `ops` phase `pending`/`blocked` for lacking a branch/trailer.** Read the `.md`'s declared fields:
+**`ops` phases — NO git artifact; read the declared status.** deploy/infra/manual steps leave nothing in git, so **NEVER mark an `ops` phase `pending`/`blocked` for lacking a branch/trailer.** Read the `.md`'s declared fields:
 - **done** — `Status: done` AND `Evidence` present (URL/id/health/date). Evidence: that string `[attested]`.
 - **pending** — `Status: pending`, OR `done` WITHOUT evidence (attested-without-evidence is NOT done — same honesty rule as gaps). Show the phase's `Verify` so the human can confirm it.
 - **blocked** — pending with at least one `Depends on` not `done`.

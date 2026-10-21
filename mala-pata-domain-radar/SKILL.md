@@ -1,15 +1,15 @@
 ---
 name: mala-pata-domain-radar
-description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE mala-pata-roadmap-radar. Given a domain (e.g. `caja`), it gathers EVERY mala-pata artifact that belongs to it — research, kickoffs (organics/loops), shots and roadmaps — by the `domain:` frontmatter field + the `Mala-Pata-Domain` commit trailer (so shots, which leave no .md, are found by their commit). It groups them: roadmaps (with a one-line rollup → run roadmap-radar for the phase detail) vs standalone items not under any roadmap. Coarse status (done / in progress / pending) from live git reality. It ALSO shows a completeness view per change — whether its QA walkthrough was run by hand (the `qa_done` human flag), whether it was seeded, whether its state diagram was drawn — plus the domain-level gaps rollup (Release GO/NO-GO) read from the gaps report. It does NOT replace roadmap-radar (phase detail) nor gaps (the full missing-work audit); it is the INDEX + completeness dashboard of a domain. It does NOT orchestrate, execute, or mutate anything. Trigger — "qué se hizo en el dominio <X>", "overview de <dominio>", "todo lo de caja", "domain radar <dominio>".
+description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE mala-pata-roadmap-radar. Given a domain (e.g. `<domain>`), it gathers EVERY mala-pata artifact that belongs to it — research, kickoffs (organics/loops), shots and roadmaps — by the `domain:` frontmatter field + the `Mala-Pata-Domain` commit trailer (so shots, which leave no .md, are found by their commit). It groups them: roadmaps (with a one-line rollup → run roadmap-radar for the phase detail) vs standalone items not under any roadmap. Coarse status (done / in progress / pending) from live git reality. It ALSO shows a completeness view per change — whether its QA walkthrough was run by hand (the `qa_done` human flag), whether it was seeded, whether its state diagram was drawn — plus the domain-level gaps rollup (Release GO/NO-GO) read from the gaps report. It does NOT replace roadmap-radar (phase detail) nor gaps (the full missing-work audit); it is the INDEX + completeness dashboard of a domain. It does NOT orchestrate, execute, or mutate anything. Trigger — "qué se hizo en el dominio <X>", "overview de <dominio>", "todo lo de caja", "domain radar <dominio>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.2.1"
+  version: "2.2.2"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
 
-Input: **the one provided by the CLI** — a **domain** (e.g. `caja`, `clientes`, `facturacion`).
+Input: **the one provided by the CLI** — a **domain** (`<domain>`).
 
 Your job: show, in a **fixed format**, EVERYTHING mala-pata did in that domain — research, kickoffs (organics/loops), shots and roadmaps — **grouped** by whether each belongs to a roadmap or is standalone, with a coarse live status. It is the **index/overview** of a domain; the detail of each roadmap is `mala-pata-roadmap-radar`'s job.
 
@@ -126,7 +126,7 @@ Then the **Runbooks** table (one row per runbook of the domain; omit the whole t
 
 | Runbook | Kind | Trigger | Risk | Reversible | Last reviewed |
 |---|---|---|---|---|---|
-| <slug> | deploy | "release a main" | high | no | 2026-10-20 |
+| <slug> | deploy | <trigger> | high | no | <date> |
 | <slug> | recovery | <trigger> | medium | yes | <date> |
 
 - Run one with `/mala-pata-runbook-start <slug>` (as text — you do NOT run it; the slug, not the full path). A runbook with a stale `last_reviewed` (older than the domain's recent activity) is worth flagging in one line, not hiding.

@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.18.0"
+  version: "1.18.1"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -85,7 +85,7 @@ Before reinterpreting anything, measure whether the request is **ready to enter 
    - **Base**: propose it with your reason — default `main`/`development` (integration), or another branch if the work builds on a feature in progress ("the code lives in X"). Any branch is valid with confirmation; what is forbidden is assuming it silently or blocking just because it is not main.
    - **Branch type**: advise the conventional prefix according to WHAT the change is (`feature/` new functionality, `fix/`/`bugfix/` correction, `hotfix/` prod urgency, `refactor/`, `chore/`, `docs/`, `release/`) and propose the full name `<type>/<change-name>`. **Never `sdd/...`**. E.g.: a bug fix → proposal `fix/<change-name>`; a new feature → `feature/<change-name>`.
    - **Wait for the OK** before setting `branch:` and `branch_base` in the kickoff. These two confirmations can go together with the profile one (Step 1.5) in a single interaction. The working branch is ALWAYS the new `<type>/<change-name>` and the `worktree` is ALWAYS a new dir per change — never put an integration branch as `branch:` nor a worktree to reuse; the executor (loop-start) works isolated in its own worktree and consolidates at merge.
-   - **Set `domain` from `branch_base`**: `feature/<X>` → `domain: <X>` (the feature — e.g. `feature/caja` → `caja`, even if the change touches facturacion/alegra, which are sub-areas, NOT the domain); `main`/`development` → the functional AREA, else `main`. **If there is ANY doubt, ASK the human — never guess.**
+   - **Set `domain` from `branch_base`**: `feature/<X>` → `domain: <X>` (the feature — e.g. `feature/<X>` → `<X>`, even if the change touches other sub-areas, which are NOT the domain); `main`/`development` → the functional AREA, else `main`. **If there is ANY doubt, ASK the human — never guess.**
 
 ---
 
@@ -161,7 +161,7 @@ The executor will load exactly the skills this kickoff lists — so choose them 
 
 ## Step 3 — Migration number: provisional for the author, final at merge (if applicable)
 
-If the change needs DB migrations, **do NOT reserve a number as a lock**. The source of truth for numbers ALREADY taken is **git, not engram** — a reservation registry is a lock that long-lived branches do not respect and that also drifts (it was seen saying "next free 0071" when the real one was 0003). Instead:
+If the change needs DB migrations, **do NOT reserve a number as a lock**. The source of truth for numbers ALREADY taken is **git, not engram** — a reservation registry is a lock that long-lived branches do not respect and that also drifts (it can drift and report a "next free" number that disagrees with the real one). Instead:
 
 1. **Measure git, not a registry**: look at which numbers the base branch AND the sibling in-flight branches occupy — with the project's command to list migrations (e.g. `git ls-tree -r --name-only <branch> -- <migrations-folder>`; the exact folder and scheme are known by `sdd-init`). **Never infer the next one by counting files on disk** (numbering may not be contiguous).
 2. **Take the next free one as PROVISIONAL**: it is the number you will write the file with and run the round-trip, but it is **not final** — if another sibling branch merges first, this change renumbers when integrating (see `/mala-pata-loop-start`, Step 4.1-bis). Project rule: "the first to merge keeps it".
@@ -183,7 +183,7 @@ Assemble the brief with this structure, **INJECTING** the rules MDs:
 change_name: <change-name>
 profile: <PERFIL>
 project: <project>
-domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.g. feature/caja → caja, EVEN IF it touches facturacion/alegra; those are sub-areas, NOT the domain). If branch_base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
+domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.g. feature/<X> → <X>, EVEN IF it touches other sub-areas; those are NOT the domain). If branch_base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 research: <research slug if this change came from /mala-pata-research, else none>   # loop-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
@@ -266,7 +266,7 @@ The kickoff MUST include the full frontmatter and the "Method rules" block with 
 
 `sdd_preflight` are only RECOMMENDATIONS — they do NOT satisfy gentle-ai's preflight hook (which requires a real, live `AskUserQuestion` in the runner's session); `mala-pata-loop-start` reads them to pre-fill the recommendation text of the hook's mandatory canonical question. Derive `pace` from the profile: FULL/STANDARD → `interactive`; LITE/MINIMAL may go `automatic`.
 
-**`smoke_test`** captures early whether the change will probably need manual testing with seeded data after apply (`loop-start` gate, Step 4.1-ter). Default `needed: auto` — `loop-start` proposes yes/no according to the shape of the change and the human confirms; put `yes`/`no` here only if you already know. In `data`, one line with the scenario to seed (e.g. "an order in DRAFT state with 2 items"), or "a definir". The seed always uses the project's mechanism and runs against the test DB.
+**`smoke_test`** captures early whether the change will probably need manual testing with seeded data after apply (`loop-start` gate, Step 4.1-ter). Default `needed: auto` — `loop-start` proposes yes/no according to the shape of the change and the human confirms; put `yes`/`no` here only if you already know. In `data`, one line with the scenario to seed (e.g. "<entity> in <initial state> with <n> related records"), or "a definir". The seed always uses the project's mechanism and runs against the test DB.
 
 **`research` field**: set it from triage's draft (the `research:` row it adds when the change came from `/mala-pata-research`), or from the human if they ran research directly and name it; otherwise `none`. This is the link `loop-start` uses to carry `mala-pata/research/<slug>.md` into the feature branch so the planning doc lands in the PR, not loose on base.
 

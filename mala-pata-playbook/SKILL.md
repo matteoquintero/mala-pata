@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -40,7 +40,7 @@ Creating a playbook is **always read-only**: you write the markdown; you never r
 Do NOT invent the branches or thresholds — surface and ask (the `/mala-pata-research` Phase 2 split: what the code answers vs what only the human knows).
 
 1. **Restate the scenario + the branches** you understood — a short readback: the entry signals and each branch "if <condition> → <action>".
-2. **Ask the open decisions one at a time**, waiting each time: the exact **conditions/thresholds** that distinguish branches (and the sustained period, to avoid flapping), which leaves are deterministic enough to be **runbooks**, **owners/roles** per branch, escalation path + max time, rollback thresholds (who decides/executes), and the **exit criteria** (what declares the scenario resolved). Never assume a branch. **Also pin the minimum run parameters** — the `inputs` contract (required vs optional, each with how it is passed, e.g. the Excel + the case's system link); the runner refuses to start without the required ones.
+2. **Ask the open decisions one at a time**, waiting each time: the exact **conditions/thresholds** that distinguish branches (and the sustained period, to avoid flapping), which leaves are deterministic enough to be **runbooks**, **owners/roles** per branch, escalation path + max time, rollback thresholds (who decides/executes), and the **exit criteria** (what declares the scenario resolved). Never assume a branch. **Also pin the minimum run parameters** — the `inputs` contract (required vs optional, each with how it is passed, e.g. an input file + a reference to the case in its source system); the runner refuses to start without the required ones.
 3. Only with those settled, write it. Anything still unknown is an explicit `OPEN:` gap, not a guess.
 
 ## Phase 3 — The standard (what every playbook contains)
@@ -55,7 +55,7 @@ kind: incident | diagnostic | reconciliation | decision | recovery
 scenario: <one line: the situation this handles>
 signals: [<observable entry triggers>]
 inputs:            # the minimum RUN parameters; the runner STOPS if a required one is missing
-  required: [<name — what it is + how to pass, e.g. excel=the analyst's .xlsm, case_ref=the case's system link>]
+  required: [<name — what it is + how to pass, e.g. <param>=what it is and how it is passed (file path, link, id)>]
   optional: [<name=default>]
 severity: <levels + indicators, or N/A>
 runbooks: [<slugs of runbooks the branches orchestrate>]
@@ -73,7 +73,7 @@ last_reviewed: <ISO 8601>
 | Purpose / Scenario | ONE scenario this handles (scope to one). |
 | Entry — signals & when | Observable triggers + thresholds (sustained, not instantaneous) + severity classification. |
 | Principles / golden rules | The non-negotiables that govern EVERY branch (e.g. verify in isolation; read the source before assuming; preserve evidence before acting). |
-| Inputs | **The run parameters (the `inputs` contract): required vs optional, each with what it is + how to pass** (e.g. required `excel` = the .xlsm, `case_ref` = the system link) — the runner STOPS if a required one is missing. |
+| Inputs | **The run parameters (the `inputs` contract): required vs optional, each with what it is + how to pass** (e.g. required `<param>` = what it is + how it is passed) — the runner STOPS if a required one is missing. |
 | Terrain / references | Declared context: systems, data sources, models, the levers/knobs, tools, the runbooks leaves can call. |
 | Triage / classify | Gather evidence and **commit to a route before acting** (audit trail); the diagnosis order. |
 | Decision tree | The core — the branch table below. |

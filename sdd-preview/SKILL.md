@@ -9,7 +9,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.9.2"
+  version: "3.9.3"
 ---
 
 # sdd-preview — pre-apply executive summary (hard human gate)
@@ -78,7 +78,7 @@ Before writing the summary, with `tasks` + `design` (+ real code) already read, 
 - Architecture smells with **high** severity.
 - `design` left open decisions not fully resolved with the human.
 
-**Money / invariants lens (domain trigger).** If the blast-radius touches money calculation, totals, taxes (VAT), discounts, warranty, stock, or any mapper/DTO/projection that transforms values → **it is never 0 reviewers** (minimum 1), and the reviewer(s) explicitly adopt the **Correctness / invariants** lens (see audit). If there is also another high-risk signal (migration, NEW pattern, etc.) → 2, and there **the lenses are split**: one money/invariants, the other concurrency/migrations.
+**Invariants lens (domain trigger).** If the blast-radius touches business-critical calculations or derived values (e.g. monetary totals, quantities, eligibility rules), or any mapper/DTO/projection that transforms values → **it is never 0 reviewers** (minimum 1), and the reviewer(s) explicitly adopt the **Correctness / invariants** lens (see audit). If there is also another high-risk signal (migration, NEW pattern, etc.) → 2, and there **the lenses are split**: one calculation/invariants, the other concurrency/migrations.
 
 Make explicit in the artifact (a short line, not a separate section) the chosen number and **the concrete signal** that motivated it — never "audit active" without saying which evidence triggered it.
 
@@ -169,12 +169,12 @@ When the self-assessment above decides ≥1 reviewer, this block is added after 
 |---|---|---|
 | <the default> | <consequence if nobody looks> | [inferred] · [assumed] |
 
-### Correctness / invariants (money lens — adopt when the domain triggers it)
+### Correctness / invariants (invariants lens — adopt when the domain triggers it)
 Perspectives to adopt, NOT a checklist to tick off — read the plan against the real code looking for:
-- **Lossy projection/mapper**: does any `SELECT`/recalc/DTO/mapper return a subset and drop a field that a downstream consumer needs? (money, tax, stock, permission lost in the transformation)
+- **Lossy projection/mapper**: does any `SELECT`/recalc/DTO/mapper return a subset and drop a field that a downstream consumer needs? (a computed value, a permission, a quantity lost in the transformation)
 - **Test that proves the read, not the result**: is there a "green" criterion that only ensures the shape/SELECT and not the end-to-end calculation? → false coverage.
-- **Hardcoded value at an edge**: a fixed `0.00`, a silent default, a constant where the real value should go.
-- **Application level**: tax/discount/warranty at document level vs line-item level — does it match the business rule?
+- **Hardcoded value at an edge**: a fixed literal, a silent default, a constant where the real value should go.
+- **Application level**: a rule applied at aggregate level vs per-item level — does it match the business rule?
 - **Consistency under concurrency**: locks without a fixed order (deadlock), reads without the guard that the invariant requires.
 ```
 
@@ -184,7 +184,7 @@ Perspectives to adopt, NOT a checklist to tick off — read the plan against the
 - **Empty audit forbidden**: if there are no findings, state EXPLICITLY WHAT was looked for and why each thing was discarded.
 - **Findings & disposition is ALWAYS a table** (`# | Finding | Severity | Disposition`), never a flat numbered list, never prose/paragraphs, never vertical `Field:/Value:` blocks (reason first, render the table last; one line per cell) — it is what the human scans to decide. Severity uses the glyph + word `▲ high` · `● medium` · `▼ low`; Disposition is one enum + a one-line reason: `IGNORE` · `REFACTOR` · `ADJUST` · `REUSE` (objective-level findings do NOT go in this table — they escape backward, see below). The Blast-radius / Reuse-first / Architecture smells / Silent assumptions are the supporting analysis that feeds this table.
 - Reviewers do NOT see each other's output. Synthesis (merge + dedup) is done afterwards.
-- The **Correctness / invariants** category is MANDATORY when the self-assessment flagged the money/invariants trigger; if it is active and you find nothing, state which invariants you verified and why they are safe (same rule as empty-audit). It is a lens to adopt, not a checklist that replaces free adversarial reading.
+- The **Correctness / invariants** category is MANDATORY when the self-assessment flagged the invariants trigger; if it is active and you find nothing, state which invariants you verified and why they are safe (same rule as empty-audit). It is a lens to adopt, not a checklist that replaces free adversarial reading.
 
 ## Artifact footer (always last, before the gate)
 

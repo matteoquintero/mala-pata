@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.1"
+  version: "1.6.2"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -130,7 +130,7 @@ Then **what was drawn** (a REAL Markdown table, NEVER fenced; emit EXACTLY this 
 |---|---|---|---|
 | <machine> | <n> | <m> | <state → card, why> or — |
 
-- The absolute path of the delivered HTML (also in the BLUF line).
+- The repo-relative path of the delivered HTML (also in the BLUF line).
 - Never a verdict of "this is broken" nor a list of findings — the human does that by opening the HTML.
 - The only "I cannot" case: the feature has no explicit state enum → say exactly that and that v1 does not support it (future extension), not a best-effort attempt on implicit state.
 

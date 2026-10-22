@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.4"
+  version: "1.14.5"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -188,7 +188,7 @@ Then the plain-language summary **as a table** (the verdict stays the line above
 | Size signal | one-unit \| multi-unit |
 
 - **Left OUT / pending** — MANDATORY **only if the signal is single-unit** (goes to an organic/loop/shot cycle, NOT roadmap). One line per piece from Phase 1e that fell out of scope (already-exists / derivable / extra): `<piece> — <why it stays out> — [skill rule | judgment]`. Nothing disappears silently. If multi-unit → this block does NOT go (the roadmap covers it with `Deferrable?`).
-- **Doc:** `<absolute path of the .md>`
+- **Doc:** `mala-pata/research/<slug>.md`
 - **Next step — DEPENDS on the verdict:**
   - **PROCEED** → `/mala-pata-triage <slug>` (or `/mala-pata-roadmap <slug>` if multi-unit), passing the draft of fields from Phase 3.
   - **SHARPEN** → answer the named questions and re-run research; do NOT route yet.

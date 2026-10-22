@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -112,11 +112,11 @@ Render the decision tree as a real Markdown table (NEVER fenced; one line per ce
 - BLUF: `Playbook: <scenario> · <b> branches (+ fallback) · orchestrates <r> runbooks · severity <…/N/A>`
 - A short readback table (`Condition | Branch | Action`) — the first branches, so the human sees the tree shape.
 - **OPEN** items, if any — one per line.
-- **File:** `<absolute path>` (+ the companion findings file)
+- **File:** `mala-pata/playbooks/<slug>.md` (+ the companion `<slug>-findings.md`)
 - **Next step** — run it:
 
   ```
-  /mala-pata-playbook-start <absolute path>
+  /mala-pata-playbook-start <slug>
   ```
 
 `Structure: decision-tree playbook (first-match branches + Others fallback) + diagnostic triage (commit-to-route, symptom→cause→action) + playbook-orchestrates-runbooks + crystallization (stable branch → runbook). Method-vs-findings split + golden-rules/gotchas living doc = house method.`

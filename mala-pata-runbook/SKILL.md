@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -111,11 +111,11 @@ Emit exactly this, from the runbook you wrote (no invention):
 - BLUF (plain line): `Runbook: <n> steps · trigger "<trigger>" · standing-auth <yes/no> · risk <r> · reversible <y/n>`
 - A short readback table (`# | Action | Expected output`) — the first lines only, so the human sees the shape.
 - **OPEN** items, if any — one per line, each needing the human (never hidden).
-- **File:** `<absolute path>`
+- **File:** `mala-pata/runbooks/<slug>.md`
 - **Next step** — run it with the runner:
 
   ```
-  /mala-pata-runbook-start <absolute path>
+  /mala-pata-runbook-start <slug>
   ```
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 read-only stance; a blocking open decision (Phase 2) → the single question allowed before writing.

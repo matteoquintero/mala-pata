@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.17.3"
+  version: "2.18.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -32,10 +32,13 @@ passes it to `/mala-pata-triage`, which decides the final lane with the informat
 > `/mala-pata-loop` or `/mala-pata-organic`. Your only deliverable is the roadmap `.md` (+ a pointer in
 > engram). The DAG is a plan, not an order to implement.
 >
-> **Hard rule #2 — if the objective ALREADY fits in ONE unit, do NOT invent phases.** If on analyzing it
-> you see it is a change that fits in a single organic or a single loop, **STOP and redirect to
-> `/mala-pata-triage`** — it decides the lane. This skill is only for objectives that do NOT fit in a
-> single unit. Over-decomposing something small is the anti-pattern this skill must avoid.
+> **Hard rule #2 — ENTRY GATE: earn the roadmap before building one; never inherit "multi-unit".** On
+> invocation, FIRST investigate the real code (Step 2) and derive the gap (Step 4-ter). **"Multi-unit" is a
+> CONCLUSION of that investigation — never inherited from research's `size_signal` nor from the human asking
+> for a roadmap.** If the investigated gap fits in ONE unit (one organic/loop, or a shot), **STOP, say in one
+> line WHY it collapsed (what the code already solves), and bounce to `/mala-pata-triage`** — do NOT present
+> or write a DAG. This skill is only for objectives whose gap genuinely needs decomposition. Over-decomposing
+> something small — or drawing a speculative DAG on an unverified premise — is the anti-pattern this skill exists to avoid.
 >
 > **Hard rule #3 — the route per phase is a FORECAST, not a commitment.** You classify each phase
 > as organic or loop with your best reading of TODAY, but **triage re-decides on arrival** (see Step 4-bis):
@@ -206,6 +209,12 @@ discovering what was missing). Do the gap analysis:
 - **Desired state** (Step 1: human + domain + intent docs, MECE) **vs current state** (what the
   code already solves, measured in Step 2 with codegraph) = **the gap**. The gap is what the roadmap has to
   cover with phases.
+- **Verify each candidate phase against the code BEFORE it enters the DAG.** A dimension the code ALREADY
+  solves is NOT a phase — drop it. A phase that assumes a field/mechanism must confirm it is REAL (do not
+  propose a phase from the human's words alone). This is the reuse-first check that stops phantom phases.
+- **After the gap analysis, RE-RUN Hard rule #2 on the investigated gap.** If the gap has collapsed to ONE
+  unit (phases already-solved, criteria that turned out trivial), STOP, say why, and bounce to
+  `/mala-pata-triage` — never present a DAG you already know is a single unit.
 - Every dimension of the desired state that the human did **NOT request** but the objective implies → is marked as
   **extra-proposal** (not as something you decided alone). **Never add it silently nor discard it
   silently**: it goes to the gate marked.

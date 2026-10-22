@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.11.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -64,8 +64,10 @@ This is a **diagnosis from the text of the request**, proportional to the reques
   - **Decidable with one question** (known options and the human chooses, a preference, or a product call) → NOT loop. Ask **that** focused question, stop and wait; once resolved → **organic** (or **shot** if it is also trivial: 1-3 files, no migration/contract/new UI). Test: *can I state the options and does one answer close them?*
   - **Needs design** (several viable architectures with tradeoffs to investigate, or the options are not known without exploring) → **loop**. Answer: `→ run /mala-pata-loop`. Test: *do I need to investigate/explore to even know the options or their tradeoffs?*
 
-- **What/Done clear but the scope spans several cycles** (multi-loop) → **roadmap**.
-  Answer: `→ run /mala-pata-roadmap`.
+- **Genuinely multi-unit — TRIAGE OWNS the "roadmap or not" call.** Do NOT inherit it from research's `size_signal` nor from the human asking for a roadmap — those are hypotheses. It is a roadmap ONLY when the objective needs **decomposition into several INDEPENDENT vertical slices**, or carries **several open architecture decisions** that each need their own unit. It is NOT a roadmap just because the request is long or lists many things.
+  - Genuinely needs decomposition → **roadmap**. Answer: `→ run /mala-pata-roadmap`.
+  - On inspection it actually fits ONE unit → it is **NOT a roadmap**: route it to organic/loop/shot and say so (`Lane: <lane> — Reason: fits one unit, not a roadmap`). You have the power to overrule a roadmap suggestion.
+  - Unsure if it is one or several units → prefer a single lane; roadmap's own entry gate bounces it back here if it turns out too big.
 
 - **Too vague to even state What/Done** (and 1 question is not enough to fix it) → **do NOT route.** Answer in "vague work" style, same as Step 0 of `/mala-pata-loop`:
 

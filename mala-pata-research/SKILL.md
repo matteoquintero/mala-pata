@@ -5,7 +5,7 @@ description: >
   today + limits, anchoring to the code, JTBD), sharpens it with the Heilmeier
   Catechism, ALWAYS writes a research doc, gives a VERDICT (PROCEED / SHARPEN /
   RECONSIDER — it may propose killing the idea), and only then hands off to
-  `/mala-pata-triage` (or `/mala-pata-roadmap` if it is multi-unit). Read-only:
+  `/mala-pata-triage` (which decides the lane, including whether it merits a roadmap). Read-only:
   it does not create a worktree/kickoff/code.
   Trigger: "prepará esta idea", "research de <idea>", "ayudame a armar esta
   idea antes de triage/roadmap", or any raw/fuzzy idea that is not yet ready
@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.5"
+  version: "1.15.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -27,7 +27,7 @@ You are **diamond 1** (Discover → Define) of mala-pata's Double Diamond. The f
 Your only job is to take a raw or fuzzy idea and **sharpen** it until triage (or roadmap, if it is multi-unit) has something to decide with. You research, put it in contact with the real code, run it through the Heilmeier Catechism, and converge it into a problem statement with a draft of the fields.
 
 > **You do NOT execute anything.** Your deliverable is EXCLUSIVELY the research doc + the handoff. You do NOT create a worktree, do NOT write a kickoff, do NOT touch code, do NOT run any lane.
-> The final result is ALWAYS: (a) the research doc written to disk, and (b) a handoff line to `/mala-pata-triage` (or `/mala-pata-roadmap` if the size signal came out multi-unit).
+> The final result is ALWAYS: (a) the research doc written to disk, and (b) a handoff line to `/mala-pata-triage` — always triage, which rules on the lane (including roadmap); the size signal is a hypothesis you pass along, never a routing decision that bypasses triage.
 
 ## Requirements (orchestrate, don't reinvent)
 
@@ -106,7 +106,7 @@ Collapse everything above into a **sharpened idea**: a clear problem statement p
 - **Open decisions** — what remains unresolved (this is exactly what triage needs to separate organic from loop).
 - **Risk** — blast radius in one line.
 
-Add the **size signal**: does this fit in one unit (one organic or one loop), or is it multi-unit (it needs `/mala-pata-roadmap` to be decomposed first)? **The signal comes from the size of the PROBLEM (Phase 1d) and from the open architecture decisions — NEVER from the volume of code, files or PRs.** A small problem with a clear solution is single-unit even if it touches several files; multi-unit only when there are several open architecture decisions or genuine independent vertical slices. Count only the `necessary` pieces from Phase 1e.
+Add the **size signal**: does this fit in one unit (one organic or one loop), or is it multi-unit (it needs `/mala-pata-roadmap` to be decomposed first)? **The signal comes from the size of the PROBLEM (Phase 1d) and from the open architecture decisions — NEVER from the volume of code, files or PRs.** A small problem with a clear solution is single-unit even if it touches several files; multi-unit only when there are several open architecture decisions or genuine independent vertical slices. Count only the `necessary` pieces from Phase 1e. **This size signal is a HYPOTHESIS for triage (and roadmap) to validate against the real code — never a verdict, and never a reason to skip triage and go straight to roadmap.**
 
 ## Phase 4 — Write the doc (MANDATORY, ALWAYS)
 
@@ -128,7 +128,7 @@ domain: <the FEATURE it belongs to — if it targets a feature branch (feature/<
 roadmap: <roadmap-slug if this idea belongs to a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 verdict: PROCEED | SHARPEN | RECONSIDER
 created_at: <ISO 8601>
-next: triage | roadmap | none (RECONSIDER/SHARPEN)
+next: triage | none (SHARPEN/RECONSIDER)   # on PROCEED always triage — roadmap-or-not is triage's call, not research's
 size_signal: one-unit | multi-unit
 ---
 # Research: <idea>
@@ -190,7 +190,7 @@ Then the plain-language summary **as a table** (the verdict stays the line above
 - **Left OUT / pending** — MANDATORY **only if the signal is single-unit** (goes to an organic/loop/shot cycle, NOT roadmap). One line per piece from Phase 1e that fell out of scope (already-exists / derivable / extra): `<piece> — <why it stays out> — [skill rule | judgment]`. Nothing disappears silently. If multi-unit → this block does NOT go (the roadmap covers it with `Deferrable?`).
 - **Doc:** `mala-pata/research/<slug>.md`
 - **Next step — DEPENDS on the verdict:**
-  - **PROCEED** → `/mala-pata-triage <slug>` (or `/mala-pata-roadmap <slug>` if multi-unit), passing the draft of fields from Phase 3.
+  - **PROCEED** → `/mala-pata-triage <slug>`, passing the draft of fields from Phase 3. **Always triage — it decides the lane, including whether this merits a roadmap; your `size_signal` is a hypothesis triage validates against the code, not a routing decision.**
   - **SHARPEN** → answer the named questions and re-run research; do NOT route yet.
   - **RECONSIDER** → do NOT route; the decision is yours (kill, pivot, or proceed anyway accepting the risk with eyes open).
 - **Structure:** Heilmeier Catechism (DARPA) + Double Diamond (Design Council). Verdict / size-signal / Left-OUT = house method.

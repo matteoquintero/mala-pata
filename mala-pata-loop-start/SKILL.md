@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the path of the kickoff file tha
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.20.1"
+  version: "1.21.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -41,7 +41,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
 
 ## Step 1 — Load the brief
 
-**Current format (default)**: `input delivered by the CLI` is an **absolute path to a `.md` file** (the one `/mala-pata-loop` writes to `mala-pata/kickoffs/<change-name>.md`, inside the repo).
+**Current format (default)**: the `input delivered by the CLI` is normally just the **change-name / slug**, which resolves to `<repo-root>/mala-pata/kickoffs/<change-name>.md` (`git -C <cwd> rev-parse --show-toplevel`); an absolute path also works. **Prefer the slug — the full path is a pain, you do not need it.**
 
 1. If the input is an absolute path (starts with `/`) → `Read` directly on that file. If the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
 1.5. **Method-rules paths**: the kickoff's "Method rules" section lists `references/profiles/_base.md` and `references/profiles/<perfil>.md`, relative to the `mala-pata-loop` skill directory. Resolve them against the installed skill dir (e.g. `~/.agent-skills/mala-pata-loop/references/profiles/` or `~/.claude/skills/mala-pata-loop/references/profiles/`), not against the cwd/worktree, and `Read` them.

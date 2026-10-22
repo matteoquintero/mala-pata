@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.18.1"
+  version: "1.19.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -295,11 +295,11 @@ The kickoff lives in a **file, not in engram** — so it is never pushed to the 
      | DoD | Given <state>, When <action>, Then <result> |
      | Migration / Phases | <reserved migration if applicable> · <n> phases |
    - **DoR:** What ✓ · Why ✓ · DoD ✓ · Decisions ✓
-   - **Kickoff:** `<absolute path of the .md>`
+   - **Kickoff:** `mala-pata/kickoffs/<change-name>.md` (repo-relative)
    - **Next step** (in a code block, copy-paste):
 
      ```
-     /mala-pata-loop-start <absolute path of the .md>
+     /mala-pata-loop-start <change-name>
      ```
 
    - **Structure:** DoR-style brief (house method) + BLUF close.

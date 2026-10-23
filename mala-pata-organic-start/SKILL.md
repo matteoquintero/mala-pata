@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.20.1"
+  version: "1.21.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -82,7 +82,7 @@ Before the first write: create `mala-pata/odd/<change_name>.md` + its engram mir
 
 ## Step 6 — Implement task-by-task (ODD 6)
 
-For each task: the **smallest topology** — direct inline (1-3 already-understood files) / delegated direct (understand 4+ or write 2+ non-trivial) — with the **project's TDD mode** (`strict_tdd` from sdd-init) and the applicable checks. Check off the task only after **observing** its result + checks; update the feature-doc and the mirror.
+For each task: the **smallest topology** — direct inline (1-3 already-understood files) / delegated direct (understand 4+ or write 2+ non-trivial) — with the **project's TDD mode** (`strict_tdd` from sdd-init) and the applicable checks. Check off the task only after **observing** its result + checks; update the feature-doc and the mirror. **Test-DB isolation guard (sibling of seed's test-DB-never-prod) — before running ANY test suite:** verify the test settings' DB is ISOLATED from dev and prod (a NAME and host distinct from every real DB) AND the anti-recreation protection is in place (`--reuse-db` for pytest-django, or the stack's equivalent). If the test DB NAME/host COLLIDES with a real DB, or the suite would run WITHOUT that protection (e.g. a `-o addopts=...` that clobbers `--reuse-db`) → **STOP, do NOT run** — the runner can DROP and recreate the DB and destroy real data. Never let it recreate a real database. **Forward this guard in the writer delegation.**
 - **Each task closes with ≥1 work-unit commit on the feature branch**, with tests+docs alongside the behavior, Conventional Commit **ending with these git trailers** (blank line, then each on its OWN line): `Mala-Pata-Phase: <change-name>`, `Mala-Pata-Domain: <domain>`, `Mala-Pata-Roadmap: <slug | none>`, `Mala-Pata-Lane: organic` (domain + roadmap from the kickoff frontmatter) — so `mala-pata-roadmap-radar` matches by phase and `mala-pata-domain-radar` groups it by domain/roadmap; record the commit in the feature-doc as evidence.
 - **RDD per commit** (Hard rule #2): after each work-unit commit, if RDD is on → `gentle-ai review assess --cwd <ABS-worktree> --agent claude-code --base-ref <last reviewed boundary> --committed-only --json`; read `review_due`; if it is true, run **verbatim** the `next_transition.command` it returns; the boundary advances on acknowledgement. `false` → record `review_due_reason` and continue. **The full detail (tiers, medium/high consent, continuations) lives in the CLAUDE.md ODD protocol — do not reimplement it.**
 - **Delivery slicing**: forecast ~400 authored lines; strategy `ask-on-risk` (default) / `auto-chain` / `single-pr`; resolve the `work-unit-commits` and `chained-pr` skills by registry name before building PRs.

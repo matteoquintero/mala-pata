@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -46,7 +46,7 @@ Only **medium/high (or unset)** prompt the human about who runs it; **low procee
 
 ## Phase 2 — Prepare (deterministic + isolated)
 
-1. Confirm the target is the **test env + this worktree's port** (never prod); if you cannot confirm → STOP.
+1. Confirm the target is the **test env + this worktree's port** (never prod); if you cannot confirm → STOP. **Test-DB isolation guard (sibling of seed's test-DB-never-prod):** verify the test DB is ISOLATED from dev and prod (a NAME and host distinct from every real DB) AND, for any test suite run, the anti-recreation protection is in place (`--reuse-db` or the stack's equivalent). If the test DB NAME/host COLLIDES with a real DB, or a suite would run WITHOUT that protection (e.g. a `-o addopts=...` that clobbers `--reuse-db`) → **STOP, do NOT run** — the runner can DROP and recreate the DB and destroy real data. Never let it recreate a real database.
 2. **Seed** the `## Seed` recipe via `/mala-pata-seed` (idempotent, test DB). If the change touches no data, skip.
 3. Bring the app up per the Access block; apply the determinism levers (#2). Confirm it is up (a web-first assertion on the landing page) before Phase 3.
 4. **Tag what the run itself creates (so cleanup can remove it).** Any record the smoke creates while exercising the app (byproducts — e.g. a record created as a side effect of the flow) is an **ephemeral cycle-only fixture, NOT a seed**: create it under a **cycle/run-scoped namespace** (distinct from the persistent seed namespace) or inside a transaction that rolls back, so the cycle cleanup (`/mala-pata-loop-start` 4.5 / `/mala-pata-organic-start` Step 7) removes exactly those and keeps the seeds. Never write smoke byproducts under the seed's persistent namespace.

@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.1"
+  version: "1.12.0"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -116,9 +116,11 @@ NO-GO iff there is ≥1 `Must` OR ≥1 `deferred-but-Must`; GO-with-conditions i
 
 **Closed since last run — absorbed** (was a gap in a previous report, now covered — omit if this is the first run or nothing closed):
 
-| # | Was missing | Now | Evidence |
-|---|---|---|---|
-| 1 | <the prior gap> | covered / already done | <file:line proving it> |
+| # | Was missing | Objective axis | Was-blocking | Now (covered by) | Evidence (commit/PR + date) | Tag |
+|---|---|---|---|---|---|---|
+| 1 | <the prior gap> | <axis or off-axis> | Must · Should · Could (what it WAS) | <the mechanism that covers it — use-case / migration / file> | <commit/PR/migration # + the date it closed> | [noted] · [inferred] |
+
+- Parity with Open/Deferred, minus `Severity` (harm no longer applies to something absorbed). **`Was-blocking`** shows when a release blocker got closed (a closed `Must` is the headline); **`Now`** is the mechanism that covers it; **`Evidence`** is the close audit — what landed + WHEN — kept separate from `Now`, never merged into it.
 
 Then the closing lines (plain text):
 
@@ -128,7 +130,8 @@ Then the closing lines (plain text):
 
 - **One row per gap**, concrete, with real evidence. No evidence → it does not go in the table (it goes to "Questions").
 - **Mandatory tag** `[noted]` or `[inferred]` per row (shared provenance vocabulary).
-- **Mandatory `Severity`** per row — `▲ high · ● medium · ▼ low`; sort each findings sub-table by it (highest first) so the backlog is pick-ready for triage.
+- **Mandatory `Severity`** per OPEN/DEFERRED row — `▲ high · ● medium · ▼ low`; sort each findings sub-table by it (highest first) so the backlog is pick-ready for triage. Closed is absorbed → no `Severity`.
+- **Render EVERY defined column of each disposition table — never merge, drop, or collapse columns.** Each table (Open / Deferred / Closed) has the exact columns shown above; emit all of them as real Markdown columns, even when a cell is short. Collapsing Closed into `Was missing | Now` (or any table into fewer columns than defined) is a defect, not a simplification.
 - **Disposition split is mandatory** — every gap lands in exactly one of Open / Deferred / Closed; never a single merged list and never prose (a finding is a table row). A `deferred` row MUST carry `Blocked by: <gate>`; if nothing parks it, it is `open`. Only `open` gaps are routed.
 - **Blocking axis + Release line are mandatory** — every `open` gap carries `Must`/`Should`/`Could` by the workaround test (separate from severity); deferred rows carry `out of this release` or the `✗ Must-but-deferred` red flag; closed is N/A. Emit the `Release: <GO | NO-GO | GO-with-conditions>` headline (NO-GO iff ≥1 `Must` or ≥1 `Must-but-deferred`). A `Must` without a named reason-why-no-workaround is not a `Must`.
 - **BLUF + coverage are mandatory** — emit the `Bottom line` count line and the MECE coverage table even when there are zero gaps; the coverage table IS the "which axes verified" proof. The counts MUST reconcile: `gaps` = total findings rows = `axis-mapped + off-axis` (see the MECE check); if they do not balance, STOP and fix.

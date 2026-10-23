@@ -4,7 +4,7 @@ description: RUNS a playbook created by /mala-pata-playbook — walks its decisi
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)
@@ -58,7 +58,7 @@ Check the playbook's **Exit criteria** (the "clean bill of health"). Met → res
 ## Phase 5 — Findings + close (mandatory)
 
 1. **Append the per-case finding** (write-only — do NOT commit) to the companion `mala-pata/playbooks/<slug>-findings.md`: the situation, the branch taken + the evidence that selected it, the outcome, ids/timestamps. If a **reusable** rule emerged, propose a Gotcha to add to the playbook (human confirms — you do not rewrite the playbook mid-run). **Crystallization hint**: if this branch has now run the same way enough times, suggest promoting it to a runbook (`/mala-pata-runbook`).
-2. **Close** — BLUF then a real table (NEVER fenced; one line per cell):
+2. **Close — render the output contract: Declared report THEN Run record.** First, if the playbook's `## Outputs` declares a **Declared report**, render it IN FULL (its own tables/sections) — the run's deliverable, rendered **even when the run stopped or escalated**, never skipped. Then the **Run record** — BLUF then a real table (NEVER fenced; one line per cell):
 
    `Run — <slug>: <resolved/stopped/escalated> · branch "<name>" · exit <pass/fail>`
 

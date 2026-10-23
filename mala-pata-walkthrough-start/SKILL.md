@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.1"
+  version: "1.3.0"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -65,7 +65,7 @@ A `✗` on a phase stops the flow if later phases depend on it; otherwise contin
 ## Phase 4 — Evidence + verdict
 
 1. **Stop the trace** → save `evidence/trace.zip` (open with `npx playwright show-trace <path>` — DOM before/after each action + console + network + timeline).
-2. **Verdict** = all phases `✓` AND no console errors / no 4xx-5xx (minus allowlist). Report — BLUF then a real table (NEVER fenced; one line per cell):
+2. **Verdict** = all phases `✓` AND no console errors / no 4xx-5xx (minus allowlist). **Render the output contract: Declared report THEN Run record** — first, if the walkthrough's `## Outputs` declares a **Declared report**, render it IN FULL (even when the run stopped or escalated); then the **Run record** — BLUF then a real table (NEVER fenced; one line per cell):
 
    `Smoke — <slug>: <pass/fail> · <k>/<n> phases · console/network <clean/ N errors> · delicacy <low/medium/high> · evidence → mala-pata/walkthroughs/<slug>/evidence/`
 

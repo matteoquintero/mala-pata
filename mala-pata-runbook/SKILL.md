@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.1"
+  version: "1.4.0"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -42,7 +42,7 @@ Creating a runbook is **always read-only** — you write a markdown describing H
 This is the step that makes the runbook correct. Do NOT invent the operational decisions — surface them and ask (the research-backed "test it on someone who didn't write it", applied up front).
 
 1. **Restate the flow in order** — a numbered one-line-per-step readback of what you understood ("Step 1 <action>; Step 2 <action> if <condition>; Step 3 <action> at <agreed time>"). This is the comprehension check.
-2. **Ask the open decisions one at a time** (the `/mala-pata-research` Phase 2 split): what only the human can settle — ambiguous timing/ordering, who is authorized, which recipients, exact thresholds, what counts as done, rollback boundaries, and whether the **trigger is standing authorization** (does one trigger phrase authorize ALL steps without per-step confirmation, or is each destructive/remote step gated?). Ask, WAIT, never assume. **Also pin the minimum run parameters** — for EACH one define its `name`, its `type` (value / file / link / id / number / boolean / date / enum / ...), and whether it is `required` or optional (with a `default`). These become the structured frontmatter `inputs`, and the runner refuses to start without the required ones.
+2. **Ask the open decisions one at a time** (the `/mala-pata-research` Phase 2 split): what only the human can settle — ambiguous timing/ordering, who is authorized, which recipients, exact thresholds, what counts as done, rollback boundaries, and whether the **trigger is standing authorization** (does one trigger phrase authorize ALL steps without per-step confirmation, or is each destructive/remote step gated?). Ask, WAIT, never assume. **Also pin the minimum run parameters** — for EACH one define its `name`, its `type` (value / file / link / id / number / boolean / date / enum / ...), and whether it is `required` or optional (with a `default`). These become the structured frontmatter `inputs`, and the runner refuses to start without the required ones. **Also pin the output format** — ask ONCE what the run renders at close: a **Declared report** (this runbook's own result tables/sections) or Run-record-only (the house close). Default Run-record-only, but ASK; if there is a Declared report, write its format in the `## Outputs` section now. The runner renders Declared report + Run record (the `## Outputs` format can be revised later by re-running this creator in adopt/normalize mode — no separate command).
 3. Only when the flow and the open decisions are settled, write the runbook. If something stays genuinely unknown, write it as an explicit `OPEN:` gap in the runbook, not a guess.
 
 ## Phase 3 — The standard (what every runbook contains)
@@ -90,6 +90,7 @@ last_reviewed: <ISO 8601>
 | Rollback / recovery | How to undo + the conditions that trigger a rollback. `N/A` only if truly irreversible (then say so loudly in Safety rails). |
 | Stop / escalation | Abort conditions (e.g. after N failed attempts on a step) + who/where to escalate. |
 | Evidence | What to record on each run (ids, timestamps, who ran it) for audit. |
+| Outputs | **The output contract — what the run renders at close, two parts.** **Declared report** = this runbook's OWN result format, pinned HERE at creation (the domain tables/figures/sections it must produce; `none` when the Run record is enough). **Run record** = the house execution close (BLUF + the run/step/evidence table), ALWAYS. The runner renders BOTH in full, even when the run stops or escalates. |
 
 Render the Steps as a real Markdown table (NEVER fenced, one line per cell; long detail as a sub-bullet under the table, not inside a cell):
 

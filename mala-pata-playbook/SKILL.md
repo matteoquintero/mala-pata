@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.1"
+  version: "1.4.0"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -40,7 +40,7 @@ Creating a playbook is **always read-only**: you write the markdown; you never r
 Do NOT invent the branches or thresholds — surface and ask (the `/mala-pata-research` Phase 2 split: what the code answers vs what only the human knows).
 
 1. **Restate the scenario + the branches** you understood — a short readback: the entry signals and each branch "if <condition> → <action>".
-2. **Ask the open decisions one at a time**, waiting each time: the exact **conditions/thresholds** that distinguish branches (and the sustained period, to avoid flapping), which leaves are deterministic enough to be **runbooks**, **owners/roles** per branch, escalation path + max time, rollback thresholds (who decides/executes), and the **exit criteria** (what declares the scenario resolved). Never assume a branch. **Also pin the minimum run parameters** — for EACH one define its `name`, its `type` (value / file / link / id / number / boolean / date / enum / ...), and whether it is `required` or optional (with a `default`); these become the structured frontmatter `inputs`, and the runner refuses to start without the required ones.
+2. **Ask the open decisions one at a time**, waiting each time: the exact **conditions/thresholds** that distinguish branches (and the sustained period, to avoid flapping), which leaves are deterministic enough to be **runbooks**, **owners/roles** per branch, escalation path + max time, rollback thresholds (who decides/executes), and the **exit criteria** (what declares the scenario resolved). Never assume a branch. **Also pin the minimum run parameters** — for EACH one define its `name`, its `type` (value / file / link / id / number / boolean / date / enum / ...), and whether it is `required` or optional (with a `default`); these become the structured frontmatter `inputs`, and the runner refuses to start without the required ones. **Also pin the output format** — ask ONCE what the run renders at close: a **Declared report** (this playbook's own result tables/sections) or Run-record-only (the house close). Default Run-record-only, but ASK; if there is a Declared report, write its format in the `## Outputs` section now. The runner renders Declared report + Run record (the `## Outputs` format is revised later by re-running this creator in adopt/normalize mode — no separate command).
 3. Only with those settled, write it. Anything still unknown is an explicit `OPEN:` gap, not a guess.
 
 ## Phase 3 — The standard (what every playbook contains)
@@ -89,6 +89,7 @@ last_reviewed: <ISO 8601>
 | Gotchas / anti-patterns | Learned "do not repeat" — the living knowledge of this scenario. |
 | Evidence / findings | What to record; per-case concrete instances go to the **companion findings file**, not here (see Phase 4). |
 | Crystallization | Which branches are stabilizing toward a runbook, and the note to promote them. |
+| Outputs | **The output contract — what the run renders at close, two parts.** **Declared report** = this playbook's OWN result format, pinned HERE at creation (the domain tables/figures/sections; `none` when the Run record is enough). **Run record** = the house execution close, ALWAYS. The runner renders BOTH in full, even when the run stops or escalates. |
 
 Render the decision tree as a real Markdown table (NEVER fenced; one line per cell; long detail as a sub-bullet):
 

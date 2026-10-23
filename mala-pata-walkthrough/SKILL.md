@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.10.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -126,6 +126,8 @@ This lane **NEVER** mentions tests, branches, migrations or anything internal.
 ## Step 5 — Screenshots / running it (delegate to `/mala-pata-walkthrough-start`)
 
 walkthrough **describes**; it does NOT run the browser. Executing this walkthrough in a real browser — one evidence screenshot + a Playwright trace per phase, verdict by assertions, console/network gate — is the job of **`/mala-pata-walkthrough-start`** (the executor twin of `/mala-pata-seed`), which writes the evidence to `mala-pata/walkthroughs/<slug>/evidence/` (in the repo, never a temp dir). It runs standalone or is delegated to by the smoke-test gate. Here you only leave the `Evidence` column filled with each phase's screenshot name so the runner (or a by-hand tester) knows what to capture. Capturing is not mandatory to close this skill.
+
+**Output contract (ask once).** The QA MAY carry an `## Outputs` section with two parts: **Declared report** = a result format this smoke should render at close (domain tables/figures; `none` when the Run record is enough) + **Run record** = the house execution close, always. Ask once at creation; default Run-record-only. `/mala-pata-walkthrough-start` renders Declared report + Run record, even when the run stops or escalates (revise the format later by re-running this creator in adopt/normalize mode — no separate command).
 
 ## Step 6 — Location and persistence (advise + confirm)
 

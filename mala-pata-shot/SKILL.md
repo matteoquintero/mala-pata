@@ -4,7 +4,7 @@ description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.9.0"
+  version: "1.10.0"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree
@@ -48,15 +48,22 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 3. **Understand (1-3 files).** Locate what must be touched (codegraph/serena, or grep/Read as fallback). **If you need 4+ files, or a design decision appears, or the blast radius grows → STOP** (Rule #1): it is not shot, bounce to `/mala-pata-organic`.
 4. **Edit + checks.** Apply the change with the **project's TDD mode**: if strict TDD is on, Red → Green → Refactor; otherwise, targeted functional checks. Run the **check that proves this change** (not the whole suite, unless it is cheap). Never consider it done without seeing the check green.
 5. **Work-unit commit.** `git -C <ABS-repo>` with explicit pathspec and a Conventional Commit **ending with these git trailers** (blank line, then each on its OWN line): `Mala-Pata-Phase: <change-name>`, `Mala-Pata-Domain: <domain>`, `Mala-Pata-Roadmap: none`, `Mala-Pata-Lane: shot` — so `mala-pata-roadmap-radar` matches by phase and `mala-pata-domain-radar` finds this shot **by domain** and types it as a shot via `Mala-Pata-Lane` (a shot leaves no `.md`; the commit is its only record — take `<domain>` from the triage context, ask if unknown). **Research carry-over**: if triage handed a `research: <slug>` (shot came from `/mala-pata-research`), include `mala-pata/research/<slug>.md` in this commit's pathspec (`git -C <ABS-repo> add <files-changed> mala-pata/research/<slug>.md`) so the research doc rides in the same feature-branch commit and lands in the PR — it is already in place (shot has no worktree, nothing to move), shot only commits it instead of leaving it loose on base. If **RDD is on**, after the commit run `gentle-ai review assess --cwd <ABS-repo> --json` and follow the native plan (for a trivial change it almost always yields passive). The full RDD detail lives in the CLAUDE.md ODD protocol — do not reimplement it.
-6. **Close (compact table — one row).** Emit a single-row table:
+6. **Close — status table (so the repo is NEVER left in a bad state).** Like every other `-start`, shot ends by SHOWING where the repo stands — branch, commit, and the PR/merge/cleanup state — so nothing is left dangling. First **confirm the working tree is clean** (`git -C <ABS-repo> status` — everything committed, no stray files) and which branch you are on. Then **BLUF**: `Result: ✓ done · on <branch> · PR/merge: yours` (or `✗ stopped: <why>`). Then the table (one milestone per row; include only those that apply):
 
-   | Result | Change | Check | Commit | Next |
-   |---|---|---|---|---|
-   | ✓ | <change> | <cmd → result> | <sha> <type(scope): subject> | push/PR is yours |
+   | Milestone | Status | Evidence |
+   |---|---|---|
+   | Safe branch | ✓ done | `<branch>` off `<base>` (NOT main/development) |
+   | Change + check | ✓ done / ✗ stopped: <why> | <cmd → result> (Red-Green if strict TDD) |
+   | Work-unit commit | ✓ done | `<sha>` <type(scope): subject> |
+   | RDD per commit (if on) | ✓ done / ∅ n/a | assess: `<passive/granted>` |
+   | CI (if any) | ✓ green / ∅ n/a | <run link or n/a> |
+   | PR / merge | ○ your call | shot does NOT open/merge — branch `<branch>` is ready; you decide |
+   | Repo state | ✓ clean | working tree clean, nothing uncommitted/dangling. **NOTE — shot works in-place (no worktree): the shared/main checkout is left on `<branch>`, not `<base>`.** Anyone/another session using this checkout will see this branch; if it is shared, switch back to `<base>` when done. |
 
-   If it did NOT finish → the same table with one row starting `✗` and `stopped: <why> → /mala-pata-organic`.
-   **Push, PR and merge are left to the human** (shot does not open a PR unless you ask). Keep it to this one-row table (no feature-doc) — that is what keeps the lane fast. Labels (`Result` / `Change` / `Check` / `Commit` / `Next`) **verbatim in English**; values follow the conversation language.
-   **Structure:** Definition of Done + Conventional Commits. The shot lane itself = house method.
+   - Shot still does NOT push/PR/merge (that keeps the lane fast and is the human's call) — but it MUST leave the repo **clean and on a known branch**, and SHOW it. The `PR / merge` and `Repo state` rows are the guarantee you did not leave it mid-air.
+   - If it did NOT finish → `Change + check` row starts `✗ stopped: <why>`; say what's left + `→ /mala-pata-organic`, and STILL report `Repo state` so you know exactly what was left (clean, or with uncommitted work on `<branch>`).
+   - Labels verbatim English; values follow the conversation language.
+   **Structure:** Definition of Done + Conventional Commits + information radiator (Cockburn). The shot lane itself = house method.
 
 ## Escape guard (Rule #1, but midway)
 

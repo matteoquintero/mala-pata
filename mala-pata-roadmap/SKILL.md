@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.18.0"
+  version: "2.19.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -258,7 +258,7 @@ The human signs off on what stays inside (incl. extra-proposals), what is deferr
 
 If the objective is enormous (several large dimensions), explicitly offer the scope decision: **(a)** a multi-dimension roadmap (all), or **(b)** narrow this roadmap to one/some dimensions and the rest in separate roadmaps. The human chooses the scope; you do not decide it alone.
 
-Then present the DAG (phases, **tentative routes** organic/loop/shot, dependencies, order). The order line carries `Suggested order`, `Parallelizable: {…}`, and `Deferred: {…}` (the `Deferrable? = yes` phases, read from the column — do not recompute).
+Then present the DAG (phases, **tentative routes** organic/loop/shot, dependencies, order) **as the real `## DAG of phases` table — one line per cell, each phase ONE ROW; NEVER the banned per-phase `#: N` stacked block** (see that section's rule). The order line carries `Suggested order`, `Parallelizable: {…}`, and `Deferred: {…}` (the `Deferrable? = yes` phases, read from the column — do not recompute).
 
 **Split decisions** (optional — include ONLY when non-obvious cuts were made; omit the whole block when every cut was obvious): one row per non-obvious split, showing which payoff of the 3-payoff rule (Step 4) it earns, plus any rejected over-decomposition so the human sees what was deliberately NOT split.
 
@@ -307,6 +307,8 @@ phases_total: <N>
 <relevant findings: how this is solved / patterns / what to reuse from the repo — with refs>
 
 ## DAG of phases
+
+Render THIS exact shape — a REAL Markdown table, NEVER fenced; **one line per cell**; **each phase is ONE ROW**. The per-phase `#: N` block with stacked `Phase:` / `slug:` / `Kind:` / `Tentative route:` / `Depends on:` / `Deferrable?:` / `Vertical slice:` labels (one label per line, phases split by `---` rules) is the **BANNED prose shape — it is exactly the error this replaces.** The `Vertical slice` cell is a ONE-LINE summary; if it does not fit one line, **compress it to one line and move the long detail to that phase's block in `## Phases in detail` BELOW** (keyed by the phase `#`/slug — that section is where the long per-phase detail belongs). NEVER expand a cell into a stacked block, NEVER emit a phase as anything but a table row.
 
 | # | Phase | slug | Kind | Tentative route | Depends on | Deferrable? | Vertical slice (one line) |
 |---|-------|------|------|-----------------|-----------|-------------|----------------------------|

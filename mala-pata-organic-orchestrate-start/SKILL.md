@@ -4,7 +4,7 @@ description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -32,7 +32,8 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
 - Input: the batch of organic kickoffs (absolute paths, or change-names resolving to `<repo-root>/mala-pata/kickoffs/<change-name>.md` via `git -C <cwd> rev-parse --show-toplevel`). `Read` each in full and take `change_name`, `route`, `base`, `branch`, `worktree`, `depends_on`, `parallelizable_with`, `domain`, `roadmap` from the frontmatter. If `route` is not `organic` → exclude it and say so (loop kickoffs always need a human; run them by hand with `/mala-pata-loop-start`).
 - **Base confirmation — ALWAYS, once**: show each kickoff's base ("`<change>` off `<base>`") and wait for a SINGLE OK. The kickoff's `base` rules; if the human corrects one, update that kickoff's frontmatter before launching. A wave only mixes kickoffs of the SAME base; different bases run as separate rounds.
-- **Delivery strategy — ask once, cache for the whole run**: `ask-on-risk` (default) / `auto-chain` / `single-pr` / `exception-ok` (same vocabulary as the ODD delivery contract). It governs how the merge decision is relayed at the central gate (see Round step 4).
+- **Delivery strategy — ask once, cache for the whole run**: `ask-on-risk` (default, **attended** — pauses at each wave's merge gate so you decide) / `auto-chain` (**fire-and-forget** — merges autonomously with no per-wave prompt, so you run it and walk away and come back to the whole batch implemented) / `single-pr` / `exception-ok` (same vocabulary as the ODD delivery contract). It governs the central merge gate (Round step 4). State plainly which one gives unattended completion (`auto-chain`).
+  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke, and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
 - If the user did not say what to run, run **every non-deferred kickoff passed**, round after round.
 - **Stateless by design**: nothing is stored between rounds. Every round re-derives readiness from git, so re-invoking this skill with the same batch RESUMES it (already-merged kickoffs are `done`, live worktrees are `in progress`).
 
@@ -61,7 +62,7 @@ You do NOT answer in-tab gates and you do NOT follow the cycles. You **observe**
 - its feature-doc (if any, `mala-pata/odd/<change_name>.md` on the branch, read with `git -C <ABS-repo> show <branch>:mala-pata/odd/<change_name>.md`) has no unchecked task;
 - a PR exists for the branch and is open (`gh pr list --head <branch>`), or `gh` is missing and the tab reports it stopped at its gate.
 
-Re-measure when the human says the tabs are ready, and at a bounded cadence if the runtime supports waiting; never busy-loop. Report a short readiness table (below, Step 4 Report) and keep waiting for the stragglers. A tab that stopped on a gate that is NOT PR-ready (red verify, smoke "No", open decision) is NOT PR-ready: show it as `◐ partial: <reason>` and do not merge it; the rest of the wave proceeds. If the human abandons a kickoff, mark it blocked and let dependents wait.
+**Strategy-aware waiting**: under `auto-chain` (fire-and-forget) the orchestrator **polls AUTONOMOUSLY** at a bounded cadence using the runtime's wait/schedule mechanism — it does NOT wait for the human to say the tabs are ready; it keeps measuring until each kickoff is PR-ready or parked, then proceeds to the central delivery on its own. Under `ask-on-risk` re-measure at a bounded cadence or when the human says the tabs are ready. **Never busy-loop.** Report a short readiness table (below, Step 4 Report) and keep waiting for the stragglers. A tab stopped on a gate that is NOT PR-ready (red verify, smoke "No", open decision, RDD consent pending) is NOT PR-ready: show it `◐ partial: <reason>` and do not merge it; the rest of the wave proceeds (under auto-chain this becomes a PARK, reported at the end — the run never hangs waiting on it). If the human abandons a kickoff, mark it blocked and let dependents wait.
 
 ### Round step 4 — CENTRAL delivery for the wave (one place)
 **Merge gate.** Present ONE table of the wave's PR-ready kickoffs, with each one's smoke verdict and RDD outcome **collected from the branch's own evidence**:
@@ -69,7 +70,14 @@ Re-measure when the human says the tabs are ready, and at a bounded cadence if t
 - **RDD outcome**: the per-task assess outcomes recorded in the feature-doc (`granted` / `declined` / `passive` / `under budget` / `already reviewed` / `unavailable`) and the work-unit commit trailers.
 - **CI / mergeability**: `gh pr checks`, `gh pr view --json mergeable` (red CI or conflicts → not offered for merge).
 
-Relay the merge decision to the human per the **cached delivery strategy**: `ask-on-risk` — one table, the human OKs all / a subset / none, and any kickoff with a non-green smoke, an `unavailable` RDD, red CI or conflicts is flagged and not offered by default; `auto-chain` — after one OK on the chain strategy (`stacked-to-main` or `feature-branch-chain`, resolve the `chained-pr` skill by registry name), merge the wave in order and slice automatically; `single-pr` — consolidate the wave's PRs into one only with a recorded `size:exception`; `exception-ok` — record the size exception and merge. In every strategy: **never merge without the human's explicit OK in this session, never merge red CI or conflicts, never force.**
+Relay the merge decision per the **cached delivery strategy**:
+- `ask-on-risk` (attended) — one table, the human OKs all / a subset / none; any kickoff with a non-green smoke, `unavailable`/`declined` RDD, red CI or conflicts is flagged and not offered by default.
+- `auto-chain` (fire-and-forget) — **NO per-wave prompt**; the upfront choice of auto-chain IS the standing authorization. After one OK on the chain strategy (`stacked-to-main` or `feature-branch-chain`, resolve the `chained-pr` skill by registry name), the orchestrator merges AUTONOMOUSLY every kickoff that passes the safe-to-auto-merge checklist, in order, slicing automatically, and PARKS the rest (park-and-continue).
+- `single-pr` — consolidate the wave's PRs into one only with a recorded `size:exception`; `exception-ok` — record the size exception and merge.
+
+**Safe-to-auto-merge checklist (auto-chain only).** A PR-ready kickoff merges WITHOUT a prompt only when ALL hold: CI green and no conflicts; smoke passed by assertions at low delicacy, or `∅ n/a`; every commit's RDD is `granted+acknowledged` / `passive` / `under budget` / `already reviewed` (NOT `declined`, NOT `unavailable`, NOT awaiting consent). If ANY is false → **PARK** it.
+
+**Park-and-continue.** A parked kickoff is NOT merged and NOT cleaned, but it NEVER blocks the rest: its independent siblings still merge and the run continues to the end; only its own dependents wait. The final report lists every parked kickoff with its reason (`RDD consent pending` / `smoke delicacy` / `red CI` / `conflict`) and how to resume (answer the in-tab gate, then re-invoke this skill). **Non-negotiable floor in EVERY strategy: never merge red CI or conflicts, never merge a kickoff whose smoke failed or whose RDD was declined, never force.**
 
 **Merge order**: dependency order, then highest fan-in, then smallest first. **Migrations** (sibling of `/mala-pata-loop-start` 4.1-bis): right before each merge, re-measure git — list the numbers occupied in `origin/<base>` AND in the sibling in-flight branches (`git ls-tree -r --name-only <branch> -- <migrations-folder>`, never count files on disk). If a provisional number is still free → confirm. If a sibling merged first and took it → renumber to the next free one using the stack's mechanism (a chained-state migrator regenerates, it does not rename), re-run the round-trip, and only then merge. After each merge `git -C <ABS-repo> fetch origin <base>` so the next merge measures the new state. The landing commit carries the trailers `Mala-Pata-Phase`, `Mala-Pata-Domain`, `Mala-Pata-Roadmap`, `Mala-Pata-Lane: organic`.
 
@@ -164,7 +172,7 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - **Anti-stale ALWAYS** (Step 2): no worktree is launched without being at `origin/<base>`, in every round.
 - **Readiness = MERGED, observed in git.** A dependency that is only PR-ready does not make its dependent ready.
 - **RDD and smoke stay in the tab.** You never run `gentle-ai review`, never run the smoke, never answer an in-tab gate; you only collect and show their outcomes.
-- **No merge without the human's explicit OK in this session**, never on red CI or conflicts, never forced; `ff-only` and `fetch` are the only advance of a worktree; never `reset --hard` or forced `rebase`.
+- **Merge authorization is strategy-aware**: `ask-on-risk` needs the human's explicit OK per wave; `auto-chain` merges autonomously by the safe-to-auto-merge checklist (the upfront auto-chain choice is the standing OK) and parks the rest. In EVERY strategy: never merge red CI or conflicts, never merge a kickoff whose smoke failed or whose RDD was declined, never forced; `ff-only` and `fetch` are the only advance of a worktree; never `reset --hard` or forced `rebase`.
 - **Migration numbers are provisional**: the first to merge keeps it, the others renumber on integration; the truth is git, never a registry.
 - **Cleanup only after merge + green CI**, from outside the worktree, `git branch -d` never `-D`, seeds kept, cycle-only fixtures removed only when provably this run's.
 - **Never unattended side effects beyond the contract**: no push of the base, no force-push, no deleting a branch that was not integrated.

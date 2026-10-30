@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.15.0"
+  version: "1.16.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -48,11 +48,11 @@ Research **never mutates**, without exception. Even if the raw idea already impl
 
 ## Phase 1 — Discover (diverge)
 
-You open the fan before converging. Research in parallel:
+You open the fan before converging. First restate the **objective** the idea serves — the OUTCOME it wants, not the idea's wording. Everything below measures the **gap to that objective** on two planes: what the authoritative external sources say it SHOULD be (a), and what the real code actually DOES (b). The sharpened idea is the gap between them — **what is MISSING to meet the objective**, not a tidy restatement of what you were told. Research in parallel:
 
-**(a) External research** (WebSearch/WebFetch): how this kind of idea is solved TODAY, what the limits of current practice are, and what best practices exist — with cited sources. It is not an exhaustive literature review: it is enough to know whether you are about to reinvent something that already has a known solution.
+**(a) External research — the authoritative source, not just "how it's done today"** (WebSearch/WebFetch): how this kind of idea is solved TODAY and the limits of current practice, with cited sources — AND, when the idea rests on a RULE, a taxonomy, a legal / spec / standard requirement, or "what the valid values are", go to the AUTHORITATIVE source (the law, the official docs, the standard), never a blog or an inference. **What is CORRECT comes from the authoritative source; what the code DOES is a separate question (b) — do NOT reverse-engineer the rule/taxonomy from the code.** It is not an exhaustive literature review: it is enough to know whether you are about to reinvent something that already has a known solution, and to ground any rule/taxonomy in its real source.
 
-**(b) Anchoring to the real code** (codegraph/Read): what already exists in the project that touches this idea, what installed infrastructure enables more than the original idea imagined. Anchor the external material to YOUR code — a best practice that ignores what is already built is useless (reuse-first). **Inventory the mechanisms that ALREADY exist** and could solve this (helpers, flags, settings, a pattern already applied elsewhere in the repo). **Before concluding "new code is needed", prove with evidence that the existing ones are NOT enough** — not merely because you did not look for them. Spending the analysis on the first mechanism you find and jumping to "new code" is the classic mistake.
+**(b) Verify against the real code — MANDATORY; never accept the premise from the user's words** (codegraph/Read): what already exists in the project that touches this idea, what installed infrastructure enables more than the original idea imagined. **Every premise the idea rests on ("today it blocks X", "there is no Y", "it does Z") is CHECKED against the code before you repeat it — the user's description is a hypothesis, not evidence, and "I did not find a block" is NOT "it works".** The code tells you what the app DOES; it does NOT tell you what is CORRECT (that is (a), the authoritative source) — do not anchor a rule or taxonomy to the current behavior. Anchor the external material to YOUR code — a best practice that ignores what is already built is useless (reuse-first). **Inventory the mechanisms that ALREADY exist** and could solve this (helpers, flags, settings, a pattern already applied elsewhere in the repo). **Before concluding "new code is needed", prove with evidence that the existing ones are NOT enough** — not merely because you did not look for them. Spending the analysis on the first mechanism you find and jumping to "new code" is the classic mistake.
 
 **(c) Jobs-to-be-done**: whose job the idea solves, what the real struggle behind the request is, and what outcome it seeks. Phrase it as: "as `<user>`, I need `<job>` so that `<benefit>`". This often reveals that the raw idea is a symptom, not the real job.
 
@@ -68,6 +68,8 @@ Each project fills those axes with whatever makes sense, using evidence from the
 - **derivable** — it comes for free from another piece (e.g.: if piece A already implies the selection, a separate knob for it is redundant); it is dropped.
 - **extra** — desirable improvement, not part of the problem; it is named separately and does not inflate the scope.
 Only the `necessary` pieces move on to Define; the others remain named (they do not disappear silently) but do not count toward size.
+
+**(f) Gap to the objective — what is MISSING, not just what was proposed**: (e) classifies the pieces the human already proposed; this adds the OTHER direction. From the objective (the opening of this phase) and the authoritative source (a), list what the objective REQUIRES to be met, then mark each item: covered-by-the-idea, already-in-the-code (b), or **MISSING** (neither proposed nor built). The MISSING set is the real sharpening — it is what the idea did not see. Keep it to what the objective genuinely needs (single-unit discipline — this is NOT a roadmap's exhaustive desired-state; a broad domain checklist belongs to `/mala-pata-roadmap`). Each item carries its provenance: verified against the code / authoritative source, or inferred.
 
 ## Phase 2 — Heilmeier Catechism (answer what you know, ASK what only the human knows)
 
@@ -106,6 +108,8 @@ Collapse everything above into a **sharpened idea**: a clear problem statement p
 - **Open decisions** — what remains unresolved (this is exactly what triage needs to separate organic from loop).
 - **Risk** — blast radius in one line.
 
+**Verified vs inferred — never launder an inference into a fact.** Each field above states only what the evidence supports: "no gate found and the value computes to 0" is NOT "the feature works end to end"; "I did not find X" is NOT "X does not exist". When a field rests on an inference, mark it `[inferred]` in the field AND keep it inferred in the prose close — do not upgrade it to a fact. An unproven end-to-end behavior is an OPEN item to verify (e.g. in prod), not a settled DoD.
+
 Add the **size signal**: does this fit in one unit (one organic or one loop), or is it multi-unit (it needs `/mala-pata-roadmap` to be decomposed first)? **The signal comes from the size of the PROBLEM (Phase 1d) and from the open architecture decisions — NEVER from the volume of code, files or PRs.** A small problem with a clear solution is single-unit even if it touches several files; multi-unit only when there are several open architecture decisions or genuine independent vertical slices. Count only the `necessary` pieces from Phase 1e. **This size signal is a HYPOTHESIS for triage (and roadmap) to validate against the real code — never a verdict, and never a reason to skip triage and go straight to roadmap.**
 
 ## Phase 4 — Write the doc (MANDATORY, ALWAYS)
@@ -117,6 +121,8 @@ You ALWAYS write the research doc, without exception — it is your deliverable.
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the doc is stranded): a research doc tied to a feature-in-progress → that **feature base branch**; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question `¿En qué rama guardo el research — <feature base> o main?` and wait. **Write only — do NOT commit/push:** write the file; the skill does NOT create a commit (auto-committing diverged local main from the remote and left docs unpushed). Tell the human the path + that durable branch so they add it in their normal PR flow.
 
 **Lightweight pointer in engram** for discoverability: `mem_save` with `topic_key: "research/<slug>"`, single-line content: `Research in file: <absolute path>`. Do not duplicate the content in engram — the file is the source of truth. If engram is unavailable, the file is still the source of truth; warn in one line that the pointer was not saved.
+
+**Re-run = build on the prior doc, never swallow it.** If a research doc already exists for this slug/topic (a prior pass — e.g. a SHARPEN you are now resolving, or a second angle on the same objective), `Read` it FIRST and EXTEND it: preserve its sources, findings and the pieces table, add the new evidence, and reconcile (newer corrects older, with the correction NAMED — e.g. a value re-grounded in the authoritative source over a first pass that had inferred it from the code). Never silently drop the earlier searches — the accumulated external evidence is the asset triage will synthesize. If the new pass changes the taxonomy/conclusion, keep both and mark what superseded what.
 
 ### `.md` doc format
 

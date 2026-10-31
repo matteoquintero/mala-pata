@@ -4,7 +4,7 @@ description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)
@@ -27,15 +27,15 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Hard rule — the test DB, NEVER prod
+## Hard rule — the test DB, NEVER prod (and for a smoke run, its ephemeral fork)
 
-You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent that `sdd-init` states). Before seeding, confirm that the target is the test DB; if you cannot confirm it, **STOP**. Seeding against prod or against an unconfirmed DB is forbidden. Absolute paths always.
+You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent that `sdd-init` states) — **NEVER prod**. Before seeding, confirm the target; if you cannot confirm it, **STOP**. **When the caller is the in-cycle smoke gate** (`mala-pata-loop-start` 4.1-ter / `mala-pata-organic-start` Step 7), the confirmed target is an **ephemeral FORK of the test DB** that the gate created — seed into **that fork**, never the shared base test DB. Seeding against prod or against an unconfirmed DB is forbidden. Absolute paths always.
 
 ## Flow
 
 1. **Find the recipe.** Locate the `## Seed (fixtures)` section of the `mala-pata-walkthrough` QA for this feature (direct path, or through the engram pointer `sdd/<change>/walkthrough`). If the QA does not exist or has no `## Seed` → **STOP** and ask that `mala-pata-walkthrough` be run first (it is the one that builds the recipe). Do not invent fixtures.
 2. **Resolve the project's mechanism.** `mem_search("sdd-init/<project>")` → what the project seeds with (seeders/factories/command). If `sdd-init` is not there or does not define a seed mechanism → **STOP** and warn; do not build ad-hoc INSERTs.
-3. **Confirm the test DB** (hard rule above).
+3. **Confirm the target DB** (hard rule above) — the test DB standalone, or the smoke gate's **ephemeral fork** when invoked in-cycle; never the shared base in a smoke run, never prod.
 4. **Seed, idempotently.** Run the project's mechanism with the recipe's data. Idempotent: upsert / stable keys / namespaced by change, so that re-running does not clash on constraints nor duplicate rows.
 5. **Report what you seeded.**
 

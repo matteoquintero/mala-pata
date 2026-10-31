@@ -13,7 +13,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.16.0"
+  version: "1.17.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -109,6 +109,8 @@ Collapse everything above into a **sharpened idea**: a clear problem statement p
 - **Risk** — blast radius in one line.
 
 **Verified vs inferred — never launder an inference into a fact.** Each field above states only what the evidence supports: "no gate found and the value computes to 0" is NOT "the feature works end to end"; "I did not find X" is NOT "X does not exist". When a field rests on an inference, mark it `[inferred]` in the field AND keep it inferred in the prose close — do not upgrade it to a fact. An unproven end-to-end behavior is an OPEN item to verify (e.g. in prod), not a settled DoD.
+
+**Deterministic DoD — ground a non-deterministic ask in the captured standard, do not guess.** If the DoD could be satisfied many arbitrary ways ("a button", "a screen", "put it somewhere"), it is NOT testable yet. Make it deterministic by grounding it in the project's captured standard (`/mala-pata-standards` → `mala-pata/standards/<domain>.md`, `approved` rules ONLY): e.g. "the action in the standard `<component>`, per the approved convention". This is the INTERNAL-standard twin of the authoritative-source rule (Phase 1a): external law/spec for what is CORRECT, internal captured standard for HOW this project already does it. If no `approved` standard covers it, do NOT invent one — leave it as an OPEN decision for triage's new-standard permission gate (it is not research's to settle).
 
 Add the **size signal**: does this fit in one unit (one organic or one loop), or is it multi-unit (it needs `/mala-pata-roadmap` to be decomposed first)? **The signal comes from the size of the PROBLEM (Phase 1d) and from the open architecture decisions — NEVER from the volume of code, files or PRs.** A small problem with a clear solution is single-unit even if it touches several files; multi-unit only when there are several open architecture decisions or genuine independent vertical slices. Count only the `necessary` pieces from Phase 1e. **This size signal is a HYPOTHESIS for triage (and roadmap) to validate against the real code — never a verdict, and never a reason to skip triage and go straight to roadmap.**
 

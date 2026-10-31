@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.13.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -54,6 +54,15 @@ Evaluate the request against these three fields, as defined by the original desi
 | **Where** | NEVER a gate | Discovered in the Explore phase of organic/loop-start, not here. |
 
 This is a **diagnosis from the text of the request**, proportional to the request — not a full form. You may ask **just 1 clarifying question** ONLY if without it you cannot decide the lane (real blocking ambiguity). Ask it, stop and wait for the answer.
+
+## Phase 1.5 — Standard check (DoD determinism + new-standard permission)
+
+Two checks against the project's captured standard (`/mala-pata-standards` → `mala-pata/standards/<domain>.md`, `approved` rules only) BEFORE deciding the lane:
+
+1. **Non-deterministic DoD → bounce to research, do NOT dead-end.** A DoD that is statable but ARBITRARY (the ask could be satisfied many ways — "a button", "a screen", "somewhere") is different from "too vague to state What/Done at all" (that stays `vague work`). It needs GROUNDING in the standard, not a bounce to vagueness. If an `approved` standard covers it → state the deterministic DoD against it and continue. If not → bounce to `/mala-pata-research` to ground it (research AUTHORS the deterministic DoD; triage does NOT author it, it only detects and routes).
+2. **New-standard permission gate — ask BEFORE a new standard enters.** If the change would ESTABLISH a NEW standard (a visual/interaction convention not covered by an `approved` rule — a new component shape, a new placement, a new pattern), do NOT let it slip in as a de-facto standard. ASK the human's permission, one line: "this introduces a new standard (`<the convention>`) — approve it entering the project standard, or should it conform to an existing approved one?" Only on approval does it proceed as a new standard (captured later via `/mala-pata-standards`); on denial it must conform to an existing `approved` standard. Never admit a new standard silently.
+
+If the project has no captured standard yet, say so in one line and continue (the grounding is best-effort until `/mala-pata-standards` runs); do not block routing on a standard that does not exist.
 
 ## Phase 2 — Decide and answer the lane
 

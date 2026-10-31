@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.19.0"
+  version: "1.20.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -85,6 +85,7 @@ Before reinterpreting anything, measure whether the request is **ready to enter 
    - **Base**: propose it with your reason — default `main`/`development` (integration), or another branch if the work builds on a feature in progress ("the code lives in X"). Any branch is valid with confirmation; what is forbidden is assuming it silently or blocking just because it is not main.
    - **Branch type**: advise the conventional prefix according to WHAT the change is (`feature/` new functionality, `fix/`/`bugfix/` correction, `hotfix/` prod urgency, `refactor/`, `chore/`, `docs/`, `release/`) and propose the full name `<type>/<change-name>`. **Never `sdd/...`**. E.g.: a bug fix → proposal `fix/<change-name>`; a new feature → `feature/<change-name>`.
    - **Wait for the OK** before setting `branch:` and `branch_base` in the kickoff. These two confirmations can go together with the profile one (Step 1.5) in a single interaction. The working branch is ALWAYS the new `<type>/<change-name>` and the `worktree` is ALWAYS a new dir per change — never put an integration branch as `branch:` nor a worktree to reuse; the executor (loop-start) works isolated in its own worktree and consolidates at merge.
+   - **Delivery mode — ask in the SAME interaction**: PR (default) or **fast-forward to an umbrella**. Ask `¿Entrega por PR, o fast-forward a una umbrella (umbrella/<name>)?`. If **ff-umbrella**: the umbrella MUST match `umbrella/*` (FF is NEVER allowed to `main`/`development` — a non-`umbrella/*` target refuses the FF and keeps `pr`), and the **`branch_base` becomes that umbrella** so the feature can fast-forward back into it. Set `delivery_mode` + `umbrella` in the frontmatter; default `pr`.
    - **Set `domain` from `branch_base`**: `feature/<X>` → `domain: <X>` (the feature — e.g. `feature/<X>` → `<X>`, even if the change touches other sub-areas, which are NOT the domain); `main`/`development` → the functional AREA, else `main`. **If there is ANY doubt, ASK the human — never guess.**
 
 ---
@@ -188,6 +189,8 @@ roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # re
 research: <research slug if this change came from /mala-pata-research, else none>   # loop-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
 branch_base: main|development
+delivery_mode: pr   # pr | ff-umbrella — pr = PR → merge; ff-umbrella = fast-forward INTO an umbrella branch
+umbrella: none      # when delivery_mode=ff-umbrella: target umbrella branch, MUST match umbrella/* (FF never to main/development); then branch_base = this umbrella
 worktree: <suggested absolute path>
 depends_on: <change-name(s)|none>
 parallelizable_with: <change-name(s)|none>

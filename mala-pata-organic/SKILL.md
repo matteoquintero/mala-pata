@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.17.0"
+  version: "3.18.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -81,6 +81,7 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 1. `change-name`: if the incoming draft carries a `change_name` (a roadmap phase slug), HONOR it as-is — do NOT derive a new one (the branch `<type>/<slug>` must match what `mala-pata-roadmap-radar` searches for). Only when `change_name` is absent, derive a short one in kebab-case.
 2. **Base — propose and confirm (Hard rule #2)**: where the code lives (`main`/`development` or an in-progress feature). Wait for the OK. **Then set `domain` FROM the base**: `feature/<X>` → `domain: <X>` (the feature, even if the change touches sub-areas of it — those are NOT the domain); `main`/`development` → the functional AREA it touches, else `main`. **If there is ANY doubt about the domain, ASK the human (one question) — never guess.**
 3. **Branch type — advise and confirm**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — never `sdd/`. The full name goes as the proposed `worktree` (absolute path, `<ABS-repo>-worktrees/<change-name>`) — you do **not create it here**, `/mala-pata-organic-start` executes that.
+3.5. **Delivery mode — ask WITH the base/branch (same interaction)**: PR (default) or **fast-forward to an umbrella**. Ask: `¿Entrega por PR, o fast-forward a una umbrella (umbrella/<name>)?`. If **ff-umbrella**: the umbrella target MUST match `umbrella/*` (FF is NEVER allowed to `main`/`development` — if they name a non-`umbrella/*` target, refuse the FF and keep `pr`), and the **base becomes that umbrella branch** so the feature can fast-forward back into it (set `base` accordingly). Record `delivery_mode` + `umbrella` in the frontmatter; default `pr`.
 4. **Init guard**: `mem_search("sdd-init/{project}")` (only the EXACT item). If it does not exist → run `sdd-init` first to detect the stack and `strict_tdd`. Take `tdd_mode` from there for the frontmatter.
 5. **Idempotency**: `mem_search("odd/<change-name>/kickoff")`. If one equal/similar already exists → offer to update or rename.
 6. Build the kickoff with this structure (same persistence mechanism as `/mala-pata-loop` — see Phase 3):
@@ -95,6 +96,8 @@ research: <research slug if this change came from /mala-pata-research, else none
 route: organic
 base: main|development|<feature-en-curso>   # confirmed with the human — Hard rule #2
 branch: <type>/<change-name>                # type confirmed — never sdd/
+delivery_mode: pr                            # pr | ff-umbrella — pr = PR → merge; ff-umbrella = fast-forward INTO an umbrella branch
+umbrella: none                               # when delivery_mode=ff-umbrella: target umbrella branch, MUST match umbrella/* (FF never to main/development); then base = this umbrella
 worktree: <proposed absolute path>          # <ABS-repo>-worktrees/<change-name> — organic-start creates it, not this skill
 tdd_mode: <strict|standard>                  # from sdd-init/<project>
 smoke_test:                                  # does it need manual testing with seeded data after apply? (organic-start confirms)

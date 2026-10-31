@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.21.0"
+  version: "1.22.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -42,14 +42,14 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 ## Step 1 — Load the kickoff + engram context
 
 1. The input is normally just the **change-name / slug**, which resolves to `<repo-root>/mala-pata/kickoffs/<change-name>.md` (`git -C <cwd> rev-parse --show-toplevel`); an absolute path also works. **Prefer the slug — the full path is a pain, you do not need it.** If no kickoff resolves → **STOP** and ask for the slug. Do not invent the context.
-2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`, `domain`, `roadmap`, `research`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
+2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`, `domain`, `roadmap`, `research`, `delivery_mode`, `umbrella`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
 3. If `route` is not `organic` → **STOP**: this kickoff is not for this skill (it is probably a `/mala-pata-loop` kickoff, which uses `/mala-pata-loop-start`).
 4. `mem_search("odd/<change_name>/kickoff")` only to confirm the pointer — it is not blocking if it fails, the file is already the source of truth.
 
 ## Step 2 — Worktree + base (ODD Phase 1 of the mala-pata layer — Hard rule #1)
 
 1. **Worktree + branch ALWAYS your own (Hard rule #1) — the kickoff does NOT override it.** The working branch is `<type>/<change-name>` (new, from the change-name; never an integration branch) and the worktree is the dedicated dir `<ABS-repo>-worktrees/<change-name>`. **Does THAT own worktree already exist** (same change-name) from a previous run and are you in it? → resume: skip to point 4. If the kickoff points to a shared worktree/branch (another feature or an integration branch) → ignore it, use your own and say in one line that you corrected the kickoff.
-2. If your own worktree does not exist → create it off the kickoff's `base` (the base does come from the kickoff as-is; it may be `main`/`development` or a feature in progress):
+2. If your own worktree does not exist → create it off the kickoff's `base` (the base does come from the kickoff as-is; it may be `main`/`development` or a feature in progress). **Delivery-mode guard:** if `delivery_mode` is `ff-umbrella`, the `base` MUST be the umbrella and MUST match `umbrella/*` — if not, STOP (FF is never allowed to `main`/`development`); branching off the umbrella is what lets the feature fast-forward back into it at close (Step 7 → loop-start 4.2 option c).
    ```bash
    git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <type>/<change-name> <base-from-kickoff>
    ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>-worktrees/<change-name>/node_modules
@@ -89,7 +89,7 @@ For each task: the **smallest topology** — direct inline (1-3 already-understo
 
 ## Step 7 — Close (ODD 7 + mala-pata close)
 
-Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data — GATE, only if applicable: seed via `/mala-pata-seed`, then run the browser walkthrough via `/mala-pata-walkthrough-start` by its `smoke_delicacy` — low = the agent runs it on its own, medium = runs it + "review the evidence", high = the agent prepares and YOU run the sensitive steps; evidence per phase, a screenshot + trace, lands in `mala-pata/walkthroughs/<slug>/evidence/`, in-repo, never a temp dir)**, 4.2 (PR/merge destination with GATE), 4.4 (proactive CI), 4.5 (cleanup with GATE — includes cleaning the **ephemeral cycle-only DB fixtures** this run created: smoke/walkthrough byproducts, ad-hoc rows, or a throwaway DB/schema, by their change-scoped namespace; **keep the persistent seeds**, never wipe the shared test DB, uncertain ownership → leave + report)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
+Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data — GATE, only if applicable: seed via `/mala-pata-seed`, then run the browser walkthrough via `/mala-pata-walkthrough-start` by its `smoke_delicacy` — low = the agent runs it on its own, medium = runs it + "review the evidence", high = the agent prepares and YOU run the sensitive steps; evidence per phase, a screenshot + trace, lands in `mala-pata/walkthroughs/<slug>/evidence/`, in-repo, never a temp dir)**, 4.2 (PR/merge/ff-umbrella destination with GATE — when `delivery_mode: ff-umbrella`, use 4.2 option (c): fast-forward into the `umbrella/*`, never to main/dev), 4.4 (proactive CI), 4.5 (cleanup with GATE — includes cleaning the **ephemeral cycle-only DB fixtures** this run created: smoke/walkthrough byproducts, ad-hoc rows, or a throwaway DB/schema, by their change-scoped namespace; **keep the persistent seeds**, never wipe the shared test DB, uncertain ownership → leave + report)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
 **Cleanup exception** if you worked with incremental commits INSIDE the worktree of a feature in progress: that branch/worktree is closed by its own cycle, not organic-start — you only clean up what this skill created.
 
 ## Step 8 — Final table (MANDATORY)

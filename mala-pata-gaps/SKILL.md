@@ -4,7 +4,7 @@ description: READ-ONLY completeness auditor for a DOMAIN — given one or severa
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.12.2"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)
@@ -74,6 +74,8 @@ Domain gaps: <domain>  ·  roadmaps: <slug, slug, …>  ·  repo: <name>  ·  <d
 Source: mala-pata/ roadmaps + live code
 ```
 
+For the banner `<date-time>` and the report frontmatter `created_at`/`updated_at`: fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
+
 **Release line** (plain text, the HEADLINE — immediately below the banner, before the Bottom line — this is the go/no-go answer the human reads first):
 
 `Release: <GO | NO-GO | GO-with-conditions> · <b> Must (blockers) · <s> Should · <cc> Could · <x> deferred-but-Must`
@@ -139,6 +141,8 @@ Then the closing lines (plain text):
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Phase 5 — Persist the report (traceability)
+
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 Write the Phase 4 report to **`mala-pata/gaps/<domain>.md`** (inside the repo, versioned; `mkdir -p` if it does not exist; `<domain>` = the keyword, or a composite slug of the analyzed roadmaps). **The file STARTS with YAML frontmatter (forward-only, feeds `/mala-pata-domain-radar`):** `domain: <X>` (the keyword — never blank; ANY doubt → ASK the human), `roadmaps: [<slug>, ...]` (the analyzed roadmaps, or `[]`), `release: <GO | NO-GO | GO-with-conditions>` (the Phase 4 Release line), `open: <n>`, `deferred: <n>`, `closed: <n>`, `created_at: <ISO 8601>`, `updated_at: <ISO 8601>`. Those counts + release let domain-radar show the domain-level gaps rollup without re-parsing the body. If it already exists, **update** that file — gaps is a **living backlog** of the domain, not an endless append nor a new file per run. Lightweight pointer in engram: `mem_save` topic_key `gaps/<domain>`, one-line content `Gaps in file: <absolute path>` (do not duplicate the content — the file is the source). If engram is not available, the file is the source; warn in one line.
 

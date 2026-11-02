@@ -4,7 +4,7 @@ description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.2.2"
+  version: "2.2.4"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
@@ -73,6 +73,8 @@ Group: one bucket per roadmap of the domain (+ its linked items as a rollup), an
 
 ## Phase 3 — Coarse status (live git, OPEN matching)
 
+> **Canonical done-derivation — single source of truth.** Apply `_shared/mala-pata-git-truth.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
 Same OPEN logic as `mala-pata-roadmap-radar` Phase 2 (reuse it; do NOT reinvent): a thing is `done` when ANY git signal confirms it landed in the freshly fetched integration branch (merged PR/branch, slug commit ancestor, delivering artifact, recorded sha, or the optional trailer). `in progress` = live branch/PR not merged. `pending` = no evidence.
 - **Per roadmap**: a ONE-LINE rollup — `<done>/<total>` phases — plus the pointer to roadmap-radar for the detail. Do NOT expand phases here.
 - **Per standalone item**: its own coarse status (research shows its `verdict` instead).
@@ -94,6 +96,8 @@ Reason first; the LAST thing you emit is EXACTLY this shape — a BLUF line then
 
 Banner (plain text):
 `Domain: <domain>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  <date-time>`
+
+For the banner `<date-time>` (the run time): fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 BLUF (plain text, immediately below):
 `Bottom line: <r> roadmaps · <s> standalone · ✓ <d> done · ◐ <p> in progress · ○ <q> pending · QA ✓ <w>/<W> done · <rb> runbooks · <pb> playbooks · Release: <GO | NO-GO | n/a>`

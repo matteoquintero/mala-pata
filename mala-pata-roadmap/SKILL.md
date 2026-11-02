@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.19.0"
+  version: "2.19.2"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -58,6 +58,8 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
 ## Step 0 — Does it merit a roadmap? (size + vagueness gate)
+
+> **Canonical lane-routing gate — single source of truth.** Apply `_shared/mala-pata-lane-gate.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 - **Research doc first**: if the input is a slug (or path) that resolves to an existing `mala-pata/research/<slug>.md`, `Read` it and use its Define fields and findings as the objective's starting context instead of only the raw text.
 
@@ -274,6 +276,8 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 
 ## Step 6 — Where to save + write the roadmap
 
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
 1. **Where to save — path + DURABLE branch.**
    - **Path**: default **`mala-pata/roadmap/<slug>.md`** (inside the repo, versioned — like the rest of the mala-pata artifacts). Allow override.
    - **Branch — DURABLE, never an ephemeral change/worktree branch.** An ephemeral branch gets deleted in cleanup and the roadmap is stranded (the bug this avoids). Resolve the target: a roadmap for a **feature-in-progress** → that **feature base branch** (it travels with the feature and merges to main with it); a **standalone** objective → the integration default (`main`/`development`); **ambiguous** → ask ONE question `¿En qué rama guardo el roadmap — <feature base> o main?` (recommend the inferred one), then wait.
@@ -290,7 +294,7 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 objective: <short title of the large objective>
 slug: <kebab-case>
 project: <project>
-domain: <the FEATURE it belongs to — if it is built on a feature branch (feature/<X>) the domain is <X> (e.g. feature/<X> → <X>, EVEN IF it touches other sub-areas <Y>/<Z>; those are sub-areas, NOT the domain). If it is on main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
 created_at: <ISO 8601>
 phases_total: <N>
 ---
@@ -369,6 +373,8 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 ---
 Structure: Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route / 3-payoff split rule = house method.
 ```
+
+**Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 ## Rules
 

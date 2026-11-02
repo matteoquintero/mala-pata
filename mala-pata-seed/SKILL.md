@@ -4,7 +4,7 @@ description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.2"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)
@@ -27,15 +27,17 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Hard rule — the test DB, NEVER prod
+## Hard rule — the test DB, NEVER prod (and for a smoke run, its ephemeral fork)
 
-You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent that `sdd-init` states). Before seeding, confirm that the target is the test DB; if you cannot confirm it, **STOP**. Seeding against prod or against an unconfirmed DB is forbidden. Absolute paths always.
+> **Canonical test-DB guard — single source of truth.** Apply `_shared/mala-pata-test-db-guard.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
+You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent that `sdd-init` states) — **NEVER prod**. Before seeding, confirm the target; if you cannot confirm it, **STOP**. **When the caller is the in-cycle smoke gate** (`mala-pata-loop-start` 4.1-ter / `mala-pata-organic-start` Step 7), the confirmed target is an **ephemeral FORK of the test DB** that the gate created — seed into **that fork**, never the shared base test DB. Seeding against prod or against an unconfirmed DB is forbidden. Absolute paths always.
 
 ## Flow
 
 1. **Find the recipe.** Locate the `## Seed (fixtures)` section of the `mala-pata-walkthrough` QA for this feature (direct path, or through the engram pointer `sdd/<change>/walkthrough`). If the QA does not exist or has no `## Seed` → **STOP** and ask that `mala-pata-walkthrough` be run first (it is the one that builds the recipe). Do not invent fixtures.
 2. **Resolve the project's mechanism.** `mem_search("sdd-init/<project>")` → what the project seeds with (seeders/factories/command). If `sdd-init` is not there or does not define a seed mechanism → **STOP** and warn; do not build ad-hoc INSERTs.
-3. **Confirm the test DB** (hard rule above).
+3. **Confirm the target DB** (hard rule above) — the test DB standalone, or the smoke gate's **ephemeral fork** when invoked in-cycle; never the shared base in a smoke run, never prod.
 4. **Seed, idempotently.** Run the project's mechanism with the recipe's data. Idempotent: upsert / stable keys / namespaced by change, so that re-running does not clash on constraints nor duplicate rows.
 5. **Report what you seeded.**
 
@@ -53,7 +55,9 @@ You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent
 
    `Structure: xUnit Test Patterns — fixture setup (Meszaros). Test-DB-never-prod safety rule = house method.`
 
-6. **Leave a record (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** Write a lightweight record `mala-pata/seeds/<change>.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (**copy it from the walkthrough QA frontmatter you read in step 1**; if that QA has no `domain`, infer FEATURE → area → `main` and **ASK the human on ANY doubt** — never blank), `roadmap: <slug | none>` (from the same QA), `change: <change-name>`, `seeded_at: <ISO 8601>`. Body: one line naming the fixtures seeded and the target test DB (no secrets — reference the mechanism, not credentials). This is how domain-radar sees a change was seeded. **Write only — do NOT commit/push**; name the path to the human. This record is the ONE repo artifact seed leaves — it still writes no app code and still touches only the test DB.
+6. **Leave a record (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** Write a lightweight record `mala-pata/seeds/<change>.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (**copy it from the walkthrough QA frontmatter you read in step 1**; if that QA has no `domain`, infer FEATURE → area → `main` and **ASK the human on ANY doubt** — never blank), `roadmap: <slug | none>` (from the same QA), `change: <change-name>`, `seeded_at: <ISO 8601>`. Body: one line naming the fixtures seeded and the target test DB (no secrets — reference the mechanism, not credentials). This is how domain-radar sees a change was seeded. **Write only — do NOT commit/push**; name the path to the human. This record is the ONE repo artifact seed leaves — it still writes no app code and still touches only the test DB. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
+
+   > **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 ## Teardown (optional, asked — default NO)
 

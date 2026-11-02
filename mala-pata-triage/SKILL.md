@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.13.1"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -31,13 +31,18 @@ Only if there is real intent to change code do you continue to the gate.
 
 Ambiguity about whether it is a change → 1 specific question, you stop and wait.
 
-## Phase 0.5 — Input is a slug/path? Read its research doc (and carry the slug)
+## Phase 0.5 — Read the research (ALL of it — one slug or several), synthesize, do NOT swallow
 
-If the input arg is a slug or a path that resolves to an existing `mala-pata/research/<slug>.md` (what `/mala-pata-research` hands off), `Read` it and use its Define fields (What / Why / DoD / Decisions / Risk / size_signal) as the draft instead of only the raw request text. Then run the form gate below over that draft.
+If the input resolves to research docs that `/mala-pata-research` handed off, `Read` them and use their Define fields (What / Why / DoD / Decisions / Risk / size_signal) as the draft instead of only the raw request text. Then run the form gate below over that **synthesized** draft.
+
+- **One or several — read them ALL.** The human may pass several slugs/paths, or ONE slug whose objective was researched in MORE THAN ONE pass. Before routing, find every research doc that belongs to THIS objective: the passed slug(s), plus sibling docs under the **same `domain:`** whose subject is clearly the same objective (a SHARPEN a later pass resolved, a second angle on the same thing). If there are signs of more than one pass on the same topic and only one was passed, say so and read the others — **never route off a single doc when several researched the same objective.**
+- **Synthesize, do NOT pick the latest and drop the rest.** Reconcile all of them into ONE draft: later evidence supersedes earlier on a direct conflict (NAME what it corrected — e.g. a value re-grounded in the authoritative source over a first pass that had inferred it), and the findings/sources UNION (no search is thrown away — the accumulated evidence is the asset). The draft's What/Why/DoD reflect the ACCUMULATED research, not the last file read. Carry an inference AS an inference — if a doc marked something `[inferred]` or OPEN (e.g. "e2e not proven"), it stays OPEN in the draft, never upgraded to a settled DoD.
 
 If the arg is a roadmap phase slug (invoked for a roadmap phase), remember it: it travels in the draft as `change_name` (see Phase 2). When triage is invoked free-standing (plain request text), there is no slug — omit `change_name`.
 
 ## Phase 1 — Form gate (quick diagnosis, not an interview)
+
+> **Canonical lane-routing gate — single source of truth.** Apply `_shared/mala-pata-lane-gate.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 Evaluate the request against these three fields, as defined by the original design (same table used by `/mala-pata-organic` and which `/mala-pata-loop` references as its compass):
 
@@ -51,6 +56,15 @@ Evaluate the request against these three fields, as defined by the original desi
 | **Where** | NEVER a gate | Discovered in the Explore phase of organic/loop-start, not here. |
 
 This is a **diagnosis from the text of the request**, proportional to the request — not a full form. You may ask **just 1 clarifying question** ONLY if without it you cannot decide the lane (real blocking ambiguity). Ask it, stop and wait for the answer.
+
+## Phase 1.5 — Standard check (DoD determinism + new-standard permission)
+
+Two checks against the project's captured standard (`/mala-pata-standards` → `mala-pata/standards/<domain>.md`, `approved` rules only) BEFORE deciding the lane:
+
+1. **Non-deterministic DoD → bounce to research, do NOT dead-end.** A DoD that is statable but ARBITRARY (the ask could be satisfied many ways — "a button", "a screen", "somewhere") is different from "too vague to state What/Done at all" (that stays `vague work`). It needs GROUNDING in the standard, not a bounce to vagueness. If an `approved` standard covers it → state the deterministic DoD against it and continue. If not → bounce to `/mala-pata-research` to ground it (research AUTHORS the deterministic DoD; triage does NOT author it, it only detects and routes).
+2. **New-standard permission gate — ask BEFORE a new standard enters.** If the change would ESTABLISH a NEW standard (a visual/interaction convention not covered by an `approved` rule — a new component shape, a new placement, a new pattern), do NOT let it slip in as a de-facto standard. ASK the human's permission, one line: "this introduces a new standard (`<the convention>`) — approve it entering the project standard, or should it conform to an existing approved one?" Only on approval does it proceed as a new standard (captured later via `/mala-pata-standards`); on denial it must conform to an existing `approved` standard. Never admit a new standard silently.
+
+If the project has no captured standard yet, say so in one line and continue (the grounding is best-effort until `/mala-pata-standards` runs); do not block routing on a standard that does not exist.
 
 ## Phase 2 — Decide and answer the lane
 
@@ -90,8 +104,10 @@ Reason through the gate first; the LAST thing you emit is EXACTLY the shape belo
    | Decisions | <resolved approach, or "open: needs design → loop"> | [inferred] / [asked] |
    | Risk | <blast radius, one line> | [inferred] / [asked] |
 
+   **One objective per What — a compound What is a routing signal, not a formatting problem.** If the What only holds together with an "and" joining two independent deliverables (e.g. "rename the field AND hide the toggle AND fix the printout"), do NOT cram them into one cell: either they are ONE coherent vertical change — then state the single OUTCOME they add up to (the one capability or behavior the pieces serve together) — or they are several, which is the multi-unit signal (consider roadmap, or name the primary and flag the rest). Same rule for the DoD: Given/When/Then describes ONE observable outcome; stacked `And` clauses each asserting a different deliverable are the same smell. Compress to the real objective; never let the draft smuggle a decomposition past the gate as "one line".
+
    Add a `change_name: <slug>` row when triage was invoked for a roadmap phase (omit when free-standing).
-   Add a `research: <slug>` row when triage came FROM `/mala-pata-research` (the arg is a research slug, or the request names a research doc), so the lane records it in the kickoff and `organic-start`/`loop-start` carries `mala-pata/research/<slug>.md` into the feature's PR, tied to the commit. Omit the row when there was no research (the lane defaults to `research: none`).
+   Add a `research: <slug[, slug...]>` row when triage came FROM `/mala-pata-research` (the arg is a research slug, the request names a research doc, or Phase 0.5 synthesized several), so the lane records them in the kickoff and `organic-start`/`loop-start` carries EVERY `mala-pata/research/<slug>.md` into the feature's PR, tied to the commit. List ALL the synthesized slugs, not just one. Omit the row when there was no research (the lane defaults to `research: none`).
 
    **Open product decisions — flag, do NOT invent.** If a draft field hides a scope/behavior call only the human can make (what is IN vs OUT, who can do it / permissions, side-effects on other systems or data), write the cell as `open: <the question>` instead of guessing a value. The lane (organic/loop) MUST ask these one at a time before locking the kickoff — triage decides the lane and flags them; `/mala-pata-research` is what resolves them fully when the uncertainty is deep. Guessing a product decision and passing it as settled is the failure.
 3. **DoR line:** `DoR: What ✓ · DoD ✓ · Decisions ✓` (the three blocking fields passed the gate).

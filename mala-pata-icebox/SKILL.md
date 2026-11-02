@@ -1,10 +1,10 @@
 ---
 name: mala-pata-icebox
-description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") into a deferred backlog (an "icebox") WITHOUT solving it now. An icebox is a flat, append-only list of INDEPENDENT cubes you accumulate over time (cheap, no research, no routing); you DEFROST it later (`/mala-pata-icebox-defrost`) to run research + triage over the whole thing and route each cube into shot/organic/loop/roadmap. Different from a roadmap (ONE objective decomposed into a dependent DAG right now) — the icebox is a bottom-up POOL of independent asks for later. It does NOT research, does NOT route, does NOT size authoritatively, does NOT read code, does NOT execute; it only appends a cube to `mala-pata/icebox/<slug>.md` (write-only, no commit). Trigger — "agregá un cube al icebox <slug>", "congelá esto para después", "metelo al icebox", "guardá esta idea para después", "freeze this".
+description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") into a deferred backlog (an "icebox") WITHOUT solving it now. An icebox is a flat, append-only list of INDEPENDENT cubes you accumulate over time (cheap, no research, no routing); you DEFROST it later (`/mala-pata-icebox-defrost`) to run research + triage over the whole thing and route each cube into shot/organic/loop/roadmap. Different from a roadmap (ONE objective decomposed into a dependent DAG right now) — the icebox is a bottom-up POOL of independent asks for later. It does NOT research, does NOT route, does NOT size authoritatively, does NOT read code, does NOT execute; it only appends one or many cubes to `mala-pata/icebox/<slug>.md` (write-only, no commit). Supports bulk — freeze a whole findings list in one pass. Trigger — "agregá un cube al icebox <slug>", "congelá esto para después", "metelo al icebox", "guardá esta idea para después", "congelá estos hallazgos", "freeze this".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog
@@ -40,8 +40,9 @@ Freezing a cube writes ONLY the icebox file (`mala-pata/icebox/<slug>.md`). It w
    - **No slug** → ask which icebox (one question: an existing slug, or a name to create). Stop and wait. Do not guess.
 3. **`domain` (create mode only) — MANDATORY, never blank.** An icebox belongs to a domain like every other mala-pata artifact (so `mala-pata-domain-radar` can group it). Infer it from what the icebox is FOR: a feature-in-progress → that feature; else the functional AREA; else `main`. **If there is ANY doubt, ASK the human (one question) BEFORE writing** — never guess. (Append mode reuses the file's existing `domain`.)
 
-## Phase 2 — Capture the cube (one line, cheap)
+## Phase 2 — Capture the cube(s) (one line each, cheap)
 
+0. **One or many (bulk).** The input may be a single outcome OR a LIST (e.g. a findings dump `H1..Hn`). Freeze each item as its own cube in a single pass — same one-line rule per cube, sequential ids, same idempotency check. Bulk stays cheap: still NO research and NO per-cube analysis (classifying research-vs-triage is `/mala-pata-icebox-defrost`'s job, not freeze's). When the source items carry their own tags (e.g. `H31`), keep the tag as a prefix in the cube's DoD so the full detail stays traceable.
 1. **The cube is a concrete, observable outcome in ONE line** — the WHAT, not the how. "Mejorar X" with no concrete target is NOT a cube: if the input is that vague, ask for the concrete outcome in one line (same spirit as the triage `What` gate) — but do NOT over-interview; freezing is meant to take seconds.
 2. **size-hint — OPTIONAL, a hint only.** If the human offers a rough size, record it (`shot` | `organic` | `loop` | `roadmap`); otherwise `?`. **Do NOT compute it authoritatively and do NOT research to decide it** — `defrost` runs triage for the real routing. A wrong hint costs nothing; it is overwritten at defrost.
 3. **Assign the next cube id** (`c<N>`, continuing the file's existing ids). Status is always `frozen` when you write it — only `defrost`/`radar` later move a cube to `routed`/`done`.
@@ -79,7 +80,12 @@ Emit exactly this, from what you actually did (no invention):
 
 - Title: `**Cube frozen — <icebox-slug>**` (or `**Icebox created — <icebox-slug>**` on create mode).
 - BLUF: `Icebox <slug> · domain <domain> · <N> cubes · <created | appended>`.
-- The cube you added (the `c<N>` line).
+- **The cube(s) you added.** One cube → its `c<N>` line. **Two or more (bulk) → a REAL Markdown table** (never fenced, one line per cell):
+
+  | # | Cube (DoD) | size-hint | Status |
+  |---|---|---|---|
+  | c1 | <one line> | organic | frozen |
+  | c2 | <one line> | ? | frozen |
 - **Icebox:** `mala-pata/icebox/<slug>.md` (repo-relative) — write-only, commit it on `<durable branch>`.
 - **Next step** — keep freezing, or defrost when ready:
 

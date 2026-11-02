@@ -4,7 +4,7 @@ description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") in
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog
@@ -42,7 +42,7 @@ Freezing a cube writes ONLY the icebox file (`mala-pata/icebox/<slug>.md`). It w
 
 ## Phase 2 — Capture the cube(s) (one line each, cheap)
 
-0. **One or many (bulk).** The input may be a single outcome OR a LIST (e.g. a findings dump `H1..Hn`). Freeze each item as its own cube in a single pass — same one-line rule per cube, sequential ids, same idempotency check. Bulk stays cheap: still NO research and NO per-cube analysis (classifying research-vs-triage is `/mala-pata-icebox-defrost`'s job, not freeze's). When the source items carry their own tags (e.g. `H31`), keep the tag as a prefix in the cube's DoD so the full detail stays traceable.
+0. **One or many (bulk).** The input may be a single outcome OR a LIST (e.g. an audit / findings dump where each item has its own tag). Freeze each item as its own cube in a single pass — same one-line rule per cube, sequential ids, same idempotency check. Bulk stays cheap: still NO research and NO per-cube analysis (classifying research-vs-triage is `/mala-pata-icebox-defrost`'s job, not freeze's). When the source items carry their own tags (e.g. `<tag><n>`), keep the tag as a prefix in the cube's DoD so the full detail stays traceable.
 1. **The cube is a concrete, observable outcome in ONE line** — the WHAT, not the how. "Mejorar X" with no concrete target is NOT a cube: if the input is that vague, ask for the concrete outcome in one line (same spirit as the triage `What` gate) — but do NOT over-interview; freezing is meant to take seconds.
 2. **size-hint — OPTIONAL, a hint only.** If the human offers a rough size, record it (`shot` | `organic` | `loop` | `roadmap`); otherwise `?`. **Do NOT compute it authoritatively and do NOT research to decide it** — `defrost` runs triage for the real routing. A wrong hint costs nothing; it is overwritten at defrost.
 3. **Assign the next cube id** (`c<N>`, continuing the file's existing ids). Status is always `frozen` when you write it — only `defrost`/`radar` later move a cube to `routed`/`done`.

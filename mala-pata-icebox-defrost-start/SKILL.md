@@ -4,7 +4,7 @@ description: RUN an approved defrost plan — the execution half of the melt. Re
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # /mala-pata-icebox-defrost-start — run the approved defrost plan
@@ -48,6 +48,8 @@ For each cube marked `research`, in PARALLEL (cubes are independent), run resear
 Surface any **RECONSIDER** prominently (research may propose killing/parking a cube). A **SHARPEN** cube (a human-only decision still open) is flagged, not force-routed. `triage-direct` cubes skip this phase entirely.
 
 ## Phase 3 — Triage every non-skip cube + grouping pass
+
+> **Canonical lane-routing gate — single source of truth.** Apply `_shared/mala-pata-lane-gate.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 1. **Triage each cube** (following `/mala-pata-triage`): the `research` cubes from their sharpened fields, the `triage-direct` cubes from their DoD as-is → a lane forecast (`shot`/`organic`/`loop`). A SHARPEN/open-decision cube is not routed until its question is answered.
 2. **Grouping pass:**

@@ -4,7 +4,7 @@ description: CREATES a project DISCOVERY document — captures what the client a
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # /mala-pata-dossier — capture project discovery (does not propose the solution)
@@ -57,10 +57,12 @@ This is the step that makes the discovery correct. The 6 questions ARE the inter
 
 Write to `mala-pata/dossier/<slug>.md` (inside the repo, versioned; `mkdir -p`). **Frontmatter** (feeds `/mala-pata-domain-radar`):
 
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
 ```markdown
 ---
 slug: <kebab>
-domain: <the project/area this discovery belongs to — else 'main'; NEVER blank, ANY doubt → ASK the human>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
 phase: discovery
 kind: discovery
 client: <who the discovery is for>
@@ -69,6 +71,8 @@ created_at: <ISO 8601>
 last_reviewed: <ISO 8601>
 ---
 ```
+
+**Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 **Rendering 1 — Internal traceability doc** (fixed section order — labels verbatim English):
 

@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.17.0"
+  version: "3.18.2"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -33,6 +33,8 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory one is missing, do not continue.
 
 ## Hard rules
+
+> **Canonical lane-routing gate — single source of truth.** Apply `_shared/mala-pata-lane-gate.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 > **#1 — Safety net, not your primary job: if while capturing `Decisions already made` you realize it is unresolved** (unresolved architecture, a new contract/endpoint left undecided, risk that deserves a full cycle with preview), **do not force organic — bounce to `/mala-pata-loop`**. This is a fallback: normally `/mala-pata-triage` has already filtered this out before you arrive. The size of the change or the file count NEVER forces the loop — ODD handles the small and the **substantial**. **But first distinguish**: if that decision is **decidable with one question** (known options, the human chooses), ask that question and, once resolved, **stay in organic — do NOT bounce**. Bounce to `/mala-pata-loop` ONLY if the decision **needs design** (viable architectures with tradeoffs to research, or options that cannot be known without exploring). The loop discriminator is not "there is a decision", it is "the decision needs design".
 > **#2 — Base: propose and confirm, create nothing.** The base comes from WHERE THE CODE TO BE TOUCHED LIVES (`main`/`development`, or an in-progress feature). Propose it with your reason in one line ("the code lives in X") and wait for the OK before fixing it in the kickoff. This skill does NOT create the worktree — `/mala-pata-organic-start` does that with the base already confirmed here. **The working branch is ALWAYS a new `<type>/<change-name>` (never an existing integration branch) and the `worktree` is ALWAYS a new dir per change (`<ABS-repo>-worktrees/<change-name>`) — never put `branch: <integration>` nor `worktree: <reuse/existing>` in the kickoff. The base may be an in-progress feature; the working branch does not replace it (organic-start branches off the base in its own worktree and consolidates on merge).**
@@ -78,9 +80,12 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 
 ## Phase 2 — Generate the organic kickoff (if the capture ended up complete)
 
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
 1. `change-name`: if the incoming draft carries a `change_name` (a roadmap phase slug), HONOR it as-is — do NOT derive a new one (the branch `<type>/<slug>` must match what `mala-pata-roadmap-radar` searches for). Only when `change_name` is absent, derive a short one in kebab-case.
 2. **Base — propose and confirm (Hard rule #2)**: where the code lives (`main`/`development` or an in-progress feature). Wait for the OK. **Then set `domain` FROM the base**: `feature/<X>` → `domain: <X>` (the feature, even if the change touches sub-areas of it — those are NOT the domain); `main`/`development` → the functional AREA it touches, else `main`. **If there is ANY doubt about the domain, ASK the human (one question) — never guess.**
 3. **Branch type — advise and confirm**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — never `sdd/`. The full name goes as the proposed `worktree` (absolute path, `<ABS-repo>-worktrees/<change-name>`) — you do **not create it here**, `/mala-pata-organic-start` executes that.
+3.5. **Delivery mode — ask WITH the base/branch (same interaction)**: PR (default) or **fast-forward to an umbrella**. Ask: `¿Entrega por PR, o fast-forward a una umbrella (umbrella/<name>)?`. If **ff-umbrella**: the umbrella target MUST match `umbrella/*` (FF is NEVER allowed to `main`/`development` — if they name a non-`umbrella/*` target, refuse the FF and keep `pr`), and the **base becomes that umbrella branch** so the feature can fast-forward back into it (set `base` accordingly). Record `delivery_mode` + `umbrella` in the frontmatter; default `pr`.
 4. **Init guard**: `mem_search("sdd-init/{project}")` (only the EXACT item). If it does not exist → run `sdd-init` first to detect the stack and `strict_tdd`. Take `tdd_mode` from there for the frontmatter.
 5. **Idempotency**: `mem_search("odd/<change-name>/kickoff")`. If one equal/similar already exists → offer to update or rename.
 6. Build the kickoff with this structure (same persistence mechanism as `/mala-pata-loop` — see Phase 3):
@@ -89,12 +94,14 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 ---
 change_name: <change-name>
 project: <project>
-domain: <the FEATURE it belongs to — from the base: feature/<X> → <X> (even if it touches sub-areas of that feature; those are NOT the domain). If base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 research: <research slug if this change came from /mala-pata-research, else none>   # organic-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 route: organic
 base: main|development|<feature-en-curso>   # confirmed with the human — Hard rule #2
 branch: <type>/<change-name>                # type confirmed — never sdd/
+delivery_mode: pr                            # pr | ff-umbrella — pr = PR → merge; ff-umbrella = fast-forward INTO an umbrella branch
+umbrella: none                               # when delivery_mode=ff-umbrella: target umbrella branch, MUST match umbrella/* (FF never to main/development); then base = this umbrella
 worktree: <proposed absolute path>          # <ABS-repo>-worktrees/<change-name> — organic-start creates it, not this skill
 tdd_mode: <strict|standard>                  # from sdd-init/<project>
 smoke_test:                                  # does it need manual testing with seeded data after apply? (organic-start confirms)
@@ -123,6 +130,8 @@ created_at: <ISO 8601>
 ## Where (optional hint — to be discovered in Explore)
 <file(s)/module if the human already knows, or "a determinar en Explore">
 ```
+
+**Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 (The section headings and frontmatter keys in the template are fixed identifiers read by `/mala-pata-organic-start` and stay as written; only the `<...>` placeholders and comments are prose.)
 

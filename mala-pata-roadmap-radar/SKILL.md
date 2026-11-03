@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.1"
+  version: "1.12.3"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -53,6 +53,8 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 3. If there is a `gh`/PR CLI, fetch the repo's list of open/merged PRs.
 
 ## Phase 2 — State per phase, live (code: from git reality · ops: by declared status)
+
+> **Canonical done-derivation — single source of truth.** Apply `_shared/mala-pata-git-truth.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 Branch the derivation by the phase's **kind**:
 
@@ -103,6 +105,8 @@ Banner (3 lines):
 `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`
 `Source: roadmap.md + live git · NO engram · <date-time>`
 `Timeline: created <roadmap created_at> · <when 100% done: completed <latest git date among the done phases> (derived from git) — else: in progress, <d>/<N> phases done>`
+
+For the run time `<date-time>` in the Source line: fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC. (The Timeline's `created_at` is the roadmap's stored value — read it, never regenerate it.)
 
 BLUF (3 lines):
 `Bottom line: ✓ <d> done · ◐ <p> in progress · ○ <q> pending · ✗ <b> blocked  (of <N> phases)`

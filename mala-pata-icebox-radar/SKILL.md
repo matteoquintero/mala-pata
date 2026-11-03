@@ -4,7 +4,7 @@ description: READ-ONLY status of an ICEBOX — how many of its cubes are still f
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # /mala-pata-icebox-radar — status of an icebox against git (fixed format)
@@ -46,6 +46,8 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
 3. If there is a `gh`/PR CLI, fetch the repo's open/merged PRs.
 
 ## Phase 2 — State per cube, live
+
+> **Canonical done-derivation — single source of truth.** Apply `_shared/mala-pata-git-truth.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 Branch by the cube's icebox status:
 

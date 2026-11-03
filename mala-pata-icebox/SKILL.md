@@ -4,7 +4,7 @@ description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") in
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.1"
+  version: "0.2.2"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog
@@ -38,7 +38,9 @@ Freezing a cube writes ONLY the icebox file (`mala-pata/icebox/<slug>.md`). It w
    - **Slug given and the file exists** → **append mode**.
    - **Slug given, file absent** → **create mode** (a new icebox).
    - **No slug** → ask which icebox (one question: an existing slug, or a name to create). Stop and wait. Do not guess.
-3. **`domain` (create mode only) — MANDATORY, never blank.** An icebox belongs to a domain like every other mala-pata artifact (so `mala-pata-domain-radar` can group it). Infer it from what the icebox is FOR: a feature-in-progress → that feature; else the functional AREA; else `main`. **If there is ANY doubt, ASK the human (one question) BEFORE writing** — never guess. (Append mode reuses the file's existing `domain`.)
+3. **`domain` (create mode only) — MANDATORY, never blank.** An icebox belongs to a domain like every other mala-pata artifact (so `mala-pata-domain-radar` can group it). Infer it from what the icebox is FOR, per the canonical rule below. (Append mode reuses the file's existing `domain`.)
+
+   > **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 ## Phase 2 — Capture the cube(s) (one line each, cheap)
 
@@ -56,7 +58,7 @@ Freezing a cube writes ONLY the icebox file (`mala-pata/icebox/<slug>.md`). It w
 ---
 icebox_slug: <slug>
 project: <project>
-domain: <the feature it belongs to, else the functional AREA, else 'main' — NEVER blank; ANY doubt → ASK the human>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
 created_at: <ISO 8601>
 ---
 # Icebox: <name>

@@ -4,7 +4,7 @@ description: PLAN the defrost of an icebox — classify each frozen cube (triage
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # /mala-pata-icebox-defrost — plan the melt (classify + approval table, then STOP)
@@ -36,6 +36,8 @@ Planning the defrost reads the icebox and writes ONLY the plan doc (`mala-pata/i
 3. **Select in-scope cubes**: by default every `status: frozen` cube; skip `thawed`/`done`/`reconsider` unless the human asks to re-plan them. If the CLI passed a subset of ids, keep only those. Zero frozen cubes → say so and stop.
 
 ## Phase 2 — Classify each cube (triage-first, cheap — NO research)
+
+> **Canonical lane-routing gate — single source of truth.** Apply `_shared/mala-pata-lane-gate.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 For each in-scope cube, apply the `/mala-pata-triage` FORM GATE to its one-line DoD (this is reasoning on the text + size-hint, NOT research, NOT a code dive, NOT web):
 

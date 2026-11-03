@@ -4,7 +4,7 @@ description: READ-ONLY wave/execution planner for a ROADMAP whose phases are ALL
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # /mala-pata-roadmap-orchestrate — Wave plan of a ROADMAP (READ-ONLY)
@@ -75,7 +75,7 @@ Then tell the human: run this roadmap with `/mala-pata-roadmap-radar <slug>` (it
 
 ALWAYS return, in this order:
 
-1. **Banner (plain text):** `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  Source: roadmap.md + live git · NO engram · <date-time>`.
+1. **Banner (plain text):** `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  Source: roadmap.md + live git · NO engram · <date-time>`. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 2. **BLUF line:** `Plan: <N> phases → ✓ <d> done · <r> ready now (<p> parallel this wave) · <o> ops to attest · <k> deferred · ✗ <b> blocked · recommended: <launch wave 1 | attest ops X | promote Y>`.
 

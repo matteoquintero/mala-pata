@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.20.0"
+  version: "1.20.1"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -264,6 +264,8 @@ Verifiable criteria, not vague bullets — use Given/When/Then for observable be
 - [ ] PR opened against the base branch, no direct push to integration.
 - [ ] Kickoff referenced in the PR body (file path — see Step 5).
 ```
+
+**Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 The kickoff MUST include the full frontmatter and the "Method rules" block with the paths to the MDs — the executor reads them at startup. Those `references/profiles/...` paths are relative to the `mala-pata-loop` skill directory (not the repo); `/mala-pata-loop-start` resolves them against the installed skill dir. Do not compress the Definition of Done so that it "fits": there is no longer a character budget, use the space the change needs.
 

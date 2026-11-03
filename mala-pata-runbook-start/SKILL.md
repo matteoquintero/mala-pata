@@ -4,7 +4,7 @@ description: RUNS a runbook created by /mala-pata-runbook — reads the runbook 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.4.1"
 ---
 
 # /mala-pata-runbook-start — run a runbook deterministically
@@ -70,7 +70,7 @@ For each step, in order:
 
 ## Phase 5 — Evidence + close (mandatory)
 
-1. **Evidence**: record what the runbook's Evidence section asks (ids, timestamps, who ran it, final state). If it asks for persistence, write a run note `mala-pata/runbooks/runs/<slug>-<ISO>.md` (write-only — do NOT commit) and `mem_save` a one-line pointer `runbooks/<slug>/run`.
+1. **Evidence**: record what the runbook's Evidence section asks (ids, timestamps, who ran it, final state). If it asks for persistence, write a run note `mala-pata/runbooks/runs/<slug>-<ISO>.md` (write-only — do NOT commit) and `mem_save` a one-line pointer `runbooks/<slug>/run`. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 2. **Close — render the output contract: Declared report THEN Run record.** First, if the runbook's `## Outputs` declares a **Declared report**, render it IN FULL (its own tables/sections) — it is the run's deliverable and is rendered **even when the run stopped or escalated**, never skipped. Then the **Run record** — BLUF then a real table (NEVER fenced; one line per cell; one row per step):
 
    `Run — <slug>: <done/stopped> · <k>/<n> steps · verification <pass/fail> · <recomputed key values>`

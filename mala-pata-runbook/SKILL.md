@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.4.1"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -75,6 +75,8 @@ created_at: <ISO 8601>
 last_reviewed: <ISO 8601>
 ---
 ```
+
+**Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
 **Body** (fixed section order — labels verbatim English):
 

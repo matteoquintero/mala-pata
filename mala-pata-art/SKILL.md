@@ -1,10 +1,10 @@
 ---
 name: mala-pata-art
-description: Visual judgment / design director — loaded to guide HOW to improve something that does not look right visually, with a cited body of principles (Gestalt, Swiss, Bauhaus, Rams, Vignelli, Albers, Norman, Laws of UX, Refactoring UI, modern craft) + hard invariants + the project's design system. Given a prompt like "usá este skill para mejorar este artefacto/HTML/componente", it generates an advice MD (the judgment applied to THAT case) and, if asked, applies the improvement in the same run — with the human eye as the final gate. It is to ODD what clean-architecture/solid are to code. It is NOT a router — it does NOT decide or propose organic/loop/shot (it is orthogonal to the lanes). It does NOT use prescriptive palettes/typefaces; the concrete values come from the project's system + the judgment. Trigger — "mejorá visualmente esto", "usá mala-pata-art para…", "esto no me gusta cómo se ve", "guía de diseño para X".
+description: Visual judgment / design director — loaded to guide HOW to improve something that does not look right visually, with a cited body of principles (Gestalt, Swiss, Bauhaus, Rams, Vignelli, Albers, Norman, Laws of UX, Refactoring UI, modern craft) + hard invariants + the project's design system. Given a prompt like "usá este skill para mejorar este artefacto/HTML/componente", it generates an advice MD (the judgment applied to THAT case) and, if asked, applies the improvement in the same run — with the human eye as the final gate. It is to ODD what clean-architecture/solid are to code. It is NOT a router — it does NOT decide or propose organic/loop/shot (it is orthogonal to the lanes). It does NOT use prescriptive palettes/typefaces; the concrete values come from the project's system (the captured standard from /mala-pata-standards — approved rules — when it exists, else read from the code) + the judgment. Trigger — "mejorá visualmente esto", "usá mala-pata-art para…", "esto no me gusta cómo se ve", "guía de diseño para X".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.1"
+  version: "1.7.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -79,13 +79,16 @@ The only thing taken from ui-ux-pro-max; they make the judgment testable:
 > **The prescriptive side of ui-ux-pro-max is forbidden**: do NOT use its 161 palettes, its font pairings, or its product→style mappings. The concrete values (which color, which font) come from the **project's system** + the **judgment** above. Its style vocabulary serve only as vocabulary to NAME a direction, not as "apply this style".
 
 ## Read the project's system (agnostic)
-Before proposing concrete values, find the **current project's design system** and treat it as **authoritative**: tokens (CSS vars / Tailwind config), spacing scale, typography, primitives (`Button`/`Card`/`Icon`/etc.), rules (design ESLint), Storybook, `DESIGN.md`/`ARCHITECTURE.md`. If it exists, the concrete values come from there (do not invent hex/fonts). A well-built system is the **reference pattern** of "what a good system looks like" — never hardcode any specific project as the source.
 
-If the project has NO system, propose a minimal one (spacing scale, neutral ramp, 1 accent, 2 type sizes) BEFORE touching components — and say so.
+**First, the captured standard.** If the project has a captured standard from `/mala-pata-standards` at `mala-pata/standards/<domain>.md`, read it FIRST and treat it as **authoritative** — but ground ONLY on its `approved` rules. A `proposed` or `OPEN` rule is NOT yet a standard: do not ground on it, and if the UI depends on one, flag that it needs the human's approval via `/mala-pata-standards`. The captured standard is the design system made explicit; prefer it over re-deriving values from the code.
+
+**Then / else, read it from the code.** When there is no captured standard (or it does not cover what you need), find the **current project's design system** directly and treat it as authoritative: tokens (CSS vars / Tailwind config), spacing scale, typography, primitives (`Button`/`Card`/`Icon`/etc.), rules (design ESLint), Storybook, `DESIGN.md`/`ARCHITECTURE.md`. If it exists, the concrete values come from there (do not invent hex/fonts). A well-built system is the **reference pattern** of "what a good system looks like" — never hardcode any specific project as the source. When you had to re-derive values from the code, suggest running `/mala-pata-standards` to capture them so they stop being re-derived each time.
+
+If the project has NO system at all, propose a minimal one (spacing scale, neutral ramp, 1 accent, 2 type sizes) BEFORE touching components — and say so.
 
 ## Flow
 1. **Understand what to improve**: an HTML/component, an artifact, or a whole project. Look at the real UI (or the code/artifact).
-2. **Read the project's system** (previous section) — the concrete values come from there.
+2. **Read the project's system** (previous section) — prefer the captured standard (`mala-pata/standards/<domain>.md`, `approved` rules only), else the code.
 3. **Diagnosis**: what is wrong against the **invariants** (first) and the **judgment** (Level 1-3). Anchor each finding to what is observable ("this block violates hierarchy: 3 focal points compete"; "emoji icons → SVG").
 4. **Advice MD (fixed shape)**: write the judgment applied to THIS case. Inline by default; if the human wants to save it, `mala-pata/art/<slug>.md`. Fixed format:
 
@@ -109,6 +112,7 @@ If the project has NO system, propose a minimal one (spacing scale, neutral ramp
 ## What it does NOT do
 - Does NOT decide or propose lanes (organic/loop/shot) — it is orthogonal; the human or triage decides the flow.
 - Does NOT use ui-ux-pro-max's prescriptive palettes/typefaces/styles — only its numbers/rules/anti-patterns.
-- Does NOT invent hex/fonts if the project has a system — read the system.
+- Does NOT invent hex/fonts if the project has a system — read the system (captured standard first, else the code).
+- Does NOT ground on a `proposed` or `OPEN` standard rule — only `approved` ones; an unapproved rule is flagged for the human, not used.
 - Does NOT add emoji (per invariant 7) or non-SVG icons (neither in the UI nor in what it produces).
 - Does NOT dispatch `sdd-*` agents.

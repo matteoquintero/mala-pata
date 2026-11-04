@@ -7,13 +7,15 @@ description: >
   RECONSIDER — it may propose killing the idea), and only then hands off to
   `/mala-pata-triage` (which decides the lane, including whether it merits a roadmap). Read-only:
   it does not create a worktree/kickoff/code.
+  Also has a SPIKE mode (`--spike "<question>"`): a read-only, scope-boxed probe
+  for a BROAD approach-unknown, producing a finding that re-enters triage.
   Trigger: "prepará esta idea", "research de <idea>", "ayudame a armar esta
-  idea antes de triage/roadmap", or any raw/fuzzy idea that is not yet ready
-  to be routed.
+  idea antes de triage/roadmap", "spike de <pregunta>", or any raw/fuzzy idea
+  that is not yet ready to be routed.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.17.2"
+  version: "1.18.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -71,6 +73,12 @@ Only the `necessary` pieces move on to Define; the others remain named (they do 
 
 **(f) Gap to the objective — what is MISSING, not just what was proposed**: (e) classifies the pieces the human already proposed; this adds the OTHER direction. From the objective (the opening of this phase) and the authoritative source (a), list what the objective REQUIRES to be met, then mark each item: covered-by-the-idea, already-in-the-code (b), or **MISSING** (neither proposed nor built). The MISSING set is the real sharpening — it is what the idea did not see. Keep it to what the objective genuinely needs (single-unit discipline — this is NOT a roadmap's exhaustive desired-state; a broad domain checklist belongs to `/mala-pata-roadmap`). Each item carries its provenance: verified against the code / authoritative source, or inferred.
 
+**(g) Completeness gate — dimension sweep + fork test.** After (f), sweep the objective across every lens and test each MISSING/unknown item for an approach-fork.
+
+> **Canonical objective-completeness rule — single source of truth.** Apply `_shared/mala-pata-objective-completeness.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
+Here (research) it stays a lightweight sweep: only adjacent-implied gaps enter the sharpened idea, broad-domain items go to a compact "not covered" checklist. Verdict wiring: unverified MISSING items only the human can answer → **SHARPEN**; a BROAD approach-fork → **PROCEED** is still allowed, but `size_signal: multi-unit` and Define carries `Spike candidates: <list>` — research does NOT route, triage decides.
+
 ## Phase 2 — Heilmeier Catechism (answer what you know, ASK what only the human knows)
 
 The 7 questions (DARPA framework adapted to 7 for mala-pata — verbatim list, do not paraphrase):
@@ -109,6 +117,7 @@ Collapse everything above into a **sharpened idea**: a clear problem statement p
 - **Decisions already made** — what of the approach/architecture the research already settled.
 - **Open decisions** — what remains unresolved (this is exactly what triage needs to separate organic from loop).
 - **Risk** — blast radius in one line.
+- **Spike candidates** — only when the fork test (1g) found a BROAD approach-fork: `<list of unknowns>`; otherwise omit.
 
 **Verified vs inferred — never launder an inference into a fact.** Each field above states only what the evidence supports: "no gate found and the value computes to 0" is NOT "the feature works end to end"; "I did not find X" is NOT "X does not exist". When a field rests on an inference, mark it `[inferred]` in the field AND keep it inferred in the prose close — do not upgrade it to a fact. An unproven end-to-end behavior is an OPEN item to verify (e.g. in prod), not a settled DoD.
 
@@ -142,6 +151,7 @@ verdict: PROCEED | SHARPEN | RECONSIDER
 created_at: <ISO 8601>
 next: triage | none (SHARPEN/RECONSIDER)   # on PROCEED always triage — roadmap-or-not is triage's call, not research's
 size_signal: one-unit | multi-unit
+kind: research | spike   # omit for a normal research; `spike` only in spike mode (see "Spike mode")
 ---
 # Research: <idea>
 ## Verdict: <PROCEED | SHARPEN | RECONSIDER>
@@ -161,11 +171,12 @@ size_signal: one-unit | multi-unit
 |---|---|---|---|
 | 1 | <question, verbatim from the 7> | <answer> | [asked] / [assumed] / [noted] |
 ## Define — sharpened idea (draft for triage)
-- What / Why / DoD / Decisions made / Open decisions / Risk / Size signal
+- What / Why / DoD / Decisions made / Open decisions / Risk / Size signal / Spike candidates (if any)
 ## DoR (hand-off gate): What ✓ · Why ✓ · DoD ✓ · Decisions ✓
+Completeness: lenses swept <N> · missing <M> · forks <F> (spike candidates <S>)
 ## Handoff
 
-Structure: Heilmeier Catechism (DARPA) + Double Diamond (Design Council). Verdict / size-signal / Left-OUT = house method.
+Structure: Heilmeier Catechism (DARPA) + Double Diamond (Design Council) + objective-completeness (gap analysis / MECE / ISO 25010) + spike (Cynefin / XP spike). Verdict / size-signal / Left-OUT / Spike-candidates = house method.
 ```
 
 **Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
@@ -207,10 +218,22 @@ Then the plain-language summary **as a table** (the verdict stays the line above
   - **PROCEED** → `/mala-pata-triage <slug>`, passing the draft of fields from Phase 3. **Always triage — it decides the lane, including whether this merits a roadmap; your `size_signal` is a hypothesis triage validates against the code, not a routing decision.**
   - **SHARPEN** → answer the named questions and re-run research; do NOT route yet.
   - **RECONSIDER** → do NOT route; the decision is yours (kill, pivot, or proceed anyway accepting the risk with eyes open).
-- **Structure:** Heilmeier Catechism (DARPA) + Double Diamond (Design Council). Verdict / size-signal / Left-OUT = house method.
+- **Structure:** Heilmeier Catechism (DARPA) + Double Diamond (Design Council) + objective-completeness (gap analysis / MECE / ISO 25010) + spike (Cynefin / XP spike). Verdict / size-signal / Left-OUT / Spike-candidates = house method.
 
 This block is the ONLY way to close on the happy path.
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+
+## Spike mode — `/mala-pata-research --spike "<question>"`
+
+A spike is a MODE of research, not a separate skill. It probes a BROAD approach-unknown (the lane-gate "spike" outcome) and produces knowledge, not shipped code. Everything above (Phase 0 read-only, Phase 4 doc rules, domain, durable branch, engram pointer, timestamps) still applies; the differences are:
+
+- **Input is a QUESTION** (not a raw idea) — "which approach makes X possible, and what slices does that imply?" — plus a **mandatory EXIT CRITERION**: *"we can name the approach and the slices"* OR *"proved infeasible"*. Add an advisory scope/time hint (a rough day range at most); the bound is the exit criterion, never a day count.
+- **Refuse a spike with no exit criterion.** Ask for it (one question) and wait; do not start an unbounded probe.
+- **Forecast first.** Before probing, state one line of cost/scope (what will be read/measured/checked) so the human can veto it.
+- **READ-ONLY by default.** The probe investigates: reads code and docs, measures, checks feasibility against the authoritative source. Throwaway code is allowed ONLY with explicit owner approval, asked before it happens; never assume it.
+- **Output = the normal research doc** with `kind: spike` in the frontmatter and a fixed `## Finding` section: **chosen approach** · **rejected options (with evidence)** · **residual unknowns** · **effect on decomposition** (the slices/order/boundaries that follow). Spike code, if any was approved, is disposable unless the finding says "promote as a tracer bullet", in which case a normal lane implements it properly.
+- **Re-entry is always `/mala-pata-triage <slug>`** — it reads the finding as research (Phase 0.5) and decides the lane; an approach now known goes to organic/loop, a changed decomposition goes to roadmap, an infeasible finding is a RECONSIDER.
+- **Anti-ceremony guard:** a phase (or question) may be spiked at most ONCE without an explicit human decision to spike again.
 
 ## Closing notes
 

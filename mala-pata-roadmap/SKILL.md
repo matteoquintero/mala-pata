@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.19.2"
+  version: "2.20.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -80,6 +80,8 @@ than too little.** There are two symmetric errors to avoid:
 (a metric, a report) and planning only that facet.
 **Covering only what the human said** — the request is incomplete by default; if you do not look for what
 is missing, the human ends up discovering it in production.
+
+> **Canonical objective-completeness rule — single source of truth.** Apply `_shared/mala-pata-objective-completeness.md` verbatim (dimension sweep, fork test, Level 1/2 proportionality); it supersedes any restatement in this skill. Do not paraphrase or re-derive it. The three sources and MECE check below are how the roadmap APPLIES it at full breadth.
 
 Define the **desired state** (the COMPLETE objective) by joining THREE sources:
 
@@ -152,8 +154,11 @@ Produce the phase graph with these rules (all of them, none optional):
   - Is a decision still open? **Distinguish before marking loop** (not "there is a decision → loop"):
     - **Decidable with a question** (known options, the human chooses) → NOT loop: tentative
       **organic**, and note the question triage will ask on arrival to close it.
-    - **Needs design** (viable architectures with tradeoffs to investigate, or options that
-      cannot be known without exploring) → tentative **loop:PROFILE** (FULL/STANDARD/LITE/MINIMAL).
+    - **Needs design** (a SCOPED design choice per the lane-gate: boundaries known, viable designs
+      with tradeoffs) → tentative **loop:PROFILE** (FULL/STANDARD/LITE/MINIMAL).
+    - **Approach unknown** (broad; a probe is needed before options or boundaries can be listed —
+      per the lane-gate's ordered test) → NOT loop: the phase is SPLIT into
+      `spike → implementation phase(s)` (see "Spike phases" below).
   - For each loop phase, note **which design decision** makes it loop — it is what triage re-checks
     on arrival (if it is already resolved, the phase becomes organic).
 - **Split only when the cut PAYS OFF — default to fewer, bigger phases.** The number to minimize is
@@ -187,6 +192,13 @@ Produce the phase graph with these rules (all of them, none optional):
   slice**: every phase must be a shippable, independently testable slice that fits in ONE unit and
   isolates its context (the IN/OUT and ceiling rules above). A cut that produces something that cannot
   ship or be verified on its own is too fine — reject it no matter how it affects the loop count.
+
+### Spike phases and tracer bullets
+
+- **`Kind: spike`** is a phase type alongside `code` / `ops`, with tentative route `spike`. It runs as `/mala-pata-research --spike "<question>"` (read-only, scope-boxed by an exit criterion), produces a finding, and **blocks its dependents**: the implementation phase(s) it unlocks list it in `Depends on`. A spike phase is not a lane that ships; its re-entry is `/mala-pata-triage` on the finding.
+- **A phase whose APPROACH is unknown is SPLIT into `spike → implementation phase(s)`** instead of being forced to `loop`. The loop-count minimization rule above keeps working (the spike is not a loop).
+- **If the broad unknown affects the WHOLE objective** (not one phase), do NOT write a DAG on an unknown approach: **bounce to `/mala-pata-research --spike`** (mirror of Hard rule #2's bounce to triage), say in one line what is unknown, and stop.
+- **Tracer bullet / walking skeleton** is a slicing tactic, NOT a spike: a kept, thin PRODUCTION slice for when the approach is CHOSEN but integration is unproven. Place it FIRST in the DAG as an ordinary organic/loop phase.
 
 ## Step 4-bis — Tentative route vs triage decision (contract)
 
@@ -354,7 +366,7 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 ### Phase 1 — <name>
 - **Tentative route**: loop:STANDARD  ·  **Depends on**: —  ·  **Deferrable?**: no (core) | yes
 - **Deferrable?**: `no` = core, it has to be done for the value to exist; `yes` = can be done later without breaking the core. It is a business PRIORITY axis, distinct from "Depends on" (which is technical). The gate (Step 5) reads this mark for core-vs-complete.
-- **Kind**: `code` (git-tracked; the radar derives state from the commit trailer) | `ops` (external infra/manual — hosting/database/repo-platform settings/paperwork — **no git artifact**).
+- **Kind**: `code` (git-tracked; the radar derives state from the commit trailer) | `ops` (external infra/manual — hosting/database/repo-platform settings/paperwork — **no git artifact**) | `spike` (a read-only probe of an unknown approach, tentative route `spike`, run via `/mala-pata-research --spike`; its output is a research finding, not a code commit — state is read from the finding doc, and its dependents stay blocked until it lands).
 - **Verify / Status / Evidence** (ops phases ONLY): `Verify:` how a human confirms it (URL / command / health check) · `Status:` pending | done · `Evidence:` env URL / project id / health 200 / date — maintained as the ops work lands; the radar reads this (provenance `[attested]`), since git cannot see ops phases.
 - **slug**: `<stable-kebab>` — the change-name it will use when executed (branch `<type>/<slug>`). On execution the landing commit carries the trailer `Mala-Pata-Phase: <slug>`, and `mala-pata-roadmap-radar` matches progress **by that trailer** — not by branch or commit subject, because branches get deleted on cleanup. Unique and stable; do not change it between roadmap versions.
 - **Why that route**: <if loop: THE DESIGN decision that makes it loop — what triage re-checks (a decision decidable-with-a-question does NOT go to loop); if organic/shot: "What+Done+Decisions already statable">

@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.13.1"
+  version: "1.15.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -14,7 +14,7 @@ User request: **input delivered by the CLI**
 Your only job is to **read the request and decide the lane**, then **answer which skill to run**. You do not generate kickoffs, you do not write files, you do not touch code. You are the gate — the strict format IS the router — separated from the three lanes that consume it.
 
 > **You execute NOTHING.** Do NOT create a worktree, do NOT write a kickoff, do NOT run phases of any cycle.
-> The result is ALWAYS one of these: (a) a direct read-only answer, (b) "→ run `/mala-pata-shot`" (trivial, understood change), (c) "→ run `/mala-pata-organic`" with the field draft, (d) "→ run `/mala-pata-loop`", (e) "→ run `/mala-pata-roadmap`", or (f) `vague work ` asking for the minimum.
+> The result is ALWAYS one of these: (a) a direct read-only answer, (b) "→ run `/mala-pata-shot`" (trivial, understood change), (c) "→ run `/mala-pata-organic`" with the field draft, (d) "→ run `/mala-pata-loop`", (e) "→ run `/mala-pata-roadmap`", (e2) "→ run `/mala-pata-research --spike`" (approach unknown), or (f) `vague work ` asking for the minimum.
 
 > **Triage does not dispatch `sdd-*` agents.** It is a pure decision skill — the gentle-ai `PreToolUse:Agent` preflight does not apply here, just as it does not apply to `/mala-pata-organic`.
 > **The lanes remain directly invokable** if the human already knows which one it is (`/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop`, `/mala-pata-roadmap`). Triage is the recommended entry when you do NOT know where it goes — not a mandatory step.
@@ -74,9 +74,10 @@ If the project has no captured standard yet, say so in one line and continue (th
 - **What + Done statable and Decisions resolved/obvious** (but not trivial enough for shot) → **organic**.
   Answer: `→ run /mala-pata-organic`, and hand it as a draft the fields you already inferred (What / Why / DoD / Decisions / Risk) so organic confirms instead of starting from scratch. The same draft goes to `/mala-pata-loop`. **Optional `change_name`**: when triage was invoked for a roadmap phase (the arg is a slug), add `change_name: <slug>` to the draft so the lane uses it as the change-name; when free-standing, omit it.
 
-- **Open decision — distinguish whether it is DECIDABLE or NEEDS DESIGN** (this is the loop discriminator; NOT "there is a decision → loop"):
+- **Open decision — distinguish DECIDABLE, NEEDS DESIGN, or APPROACH UNKNOWN** (the loop-vs-spike split lives in the lane-gate; NOT "there is a decision → loop"):
   - **Decidable with one question** (known options and the human chooses, a preference, or a product call) → NOT loop. Ask **that** focused question, stop and wait; once resolved → **organic** (or **shot** if it is also trivial: 1-3 files, no migration/contract/new UI). Test: *can I state the options and does one answer close them?*
-  - **Needs design** (several viable architectures with tradeoffs to investigate, or the options are not known without exploring) → **loop**. Answer: `→ run /mala-pata-loop`. Test: *do I need to investigate/explore to even know the options or their tradeoffs?*
+  - **Needs design** (a SCOPED design choice — boundaries known, several viable designs with tradeoffs) → **loop**, per the lane-gate. Answer: `→ run /mala-pata-loop`.
+  - **Approach unknown** (broad; a probe is needed before options or boundaries can even be listed — per the lane-gate's ordered test) → **spike**. Answer: `→ run /mala-pata-research --spike "<question>"`, naming the specific unknown and handing the draft fields. `Reason: approach unknown, a probe is required before options can be listed`. Phase 0.5 already reads research docs, so the resulting spike finding is just one more doc to read when it comes back through triage.
 
 - **Genuinely multi-unit — TRIAGE OWNS the "roadmap or not" call.** Do NOT inherit it from research's `size_signal` nor from the human asking for a roadmap — those are hypotheses. It is a roadmap ONLY when the objective needs **decomposition into several INDEPENDENT vertical slices**, or carries **several open architecture decisions** that each need their own unit. It is NOT a roadmap just because the request is long or lists many things.
   - Genuinely needs decomposition → **roadmap**. Answer: `→ run /mala-pata-roadmap`.
@@ -93,7 +94,7 @@ If the project has no captured standard yet, say so in one line and continue (th
 
 Reason through the gate first; the LAST thing you emit is EXACTLY the shape below — same lines, same columns, same order, values filled in. Never replace the table with vertical `Field:/Value:` blocks or with prose.
 
-1. **Decision line (always first):** `Lane: <shot | organic | loop | roadmap> — Reason: <the test that applied, one line>`.
+1. **Decision line (always first):** `Lane: <shot | organic | loop | roadmap | spike> — Reason: <the test that applied, one line>`.
 2. **Draft (only when routing to organic/loop)** — copy this table and fill the values. **Every cell is ONE line** — no multi-sentence cells, no `<br>`, no paragraphs; if a value needs more, compress it (the full detail belongs in the kickoff the lane writes, not here):
 
    | Field | Value | Provenance |
@@ -107,6 +108,7 @@ Reason through the gate first; the LAST thing you emit is EXACTLY the shape belo
    **One objective per What — a compound What is a routing signal, not a formatting problem.** If the What only holds together with an "and" joining two independent deliverables (e.g. "rename the field AND hide the toggle AND fix the printout"), do NOT cram them into one cell: either they are ONE coherent vertical change — then state the single OUTCOME they add up to (the one capability or behavior the pieces serve together) — or they are several, which is the multi-unit signal (consider roadmap, or name the primary and flag the rest). Same rule for the DoD: Given/When/Then describes ONE observable outcome; stacked `And` clauses each asserting a different deliverable are the same smell. Compress to the real objective; never let the draft smuggle a decomposition past the gate as "one line".
 
    Add a `change_name: <slug>` row when triage was invoked for a roadmap phase (omit when free-standing).
+   Add a `kind: <feature|bug>` row (default `feature`) — a **NON-routing** tag: a bug still routes by size×uncertainty like any other change (it never adds a lane and never changes the gate), exactly as `size-hint` does not route. When `kind: bug`, add one line under the draft: `Bug: apply _shared/mala-pata-bug-entry-check.md in the chosen lane.` The lane carries `kind` into the kickoff.
    Add a `research: <slug[, slug...]>` row when triage came FROM `/mala-pata-research` (the arg is a research slug, the request names a research doc, or Phase 0.5 synthesized several), so the lane records them in the kickoff and `organic-start`/`loop-start` carries EVERY `mala-pata/research/<slug>.md` into the feature's PR, tied to the commit. List ALL the synthesized slugs, not just one. Omit the row when there was no research (the lane defaults to `research: none`).
 
    **Open product decisions — flag, do NOT invent.** If a draft field hides a scope/behavior call only the human can make (what is IN vs OUT, who can do it / permissions, side-effects on other systems or data), write the cell as `open: <the question>` instead of guessing a value. The lane (organic/loop) MUST ask these one at a time before locking the kickoff — triage decides the lane and flags them; `/mala-pata-research` is what resolves them fully when the uncertainty is deep. Guessing a product decision and passing it as settled is the failure.

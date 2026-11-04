@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.3"
+  version: "1.13.0"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -44,7 +44,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
    - If it is a **domain** (e.g. `<domain>`) → list `mala-pata/roadmap/*.md` and keep ONLY those whose frontmatter `domain:` matches (the owner field — do NOT guess by filename). Roadmaps of OTHER domains are excluded: **never mix domains in one run.** An old roadmap with no `domain:` → fall back to matching its slug/name and note it was matched heuristically.
    - If several candidates and none specified → list them and ask which one (one question, stop and wait).
    - If NO roadmap matches → do NOT dead-end: if the domain was built via SDD loops/changes (no roadmap), point to `/mala-pata-radar` (needs no roadmap `.md`); if the roadmap was archived, ask for its path. Do not invent phases.
-3. Read the roadmap's frontmatter `domain:` (the owner — used for scoping above). Then from the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**. From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
+3. Read the roadmap's frontmatter `domain:` (the owner — used for scoping above). Then from the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`/`spike`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**; for `spike` phases the **question** and the finding doc slug (`mala-pata/research/<slug>.md`). From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
 
 ## Phase 1 — Freshness (live git, zero cache)
 
@@ -72,6 +72,13 @@ Derive:
 - **`? unbound (confirm)`** — implementing commits CLEARLY exist but cannot be tied to the slug (work landed under another slug/PR): show those commits and ask the human — **NEVER a confident `pending` when work demonstrably exists.**
 - **blocked** — `pending` with at least one `Depends on` not `done`.
 
+**`spike` phases — state comes from the FINDING, NOT from a merged code slice.** A spike ships knowledge, not code, so NEVER derive it from a merged PR/branch/trailer. Read the finding doc (`mala-pata/research/<slug>.md`, frontmatter `kind: spike`, fixed `## Finding` section) in the repo:
+- **done** — the finding doc exists with a filled `## Finding` (chosen approach · rejected options · residual unknowns · effect on decomposition) AND the spike has **re-entered the pipeline** (its finding was handed to `/mala-pata-triage`: evidenced by a dependent phase now having a fixed Route/kickoff, or the finding/roadmap recording the triage hand-off). Evidence: the finding path `[finding]`. A finding written but not yet re-entered is `◐ in progress` with note "finding written, awaiting triage re-entry" — dependents stay blocked.
+- **in progress** — the spike was started (a research doc with `kind: spike` exists or a live research branch for the slug) but has no filled `## Finding` yet (or the finding is not yet re-entered, see above).
+- **pending** — not started: no finding doc and no live research branch for the slug.
+- **blocked** — pending with at least one `Depends on` not `done`.
+- **A spike BLOCKS its dependents until it is `done`** (its finding may reshape the decomposition): any phase listing the spike in `Depends on` is `blocked` while the spike is `pending` or `in progress` — never `ready to start now`.
+
 **`ops` phases — NO git artifact; read the declared status.** deploy/infra/manual steps leave nothing in git, so **NEVER mark an `ops` phase `pending`/`blocked` for lacking a branch/trailer.** Read the `.md`'s declared fields:
 - **done** — `Status: done` AND `Evidence` present (URL/id/health/date). Evidence: that string `[attested]`.
 - **pending** — `Status: pending`, OR `done` WITHOUT evidence (attested-without-evidence is NOT done — same honesty rule as gaps). Show the phase's `Verify` so the human can confirm it.
@@ -95,6 +102,7 @@ Derivation rules:
   - **Route = organic | loop** → look for the kickoff `mala-pata/kickoffs/<slug>.md`:
     - kickoff MISSING → the lane creator `/mala-pata-organic <slug>` or `/mala-pata-loop <slug>` (writes the kickoff).
     - kickoff PRESENT → the runner `/mala-pata-organic-start <abs kickoff path>` or `/mala-pata-loop-start <abs kickoff path>`.
+  - **Route = spike** → `/mala-pata-research --spike "<question>"` (pending); in progress with a written finding → `/mala-pata-triage <finding path>` to re-enter the pipeline.
   - **Route = ops** → no command; verify manually per the phase's `Verify` (attested).
 
 ## Output — fixed format (ALWAYS identical)
@@ -122,6 +130,7 @@ Then the real table:
 | 3 | <name> | <slug> | shot | 1 | ○ pending | no trailer/branch |
 | 4 | <name> | <slug> | ops | — | ✓ done | <env URL / health 200 / date> [attested] |
 | 5 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
+| 6 | <name> | <slug> | spike | — | ✓ done | finding mala-pata/research/<slug>.md, re-entered via triage [finding] |
 
 Then, for the "ready to start now" phases, the **Next step** block (plain text, copy-paste — the radar does NOT run it and does NOT offer to; it only shows the command the human may copy):
 `Next step per ready phase (pipeline triage → lane → start):`
@@ -130,12 +139,12 @@ Then, for the "ready to start now" phases, the **Next step** block (plain text, 
 (one line per ready-now phase; `ops` phases show "verify manually per Verify", no command. In-progress phases with a live kickoff show the `-start` runner to resume.)
 
 Then the closing lines (plain text):
-`Legend: ✓ done = landed in integration — confirmed by git reality (merge / PR / slug commit / artifact / optional trailer) for code, or declared with evidence for ops · ◐ in progress = live branch/PR not merged · ○ pending = NO evidence at all (code) or Status pending (ops) · ? unbound = work exists but not tied to the slug (confirm) · ✗ blocked = pending with unfinished deps · [git] = proven in git · [attested] = ops, human-declared`
+`Legend: ✓ done = landed in integration — confirmed by git reality (merge / PR / slug commit / artifact / optional trailer) for code, or declared with evidence for ops · ◐ in progress = live branch/PR not merged · ○ pending = NO evidence at all (code) or Status pending (ops) · ? unbound = work exists but not tied to the slug (confirm) · ✗ blocked = pending with unfinished deps · [git] = proven in git · [attested] = ops, human-declared · [finding] = spike, finding doc written AND re-entered via triage (a spike never lands as code)`
 `Structure: information radiator (Cockburn) + workflow-state lexicon. Live-git state derivation + ready-now computation = house method.`
 
 - The table carries **one row per roadmap phase**, in the `.md` order. No phase is omitted.
 - State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.
-- **Concrete evidence + provenance** per row: `[git]` (trailer/merge SHA, PR#, commits ahead) or `[attested]` (ops — the declared URL/id/health/date) — never a bare "ok". The provenance tag is MANDATORY so a git-proven state is never confused with an attested one.
+- **Concrete evidence + provenance** per row: `[git]` (trailer/merge SHA, PR#, commits ahead), `[attested]` (ops — the declared URL/id/health/date) or `[finding]` (spike — the finding doc path) — never a bare "ok". The provenance tag is MANDATORY so a git-proven state is never confused with an attested one.
 - If `gh`/the PR CLI was missing, the banner says so ("PRs not queried; status by branches/merges").
 - **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 

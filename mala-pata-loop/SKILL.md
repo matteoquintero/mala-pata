@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.20.1"
+  version: "1.21.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -188,6 +188,8 @@ domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 research: <research slug if this change came from /mala-pata-research, else none>   # loop-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/
+execution_strategy: none                     # none|interface-first — author proposes, human confirms (see _shared/mala-pata-execution-strategies.md)
+kind: feature                                # feature|bug — carried from triage's draft; non-routing (see _shared/mala-pata-bug-entry-check.md)
 branch_base: main|development
 delivery_mode: pr   # pr | ff-umbrella — pr = PR → merge; ff-umbrella = fast-forward INTO an umbrella branch
 umbrella: none      # when delivery_mode=ff-umbrella: target umbrella branch, MUST match umbrella/* (FF never to main/development); then branch_base = this umbrella
@@ -266,6 +268,10 @@ Verifiable criteria, not vague bullets — use Given/When/Then for observable be
 ```
 
 **Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
+
+**`execution_strategy` field**: what to build FIRST given the nature of this change (a per-change dial, orthogonal to `profile` and `tdd_mode`). Default `none`; propose `interface-first` when the work is very visual (UI-first) and the human confirms — never auto-coupled to `smoke_test`. `interface-first` MUST end by wiring the real logic; the fixture screen is never the deliverable. Definition and guardrail: `_shared/mala-pata-execution-strategies.md` — do not restate it here.
+
+**`kind` field**: `feature` (default) or `bug`, carried as-is from triage's draft. It is NON-routing — it never changes the lane. When `bug`, `loop-start` applies `_shared/mala-pata-bug-entry-check.md`; record the tracker issue link in the kickoff if one exists.
 
 The kickoff MUST include the full frontmatter and the "Method rules" block with the paths to the MDs — the executor reads them at startup. Those `references/profiles/...` paths are relative to the `mala-pata-loop` skill directory (not the repo); `/mala-pata-loop-start` resolves them against the installed skill dir. Do not compress the Definition of Done so that it "fits": there is no longer a character budget, use the space the change needs.
 

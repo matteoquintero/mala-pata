@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.18.2"
+  version: "3.19.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -107,6 +107,8 @@ tdd_mode: <strict|standard>                  # from sdd-init/<project>
 smoke_test:                                  # does it need manual testing with seeded data after apply? (organic-start confirms)
   needed: auto                               # auto|yes|no — auto = organic-start proposes and the human confirms
   data: <scenario/data to seed, or "a definir">
+execution_strategy: none                     # none|interface-first — author proposes, human confirms (see _shared/mala-pata-execution-strategies.md)
+kind: feature                                # feature|bug — carried from triage's draft; non-routing (see _shared/mala-pata-bug-entry-check.md)
 created_at: <ISO 8601>
 ---
 
@@ -138,6 +140,10 @@ created_at: <ISO 8601>
 **Set `research:`** from triage's draft (the `research:` row it adds when the change came from `/mala-pata-research`), or from the human if they ran research directly and name it; otherwise `none`. This is the link `organic-start` uses to carry `mala-pata/research/<slug>.md` into the feature branch so the planning doc lands in the PR, not loose on base.
 
 **`smoke_test` field**: capture early whether the change is likely to need a manual test with seeded data after apply (gate of `organic-start`, Step 7 / 4.1-ter). Default `needed: auto` — `organic-start` proposes yes/no based on the shape of the change and the human confirms; set `yes`/`no` only if you already know. In `data`, one line with the scenario to seed, or "a definir". The seed uses the project's mechanism and runs against the test DB.
+
+**`execution_strategy` field**: what to build FIRST given the nature of this change (a per-change dial, orthogonal to `lane` and `tdd_mode`). Default `none`; propose `interface-first` when the work is very visual (UI-first) and the human confirms — like `smoke_test`, never auto-coupled to it. `interface-first` MUST end by wiring the real logic; the fixture screen is never the deliverable. Definition and guardrail: `_shared/mala-pata-execution-strategies.md` — do not restate it here.
+
+**`kind` field**: `feature` (default) or `bug`, carried as-is from triage's draft row. It is NON-routing — it never changes the lane. When `bug`, `organic-start` applies `_shared/mala-pata-bug-entry-check.md`; record the tracker issue link in the kickoff if one exists.
 
 ## Phase 3 — One-line pointer in engram
 

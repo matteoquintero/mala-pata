@@ -1,10 +1,10 @@
 ---
 name: mala-pata-art
-description: Visual judgment / design director — loaded to guide HOW to improve something that does not look right visually, with a cited body of principles (Gestalt, Swiss, Bauhaus, Rams, Vignelli, Albers, Norman, Laws of UX, Refactoring UI, modern craft) + hard invariants + the project's design system. Given a prompt like "usá este skill para mejorar este artefacto/HTML/componente", it generates an advice MD (the judgment applied to THAT case) and, if asked, applies the improvement in the same run — with the human eye as the final gate. It is to ODD what clean-architecture/solid are to code. It is NOT a router — it does NOT decide or propose organic/loop/shot (it is orthogonal to the lanes). It does NOT use prescriptive palettes/typefaces; the concrete values come from the project's system (the captured standard from /mala-pata-standards — approved rules — when it exists, else read from the code) + the judgment. Trigger — "mejorá visualmente esto", "usá mala-pata-art para…", "esto no me gusta cómo se ve", "guía de diseño para X".
+description: Visual judgment / design director — loaded to guide HOW to improve something that does not look right visually, with a cited body of principles (Gestalt, Swiss, Bauhaus, Rams, Vignelli, Albers, Norman, Laws of UX, Refactoring UI, Atomic Design, Component-Driven, Value-Sensitive Design, modern craft) + hard invariants + the project's design system. Given a prompt like "usá este skill para mejorar este artefacto/HTML/componente", it generates an advice MD (the judgment applied to THAT case) and, if asked, applies the improvement in the same run — with the human eye as the final gate. It is to ODD what clean-architecture/solid are to code. It is NOT a router — it does NOT decide or propose organic/loop/shot (it is orthogonal to the lanes). It does NOT use prescriptive palettes/typefaces; the concrete values come from the project's system (the captured standard from /mala-pata-standards — approved rules — when it exists, else read from the code) + the judgment. Trigger — "mejorá visualmente esto", "usá mala-pata-art para…", "esto no me gusta cómo se ve", "guía de diseño para X".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -53,6 +53,8 @@ Translate each one into a concrete action on the UI:
 - **Laws of UX** (Yablonski) — Hick (fewer options), Fitts (large/close targets), Miller (7±2), aesthetic-usability, Von Restorff (make the key thing stand out by isolation), serial position.
 - **Norman** — clear affordances and signifiers, immediate feedback, natural mapping, constraints that prevent error.
 - **Modern craft** — **expressive** minimalism (few elements, with energy), tokens-first, **one signature detail** per screen, cut sections that do not earn their place.
+- **Atomic Design** (Brad Frost) — compose the UI bottom-up: atoms → molecules → organisms → templates → pages; fix at the smallest reusable level, not per-screen, so the change propagates by composition.
+- **Component-Driven** (Coleman) — judge and build UI as isolated, composable components first, then assemble screens; a fix to a shared component lands everywhere it is used (pairs with Atomic Design).
 
 ### Level 2 — Philosophy / direction (the "why" / the taste — a guide, not a checklist)
 - **Bauhaus** (Gropius, Itten, Albers, Moholy-Nagy) — form follows function, truth to materials.
@@ -60,6 +62,7 @@ Translate each one into a concrete action on the UI:
 - **Vignelli** (*Canon*) — discipline, appropriateness, semantics; style serves purpose, not style for its own sake.
 - **Tschichold** (*The New Typography*) — asymmetry, white space as structure.
 - **Paul Rand** — simplicity, memorability, wit.
+- **Value-Sensitive Design** (Batya Friedman) — account for human values and stakeholders (accessibility, inclusion, consent, potential harm) throughout the design, not only aesthetics; a visual choice that excludes or harms a user fails regardless of how it looks.
 
 ### Level 3 — Contextual (only when it applies)
 - **Tufte** — data-ink ratio, chartjunk, lie factor, small multiples → **only if there is data/charts**.
@@ -105,7 +108,7 @@ If the project has NO system at all, propose a minimal one (spacing scale, neutr
 
    **Emit every structural label verbatim in English** — section headers, field labels and table/column headers (`Bottom line`, `Finding (observable)`, `Principle violated (cited)`, `Severity`, `Change`) stay English even when the conversation is in the user's language; only the values are localized.
 
-   `Structure: Gestalt + Swiss grid (Müller-Brockmann) + Bauhaus + Dieter Rams + Norman + Laws of UX (Yablonski) + Refactoring UI (Wathan/Schoger). Invariants-first ordering + 3-level judgment = house method.`
+   `Structure: Gestalt + Swiss grid (Müller-Brockmann) + Bauhaus + Dieter Rams + Norman + Laws of UX (Yablonski) + Refactoring UI (Wathan/Schoger) + Atomic Design (Frost) + Component-Driven (Coleman) + Value-Sensitive Design (Friedman). Invariants-first ordering + 3-level judgment = house method.`
 5. **Apply (optional, if asked)**: never on `main`/the default branch — work on a branch (if on main/development, `git switch -c <type>/<slug>` first, same safe-branch rule as `mala-pata-shot`). In the same run, improve the thing following that MD + the invariants + the project's system. Respect SVG-only, the no-emoji invariant (7), project tokens.
 6. **Human gate (ALWAYS the last line)**: after the Advice MD (and the before/after if you applied), close with the human-eye gate — present the MD / before-after and wait for their OK or adjustments. Their eye is the final gate and this line is the **last thing you emit**, after the Structure footer.
 

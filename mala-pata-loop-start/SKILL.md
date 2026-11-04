@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the kickoff that /mala-pata-loop
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.24.2"
+  version: "1.25.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -45,7 +45,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
 
 1. If the input is an absolute path (starts with `/`) → `Read` directly on that file. If the file does not exist → **STOP** and ask for the correct path. Do not invent the context.
 1.5. **Method-rules paths**: the kickoff's "Method rules" section lists `references/profiles/_base.md` and `references/profiles/<perfil>.md`, relative to the `mala-pata-loop` skill directory. Resolve them against the installed skill dir (e.g. `~/.agent-skills/mala-pata-loop/references/profiles/` or `~/.claude/skills/mala-pata-loop/references/profiles/`), not against the cwd/worktree, and `Read` them.
-2. Read the frontmatter (change_name, profile, project, domain, roadmap, research, branch, branch_base, worktree, depends_on, parallelizable_with, migrations_reserved) and the WHOLE body: method rules, project context, contract, technical reinterpretation, architecture, conditional skills, **open decisions**, phase plan, Definition of Done.
+2. Read the frontmatter (change_name, profile, project, domain, roadmap, research, branch, branch_base, `execution_strategy` (default `none`), `kind` (default `feature`), worktree, depends_on, parallelizable_with, migrations_reserved) and the WHOLE body: method rules, project context, contract, technical reinterpretation, architecture, conditional skills, **open decisions**, phase plan, Definition of Done.
 
 **Legacy format (kickoffs created before this change — only for compatibility, do not use it for new kickoffs)**: if the input is NOT an absolute path, it may come as **(a)** an engram id (`#1234` or `1234`), **(b)** a topic_key (`sdd/<change-name>/kickoff`), or **(c)** the old combined format `sdd/<change-name>/kickoff · engram #<id>`.
 3. With `#<number>` (cases a/c) → `mem_get_observation(id: <number>)` DIRECTLY, never `mem_search`.
@@ -165,7 +165,7 @@ Run the phases IN ORDER, **one by one** (never two together, never spec and desi
    5. **A>0 and B>0** (the worktree ALREADY has commits of its own — typical when RESUMING mid-apply) → **the only situation that STOPS**: it is no longer ff, it is rebase/merge with possible conflict. Report and offer `git -C <ABS-worktree> rebase origin/<base>`; if there are conflicts, leave the worktree as is and wait for a human decision. **Never force** (`--force`, `reset --hard`, `--no-verify`).
    6. **Cross-check with migrations**: if `A>0` and this change has a migration, a sibling branch may have merged its migration in that advance → fire early the number re-verification of Step 4.1-bis (measure git). If your provisional number was taken by another branch, renumber (regenerate) **BEFORE apply**, not at merge — it is cheaper to discover it here.
    7. After the fast-forward, reconfirm the executable environment (the `.env`/`node_modules` symlinks survive an ff, but verify they are still resolved) before starting apply.
-7. **Apply** (`sdd-apply`) — only now is code written. For each task: **STRICT TDD** (Red → Green → Refactor) + **100% verify** (0 warnings/critical). Migration with the kickoff's **provisional** number (it is NOT yet final — it is confirmed or renumbered at merge, see Step 4.1-bis), validated **according to the project's testing convention** (round-trip if applicable). Persist `apply-progress` (MERGE, not overwrite). On closing each batch/phase → summary + PAUSE.
+7. **Apply** (`sdd-apply`) — only now is code written. **Execution strategy**: apply the kickoff's `execution_strategy` when ordering the tasks and **forward it to the `sdd-apply` delegation**, exactly as `tdd_mode` is forwarded. `none` → no change. Anything else → follow `_shared/mala-pata-execution-strategies.md` verbatim (including its mandatory wiring guardrail); do not restate it. **Bug entry check**: when the kickoff's `kind: bug`, apply `_shared/mala-pata-bug-entry-check.md` before the first code write and carry it into the `sdd-apply` delegation; `kind` never changes the lane. For each task: **STRICT TDD** (Red → Green → Refactor) + **100% verify** (0 warnings/critical). Migration with the kickoff's **provisional** number (it is NOT yet final — it is confirmed or renumbered at merge, see Step 4.1-bis), validated **according to the project's testing convention** (round-trip if applicable). Persist `apply-progress` (MERGE, not overwrite). On closing each batch/phase → summary + PAUSE.
    - Phase 0 (if there is UI) — **MANDATORY Storybook-first + Atomic Design + reuse-first** (recurring error: things get created without this):
      - **BEFORE building, audit the project's library/workshop and list REUSES / ADAPTS / NEW per component** — reuse or compose on top of what exists, only create what does not exist.
      - Build with **Atomic Design**: **atom → molecule → organism**, in that order; no monolithic organisms. One story per component with its states/variants.

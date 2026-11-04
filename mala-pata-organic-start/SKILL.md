@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.23.2"
+  version: "1.24.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -42,7 +42,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 ## Step 1 — Load the kickoff + engram context
 
 1. The input is normally just the **change-name / slug**, which resolves to `<repo-root>/mala-pata/kickoffs/<change-name>.md` (`git -C <cwd> rev-parse --show-toplevel`); an absolute path also works. **Prefer the slug — the full path is a pain, you do not need it.** If no kickoff resolves → **STOP** and ask for the slug. Do not invent the context.
-2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`, `domain`, `roadmap`, `research`, `delivery_mode`, `umbrella`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
+2. `Read` in full: frontmatter (`change_name`, `project`, `route: organic`, `base`, `branch`, `worktree`, `tdd_mode`, `execution_strategy` (default `none`), `kind` (default `feature`), `domain`, `roadmap`, `research`, `delivery_mode`, `umbrella`) and body (What, Why, DoD, Decisions already made, Risk, Where-hint).
 3. If `route` is not `organic` → **STOP**: this kickoff is not for this skill (it is probably a `/mala-pata-loop` kickoff, which uses `/mala-pata-loop-start`).
 4. `mem_search("odd/<change_name>/kickoff")` only to confirm the pointer — it is not blocking if it fails, the file is already the source of truth.
 
@@ -83,6 +83,9 @@ Before the first write: create `mala-pata/odd/<change_name>.md` + its engram mir
 ## Step 6 — Implement task-by-task (ODD 6)
 
 For each task: the **smallest topology** — direct inline (1-3 already-understood files) / delegated direct (understand 4+ or write 2+ non-trivial) — with the **project's TDD mode** (`strict_tdd` from sdd-init) and the applicable checks. Check off the task only after **observing** its result + checks; update the feature-doc and the mirror. **Before running ANY test suite, apply the test-DB guard below — forward it in the writer delegation.**
+
+- **Execution strategy**: apply the kickoff's `execution_strategy` when ordering the tasks and **forward it to every writer delegation**, exactly as `tdd_mode` is forwarded. `none` → no change. Anything else → follow `_shared/mala-pata-execution-strategies.md` verbatim (including its mandatory wiring guardrail); do not restate it.
+- **Bug entry check**: when the kickoff's `kind: bug`, apply `_shared/mala-pata-bug-entry-check.md` before the first code write and carry it into the writer delegation; `kind` never changes the lane.
 
 > **Canonical test-DB guard — single source of truth.** Apply `_shared/mala-pata-test-db-guard.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 

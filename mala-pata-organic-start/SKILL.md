@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.24.0"
+  version: "1.25.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -123,11 +123,13 @@ Then the table — one milestone per row, 3 columns. Status uses the shared work
 | CI post-merge | ✓ done | GREEN |
 | Cleanup (worktree + branch) | ✓ done | branch + worktree removed |
 
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — columns `Milestone` · `Status` · `Evidence`; BLUF label `Result:`; the Milestone column is exactly this set: `Authorization` · `Worktree + base` · `Explore (Where)` · `Feature-doc (if substantial)` · `Apply (TDD if applies)` · `Migrations (if any)` · `Smoke test (fixtures)` · `Work-unit commits` · `RDD per commit (if enabled)` · `PR #<n> → <branch>` · `CI post-merge` · `Cleanup (worktree + branch)`; Status tokens `✓ done` · `◐ partial: <reason>` · `○ pending` · `✗ blocked: <reason>` · `∅ n/a`. Omit a row that does not apply; never rename or translate a Milestone.
 **No false green**: any milestone left partial/blocked carries its reason in Status (`◐ partial: <reason>` / `✗ blocked: <reason>`) — never mark `✓ done` over a red pipeline.
 
 **Structure:** Definition of Done + information radiator (Cockburn).
 
-**Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+**Emit this block's structural labels verbatim in English** — the enumerated set above is frozen: section headers, the Milestone-column labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Persistence
 

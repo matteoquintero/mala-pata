@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -72,6 +72,9 @@ A `✗` on a phase stops the flow if later phases depend on it; otherwise contin
    | # | Phase | Assert (Then) | Evidence | Result |
    |---|---|---|---|---|
    | 1 | <when → then> | <what was asserted> | `<NN>-<step>.png` | ✓ pass · ✗ fail |
+
+   **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+   **Frozen Run-record labels** — BLUF label `Smoke —` with fields `console/network`, `delicacy` (`low` / `medium` / `high`) and `evidence →`; columns `#` · `Phase` · `Assert (Then)` · `Evidence` · `Result`; Result tokens `✓ pass` · `✗ fail`. Emit them verbatim in English even when the conversation is in another language; only the cell values are localized. A **Declared report** from the walkthrough's `## Outputs` keeps the walkthrough's own pinned labels, not this set.
 
 3. The **trace path** + the evidence folder (also in the BLUF).
 

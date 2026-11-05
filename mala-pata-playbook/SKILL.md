@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.1"
+  version: "1.5.0"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -123,6 +123,9 @@ Render the decision tree as a real Markdown table (NEVER fenced; one line per ce
   ```
 
 `Structure: decision-tree playbook (first-match branches + Others fallback) + diagnostic triage (commit-to-route, symptom→cause→action) + playbook-orchestrates-runbooks + crystallization (stable branch → runbook). Method-vs-findings split + golden-rules/gotchas living doc = house method.`
+
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — title `Playbook ready`; BLUF label `Playbook:`; readback columns `Condition` · `Branch` · `Action`; block labels `OPEN`, `File`, `Next step`, `Structure`. The decision-tree table of the document body uses the columns `Condition (observed, measurable)` · `Branch` · `Action (inline steps or runbook)` · `Expected outcome` · `Owner` · `Rollback`, and the fallback row label `Others (fallback)`. Emit them verbatim in English even when the conversation is in another language; only the values are localized.
 
 ## What it does NOT do (invariants)
 

@@ -4,7 +4,7 @@ description: PLAN the defrost of an icebox — classify each frozen cube (triage
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.1"
+  version: "0.3.0"
 ---
 
 # /mala-pata-icebox-defrost — plan the melt (classify + approval table, then STOP)
@@ -90,7 +90,7 @@ plan_created_at: <ISO 8601>
 
 - **Structure:** plan/run split (approve before the expensive step) + triage form-gate classification. Icebox defrost plan = house method.
 
-Emit the structural labels above (Defrost plan, BLUF, Plan, Next step, Structure) **verbatim in English**; only values and prose follow the conversation language.
+Apply `_shared/mala-pata-structural-labels.md` verbatim (labels are frozen: never translate, never swap for case-specific ones, omit-never-rename). Emit the structural labels above (Defrost plan, BLUF, Plan, Next step, Structure) and the approval-table columns (`cube` · `DoD` · `size-hint` · `handling` · `why`) **verbatim in English**; only values and prose follow the conversation language.
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 wrong-skill bounce; the Phase 1 missing-slug / no-frozen-cubes STOP.
 

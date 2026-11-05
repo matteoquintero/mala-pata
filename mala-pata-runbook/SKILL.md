@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.1"
+  version: "1.5.0"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -122,6 +122,9 @@ Emit exactly this, from the runbook you wrote (no invention):
   ```
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 read-only stance; a blocking open decision (Phase 2) → the single question allowed before writing.
+
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — title `Runbook ready`; BLUF label `Runbook:`; readback columns `#` · `Action` · `Expected output`; block labels `OPEN`, `File`, `Next step`, `Structure`. The Steps table of the document body uses the columns `#` · `Action` · `Expected output` · `If not as expected`. Emit them verbatim in English even when the conversation is in another language; only the values are localized.
 
 `Structure: runbooks-as-agent-instructions (explicit action + measurable threshold + declared reference) + executable decision tree (action / expected / if-not) + SRE runbook metadata (owner, last_reviewed, rollback). Trigger-as-standing-authorization + secrets-by-reference = house method.`
 

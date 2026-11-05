@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.20.0"
+  version: "2.21.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -255,13 +255,13 @@ discovering what was missing). Do the gap analysis:
 
 Then the **MANDATORY coverage table** (MECE): each axis of the desired state (Step 1) appears with EXACTLY ONE status. No axis missing nor silently slipped into Level 2 — a desired-state axis not in the table is a **silent drop** (gate fails).
 
-| Axis (desired state) | Covered by | Status |
+| Axis (desired state) | Status | Phases / reason |
 |---|---|---|
-| <axis 1> | Phases 1, 3 | covered |
-| <axis 2> | Phase 4 | covered |
-| <axis 3> | Phase 7 | extra-proposal (you didn't ask; the objective implies it) |
-| <axis 4> | — | deferred (reason / separate roadmap) |
-| <axis 5> | — | → Level 2 (reason) |
+| <axis 1> | covered | Phases 1, 3 |
+| <axis 2> | covered | Phase 4 |
+| <axis 3> | extra-proposal | Phase 7 — you didn't ask; the objective implies it |
+| <axis 4> | deferred | <reason> / separate roadmap |
+| <axis 5> | → Level 2 | <reason> |
 
 **MECE check:** `axes in Step 1: N · axes in table: N · overlaps: none` — the two counts MUST match.
 
@@ -284,7 +284,9 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 
 **Structure:** Minto Pyramid / MECE + INVEST / vertical slices + WBS 100%-rule + dependency DAG. Core-vs-complete / Deferrable / Level-1-2 / tentative-route / 3-payoff split rule = house method.
 
-**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md`: section headers (`Objective coverage`, `Loop justification`, `Split decisions`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`, `Loops`), the order line labels (`Suggested order`, `Parallelizable`, `Deferred`), and the table columns (`Phase`, `slug`, `Kind`, `Tentative route`, `Depends on`, `Deferrable?`, `Verify`, `Status`, `Evidence`, `Candidate cut`, `Payoff`, `Verdict`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+
+**Emit every structural label verbatim in English** — in BOTH this Step-5 gate presentation and the written `.md` (the coverage table has ONE shape in both places: `Axis (desired state)` · `Status` · `Phases / reason`; Status tokens `covered` · `extra-proposal` · `deferred` · `→ Level 2`; the DAG table also carries `#` and `Vertical slice (one line)`): section headers (`Objective coverage`, `Loop justification`, `Split decisions`, `Level 2 — broad domain not covered`, `Large objective`, `Architecture / seams`, `Context and research`, `DAG of phases`, `Phases in detail`), the decision-block labels (`Core vs complete`, `Magnitude of the problem`, `Cheapest workaround`, `Loops`), the order line labels (`Suggested order`, `Parallelizable`, `Deferred`), and the table columns (`Phase`, `slug`, `Kind`, `Tentative route`, `Depends on`, `Deferrable?`, `Verify`, `Status`, `Evidence`, `Candidate cut`, `Payoff`, `Verdict`). Parallelism in the order line uses `//` (e.g. `2 // 3`), not a Unicode symbol. Only the values and content follow the user's language; the labels are never localized.
 
 ## Step 6 — Where to save + write the roadmap
 

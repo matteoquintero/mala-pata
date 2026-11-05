@@ -4,7 +4,7 @@ description: HARVESTS a project's STANDARD into a captured, versioned artifact �
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.1"
+  version: "0.2.0"
 ---
 
 # /mala-pata-standards — capture a project's standard (harvest, do not invent)
@@ -97,6 +97,9 @@ Emit exactly this, from the document you wrote (no invention):
 `Structure: pattern-mining (infer the rule from repeated instances) + inconsistency-as-question (ask, never pick) + evidence-and-confidence capture. Harvest-not-invent + visual/interaction scope = house method.`
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 read-only stance; a blocking inconsistency ruling (Phase 2) → the single question allowed before writing.
+
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — title `Standard ready`; BLUF label `Standard:`; readback columns `Area` · `Status` · `Evidence`; Status tokens `approved` · `proposed` · `OPEN`; block labels `OPEN`, `File`, `Next step`, `Structure`. Emit them verbatim in English even when the conversation is in another language; only the values are localized.
 
 ## What it does NOT do (invariants)
 

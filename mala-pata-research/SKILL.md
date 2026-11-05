@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.20.0"
+  version: "1.21.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -202,7 +202,7 @@ whole doc pasted. The human decides with this alone.
     **even if it is the opposite of what the human asked for** — this is exactly what research exists for.
     Killing an idea here is cheap; after an entire roadmap, it is not.
 
-Then the plain-language summary **as a table** (the verdict stays the line above; this is the required ≥1 table):
+Then the plain-language summary **as a table** (the verdict stays the line above; this is the required ≥1 table). The Field column is a FROZEN label set, not an example to adapt:
 
 | Field | Value |
 |---|---|
@@ -213,6 +213,9 @@ Then the plain-language summary **as a table** (the verdict stays the line above
 | What matters | <main risk + open decisions> |
 | Size signal | one-unit \| multi-unit |
 
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — emit EXACTLY these, verbatim English, in this order: Title `Research:`; Field column `What it proposes` · `Why` · `What it will do` · `Problem size` · `What matters` · `Size signal` (Value for `Size signal` is the enum `one-unit | multi-unit`); verdict tokens `PROCEED` / `SHARPEN` / `RECONSIDER`; block labels `Verdict`, `Left OUT / pending`, `Doc`, `Next step`, `Structure`. Replacing a Field label with a case-specific one (for example "what was measured", "good news", "what shrinks") is a defect — put that content in the Value cell instead.
+
 - **Left OUT / pending** — MANDATORY **only if the signal is single-unit** (goes to an organic/loop/shot cycle, NOT roadmap). One line per piece from Phase 1e that fell out of scope (already-exists / derivable / extra): `<piece> — <why it stays out> — [skill rule | judgment]`. Nothing disappears silently. If multi-unit → this block does NOT go (the roadmap covers it with `Deferrable?`).
 - **Doc:** `mala-pata/research/<slug>.md`
 - **Next step — DEPENDS on the verdict:**
@@ -222,7 +225,7 @@ Then the plain-language summary **as a table** (the verdict stays the line above
 - **Structure:** Heilmeier Catechism (DARPA) + Double Diamond (Design Council) + objective-completeness (gap analysis / MECE / ISO 25010) + spike (Cynefin / XP spike). Verdict / size-signal / Left-OUT / Spike-candidates = house method.
 
 This block is the ONLY way to close on the happy path.
-- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+- **Emit this block's structural labels verbatim in English** — the enumerated set above is frozen: section headers, the Field-column labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 
 ## Spike mode — `/mala-pata-research --spike "<question>"`
 

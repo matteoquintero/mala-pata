@@ -4,7 +4,7 @@ description: CREATES a project DISCOVERY document — captures what the client a
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.2"
+  version: "0.2.0"
 ---
 
 # /mala-pata-dossier — capture project discovery (does not propose the solution)
@@ -74,21 +74,21 @@ last_reviewed: <ISO 8601>
 
 **Timestamps.** Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
-**Rendering 1 — Internal traceability doc** (fixed section order — labels verbatim English):
+**Rendering 1 — Internal traceability doc** (fixed section order — labels verbatim English, the Q1..Q6 question labels included — the house question labels below are emitted in English exactly as listed, not as the Spanish originals of the framework):
 
 | Section | What it holds |
 |---|---|
 | Header / executive summary | Project, client, participants, date, one-line objective. |
-| Q1 ¿Para qué? [ACLARAR] | The objective with a NUMBER (the measurable target). |
-| Q2 ¿Cómo es hoy? [MAPEAR] | Current flow + where it hurts + volume. |
-| Q3 ¿De qué está hecho? [DESCOMPONER] | The 6 branches (Intenciones / Identidad / Integraciones / Humano / Canal / Medición) + a stakeholders / actors map. |
-| Q4 ¿Por dónde empiezo? [VERSIÓN 1] | The MVP + a value / ease / risk priority matrix. |
-| Q5 ¿Cómo sé que funcionó? [MEDIR] | Metrics today → target. |
-| Q6 ¿Qué puede salir mal? [PROTEGER] | RAID log: risks + assumptions + constraints + dependencies + mitigation. |
+| Q1 Why? [ACLARAR] | The objective with a NUMBER (the measurable target). |
+| Q2 How is it today? [MAPEAR] | Current flow + where it hurts + volume. |
+| Q3 What is it made of? [DESCOMPONER] | The 6 branches (Intents / Identity / Integrations / Human / Channel / Measurement) + a stakeholders / actors map. |
+| Q4 Where do I start? [VERSIÓN 1] | The MVP + a value / ease / risk priority matrix. |
+| Q5 How do I know it worked? [MEDIR] | Metrics today → target. |
+| Q6 What can go wrong? [PROTEGER] | RAID log: risks + assumptions + constraints + dependencies + mitigation. |
 | Glossary | Shared terms (optional — `N/A` when not needed). |
 | Close / sign-off | Confirmed agreements + `OPEN:` items (nothing hidden). |
 
-**Rendering 2 — Client-only questionnaire** (the handout — simple, no jargon):
+**Rendering 2 — Client-only questionnaire** (the handout — simple, no jargon). **Language split (owner decision):** this client questionnaire STAYS in Spanish — it is client-facing content addressed to the client in their language, NOT a structural label, so the structural-labels rule below does not apply to it. Only Rendering 1 (internal traceability) and the close block carry verbatim-English structural labels:
 
 Sections: **Objetivo · Cómo funciona hoy · Volumen · Primera versión · Resultado y futuro · Material de apoyo**. Numbered questions with blank answer spaces, phrased in JTBD style (concrete past event, open, non-leading). Same 6-question spine underneath, plain language on the surface. It **NEVER** mixes internal notes, priorities or risks into the client handout (Diátaxis: two renders).
 
@@ -106,12 +106,15 @@ Emit exactly this, from the document you wrote (no invention):
 
 - Title: `**Discovery ready — <slug>**`
 - BLUF (plain line): `Discovery: 6 questions · <k> OPEN · 2 renderings (traceability + client questionnaire) · phase discovery`
-- A short readback table (`Q | Captured?`) — one line per question, so the human sees coverage.
+- A short readback table (`Question | Captured?`) — one line per question, so the human sees coverage.
 - **OPEN** items, if any — one per line, each needing the client/human (never hidden).
 - **File:** `mala-pata/dossier/<slug>.md`
 - **Next step** — the discovery is the INPUT to the next phase (scope / architecture), decided in a different lane (`/mala-pata-triage` → organic/loop/roadmap); dossier does NOT propose it.
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 read-only stance; a blocking open question (Phase 2) → the single question allowed before writing.
+
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — title `Discovery ready`; BLUF label `Discovery:`; readback columns `Question` · `Captured?`; block labels `OPEN`, `File`, `Next step`, `Structure`; Rendering 1 section/question labels exactly as listed in its table. Emit them verbatim in English even when the conversation is in another language; only the values are localized. **Exception — the client questionnaire (Rendering 2) stays in Spanish** (client content, not structural labels).
 
 `Structure: house 6-question discovery framework (ACLARAR→PROTEGER) + Diátaxis dual-audience (Procida) + JTBD switch interview (Moesta) + BRD/RAID wrapping (BABOK-adjacent). Phase-as-mode + traceability-vs-questionnaire split = house method.`
 

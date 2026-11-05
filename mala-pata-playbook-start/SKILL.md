@@ -4,7 +4,7 @@ description: RUNS a playbook created by /mala-pata-playbook — walks its decisi
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)
@@ -67,7 +67,7 @@ Check the playbook's **Exit criteria** (the "clean bill of health"). Met → res
    | triage | <classification> | <evidence that selected the route> | committed to <branch> |
    | <branch> | <inline or runbook> | <observed> | ✓ done · ◐ partial · ✗ stopped |
 
-   If it stopped/escalated: the row starts `✗` with the reason (ambiguous evidence / gotcha hit / exit failed) + the escalation taken. Labels verbatim English; values follow the conversation language.
+   If it stopped/escalated: the row starts `✗` with the reason (ambiguous evidence / gotcha hit / exit failed) + the escalation taken. Apply `_shared/mala-pata-structural-labels.md` verbatim (labels are frozen: never translate, never swap for case-specific ones, omit-never-rename). Frozen Run-record columns: `Step` · `Branch / action` · `Evidence` · `Outcome`. Labels verbatim English; values follow the conversation language.
 
 `Structure: decision-tree walk (gather → commit-to-route → first-match branch → verify) + stop-on-ambiguity (no guessing) + delegate deterministic leaves to the runbook runner + self-feeding findings/crystallization. Evidence-driven branch selection = house method.`
 

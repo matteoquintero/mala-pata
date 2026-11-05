@@ -4,7 +4,7 @@ description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.13.0"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree
@@ -66,7 +66,8 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 
    - Shot still does NOT push/PR/merge (that keeps the lane fast and is the human's call) — but it MUST leave the repo **clean and on a known branch**, and SHOW it. The `PR / merge` and `Repo state` rows are the guarantee you did not leave it mid-air.
    - If it did NOT finish → `Change + check` row starts `✗ stopped: <why>`; say what's left + `→ /mala-pata-organic`, and STILL report `Repo state` so you know exactly what was left (clean, or with uncommitted work on `<branch>`).
-   - Labels verbatim English; values follow the conversation language.
+   - **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+   - **Frozen close labels** — columns `Milestone` · `Status` · `Evidence`; BLUF label `Result:`; the Milestone column is exactly this set: `Safe branch` · `Change + check` · `Work-unit commit` · `RDD per commit (if on)` · `CI (if any)` · `PR / merge` · `Repo state`. Omit a row that does not apply; never rename or translate a Milestone. Labels verbatim English — the Milestone column included; values follow the conversation language.
    **Structure:** Definition of Done + Conventional Commits + information radiator (Cockburn). The shot lane itself = house method.
 
 ## Escape guard (Rule #1, but midway)

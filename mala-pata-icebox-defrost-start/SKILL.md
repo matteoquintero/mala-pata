@@ -4,7 +4,7 @@ description: RUN an approved defrost plan — the execution half of the melt. Re
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.1"
+  version: "0.2.0"
 ---
 
 # /mala-pata-icebox-defrost-start — run the approved defrost plan
@@ -79,7 +79,7 @@ Surface any **RECONSIDER** prominently (research may propose killing/parking a c
    - **Next step** — `/mala-pata-triage <slug>` per routed cube (triage re-decides the lane on arrival — the route is a forecast); `/mala-pata-roadmap <group-slug>` for a roadmap group.
    - **Structure:** plan/run split + Double Diamond (research) + lane routing (triage) + WBS grouping. Icebox defrost run / thawed / forecast-not-commitment = house method.
 
-   Emit the structural labels above (Defrosted, BLUF, Cube, Handling, Verdict, Route, Next step, Grouping notes, Icebox, Research docs, Structure) **verbatim in English**; only values and prose follow the conversation language.
+   Apply `_shared/mala-pata-structural-labels.md` verbatim (labels are frozen: never translate, never swap for case-specific ones, omit-never-rename). Emit the structural labels above (Defrosted, BLUF, Cube, Handling, Verdict, Route, Next step, Grouping notes, Icebox, Research docs, Structure) and the table columns exactly as written (`Cube` · `Sharpened (What)` · `Handling` · `Verdict` · `Route (forecast)` · `Next step`) **verbatim in English**; only values and prose follow the conversation language.
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 wrong-skill bounce; the Phase 1 missing-plan STOP.
 

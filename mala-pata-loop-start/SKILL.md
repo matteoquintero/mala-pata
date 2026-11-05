@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the kickoff that /mala-pata-loop
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.25.0"
+  version: "1.26.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -287,10 +287,13 @@ Canonical rows (include ONLY those that apply; do NOT invent a row that did not 
 
 (LITE/MINIMAL merge Spec+Design into one `Spec+Design` row; include ONLY the rows that actually happened.)
 
+> **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+**Frozen close labels** — columns `Milestone` · `Status` · `Evidence`; BLUF label `Result:`; the Milestone column is exactly the canonical row set above (`Worktree + base` · `Explore` · `Propose` · `Spec` · `Design` · `Tasks` · `Preview gate` · `Apply (TDD)` · `Verify` · `Review per candidate (if RDD on)` · `Migrations (if any)` · `Smoke test (fixtures + human confirmation)` · `e2e real case <id>` · `No-regression` · `PR #<n> → <branch>` · `CI post-merge` · `Archive` · `Cleanup (worktree + local/remote branch)`; LITE/MINIMAL `Spec+Design`); Status tokens `✓ done` · `◐ partial: <reason>` · `○ pending` · `✗ blocked: <reason>` · `✗ red: <reason>` · `∅ n/a`.
+
 **Structure:** Definition of Done + information radiator (Cockburn).
 
 Table rules:
-- **Adapt the rows to the real change**: no migration → remove the `migrate <N>` from the CI row; no real e2e case → remove that row; PR vs merge-to-feature → adjust the destination row; project without CI → `CI` row with `○ N/A (project without pipeline)`.
+- **Omit rows that do not apply; never rename or translate a row label** (only the Evidence value is free): no migration → remove the `migrate <N>` from the CI row's Evidence; no real e2e case → omit that row; PR vs merge-to-feature → keep the `PR #<n> → <branch>` row and put the destination in its Value; project without CI → keep the `CI post-merge` row with Status `○ N/A (project without pipeline)` as a Value, not a new label.
 - **No false green**: if something was left partial/red/pending, the row carries the specific reason, prefixed `◐ partial: <reason>` or `✗ red: <reason>` — the table must reflect the truth of the closing (consistent with the rule of not marking "Done" with a red pipeline).
-- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+- **Emit this block's structural labels verbatim in English** — the enumerated set above is frozen: section headers, the Milestone-column labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
 - Below the table you can add 1-3 lines of non-blocking follow-ups if there are any; the rest of the detail already lives in the engram artifacts.

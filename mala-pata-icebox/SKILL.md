@@ -4,7 +4,7 @@ description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") in
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.2"
+  version: "0.3.0"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog
@@ -97,7 +97,7 @@ Emit exactly this, from what you actually did (no invention):
 
 - **Structure:** deferred backlog (capture-now / route-later) + BLUF close. Icebox / cube / freeze / defrost = house method.
 
-Emit the structural labels above (Cube frozen, Icebox created, BLUF, Icebox, Next step, Structure) **verbatim in English**; only the values and surrounding prose follow the conversation language.
+Apply `_shared/mala-pata-structural-labels.md` verbatim (labels are frozen: never translate, never swap for case-specific ones, omit-never-rename). Emit the structural labels above (Cube frozen, Icebox created, BLUF, Icebox, Next step, Structure) and the bulk-table columns (`#` · `Cube (DoD)` · `size-hint` · `Status`) **verbatim in English**; only the values and surrounding prose follow the conversation language.
 
 This block is the only way to close on the happy path. **Only exceptions**: Phase 0 wrong-skill bounce; the single resolve question (Phase 1) or the single concrete-outcome question (Phase 2) when the input is missing/vague.
 

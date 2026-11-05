@@ -2,13 +2,13 @@
 
 *No inventamos la rueda — la orquestamos.*
 
-**Capa de orquestación para desarrollo asistido por IA (Claude Code / Codex): toma el motor de [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai) y lo organiza en un flujo de trabajo propio — por carriles y fases, con gates humanos y aislamiento por worktree.**
+**mala-pata es una capa de orquestación — una metodología ejecutable — para desarrollo asistido por IA (Claude Code / Codex): decide *cómo* encarar cada cambio y lo corre por su propio flujo de trabajo — carriles y fases, con gates humanos y aislamiento por worktree.**
 
-No es un *copilot* ni un autocompletado. Es una **metodología ejecutable**: decide *cómo* encarar cada cambio, arma el contexto, corre el ciclo con checkpoints humanos y verifica contra git. Cada decisión se apoya en un **marco estándar de la industria** (no en criterio inventado), y está **investigada y probada en proyectos reales**, viendo cómo se comporta de punta a punta.
+No es un *copilot* ni un autocompletado: **gatea** (checkpoints humanos donde importa) y **verifica** (nada se da por hecho sin prueba). Orquesta un **motor SDD/ODD** en vez de reinventarlo — hoy **[gentle-ai](https://github.com/Gentleman-Programming/gentle-ai)**, aunque empezó sobre **[Spec Kit](https://github.com/github/spec-kit)** de GitHub — y le pone encima el flujo. Cada decisión se apoya en un **marco estándar de la industria** (no en criterio inventado), y está **investigada y probada en proyectos reales**.
 
 ## Qué es — y qué no
 
-- **Es:** una capa de orquestación / metodología sobre el motor de gentle-ai. Enruta el trabajo, genera el contexto, corre el ciclo con gates y worktrees aislados, y radiografía el estado contra git.
+- **Es:** una capa de orquestación / metodología sobre un motor SDD/ODD (hoy gentle-ai). Enruta el trabajo, genera el contexto, corre el ciclo con gates y worktrees aislados, y radiografía el estado contra git.
 - **No es:** un copilot, un autocompletado, ni "generá código y listo". No adivina: **gatea** (checkpoints humanos donde importa) y **verifica** (nada se da por hecho sin prueba).
 
 ## El flujo (el corazón)
@@ -23,9 +23,9 @@ La puerta de entrada es `triage`; antes, si la idea es cruda, `research` la afil
 
 Transversal a todo: **worktree aislado** por cambio, **gates humanos** en los puntos sensibles, **RDD** (review por commit) y un **barrido de completitud** que detecta lo que falta ("profesionalmente te falta X") antes de rutear.
 
-## Origen — de SDD a mucho más
+## Origen — de Spec Kit a su propio flujo
 
-Empezó como un **SDD propio** read-only: solo el ciclo de especificación *antes* de tocar código. Después adopté **gentle-ai** como **motor** (no reinventar la rueda) y le puse encima **mi flujo**. Hoy mala-pata es **mucho más que SDD**: un pipeline completo (`research → triage → carriles`), radars de estado, orquestadores por olas, un **icebox** (backlog diferido), una familia de **documentación**, **spikes** por tipo de incógnita, y un **centro de verdad** de reglas compartidas que todos los skills aplican igual.
+mala-pata nació como un **flujo SDD propio sobre [Spec Kit](https://github.com/github/spec-kit)** (GitHub): solo el ciclo de especificación *antes* de tocar código. Después **trasladé el motor a [gentle-ai](https://github.com/Gentleman-Programming/gentle-ai)** (sin reinventarlo) y construí encima **mi flujo**. Hoy mala-pata es **mucho más que SDD**: un pipeline completo (`research → triage → carriles`), radars de estado, orquestadores por olas, un **icebox** (backlog diferido), una familia de **documentación**, **spikes** por tipo de incógnita, y un **centro de verdad** de reglas compartidas que todos los skills aplican igual.
 
 ## Qué es de quién (atribución honesta)
 

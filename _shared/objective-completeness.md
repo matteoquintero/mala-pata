@@ -12,13 +12,13 @@ fully reachable?" Record ONLY items that are `MISSING` or `unknown`, each with p
 `verified` (against the code / an authoritative source) or `inferred`.
 
 - **User-facing** — screens/states (empty, error, loading), copy, journey steps nobody named (Story-Map walk + jobs-to-be-done).
-- **Data** — model changes, migrations/backfill, retention, ownership.
+- **Data** — model changes, migrations/backfill, retention, ownership. When this **forks** the approach, the spike candidate is a **data-spike** (`_shared/mala-pata-spike-data.md`).
 - **Access** — roles, permissions, tenancy, audit.
-- **Integrations** — external systems, contracts, failure/retry behavior.
+- **Integrations** — external systems, contracts, failure/retry behavior. When this **forks** the approach, the spike candidate is an **integration-spike** (`_shared/mala-pata-spike-integration.md`).
 - **Edge cases** — concurrency, partial failure, legacy data, limits.
 - **Non-functional** (ISO/IEC 25010 as the prompt vocabulary) — performance, security, reliability, compatibility, maintainability, usability.
 - **Operations** — observability, config/flags, rollout, rollback, runbooks.
-- **Infrastructure** — new provisioning or a capacity ceiling the objective would hit (only if it demands it). When this **forks** the approach, the spike candidate is an **infra-spike** (`_shared/mala-pata-spike-infra.md`).
+- **Infrastructure** — new provisioning or a capacity ceiling the objective would hit (only if it demands it). When this **forks** the approach, the spike candidate is an **infra-spike** (`_shared/mala-pata-spike-infra.md`). A fork on any lens without a profile runs the generic spike (see `_shared/mala-pata-spike-catalog.md`).
 - **`<other>`** — the list is explicitly OPEN; add any lens the domain implies.
 
 **No silent drop (MECE).** A lens judged irrelevant is recorded `n/a - <reason>`, NEVER

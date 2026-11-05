@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.18.0"
+  version: "1.19.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -231,6 +231,7 @@ A spike is a MODE of research, not a separate skill. It probes a BROAD approach-
 - **Refuse a spike with no exit criterion.** Ask for it (one question) and wait; do not start an unbounded probe.
 - **Forecast first.** Before probing, state one line of cost/scope (what will be read/measured/checked) so the human can veto it.
 - **READ-ONLY by default.** The probe investigates: reads code and docs, measures, checks feasibility against the authoritative source. Throwaway code is allowed ONLY with explicit owner approval, asked before it happens; never assume it.
+- **Profiles (the spike's assessment checklist).** When the blocker is INFRASTRUCTURE — new provisioning or a capacity ceiling — apply the **infra-spike** profile `_shared/mala-pata-spike-infra.md` verbatim (measure the current ceiling, reuse-first, new-infra feasibility + cost, options → decidable). It is the first spike profile; more will be cataloged later.
 - **Output = the normal research doc** with `kind: spike` in the frontmatter and a fixed `## Finding` section: **chosen approach** · **rejected options (with evidence)** · **residual unknowns** · **effect on decomposition** (the slices/order/boundaries that follow). Spike code, if any was approved, is disposable unless the finding says "promote as a tracer bullet", in which case a normal lane implements it properly.
 - **Re-entry is always `/mala-pata-triage <slug>`** — it reads the finding as research (Phase 0.5) and decides the lane; an approach now known goes to organic/loop, a changed decomposition goes to roadmap, an infeasible finding is a RECONSIDER.
 - **Anti-ceremony guard:** a phase (or question) may be spiked at most ONCE without an explicit human decision to spike again.

@@ -1,10 +1,10 @@
 ---
 name: mala-pata-dossier
-description: CREATES a project DISCOVERY document — captures what the client actually wants BEFORE proposing architecture or features, following a house 6-question framework (ACLARAR / MAPEAR / DESCOMPONER / VERSIÓN 1 / MEDIR / PROTEGER). It is the first MODE of a phased documentation family (the project PHASE is a mode; discovery = module 1; scope/build/delivery are future modes). Produces TWO renderings WITHOUT mixing them (Diátaxis) — an internal 6-question traceability doc AND a client-only questionnaire. Two modes — create NEW from a client/project context, or ADOPT an existing discovery doc and normalize it to the standard. It writes to mala-pata/dossier/<slug>.md with a domain; it is READ-ONLY on your projects and NEVER proposes the solution (discovery only). Before writing, it confirms understanding and asks the open questions one at a time (JTBD style). Trigger — "levantá la información de X", "documentá el discovery de <cliente>", "armá el cuestionario de descubrimiento", "qué quiere el cliente en <proyecto>", "normalizá este discovery al estándar".
+description: CREATES a project DISCOVERY document — captures what the client actually wants BEFORE proposing architecture or features, following a house 6-question framework (CLARIFY / MAP / DECOMPOSE / VERSION 1 / MEASURE / PROTECT). It is the first MODE of a phased documentation family (the project PHASE is a mode; discovery = module 1; scope/build/delivery are future modes). Produces TWO renderings WITHOUT mixing them (Diátaxis) — an internal 6-question traceability doc AND a client-only questionnaire. Two modes — create NEW from a client/project context, or ADOPT an existing discovery doc and normalize it to the standard. It writes to mala-pata/dossier/<slug>.md with a domain; it is READ-ONLY on your projects and NEVER proposes the solution (discovery only). Before writing, it confirms understanding and asks the open questions one at a time (JTBD style). Trigger — "levantá la información de X", "documentá el discovery de <cliente>", "armá el cuestionario de descubrimiento", "qué quiere el cliente en <proyecto>", "normalizá este discovery al estándar".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # /mala-pata-dossier — capture project discovery (does not propose the solution)
@@ -30,7 +30,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP). If a mandatory tool
 
 ## Principles (proven, not invented)
 
-- **The 6-question framework (house synthesis).** The spine of the document: (1) ¿Para qué? [ACLARAR] objetivo con número; (2) ¿Cómo es hoy? [MAPEAR] flujo + dónde duele; (3) ¿De qué está hecho? [DESCOMPONER] 6 ramas = Intenciones / Identidad / Integraciones / Humano / Canal / Medición; (4) ¿Por dónde empiezo? [VERSIÓN 1] MVP priorizado por valor / facilidad / riesgo; (5) ¿Cómo sé que funcionó? [MEDIR] métricas hoy → meta; (6) ¿Qué puede salir mal? [PROTEGER] riesgos + mitigación. It has **NO published external source** — it is a house synthesis; dossier OWNS the method and does NOT fake a citation.
+- **The 6-question framework (house synthesis).** The spine of the document: (1) Why? [CLARIFY] the objective with a number; (2) How is it today? [MAP] current flow + where it hurts; (3) What is it made of? [DECOMPOSE] 6 branches = Intents / Identity / Integrations / Human / Channel / Measurement; (4) Where do I start? [VERSION 1] MVP prioritized by value / ease / risk; (5) How do I know it worked? [MEASURE] metrics today → target; (6) What can go wrong? [PROTECT] risks + mitigation. It has **NO published external source** — it is a house synthesis; dossier OWNS the method and does NOT fake a citation.
 - **Diátaxis** (Procida): the traceability doc and the client questionnaire share the discovery core but differ in audience → two renders, never one mixed doc.
 - **JTBD / switch interview** (Moesta): the question STYLE for the client questionnaire — anchor each answer in a concrete past event ("la última vez que…"), keep questions open, avoid leading questions.
 - **BRD structure wrapping** (BABOK-adjacent): the traceability doc wraps the 6 questions with an executive-summary header, a stakeholders map, a RAID log (risks / assumptions / constraints / dependencies) and a sign-off; nonessential sections are marked `N/A`, never dropped.
@@ -79,12 +79,12 @@ last_reviewed: <ISO 8601>
 | Section | What it holds |
 |---|---|
 | Header / executive summary | Project, client, participants, date, one-line objective. |
-| Q1 Why? [ACLARAR] | The objective with a NUMBER (the measurable target). |
-| Q2 How is it today? [MAPEAR] | Current flow + where it hurts + volume. |
-| Q3 What is it made of? [DESCOMPONER] | The 6 branches (Intents / Identity / Integrations / Human / Channel / Measurement) + a stakeholders / actors map. |
-| Q4 Where do I start? [VERSIÓN 1] | The MVP + a value / ease / risk priority matrix. |
-| Q5 How do I know it worked? [MEDIR] | Metrics today → target. |
-| Q6 What can go wrong? [PROTEGER] | RAID log: risks + assumptions + constraints + dependencies + mitigation. |
+| Q1 Why? [CLARIFY] | The objective with a NUMBER (the measurable target). |
+| Q2 How is it today? [MAP] | Current flow + where it hurts + volume. |
+| Q3 What is it made of? [DECOMPOSE] | The 6 branches (Intents / Identity / Integrations / Human / Channel / Measurement) + a stakeholders / actors map. |
+| Q4 Where do I start? [VERSION 1] | The MVP + a value / ease / risk priority matrix. |
+| Q5 How do I know it worked? [MEASURE] | Metrics today → target. |
+| Q6 What can go wrong? [PROTECT] | RAID log: risks + assumptions + constraints + dependencies + mitigation. |
 | Glossary | Shared terms (optional — `N/A` when not needed). |
 | Close / sign-off | Confirmed agreements + `OPEN:` items (nothing hidden). |
 
@@ -116,7 +116,7 @@ This block is the only way to close on the happy path. **Only exceptions**: Phas
 > **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 **Frozen close labels** — title `Discovery ready`; BLUF label `Discovery:`; readback columns `Question` · `Captured?`; block labels `OPEN`, `File`, `Next step`, `Structure`; Rendering 1 section/question labels exactly as listed in its table. Emit them verbatim in English even when the conversation is in another language; only the values are localized. **Exception — the client questionnaire (Rendering 2) stays in Spanish** (client content, not structural labels).
 
-`Structure: house 6-question discovery framework (ACLARAR→PROTEGER) + Diátaxis dual-audience (Procida) + JTBD switch interview (Moesta) + BRD/RAID wrapping (BABOK-adjacent). Phase-as-mode + traceability-vs-questionnaire split = house method.`
+`Structure: house 6-question discovery framework (CLARIFY→PROTECT) + Diátaxis dual-audience (Procida) + JTBD switch interview (Moesta) + BRD/RAID wrapping (BABOK-adjacent). Phase-as-mode + traceability-vs-questionnaire split = house method.`
 
 ## What it does NOT do (invariants)
 

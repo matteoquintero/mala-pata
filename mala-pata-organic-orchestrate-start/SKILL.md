@@ -1,10 +1,10 @@
 ---
 name: mala-pata-organic-orchestrate-start
-description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves delivery — in ROUNDS, one per wave. Each round derives the READY wave live against git, creates one worktree per kickoff (anti-stale at origin/<base>), opens ONE Warp launch config with one Claude tab per kickoff running /mala-pata-organic-start (which keeps per-commit RDD and the smoke gate inside its own tab and STOPS at PR-ready), waits for the wave to reach PR-ready, then runs the CENTRAL delivery itself — one merge-gate table (smoke verdict + RDD outcome per phase), merges in dependency order with migration renumbering, central worktree/branch cleanup — and advances the base for the next round. The orchestrator OWNS merges, cleanups and sequencing between waves. Trigger — "lanzá estos organic en olas", "corré el lote de ODD con merge central", "arrancá la ola de kickoffs organic y mergeá por mí", "orquestá y entregá estos cambios organic".
+description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves delivery — in ROUNDS, one per wave. Each round derives the READY wave live against git, creates one worktree per kickoff (anti-stale at origin/<base>), opens one Claude tab per kickoff in the active Warp window (validated tab configs, launch verified) running /mala-pata-organic-start (which keeps per-commit RDD and the smoke gate inside its own tab and STOPS at PR-ready), waits for the wave to reach PR-ready, then runs the CENTRAL delivery itself — one merge-gate table (smoke verdict + RDD outcome per phase), merges in dependency order with migration renumbering, central worktree/branch cleanup — and advances the base for the next round. The orchestrator OWNS merges, cleanups and sequencing between waves. Trigger — "lanzá estos organic en olas", "corré el lote de ODD con merge central", "arrancá la ola de kickoffs organic y mergeá por mí", "orquestá y entregá estos cambios organic".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -108,38 +108,16 @@ git -C <ABS-repo>-worktrees/<change-name> merge --ff-only origin/<base>
 ```
 Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEAD`). If a worktree already had commits and the ff failed, STOP and warn (do not force): that worktree is not born clean. `ff-only` does not lose history — it is the only advance allowed here.
 
-## Step 3 — One Warp launch config with N tabs (one Claude session per kickoff)
+## Step 3 — Launch the wave as Warp tabs (one Claude session per kickoff)
 - Verify `claude` in PATH (`which claude`).
-- Write ONE launch configuration per round:
-  - File: `~/.warp/launch_configurations/mpl-organic-orchestrate-<batch-slug>-r<N>.yaml` (create the dir if missing).
-  - Schema:
-    ```yaml
-    ---
-    name: mpl-organic-orchestrate-<batch-slug>-r<N>
-    windows:
-      - tabs:
-          - title: <change-name>
-            color: blue
-            layout:
-              cwd: <ABS-repo>-worktrees/<change-name>
-              commands:
-                - exec: claude "/mala-pata-organic-start <absolute-path-of-kickoff-1.md> -- wave-mode: this phase is run by /mala-pata-organic-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally."
-          - title: <change-name-2>
-            color: green
-            layout:
-              cwd: <ABS-repo>-worktrees/<change-name-2>
-              commands:
-                - exec: claude "/mala-pata-organic-start <absolute-path-of-kickoff-2.md> -- wave-mode: <same directive>"
-          # ... one tab per kickoff of the wave
-    ```
-- **Each tab's `cwd` MUST be the ABSOLUTE path of the worktree**, NEVER the main repo — it is the base directory the shell cwd returns to after each command; pointing to main makes every bare command operate on main. Verify each `cwd:` before opening.
-- **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path and fall back to main; close and relaunch them with the new `cwd`.
+- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>`; one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+- **Per-tab prompt** (written verbatim to the kickoff's `.prompt` file): `/mala-pata-organic-start <absolute-path-of-kickoff.md> -- wave-mode: this phase is run by /mala-pata-organic-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
+- **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path and fall back to main; close and relaunch them with the new `directory`.
 - **Resume**: a kickoff `in progress` whose tab is gone gets a fresh tab on its existing worktree (organic-start resumes there); never create a second worktree.
-- Open: `open "warp://launch/mpl-organic-orchestrate-<batch-slug>-r<N>"`. If the URI does not fire, tell the user to open it from **Command Palette → "Launch Configuration" → mpl-organic-orchestrate-<batch-slug>-r<N>** (the YAML is already written). Do not invent another mechanism.
 
 ## Step 4 — Reports (emit at each round boundary)
 
-**Launch report.** BLUF first: `Launched <n>/<n> sessions · round <N> · launch config: <path>` (or `✗ partial: <which failed and why>`). Then one row per kickoff:
+**Launch report.** BLUF first: `Launched <n>/<n> sessions · round <N> · launch: <warp-tab|warp-window|terminal|manual counts>` (or `✗ partial: <which failed and why>`). Then one row per kickoff:
 
 | Kickoff | Branch | Worktree | At origin/<base> | Tab | Merge order |
 |---|---|---|---|---|---|
@@ -176,7 +154,7 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - **Migration numbers are provisional**: the first to merge keeps it, the others renumber on integration; the truth is git, never a registry.
 - **Cleanup only after merge + green CI**, from outside the worktree, `git branch -d` never `-D`, seeds kept, cycle-only fixtures removed only when provably this run's.
 - **Never unattended side effects beyond the contract**: no push of the base, no force-push, no deleting a branch that was not integrated.
-- ABSOLUTE paths in every git/worktree/launch command and YAML; relative only when talking to the user.
+- ABSOLUTE paths in every git/worktree/launch command and tab config; relative only when talking to the user.
 
 ## What it does NOT do
 - It does not run the ODD cycle, RDD, or the smoke — each tab's `/mala-pata-organic-start` does.

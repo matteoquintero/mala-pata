@@ -1,10 +1,10 @@
 ---
 name: mala-pata-roadmap-orchestrate-start
-description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves delivery (done phases are skipped; genuine loop phases are excluded and flagged "needs a human" instead of refusing the roadmap — loops always need a human at their gates; a phase that triage upgrades to loop at run time is paused and handed to the human) — in ROUNDS, one per wave. Each round derives the READY wave live against git (reusing /mala-pata-roadmap-radar's readiness logic), passes each phase through /mala-pata-triage (the roadmap route is only a FORECAST; triage re-decides with current info), creates one worktree per code phase (anti-stale at origin/<base>), opens ONE Warp launch config with one Claude tab per phase running its resolved lane (shot, or organic + organic-start), and PAUSES on Kind ops phases for human attestation (Verify/Status/Evidence). Per-commit RDD and the phase smoke stay inside each phase's tab, which STOPS at PR-ready; the orchestrator then runs the CENTRAL delivery — one merge-gate table with smoke verdict and RDD outcome, merges in dependency order with migration renumbering, central cleanup — and advances the base for the next round. Trigger — "ejecutá el roadmap <slug> en olas", "corré el roadmap completo con merge central", "arrancá las fases listas del roadmap y mergeá por mí", "orquestá y entregá el roadmap <slug>".
+description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves delivery (done phases are skipped; genuine loop phases are excluded and flagged "needs a human" instead of refusing the roadmap — loops always need a human at their gates; a phase that triage upgrades to loop at run time is paused and handed to the human) — in ROUNDS, one per wave. Each round derives the READY wave live against git (reusing /mala-pata-roadmap-radar's readiness logic), passes each phase through /mala-pata-triage (the roadmap route is only a FORECAST; triage re-decides with current info), creates one worktree per code phase (anti-stale at origin/<base>), opens one Claude tab per phase in the active Warp window (validated tab configs, launch verified) running its resolved lane (shot, or organic + organic-start), and PAUSES on Kind ops phases for human attestation (Verify/Status/Evidence). Per-commit RDD and the phase smoke stay inside each phase's tab, which STOPS at PR-ready; the orchestrator then runs the CENTRAL delivery — one merge-gate table with smoke verdict and RDD outcome, merges in dependency order with migration renumbering, central cleanup — and advances the base for the next round. Trigger — "ejecutá el roadmap <slug> en olas", "corré el roadmap completo con merge central", "arrancá las fases listas del roadmap y mergeá por mí", "orquestá y entregá el roadmap <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -128,43 +128,17 @@ git -C <ABS-repo>-worktrees/<slug> merge --ff-only origin/<base>
 ```
 Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEAD`). If a worktree already had commits and the ff failed, STOP and warn (do not force). `ff-only` is the only advance allowed.
 
-## Step 3 — One Warp launch config with N tabs (one Claude session per code phase)
+## Step 3 — Launch the wave as Warp tabs (one Claude session per code phase)
 - Verify `claude` in PATH (`which claude`).
-- Write ONE launch configuration per round:
-  - File: `~/.warp/launch_configurations/mpl-roadmap-orchestrate-<slug>-r<N>.yaml` (create the dir if missing).
-  - Schema (the `exec` depends on the phase's RESOLVED lane):
-    ```yaml
-    ---
-    name: mpl-roadmap-orchestrate-<slug>-r<N>
-    windows:
-      - tabs:
-          - title: <phase-slug-1>
-            color: blue
-            layout:
-              cwd: <ABS-repo>-worktrees/<phase-slug-1>
-              commands:
-                - exec: claude "Run /mala-pata-organic <phase-slug-1> with the triage draft, then /mala-pata-organic-start <phase-slug-1>. wave-mode: this phase is run by /mala-pata-roadmap-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally."
-          - title: <phase-slug-2>
-            color: green
-            layout:
-              cwd: <ABS-repo>-worktrees/<phase-slug-2>
-              commands:
-                - exec: claude "Run /mala-pata-organic <phase-slug-2> with the triage draft, then /mala-pata-organic-start <phase-slug-2>. wave-mode: <same directive>"
-          - title: <phase-slug-3>
-            color: yellow
-            layout:
-              cwd: <ABS-repo>-worktrees/<phase-slug-3>
-              commands:
-                - exec: claude "Run /mala-pata-shot <phase-slug-3>. wave-mode: commit on this worktree's branch, open a PR, STOP at PR-ready; do NOT merge nor clean up."
-          # ... one tab per code phase of the wave; ops phases get NO tab
-    ```
-- **Each tab's `cwd` MUST be the ABSOLUTE path of the worktree**, NEVER the main repo — it is the base directory the shell cwd returns to after each command; pointing to main makes every bare command operate on main. Verify each `cwd:` before opening.
-- **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path; close and relaunch with the new `cwd`.
-- Open: `open "warp://launch/mpl-roadmap-orchestrate-<slug>-r<N>"`. If the URI does not fire, tell the user to open it from **Command Palette → "Launch Configuration" → mpl-roadmap-orchestrate-<slug>-r<N>** (the YAML is already written). Do not invent another mechanism.
+- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<slug>-r<N>`; one tab per code phase, ops phases get NO tab; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+- **Per-tab prompt** (written verbatim to the phase's `.prompt` file; depends on the RESOLVED lane):
+  - organic: `Run /mala-pata-organic <phase-slug> with the triage draft, then /mala-pata-organic-start <phase-slug>. wave-mode: this phase is run by /mala-pata-roadmap-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
+  - shot: `Run /mala-pata-shot <phase-slug>. wave-mode: commit on this worktree's branch, open a PR, STOP at PR-ready; do NOT merge nor clean up.`
+- **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path; close and relaunch with the new `directory`.
 
 ## Step 4 — Reports (emit at each round boundary)
 
-**Launch report.** BLUF first: `Launched <n>/<n> sessions · <o> ops paused · round <N> · launch config: <path>` (or `✗ partial: <which failed and why>`). One row per phase of the wave:
+**Launch report.** BLUF first: `Launched <n>/<n> sessions · <o> ops paused · round <N> · launch: <warp-tab|warp-window|terminal|manual counts>` (or `✗ partial: <which failed and why>`). One row per phase of the wave:
 
 | Phase | Kind | Resolved lane | Branch | Worktree | At origin/<base> | Tab | Merge order |
 |---|---|---|---|---|---|---|---|
@@ -205,7 +179,7 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - **Migration numbers are provisional**: first to merge keeps it, the others renumber on integration; the truth is git, never a registry.
 - **Cleanup only after merge + green CI**, from outside the worktree, `git branch -d` never `-D`, seeds kept, cycle-only fixtures removed only when provably this run's.
 - **Roadmap edits are limited to an attested ops phase's `Status`/`Evidence`**, write-only, never committed by you.
-- ABSOLUTE paths in every git/worktree/launch command and YAML; relative only when talking to the user; slug-first.
+- ABSOLUTE paths in every git/worktree/launch command and tab config; relative only when talking to the user; slug-first.
 
 ## What it does NOT do
 - It does not run any lane cycle, RDD, or smoke — each tab's lane-start does.

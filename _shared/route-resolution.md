@@ -22,7 +22,7 @@ re-decides on arrival); the gate prefers evidence of the re-decided route.
 
 ## Route resolution tiers (cheapest first; NEVER run triage in a planner)
 
-1. **Kickoff exists**: read `mala-pata/kickoffs/<slug>.md` from the integration branch FIRST (read-only, `git show <integration>:mala-pata/kickoffs/<slug>.md`), then BEST-EFFORT from the phase branch (`git show <branch>:mala-pata/kickoffs/<slug>.md`). Frontmatter `route: organic` → `organic`. A `profile:` field with no `route:` → `loop` (genuine loop). Tag the `Route source` as `kickoff`.
+1. **Kickoff exists**: read `mala-pata/kickoffs/<slug>.md` from the integration branch (read-only, `git show <integration>:mala-pata/kickoffs/<slug>.md`) AND, best-effort, from the phase branch (`git show <branch>:mala-pata/kickoffs/<slug>.md`). **Precedence: when both exist and disagree, the PHASE BRANCH wins** (it holds the latest re-triage); a single copy is used as is. Tag `Route source = kickoff` either way and, on a disagreement, say so in the row's Note (`kickoff differs: integration=<route>, phase branch=<route>`). Frontmatter `route: organic` → `organic`. A `profile:` field with no `route:` → `loop` (genuine loop). A kickoff carrying NEITHER `route:` NOR `profile:` is treated as NO kickoff: fall to tier 2 (forecast, provisional) and flag it in the Note (`kickoff has no route/profile`).
 2. **No kickoff anywhere**: use the roadmap's forecast and tag the `Route source` as `forecast`. A `forecast` route is PROVISIONAL by definition (the value stays exactly `forecast`; provisional-ness lives in this rule, not in the value). Forecast `organic` / `shot` → plannable. Forecast `loop*` → `loop?` (unconfirmed loop).
 3. `ops` phases have no route (`—`); they are never partitioned as loop.
 
@@ -34,10 +34,10 @@ executor re-runs `/mala-pata-triage` per READY code phase and re-decides.
 | Set | Members | Treatment |
 |---|---|---|
 | orchestrable | `organic` / `shot` code phases, plus `ops` attestation rows | planned into waves |
-| needs-human | `loop` (kickoff `profile:`) and `loop?` (forecast loop, no kickoff) | EXCLUDED from waves, flagged `needs a human` |
+| needs-human | `loop` (kickoff `profile:`) and `loop?` (forecast loop, no kickoff) | EXCLUDED from waves, flagged `⚑ needs a human` |
 
 - A `loop?` is excluded and flagged `forecast loop, not yet triaged`. Hint: `/mala-pata-triage <slug>` first (it may re-decide to organic; the next run then sees the kickoff), then `/mala-pata-loop` + `/mala-pata-loop-start` if it stays loop.
-- A needs-human phase is not `done`, so its dependents are `✗ blocked` with Note `waits for phase <n> (needs a human - loop)`. They stay in the DAG; independent branches still orchestrate.
+- A needs-human phase is not `done`, so its dependents are `✗ blocked` with Note `waits for phase <n>`. They stay in the DAG; independent branches still orchestrate.
 - A needs-human phase that is also `deferred` stays `deferred` (deferral wins).
 - Round forecast stops at the first chain that goes through a needs-human phase; state `rounds beyond <N> require phase <n> (human)`.
 
@@ -50,5 +50,5 @@ executor re-runs `/mala-pata-triage` per READY code phase and re-decides.
 ## Runtime guard (executor)
 
 A phase resolved as orchestrable that triage upgrades to loop at execution time is
-PAUSED, never auto-run, and reported `✗ blocked: needs human - became loop at triage`.
+PAUSED, never auto-run, and reported `⚑ needs a human` (Note `became loop at triage`).
 Other orchestrable phases proceed; its dependents stay blocked until the human lands it.

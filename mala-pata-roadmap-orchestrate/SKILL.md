@@ -1,10 +1,10 @@
 ---
 name: mala-pata-roadmap-orchestrate
-description: READ-ONLY wave/execution planner for a ROADMAP — done-aware and route-accurate: it drops done phases, resolves each remaining phase's ACTUAL route, plans the shot/organic phases in waves and excludes genuine loop phases with a "needs a human" flag (loops always need a human at their gates; the roadmap is never refused as a whole) — takes a roadmap slug or .md path, derives each phase's state LIVE against git (reusing /mala-pata-roadmap-radar's readiness logic), and returns the execution plan: which phases are ready now, which parallelize in this wave, which are deferred, which are ops phases (human-attested), which are blocked and why, plus the single copy-paste /mala-pata-roadmap-orchestrate-start <slug>. It is to roadmap-orchestrate-start what roadmap-radar is to execution, but focused on the WAVE plan rather than pure status. It does NOT execute, does NOT create worktrees, does NOT launch, does NOT mutate. Trigger — "planificá las olas del roadmap <slug>", "qué fases del roadmap puedo correr en paralelo ahora", "plan de ejecución del roadmap", "orquestá el roadmap <slug>".
+description: READ-ONLY wave/execution planner for a ROADMAP — done-aware and route-accurate: it drops done phases, resolves each remaining phase's ACTUAL route, plans the shot/organic phases in waves and excludes genuine loop phases with a "⚑ needs a human" flag (loops always need a human at their gates; the roadmap is never refused as a whole) — takes a roadmap slug or .md path, derives each phase's state LIVE against git (reusing /mala-pata-roadmap-radar's readiness logic), and returns the execution plan: which phases are ready now, which parallelize in this wave, which are deferred, which are ops phases (human-attested), which are blocked and why, plus the single copy-paste /mala-pata-roadmap-orchestrate-start <slug>. It is to roadmap-orchestrate-start what roadmap-radar is to execution, but focused on the WAVE plan rather than pure status. It does NOT execute, does NOT create worktrees, does NOT launch, does NOT mutate. Trigger — "planificá las olas del roadmap <slug>", "qué fases del roadmap puedo correr en paralelo ahora", "plan de ejecución del roadmap", "orquestá el roadmap <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # /mala-pata-roadmap-orchestrate — Wave plan of a ROADMAP (READ-ONLY)
@@ -61,7 +61,7 @@ In short, in this order: derive live state (Step 2) → drop `✓ done` phases �
 1. **Ready now** = orchestrable phases `pending` (not `blocked`) whose dependencies are ALL `done` (code `[git]` or ops `[attested]`). Needs-human phases are never ready.
 2. **This wave** = the ready phases that are **mutually parallelizable**: they appear together in the roadmap's `Parallelizable: {…}` AND declare no shared file AND no migration-number conflict. Conflicting ready phases are **serialized across rounds**, core / highest fan-in first — state which goes first and why. `Kind: ops` phases are never "launched": they are listed in the wave as **ops-attest** (the executor pauses and asks the human to attest them).
 3. **Deferred set** = phases with `Deferrable? = yes` that the executor will NOT start unless the human promotes them (read the column; do not recompute). Core phases (`no`) always plan first.
-4. **Blocked** = phases waiting on unfinished dependencies, each with the dependency and its state, so the human sees the chain; a dependent of a needs-human phase is `✗ blocked` (Note `waits for phase <n> (needs a human - loop)`).
+4. **Blocked** = phases waiting on unfinished dependencies, each with the dependency and its state, so the human sees the chain; a dependent of a needs-human phase is `✗ blocked` (Note `waits for phase <n>`).
 5. **Round forecast**: project the sequence of rounds (round 1 = this wave; round 2 = what becomes ready once round 1 is merged; …) up to the end or the first dependency that cannot resolve. State where the executor will pause for a human (an `ops` attestation, or the merge gate between rounds). Rounds stop at the first chain through a needs-human phase (`rounds beyond <N> require phase <n> (human)`). Say that each phase passes `/mala-pata-triage` on arrival and may change lane; the plan reports the actual route with its source, the executor re-decides.
 6. **Conflict analysis** (read-only): for ready phases, intersect each phase's `IN` border (from `## Phases in detail`) to detect shared files/modules; a phase that forecasts a migration is flagged (provisional number — first to merge keeps it, the others renumber on integration; truth is git).
 7. **Base freshness (DETECT and WARN only)**: compare `git rev-parse <base>` vs `origin/<base>`; if local is BEHIND flag it — the executor advances the worktrees before launching.
@@ -84,14 +84,14 @@ ALWAYS return, in this order:
    | 4 | <name> | <slug> | ops | — | — | — | ○ pending | 1 (ops-attest) | — | Verify: <how> |
    | 5 | <name> | <slug> | code | organic | forecast | 2 | ✗ blocked | 2 | — | waits for phase 2 |
    | 6 | <name> | <slug> | code | organic | forecast | 3 | ○ pending | deferred | — | Deferrable? yes |
-   | 7 | <name> | <slug> | code | loop | kickoff | — | ○ pending | needs a human | — | kickoff profile: <PERFIL> |
-   | 8 | <name> | <slug> | code | loop? | forecast | — | ○ pending | needs a human | — | forecast loop, not yet triaged |
+   | 7 | <name> | <slug> | code | loop | kickoff | — | ⚑ needs a human | — | — | kickoff profile: <PERFIL> |
+   | 8 | <name> | <slug> | code | loop? | forecast | — | ⚑ needs a human | — | — | forecast loop, not yet triaged |
 
 4. **Warnings table** — one row per issue, never a flat list (always emit it, with a `none` row if clean):
 
    | Type | Phases | Evidence | Recommendation |
    |---|---|---|---|
-   | file clash / migration collision / ops attestation / blocked chain / unbound / base-freshness / forecast-route-risk / needs human (loop) | <phase #s> | <file:line / number / dependency / branch behind> | <serialize / renumber / attest / start provider first / confirm / ff first / triage then loop by hand> |
+   | file clash / migration collision / ops attestation / blocked chain / unbound / base-freshness / forecast-route-risk / needs a human (loop) | <phase #s> | <file:line / number / dependency / branch behind> | <serialize / renumber / attest / start provider first / confirm / ff first / triage then loop by hand> |
 
 5. **Round forecast table**:
 
@@ -133,7 +133,7 @@ ALWAYS return, in this order:
 - It does not decide smoke or RDD (those run in each phase's lane tab) and it does not attest ops phases.
 - It does not edit the roadmap `.md`, create kickoffs, or write to engram.
 - It does not re-plan the roadmap (that is `/mala-pata-roadmap`); it reports the plan the DAG already carries.
-- It does not plan loop phases: they are excluded and flagged `needs a human` (drive them by hand with `/mala-pata-loop` + `/mala-pata-loop-start`); the rest of the roadmap still orchestrates.
+- It does not plan loop phases: they are excluded and flagged `⚑ needs a human` (drive them by hand with `/mala-pata-loop` + `/mala-pata-loop-start`); the rest of the roadmap still orchestrates.
 - It does not run `/mala-pata-triage` to resolve a route (read-only; the executor triages per READY phase).
 
 ## Runtime compatibility

@@ -4,7 +4,7 @@ description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -110,7 +110,7 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 
 ## Step 3 — Launch the wave as Warp tabs (one Claude session per kickoff)
 - Verify `claude` in PATH (`which claude`).
-- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>`; one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
 - **Per-tab prompt** (written verbatim to the kickoff's `.prompt` file): `/mala-pata-organic-start <absolute-path-of-kickoff.md> -- wave-mode: this phase is run by /mala-pata-organic-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
 - **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path and fall back to main; close and relaunch them with the new `directory`.
 - **Resume**: a kickoff `in progress` whose tab is gone gets a fresh tab on its existing worktree (organic-start resumes there); never create a second worktree.

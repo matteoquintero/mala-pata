@@ -8,7 +8,7 @@
 **TDD:** not applicable (markdown skill content). Checks = structural readback, YAML template parses with `yaml.safe_load`, context-leak grep, mirror sync.
 
 ## Tasks
-- [ ] T1 — Done-aware, route-accurate gate in roadmap-orchestrate + roadmap-orchestrate-start (Hard rule #0, steps, report shapes). Route: delegated.
+- [x] T1 — Done-aware, route-accurate gate in roadmap-orchestrate + roadmap-orchestrate-start (Hard rule #0, steps, report shapes). Route: delegated. Evidence: orchestrate 1.0.1→1.1.0, orchestrate-start 1.1.0→1.2.0, new _shared/route-resolution.md (+ symlink mala-pata-route-resolution.md); Route (actual)+Route source (kickoff|forecast); commit recorded in git log.
 - [ ] T2 — Robust Warp launch (quoted exec / block scalar, YAML validation before open, launch verification + fallback, active-window tab if supported) in both -start skills, ideally one shared fragment. Route: delegated. Blocked on Warp research.
 
 ## Progress / evidence

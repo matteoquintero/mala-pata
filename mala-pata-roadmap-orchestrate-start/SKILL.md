@@ -1,10 +1,10 @@
 ---
 name: mala-pata-roadmap-orchestrate-start
-description: Executes a ROADMAP whose phases are ALL shot/organic as a route-aware hybrid-by-waves delivery (it refuses any roadmap containing a loop phase — loops always need a human at their gates, so they cannot be batch-automated; a phase that triage upgrades to loop at run time is paused and handed to the human) — in ROUNDS, one per wave. Each round derives the READY wave live against git (reusing /mala-pata-roadmap-radar's readiness logic), passes each phase through /mala-pata-triage (the roadmap route is only a FORECAST; triage re-decides with current info), creates one worktree per code phase (anti-stale at origin/<base>), opens ONE Warp launch config with one Claude tab per phase running its resolved lane (shot, or organic + organic-start), and PAUSES on Kind ops phases for human attestation (Verify/Status/Evidence). Per-commit RDD and the phase smoke stay inside each phase's tab, which STOPS at PR-ready; the orchestrator then runs the CENTRAL delivery — one merge-gate table with smoke verdict and RDD outcome, merges in dependency order with migration renumbering, central cleanup — and advances the base for the next round. Trigger — "ejecutá el roadmap <slug> en olas", "corré el roadmap completo con merge central", "arrancá las fases listas del roadmap y mergeá por mí", "orquestá y entregá el roadmap <slug>".
+description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves delivery (done phases are skipped; genuine loop phases are excluded and flagged "⚑ needs a human" instead of refusing the roadmap — loops always need a human at their gates; a phase that triage upgrades to loop at run time is paused and handed to the human) — in ROUNDS, one per wave. Each round derives the READY wave live against git (reusing /mala-pata-roadmap-radar's readiness logic), passes each phase through /mala-pata-triage (the roadmap route is only a FORECAST; triage re-decides with current info), creates one worktree per code phase (anti-stale at origin/<base>), opens one Claude tab per phase in the active Warp window (validated tab configs, launch verified) running its resolved lane (shot, or organic + organic-start), and PAUSES on Kind ops phases for human attestation (Verify/Status/Evidence). Per-commit RDD and the phase smoke stay inside each phase's tab, which STOPS at PR-ready; the orchestrator then runs the CENTRAL delivery — one merge-gate table with smoke verdict and RDD outcome, merges in dependency order with migration renumbering, central cleanup — and advances the base for the next round. Trigger — "ejecutá el roadmap <slug> en olas", "corré el roadmap completo con merge central", "arrancá las fases listas del roadmap y mergeá por mí", "orquestá y entregá el roadmap <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.3.1"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -30,19 +30,13 @@ mala-pata orchestrates community tools — it does not reimplement them. Check a
 
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a mandatory tool is missing, do not continue.
 
-## Hard rule #0 — ENTRY GATE: refuse any roadmap with a loop phase
+## Hard rule #0 — PER-PHASE GATE: done-aware, route-accurate (never refuse the whole roadmap)
 
-> **Loops always need a human.** A loop (SDD) stops at a human gate at every phase, so it cannot be batch-automated. This executor only runs roadmaps whose phases are all **shot** and **organic**. Right after loading the roadmap (Step 0) and BEFORE any state derivation, worktree or launch, scan the DAG's `Tentative route` column: if ANY phase — deferred or not, done or not — has a loop route (`loop`, `loop:FULL`, `loop:STANDARD`, `loop:LITE`, `loop:MINIMAL`), **REFUSE to orchestrate the whole roadmap. Do NOT run any wave.**
+> **Loops always need a human.** A loop (SDD) stops at a human gate at every phase, so it cannot be batch-automated — but that is a property of a PHASE, not of the roadmap. Apply `_shared/mala-pata-route-resolution.md` verbatim (order, route-resolution tiers, partition, outcomes); it is the single source of truth and this skill does not restate it. Never emit a "Refused" report and never run a wave "around" a loop silently.
 
-The refusal report: BLUF `Refused: roadmap <slug> has <n> loop phase(s) — loops always need a human, this orchestrator does not handle them`, then the table of every loop phase:
+After loading the roadmap (Step 0) and deriving live state (Round step 1): drop `✓ done` phases, resolve each remaining code phase's actual route and `Route source` (`kickoff` | `forecast`), run waves over the orchestrable phases only, and list the needs-human phases in the Round 1 report as `⚑ needs a human` (their dependents stay `✗ blocked`, Note `waits for phase <n>`). Zero non-done phases → the final report. Orchestrable set empty and needs-human non-empty → STOP with the `Needs you` report (BLUF + table as in `/mala-pata-roadmap-orchestrate` Step 4), no wave. Emit these labels verbatim in English.
 
-| # | Phase | slug | Tentative route |
-|---|---|---|---|
-| <#> | <name> | <slug> | loop:STANDARD |
-
-Then tell the human: run this roadmap with `/mala-pata-roadmap-radar <slug>` (it emits the per-phase `triage → lane → -start` commands, loops included) and drive each loop phase yourself via `/mala-pata-loop` + `/mala-pata-loop-start`. Emit these labels verbatim in English.
-
-**Runtime guard.** The gate checks the FORECAST; triage re-decides on arrival. If triage upgrades a phase to loop at execution time (Round step 3), **PAUSE that phase, do NOT auto-run it**, and hand it to the human: report it as `✗ blocked: needs human — became loop at triage` and tell the human to drive it with `/mala-pata-loop` + `/mala-pata-loop-start`. The other non-loop phases of the wave still proceed; the loop phase's dependents stay blocked until the human merges it.
+**Runtime guard (kept).** The resolved route may still be provisional (`forecast`) and triage re-decides on arrival. If triage upgrades a phase to loop at execution time (Round step 3), **PAUSE that phase, do NOT auto-run it**, and hand it to the human: report it as `⚑ needs a human` (Note `became loop at triage`) and tell the human to drive it with `/mala-pata-loop` + `/mala-pata-loop-start`. The other orchestrable phases of the wave still proceed; the loop phase's dependents stay blocked until the human merges it.
 
 ## Step 0 — Load the roadmap, confirm, cache choices
 
@@ -61,9 +55,9 @@ Each round N:
 ### Round step 1 — Derive the READY wave LIVE against git
 Reuse `/mala-pata-roadmap-radar` verbatim for state: `git -C <ABS-repo> fetch --all --prune`, confirm the integration branch + SHA, then per phase — **code**: `done` by ANY git signal (`Mala-Pata-Phase: <slug>` trailer on an integration commit — optional, merged PR, branch merged or slug commit ancestor via `git merge-base --is-ancestor`, delivering artifact, recorded sha) `[git]`; `in progress` = live branch/OPEN PR not merged; `pending` = zero evidence; `? unbound` = work exists but not tied to the slug (STOP and ask, never a false pending); `blocked` = pending with an unfinished dependency. **ops**: `done` = declared `Status: done` + `Evidence` `[attested]`; otherwise pending; never pending/blocked for lacking a git artifact.
 
-A phase is **READY** when it is `pending` (or `in progress` with a missing tab — see Step 4 resume), not deferred, and **every dependency is MERGED** (code `done` observed in git, or ops `done` attested) — a PR-ready dependency is NOT enough. The **wave** = all READY phases that are **mutually parallelizable**: they appear together in the roadmap's `Parallelizable: {…}` AND have no shared file (intersect each phase's `IN` border) AND no migration-number conflict. Conflicting READY phases are **serialized across rounds**, core / highest fan-in first, and the round report says which waits and why.
+A phase is **READY** when it is `pending` (or `in progress` with a missing tab — see Step 4 resume), orchestrable (not needs-human per Hard rule #0), not deferred, and **every dependency is MERGED** (code `done` observed in git, or ops `done` attested) — a PR-ready dependency is NOT enough. The **wave** = all READY phases that are **mutually parallelizable**: they appear together in the roadmap's `Parallelizable: {…}` AND have no shared file (intersect each phase's `IN` border) AND no migration-number conflict. Conflicting READY phases are **serialized across rounds**, core / highest fan-in first, and the round report says which waits and why.
 
-No READY phase and some blocked → report who waits for whom and STOP. Every non-deferred phase `done` → final report.
+No READY phase and some blocked → report who waits for whom (including `⚑ needs a human` phases) and STOP. Every non-deferred phase `done` → final report.
 
 ### Round step 2 — Ops phases: PAUSE and ask the human to attest
 A `Kind: ops` phase has **NO code cycle, NO worktree, NO tab**. When an ops phase is in the wave (ready, or blocking dependents), the orchestrator **PAUSES** and shows the phase's `Verify` (URL / command / health check). Ask the human to perform it and attest: `Status: done` with `Evidence` (env URL / project id / health 200 / date). **Attested without evidence is NOT done.** On attestation, write ONLY that phase's `Status` and `Evidence` fields into the roadmap `.md` in the working tree (write-only, **no commit** — same rule as `/mala-pata-roadmap`; tell the human the durable branch it belongs on), tag it `[attested]`, and its dependents become ready in the same round derivation. Never run the ops step yourself and never invent evidence. Code phases of the wave that do not depend on the ops phase launch without waiting.
@@ -77,7 +71,7 @@ For each READY code phase, run `/mala-pata-triage <slug>` **in this orchestrator
 Then launch (Steps 1–3 below): **one worktree per code phase at `origin/<base>`, one tab per phase**, the tab command by the resolved lane:
 - **shot** → `/mala-pata-shot <slug>` — runs inline on the phase's pre-created worktree and branch (no ceremony; commit, then stop).
 - **organic** → `/mala-pata-organic <slug>` (writes the kickoff from the triage draft) then `/mala-pata-organic-start <slug>`.
-- **loop** → NOT dispatched: there is no `triage → loop → loop-start` path. The phase is paused and handed to the human (Runtime guard).
+- **loop** → NOT dispatched: there is no `triage → loop → loop-start` path. The phase is paused and handed to the human (Runtime guard); a phase already excluded by Hard rule #0 is never sent through triage-to-launch.
 
 Each tab runs its FULL cycle, including **per-commit RDD in-tab** (organic/shot) and the **phase smoke when the change needs it** (the lane-start's own gate decides applicability). **Each tab STOPS at its PR-ready gate: it does NOT merge and does NOT clean up** — merge and cleanup are central. The launch prompt carries that directive (Step 3).
 
@@ -134,43 +128,17 @@ git -C <ABS-repo>-worktrees/<slug> merge --ff-only origin/<base>
 ```
 Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEAD`). If a worktree already had commits and the ff failed, STOP and warn (do not force). `ff-only` is the only advance allowed.
 
-## Step 3 — One Warp launch config with N tabs (one Claude session per code phase)
+## Step 3 — Launch the wave as Warp tabs (one Claude session per code phase)
 - Verify `claude` in PATH (`which claude`).
-- Write ONE launch configuration per round:
-  - File: `~/.warp/launch_configurations/mpl-roadmap-orchestrate-<slug>-r<N>.yaml` (create the dir if missing).
-  - Schema (the `exec` depends on the phase's RESOLVED lane):
-    ```yaml
-    ---
-    name: mpl-roadmap-orchestrate-<slug>-r<N>
-    windows:
-      - tabs:
-          - title: <phase-slug-1>
-            color: blue
-            layout:
-              cwd: <ABS-repo>-worktrees/<phase-slug-1>
-              commands:
-                - exec: claude "Run /mala-pata-organic <phase-slug-1> with the triage draft, then /mala-pata-organic-start <phase-slug-1>. wave-mode: this phase is run by /mala-pata-roadmap-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally."
-          - title: <phase-slug-2>
-            color: green
-            layout:
-              cwd: <ABS-repo>-worktrees/<phase-slug-2>
-              commands:
-                - exec: claude "Run /mala-pata-organic <phase-slug-2> with the triage draft, then /mala-pata-organic-start <phase-slug-2>. wave-mode: <same directive>"
-          - title: <phase-slug-3>
-            color: yellow
-            layout:
-              cwd: <ABS-repo>-worktrees/<phase-slug-3>
-              commands:
-                - exec: claude "Run /mala-pata-shot <phase-slug-3>. wave-mode: commit on this worktree's branch, open a PR, STOP at PR-ready; do NOT merge nor clean up."
-          # ... one tab per code phase of the wave; ops phases get NO tab
-    ```
-- **Each tab's `cwd` MUST be the ABSOLUTE path of the worktree**, NEVER the main repo — it is the base directory the shell cwd returns to after each command; pointing to main makes every bare command operate on main. Verify each `cwd:` before opening.
-- **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path; close and relaunch with the new `cwd`.
-- Open: `open "warp://launch/mpl-roadmap-orchestrate-<slug>-r<N>"`. If the URI does not fire, tell the user to open it from **Command Palette → "Launch Configuration" → mpl-roadmap-orchestrate-<slug>-r<N>** (the YAML is already written). Do not invent another mechanism.
+- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per code phase, ops phases get NO tab; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+- **Per-tab prompt** (written verbatim to the phase's `.prompt` file; depends on the RESOLVED lane):
+  - organic: `Run /mala-pata-organic <phase-slug> with the triage draft, then /mala-pata-organic-start <phase-slug>. wave-mode: this phase is run by /mala-pata-roadmap-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
+  - shot: `Run /mala-pata-shot <phase-slug>. wave-mode: commit on this worktree's branch, open a PR, STOP at PR-ready; do NOT merge nor clean up.`
+- **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path; close and relaunch with the new `directory`.
 
 ## Step 4 — Reports (emit at each round boundary)
 
-**Launch report.** BLUF first: `Launched <n>/<n> sessions · <o> ops paused · round <N> · launch config: <path>` (or `✗ partial: <which failed and why>`). One row per phase of the wave:
+**Launch report.** BLUF first: `Launched <n>/<n> sessions · <o> ops paused · round <N> · launch: <warp-tab|warp-window|terminal|manual counts>` (or `✗ partial: <which failed and why>`). One row per phase of the wave:
 
 | Phase | Kind | Resolved lane | Branch | Worktree | At origin/<base> | Tab | Merge order |
 |---|---|---|---|---|---|---|---|
@@ -193,15 +161,15 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 
 | # | Phase | Round | Status | Evidence |
 |---|---|---|---|---|
-| 1 | <slug> | 1 | ✓ done / ◐ partial: <reason> / ✗ blocked: <reason> / ○ pending | merge <sha> [git] · CI GREEN · worktree+branch removed / <URL, health 200, date> [attested] |
+| 1 | <slug> | 1 | ✓ done / ◐ partial: <reason> / ✗ blocked: <reason> / ⚑ needs a human / ○ pending | merge <sha> [git] · CI GREEN · worktree+branch removed / <URL, health 200, date> [attested] |
 
 **No false green**: never mark `✓ done` over a red pipeline or an unmerged PR. Offer `mala-pata-roadmap-radar` for the pure status view.
 
-**Emit this block's structural labels verbatim in English** — the BLUF lines and every table header (`Phase`, `Kind`, `Resolved lane`, `Forecast route`, `Why it changed`, `Branch`, `Worktree`, `At origin/<base>`, `Tab`, `Merge order`, `Status`, `Evidence`, `PR`, `Smoke verdict`, `RDD outcome`, `CI`, `Migration`, `Merge decision`, `Round`, `Lane`) stay English; only the values follow the conversation language.
+**Emit this block's structural labels verbatim in English** — the BLUF lines and every table header (`Phase`, `Kind`, `Resolved lane`, `Forecast route`, `Why it changed`, `Branch`, `Worktree`, `At origin/<base>`, `Tab`, `Merge order`, `Status`, `Evidence`, `PR`, `Smoke verdict`, `RDD outcome`, `CI`, `Migration`, `Merge decision`, `Round`, `Lane`, `Route (actual)`, `Route source`) and the state values (`✓ done`, `◐ partial`, `✗ blocked`, `○ pending`, `⚑ needs a human`) stay English; only the values follow the conversation language.
 
 ## Hard rules
 - **Route-aware, triage-first.** Every code phase passes `/mala-pata-triage` on arrival; the resolved lane (not the roadmap forecast) picks the tab command. Never skip triage "because the roadmap already said organic"; a phase triage upgrades to loop is paused for the human, never auto-run.
-- **Refuse loops (Hard rule #0) and guard at run time.** Any loop forecast refuses the whole roadmap; a phase that becomes loop at triage is paused as `needs human — became loop at triage` while the other non-loop phases proceed.
+- **Per-phase gate (Hard rule #0) and run-time guard.** Done phases are skipped; loop / unconfirmed-loop phases are excluded as `⚑ needs a human`, never a whole-roadmap refusal; a phase that becomes loop at triage is paused as `⚑ needs a human` (became loop at triage) while the other orchestrable phases proceed.
 - **LAUNCH THE COMPLETE READY WAVE** in parallel — conflicts are serialized across rounds (decided at derivation, reported), never by silently trimming a launched wave.
 - **Anti-stale ALWAYS** (Step 2): no worktree is launched without being at `origin/<base>`, in every round.
 - **Readiness = MERGED (code, observed in git) or ATTESTED with evidence (ops).** A PR-ready dependency does not make its dependent ready.
@@ -211,11 +179,11 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - **Migration numbers are provisional**: first to merge keeps it, the others renumber on integration; the truth is git, never a registry.
 - **Cleanup only after merge + green CI**, from outside the worktree, `git branch -d` never `-D`, seeds kept, cycle-only fixtures removed only when provably this run's.
 - **Roadmap edits are limited to an attested ops phase's `Status`/`Evidence`**, write-only, never committed by you.
-- ABSOLUTE paths in every git/worktree/launch command and YAML; relative only when talking to the user; slug-first.
+- ABSOLUTE paths in every git/worktree/launch command and tab config; relative only when talking to the user; slug-first.
 
 ## What it does NOT do
 - It does not run any lane cycle, RDD, or smoke — each tab's lane-start does.
-- It only orchestrates roadmaps whose phases are all shot/organic; it refuses any roadmap containing a loop phase and pauses any phase that triage upgrades to loop.
+- It does not run loop phases: they are excluded or paused and handed to the human (`/mala-pata-loop` + `/mala-pata-loop-start`); the rest of the roadmap still runs.
 - It does not plan (that is `/mala-pata-roadmap-orchestrate`) nor build the roadmap (that is `/mala-pata-roadmap`).
 - It does not execute `Kind: ops` phases or fabricate their evidence.
 - It does not start deferred phases unless the human promotes them.

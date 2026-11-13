@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.21.0"
+  version: "1.22.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -24,8 +24,7 @@ Your only job is to turn that request into a **COMPLETE TECHNICAL CONTEXT saved 
 
 mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Required** (no fallback — if missing, STOP and ask for it to be installed, do not start):
-  - `gentle-ai` — SDD engine. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Required**: none. The SDD cycle is mala-pata-owned (self-contained since gentle-ai 4.x retired SDD); this skill only writes a kickoff file.
 - **Recommended** (with fallback — if missing, warn in one line and continue degraded):
   - `engram` — persistent memory and continuity pointer. Fallback: continue without the pointer; the brief in the file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
@@ -200,9 +199,8 @@ migrations_reserved: <provisional number(s) + "final at merge; first to merge ke
 smoke_test:                 # does it need manual testing with seeded data after apply? (confirmed by loop-start, Step 4.1-ter)
   needed: auto             # auto|yes|no — auto = loop-start proposes and the human confirms
   data: <scenario/data to seed, or "a definir">
-sdd_preflight:              # recommendations the runner (loop-start) uses as the default of the hook's canonical question
+sdd_preflight:              # recommendations the runner (loop-start) uses as the default of its interactive preflight
   pace: interactive        # interactive|automatic — FULL/STANDARD => interactive; LITE/MINIMAL may be automatic
-  artifacts: engram        # engram|openspec|hybrid — default engram for this user
   pr_strategy: ask-on-risk # ask-on-risk|single-pr|auto-chain — default ask-on-risk
 created_at: <ISO 8601>
 ---
@@ -275,7 +273,7 @@ Verifiable criteria, not vague bullets — use Given/When/Then for observable be
 
 The kickoff MUST include the full frontmatter and the "Method rules" block with the paths to the MDs — the executor reads them at startup. Those `references/profiles/...` paths are relative to the `mala-pata-loop` skill directory (not the repo); `/mala-pata-loop-start` resolves them against the installed skill dir. Do not compress the Definition of Done so that it "fits": there is no longer a character budget, use the space the change needs.
 
-`sdd_preflight` are only RECOMMENDATIONS — they do NOT satisfy gentle-ai's preflight hook (which requires a real, live `AskUserQuestion` in the runner's session); `mala-pata-loop-start` reads them to pre-fill the recommendation text of the hook's mandatory canonical question. Derive `pace` from the profile: FULL/STANDARD → `interactive`; LITE/MINIMAL may go `automatic`.
+`sdd_preflight` are only RECOMMENDATIONS; `mala-pata-loop-start` reads them to pre-fill the recommendation text of its interactive preflight (there is no hook — gentle-ai 4.x retired SDD). Derive `pace` from the profile: FULL/STANDARD → `interactive`; LITE/MINIMAL may go `automatic`.
 
 **`smoke_test`** captures early whether the change will probably need manual testing with seeded data after apply (`loop-start` gate, Step 4.1-ter). Default `needed: auto` — `loop-start` proposes yes/no according to the shape of the change and the human confirms; put `yes`/`no` here only if you already know. In `data`, one line with the scenario to seed (e.g. "<entity> in <initial state> with <n> related records"), or "a definir". The seed always uses the project's mechanism and runs against the test DB.
 

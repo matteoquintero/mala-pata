@@ -19,7 +19,7 @@ Your only job is to turn that request into an **ODD kickoff** — a markdown fil
 
 > **The ODD protocol is the source of truth.** Its 7 steps, the feature-doc, the work-unit commits, RDD per commit and the delivery slicing live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill does not duplicate them — the kickoff you generate is the input that `/mala-pata-organic-start` uses to follow them. If CLAUDE.md and this skill differ on ODD mechanics, **CLAUDE.md rules**.
 
-> **Organic uses ODD workers (direct/delegated), NEVER `sdd-*` agents.** gentle-ai's `PreToolUse:Agent` preflight (`gentle-ai sdd-preflight-hook`) only intercepts `sdd-*` dispatches — it applies neither to this skill nor to `/mala-pata-organic-start`. Do not invent a preflight gate here: it does not exist for this lane.
+> **Organic uses ODD workers (direct/delegated), NEVER the SDD `mala-pata-sdd-*` agents.** There is no SDD preflight gate in this lane (SDD is the loop lane; gentle-ai 4.x retired SDD and its `PreToolUse:Agent` hook). Do not invent a preflight gate here.
 
 ## Requirements (orchestrate, don't reinvent)
 

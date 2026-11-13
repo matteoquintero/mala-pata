@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.25.0"
+  version: "1.27.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -15,7 +15,7 @@ Your job: read the kickoff and run the **native gentle-ai ODD cycle**, organized
 
 > **The ODD protocol is the source of truth.** Its 7 steps (Authorize → Explore → Resolve → Classify → Track → Implement → Close), the feature-doc, the work-unit commits, the RDD evaluation per commit and the delivery slicing live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill follows them and adds the mala-pata layer. If the CLAUDE.md and this skill differ on ODD mechanics, **the CLAUDE.md wins**.
 
-> **Uses ODD workers (direct inline / delegated direct), NEVER `sdd-*` agents.** The gentle-ai `PreToolUse:Agent` preflight (`gentle-ai sdd-preflight-hook`) only intercepts `sdd-*` dispatches — it does not apply to this skill. Do not ask the canonical 3-question preflight here: it does not exist for this lane.
+> **Uses ODD workers (direct inline / delegated direct), NEVER the SDD `mala-pata-sdd-*` agents.** There is no SDD preflight gate in this lane (SDD is the loop lane; gentle-ai 4.x retired SDD and its `PreToolUse:Agent` hook). Do not ask a canonical 3-question preflight here.
 
 > **Proportionality**: for a small, already-understood change, the phases below run in a single pass (explore → implement → close) without ceremonial pauses — the kickoff/start separation exists to give a review/handoff point between "what is going to be done" and "doing it", same as in the `mala-pata-loop`/`mala-pata-loop-start` pair, not to force bureaucracy on small things.
 
@@ -97,7 +97,7 @@ For each task: the **smallest topology** — direct inline (1-3 already-understo
 
 ## Step 7 — Close (ODD 7 + mala-pata close)
 
-Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data against a MANDATORY ephemeral DB fork — never the shared base test DB, see loop-start 4.1-ter step 2 — GATE, only if applicable: create the fork, seed into it via `/mala-pata-seed`, then run the browser walkthrough via `/mala-pata-walkthrough-start` by its `smoke_delicacy` — low = the agent runs it on its own, medium = runs it + "review the evidence", high = the agent prepares and YOU run the sensitive steps; evidence per phase, a screenshot + trace, lands in `mala-pata/walkthroughs/<slug>/evidence/`, in-repo, never a temp dir)**, 4.2 (PR/merge/ff-umbrella destination with GATE — when `delivery_mode: ff-umbrella`, use 4.2 option (c): fast-forward into the `umbrella/*`, never to main/dev), 4.4 (proactive CI), 4.5 (cleanup with GATE — includes **dropping the smoke's ephemeral DB fork** (all its DB side-effects — seeds + walkthrough byproducts — die with it); **never wipe the shared base/test DB** (the smoke never touched it); if the drop fails, report it)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
+Report the **verified result** + every failed/skipped/pending check + next step. Then, the mala-pata close: reuse from `/mala-pata-loop-start` the sub-phases **4.1 (report), 4.1-bis (re-verify/renumber migration if you touched one), **4.1-ter (smoke test with seeded data against a MANDATORY ephemeral DB fork — never the shared base test DB, see loop-start 4.1-ter step 2 — GATE, only if applicable: create the fork, seed into it via `/mala-pata-seed`, then run the browser walkthrough via `/mala-pata-walkthrough-start` by its `smoke_delicacy` — low = the agent runs it on its own, medium = runs it + "review the evidence", high = the agent prepares and YOU run the sensitive steps; evidence per phase, a screenshot + trace, lands in the in-repo evidence folder, never a temp dir, and is **reported to the human by its ABSOLUTE worktree path ALWAYS — regardless of how the smoke was produced** (browser walkthrough or a direct render): `<ABS-evidence>` = `<ABS-worktree>/mala-pata/walkthroughs/<slug>/evidence/` (`<ABS-worktree>` via `git rev-parse --show-toplevel`), with the copy-paste `open <ABS-evidence>` line (`xdg-open` on Linux) — never the repo-relative path; same rule as `/mala-pata-walkthrough-start` Hard rule #4)**, 4.2 (PR/merge/ff-umbrella destination with GATE — when `delivery_mode: ff-umbrella`, use 4.2 option (c): fast-forward into the `umbrella/*`, never to main/dev), 4.4 (proactive CI), 4.5 (cleanup with GATE — **delete the merged branch LOCAL AND REMOTE as a standard part of the cleanup** (local `git -C <ABS-repo> branch -d <branch>` — `-d`, never `-D`; remote `git push origin --delete <branch>`, or the project's equivalent; **exception**: if the integration did NOT happen — PR opened without merge, abandoned, or a merge that did not reach green — do NOT delete, ask a separate explicit OK; if the merge already used `--delete-source-branch`, the remote is gone → clean only local; same rule as `/mala-pata-loop-start` 4.5), and includes **dropping the smoke's ephemeral DB fork** (all its DB side-effects — seeds + walkthrough byproducts — die with it); **never wipe the shared base/test DB** (the smoke never touched it); if the drop fails, report it)** — **NOT 4.3** (that one no longer exists in the SDD cycle; RDD already ran per commit here, in Step 6). **The kickoff's `Why` FLOWS into the PR body** (motivation section).
 **Cleanup exception** if you worked with incremental commits INSIDE the worktree of a feature in progress: that branch/worktree is closed by its own cycle, not organic-start — you only clean up what this skill created.
 
 ## Step 8 — Final table (MANDATORY)
@@ -116,15 +116,15 @@ Then the table — one milestone per row, 3 columns. Status uses the shared work
 | Feature-doc (if substantial) | ✓ done | `mala-pata/odd/<change_name>.md` · `<n>` tasks |
 | Apply (TDD if applies) | ✓ done | Red-Green-Refactor, `<n>` tests |
 | Migrations (if any) | ✓ done / ∅ n/a | provisional `<N>`, re-verified at merge |
-| Smoke test (fixtures) | ✓ done / ∅ n/a | functionality OK, or did not apply |
+| Smoke test (fixtures) | ✓ done / ∅ n/a | functionality OK · evidence → `<ABS-evidence>` (absolute), or did not apply |
 | Work-unit commits | ✓ done | `<n>` commits (Conventional) |
 | RDD per commit (if enabled) | ✓ done / ∅ n/a | assess: `<passive/granted>` · review: `<acknowledged / n-a>` |
 | PR `#<n>` → `<branch>` | ✓ done | MERGED (merge commit `<sha>`) |
 | CI post-merge | ✓ done | GREEN |
-| Cleanup (worktree + branch) | ✓ done | branch + worktree removed |
+| Cleanup (worktree + local/remote branch) | ✓ done | worktree + local & remote branch removed |
 
 > **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
-**Frozen close labels** — columns `Milestone` · `Status` · `Evidence`; BLUF label `Result:`; the Milestone column is exactly this set: `Authorization` · `Worktree + base` · `Explore (Where)` · `Feature-doc (if substantial)` · `Apply (TDD if applies)` · `Migrations (if any)` · `Smoke test (fixtures)` · `Work-unit commits` · `RDD per commit (if enabled)` · `PR #<n> → <branch>` · `CI post-merge` · `Cleanup (worktree + branch)`; Status tokens `✓ done` · `◐ partial: <reason>` · `○ pending` · `✗ blocked: <reason>` · `∅ n/a`. Omit a row that does not apply; never rename or translate a Milestone.
+**Frozen close labels** — columns `Milestone` · `Status` · `Evidence`; BLUF label `Result:`; the Milestone column is exactly this set: `Authorization` · `Worktree + base` · `Explore (Where)` · `Feature-doc (if substantial)` · `Apply (TDD if applies)` · `Migrations (if any)` · `Smoke test (fixtures)` · `Work-unit commits` · `RDD per commit (if enabled)` · `PR #<n> → <branch>` · `CI post-merge` · `Cleanup (worktree + local/remote branch)`; Status tokens `✓ done` · `◐ partial: <reason>` · `○ pending` · `✗ blocked: <reason>` · `∅ n/a`. Omit a row that does not apply; never rename or translate a Milestone.
 **No false green**: any milestone left partial/blocked carries its reason in Status (`◐ partial: <reason>` / `✗ blocked: <reason>`) — never mark `✓ done` over a red pipeline.
 
 **Structure:** Definition of Done + information radiator (Cockburn).

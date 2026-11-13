@@ -38,7 +38,7 @@ This phase sits between `sdd-tasks` (approved plan) and `sdd-apply` (code). It d
 
 From the orchestrator:
 - Change name
-- Artifact store mode (`engram | openspec | hybrid | none`)
+- Artifact store mode (`engram`)
 - Absolute path of the worktree to inspect
 - Kickoff profile (FULL/STANDARD/LITE/MINIMAL) — determines the summary's word target
 
@@ -46,7 +46,7 @@ The **audit mode and the number of reviewers (0/1/2) do NOT come from the orches
 
 ## Execution and Persistence Contract
 
-> Follow **Section A** (skill loading), **Section B** (retrieval), and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
+> Follow **Section A** (skill loading), **Section B** (retrieval), and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
 
 Required reads (parallel + `mem_get_observation` — previews are truncated):
 - `sdd/{change-name}/tasks` (required)
@@ -84,8 +84,6 @@ Make explicit in the artifact (a short line, not a separate section) the chosen 
 
 Persistence:
 - **engram**: `sdd/{change-name}/preview` (type: `architecture`).
-- **openspec / hybrid**: `preview.md` in the change folder.
-- **none**: return inline; do not write files.
 
 ## Output — Executive summary (ALWAYS)
 
@@ -241,7 +239,7 @@ The gate **ALWAYS** runs, whether or not the audit is active. It is **immune to 
 **Stop (resumable pause, Option A)**
 - Marks `sdd/<change>/state = "paused-at-preview"` in engram, with an optional reason from the human, **and the absolute path of the worktree that stays LIVE** — a paused SDD is the #1 candidate for leaking orphan worktrees; recording it is what lets the radar list it for future cleanup.
 - It does **NOT delete** previous artifacts (explore/proposal/spec/design/tasks stay in engram).
-- **Resumable with `/mala-pata-loop-start <kickoff-path>`** — on resume, loop-start detects the `paused-at-preview` and jumps straight to this same gate (do NOT use `/sdd-continue`: it belongs to gentle-ai and does not know the preview phase — it routes above the gate).
+- **Resumable with `/mala-pata-loop-start <kickoff-path>`** — on resume, loop-start detects the `paused-at-preview` and jumps straight to this same gate.
 - State recorded for future memory (if it comes back in 2 weeks it knows why it stopped).
 - **Objective-not-ready variant**: if the reason for stopping is an **objective-level** defect (see the classification section), the state is `sdd/<change>/state = "objective-not-ready-at-preview"` instead of `paused-at-preview`, and the resume is NOT at the preview gate but at **explore/propose** (the WHAT has to be redefined first). The rest is the same: live worktree recorded, previous artifacts intact.
 
@@ -284,5 +282,5 @@ When the Self-assessment decided 2 reviewers:
 - **The gate cannot be passed without the autotest** (1 written line).
 - **The gate stops even if the rest of the SDD is in auto mode** — this phase is interactive by design.
 - Size budget of the **summary** per profile (see table). Audit has no cap.
-- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`; `next_recommended: sdd-apply` **only** after gate approval.
+- Return envelope per **Section D** from `_shared/sdd-phase-common.md`; `next_recommended: sdd-apply` **only** after gate approval.
 - **Record the dispositions in the persisted artifact** (`sdd/<change>/preview`): for each finding, its final disposition (REUSE / REFACTOR / IGNORE / accepted-as-gap). The goal is ONE pass: if there was an "Adjust", also record the requested delta and that the close was via a delta re-gate, not another audit pass (ANTI-LOOP section).

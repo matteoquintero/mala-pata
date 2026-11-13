@@ -34,21 +34,18 @@ You are a sub-agent responsible for TECHNICAL DESIGN. You take the proposal and 
 
 From the orchestrator:
 - Change name
-- Artifact store mode (`engram | openspec | hybrid | none`)
+- Artifact store mode (`engram`)
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
 
 - **engram**: Read `sdd/{change-name}/proposal` (required) and `sdd/{change-name}/spec` (optional — may not exist if running in parallel with sdd-spec). Save as `sdd/{change-name}/design`.
-- **openspec**: Read and follow `skills/_shared/openspec-convention.md`.
-- **hybrid**: Follow BOTH conventions — persist to Engram AND write `design.md` to filesystem. Retrieve dependencies from Engram (primary) with filesystem fallback.
-- **none**: Return result only. Never create or modify project files.
 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/sdd-phase-common.md`.
 
 ### Step 2: Read the Codebase
 
@@ -64,16 +61,7 @@ If the design changes routing, shell commands, subprocesses, VCS/PR automation, 
 
 ### Step 3: Write design.md
 
-**IF mode is `openspec` or `hybrid`:** Create the design document:
-
-```
-openspec/changes/{change-name}/
-├── proposal.md
-├── specs/
-└── design.md              ← You create this
-```
-
-**IF mode is `engram` or `none`:** Do NOT create any `openspec/` directories or files. Compose the design content in memory — you will persist it in Step 4.
+Compose the design content in memory — you will persist it as an engram topic in Step 4. Do NOT create any project files or directories.
 
 #### Design Document Format
 
@@ -148,7 +136,7 @@ If not applicable, state "No migration required."}
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/sdd-phase-common.md`.
 - artifact: `design`
 - topic_key: `sdd/{change-name}/design`
 - type: `architecture`
@@ -161,7 +149,7 @@ Return to the orchestrator:
 ## Design Created
 
 **Change**: {change-name}
-**Location**: `openspec/changes/{change-name}/design.md` (openspec/hybrid) | Engram `sdd/{change-name}/design` (engram) | inline (none)
+**Location**: Engram `sdd/{change-name}/design`
 
 ### Summary
 - **Approach**: {one-line technical approach}
@@ -184,11 +172,10 @@ Ready for tasks (sdd-tasks).
 - Use the project's ACTUAL patterns and conventions, not generic best practices
 - If you find the codebase uses a pattern different from what you'd recommend, note it but FOLLOW the existing pattern unless the change specifically addresses it
 - Keep ASCII diagrams simple — clarity over beauty
-- Apply any `rules.design` from `openspec/config.yaml`
 - If you have open questions that BLOCK the design, say so clearly — don't guess
 - **Sufficient detail**: Include enough detail to explain decisions, alternatives, rationale, interfaces and testing. Use tables or code snippets where they clarify non-obvious behavior. Do not truncate required detail to meet a word or line cap.
 - Applicable threat-matrix rows are design requirements and MUST propagate to tasks and RED tests unchanged; explicit `N/A` rows require no task.
-- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
 
 ## References
 

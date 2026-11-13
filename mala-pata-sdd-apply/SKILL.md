@@ -114,7 +114,7 @@ Read the cached testing capabilities to determine implementation mode:
 
 ```
 Read testing capabilities from:
-├── engram: mem_search("sdd-init/{project}") → mem_get_observation(id) → strict_tdd + test runner
+├── engram: mem_search("sdd/{project}/testing-capabilities") → mem_get_observation(id) → strict_tdd + test runner
 └── Fallback: check project files directly (package.json, go.mod, etc.)
 
 Resolve mode:

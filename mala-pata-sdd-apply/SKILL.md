@@ -32,50 +32,45 @@ You are a sub-agent responsible for IMPLEMENTATION. You receive specific tasks f
 ## What You Receive
 
 From the orchestrator:
-- Change name
+- Change name and project
 - The specific task(s) to implement (e.g., "Phase 1, tasks 1.1-1.3")
-- Artifact store mode as REPORTED by native status (`engram | openspec | hybrid | none`) — consume it, never re-derive it
-- Structured status from `skills/_shared/sdd-status-contract.md`: `schemaName`, `planningHome`, `changeRoot`, `artifactPaths`, `contextFiles`, `applyState`, task progress, dependency states, and `actionContext`
+- The kickoff absolute path (for the verbatim What / Why / DoD)
 - Delivery strategy and resolved workload decision (`ask-on-risk | auto-chain | single-pr | exception-ok`, plus PR slice or `size:exception` when applicable)
+
+State is in-house (`_shared/sdd-state.md`): read the artifacts from their engram topics `sdd/<change-name>/*` and derive `applyState` from the `tasks` checkboxes. There is no native status JSON and no store to detect — it is always engram.
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
 
-**Reads are store-blind.** Read `proposal`, `spec`, `design`, and `tasks` (all required) from the locators in `artifactPaths`, and `apply-progress` from its locator whenever that one resolves. Do not detect the store and do not assemble locators yourself.
+**Reads (engram topics).** Read `proposal`, `spec`, `design`, and `tasks` (all required) from their engram topics `sdd/<change-name>/<artifact>`, and `apply-progress` from `sdd/<change-name>/apply-progress` whenever it exists. Always also `Read` the kickoff at the absolute path you were given.
 
-Writes name a mechanism because writing a file and saving an observation are different operations, but the reported store selects it — you do not:
-
-- **engram**: `mem_update` the `tasks` observation so completed tasks are marked `[x]`; `mem_save` or `mem_update` the `apply-progress` locator.
-- **openspec**: follow `skills/_shared/openspec-convention.md`; mark `[x]` in the file at the `tasks` locator.
-- **hybrid**: both mechanisms, against that artifact's locators.
-- **none**: return progress only. Do not update project artifacts.
+**Writes (engram).** `mem_update` the `tasks` observation so completed tasks are marked `[x]`; `mem_save`/`mem_update` the `sdd/<change-name>/apply-progress` topic.
 
 ## Status and Workspace Guard
 
-Before reading implementation files or writing code, consume the structured status provided by the orchestrator or build the equivalent status from artifacts.
+Before writing code, derive `applyState` from the `tasks` artifact's checkboxes (per `_shared/sdd-state.md`):
 
-- If `applyState` is `blocked`, STOP and return `blocked` with the missing artifacts or unsafe context.
-- If `applyState` is `all_done`, do not edit. Return `success` with `next_recommended: sdd-archive`; verification remains optional.
-- If `applyState` is `ready`, proceed only on the assigned pending tasks.
-- Read context from `contextFiles` / `artifactPaths` instead of assuming fixed filenames. For spec-driven OpenSpec, these normally map to proposal, specs, design, and tasks.
-- If `actionContext.mode` is `workspace-planning` and `allowedEditRoots` is empty, STOP before editing. Treat linked repos and folders as read-only planning context.
-- If `allowedEditRoots` is present, edit only files under those roots. If a needed edit is outside the allowed roots, STOP and report the unsafe path.
+- `blocked` (tasks missing, or a required upstream artifact absent) → STOP and return `blocked` with what is missing.
+- `all_done` (every implementation task `[x]`) → do not edit. Return `success` with `next_recommended: sdd-archive`; verification remains optional.
+- `ready` (at least one task `[ ]`) → proceed only on the assigned pending tasks.
+- Read context from the engram topics `sdd/<change-name>/{proposal,spec,design,tasks}`, not fixed filenames.
+- **Edit scope is the loop's worktree.** `/mala-pata-loop-start` runs the cycle in a dedicated worktree on the change's branch; edit only files inside that worktree, by absolute path. There is no native edit-authority grant and no `allowedEditRoots` to consult.
 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/sdd-phase-common.md`.
 
 ### Step 2: Read Context
 
 Before writing ANY code:
-1. Read the structured status and confirm `applyState: ready`
-2. Read every applicable artifact path/topic in `contextFiles`
+1. Derive `applyState` from the `tasks` checkboxes and confirm it is `ready`
+2. Read every artifact from its engram topic `sdd/<change-name>/*`
 3. Read the specs — understand WHAT the code must do
 4. Read the design — understand HOW to structure the code
 5. Read existing code in affected files — understand current patterns
-6. Check the project's coding conventions from `config.yaml`
+6. Check the project's coding conventions (from the project itself and the kickoff)
 
 #### Step 2a: Enforce Review Workload Decision
 
@@ -119,8 +114,7 @@ Read the cached testing capabilities to determine implementation mode:
 
 ```
 Read testing capabilities from:
-├── engram: mem_search("sdd/{project}/testing-capabilities") → mem_get_observation(id)
-├── openspec: openspec/config.yaml → strict_tdd + testing section
+├── engram: mem_search("sdd-init/{project}") → mem_get_observation(id) → strict_tdd + test runner
 └── Fallback: check project files directly (package.json, go.mod, etc.)
 
 Resolve mode:
@@ -191,11 +185,11 @@ Update `tasks.md` — change `- [ ]` to `- [x]` for completed tasks:
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/sdd-phase-common.md`.
 - artifact: `apply-progress`
 - topic_key: `sdd/{change-name}/apply-progress`
 - type: `architecture`
-- Also mark completed tasks `[x]` at the `tasks` locator, using the write mechanism the reported store requires.
+- Also mark completed tasks `[x]` by `mem_update` on the `sdd/{change-name}/tasks` topic.
 
 #### Merge Protocol
 
@@ -255,9 +249,9 @@ If none, say "None."}
 - ALWAYS read specs before implementing — specs are your acceptance criteria
 - ALWAYS follow the design decisions — don't freelance a different approach
 - ALWAYS match existing code patterns and conventions in the project
-- ALWAYS consume or produce structured status before implementation; do not infer readiness from conversation alone
-- STOP on `applyState: blocked` and do not edit; STOP on unsafe `actionContext` or edit roots
-- In `openspec` mode, mark tasks complete in `tasks.md` AS you go, not at the end
+- ALWAYS derive `applyState` from the `tasks` checkboxes before implementation; do not infer readiness from conversation alone
+- STOP on `applyState: blocked` and do not edit; edit only inside the loop's worktree
+- Mark tasks complete in the `tasks` topic AS you go, not at the end
 - Before returning, re-read the persisted tasks artifact and ensure completed tasks are visibly marked `[x]`; internal todos are not completion evidence
 - If you discover the design is wrong or incomplete, NOTE IT in your return summary — don't silently deviate
 - If a task is blocked by something unexpected, STOP and report back
@@ -266,7 +260,6 @@ If none, say "None."}
 - When applying `size:exception`, state it explicitly in apply-progress and the return summary
 - NEVER implement tasks that weren't assigned to you
 - Skill loading is handled in Step 1 — follow any loaded skills strictly when writing code
-- Apply any `rules.apply` from `openspec/config.yaml`
 - If Strict TDD Mode is active (Step 3), load `strict-tdd.md` and follow its cycle INSTEAD of Step 4
 - When Strict TDD is active, the `strict-tdd.md` module's rules OVERRIDE Step 4 entirely
-- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.

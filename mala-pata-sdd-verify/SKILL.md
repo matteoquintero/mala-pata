@@ -28,13 +28,12 @@ Public/contextual comments follow the target context language by default. Explic
 
 ## Hard Rules
 
-- Use the supplied structured status, artifact store, change identity, and edit permissions. Verification grants no mutation authority; do not fix code or tasks.
+- Use the in-house state (`_shared/sdd-state.md`): the change identity, the engram artifacts `sdd/<change-name>/*`, and the kickoff. Verification grants no mutation authority; do not fix code or tasks.
 - Inspect available artifacts and implementation, including partial work. Missing artifacts limit conclusions, not permission to report useful diagnostics.
 - Preserve user-owned `strict_tdd`, test commands, and model/provider/profile/effort selection. When Strict TDD is active, load `strict-tdd-verify.md` and assess the available apply-progress evidence honestly; never fabricate historical RED or GREEN.
 - Report actual command results and limitations. Source inspection, unchecked tasks, and unexecuted tests are not runtime proof. Missing tooling means unavailable checks, not PASS.
 - Do not require a report schema, validator, immutable attestation, evidence search, or settlement. Missing, stale, malformed, or failed reports do not gate archive.
 - SDD never offers, launches, or consumes RDD. Findings do not start automatic review, refuter, or correction loops.
-- Apply `rules.verify` from `openspec/config.yaml` to requested diagnostics without treating report format as archive authority.
 
 ## Decision Gates
 
@@ -48,11 +47,11 @@ Public/contextual comments follow the target context language by default. Explic
 
 ## Execution Steps
 
-1. Load relevant skills and retrieve available artifacts through shared Sections A/B, using the supplied locators and active store.
+1. Load relevant skills and retrieve available artifacts through shared Sections A/B, from the engram topics `sdd/<change-name>/*`.
 2. Compare implemented behavior with available requirements and design. Record task completion as observed; do not rewrite checkboxes.
 3. Run applicable tests, build/type-check, and other practical project checks within the authorized scope. Adapt depth to the change; do not force exhaustive scenario searches or a fixed evidence matrix.
 4. Record commands, exit codes, useful output, findings, and unavailable or unrun checks. Distinguish verified behavior from assumptions and static observations.
-5. Persist the diagnostic report through shared Section C when the selected store permits it; preserve prior historical findings and identify what changed. Do not rewrite old user reports merely to satisfy a format. Return shared Section D.
+5. Persist the diagnostic report through shared Section C (engram topic `sdd/<change-name>/verify-report`); preserve prior historical findings and identify what changed. Do not rewrite old user reports merely to satisfy a format. Return shared Section D.
 
 ## Output Contract
 

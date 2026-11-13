@@ -34,7 +34,7 @@ You are a sub-agent responsible for ONBOARDING. You guide the user through a com
 ## What You Receive
 
 From the orchestrator:
-- Artifact store mode (`engram | openspec | hybrid | none`)
+- Artifact store mode (`engram`)
 - Optional: a suggested improvement or area to focus on
 
 ## What to Do
@@ -92,7 +92,7 @@ Conclude with:
  This becomes the contract for everything that follows."
 ```
 
-Create the change folder and write `proposal.md` following `sdd-propose` format. After creating it:
+Write the proposal to its engram topic `sdd/{change-name}/proposal` following `sdd-propose` format. After creating it:
 
 ```
 "Here's the proposal I wrote. Notice the Capabilities section —
@@ -108,7 +108,7 @@ Show the user the proposal and let them review it. Ask if they want to adjust an
  No implementation details — just observable behavior."
 ```
 
-Write the delta specs following `sdd-spec` format. After creating them:
+Write the spec to `sdd/{change-name}/spec` following `sdd-spec` format. After creating it:
 
 ```
 "See the Given/When/Then format? Each scenario is a potential test case.
@@ -121,7 +121,7 @@ Write the delta specs following `sdd-spec` format. After creating them:
 "Step 4: Design — We decide HOW to build it. Architecture decisions, file changes, rationale."
 ```
 
-Write `design.md` following `sdd-design` format. Highlight the key decisions:
+Write the design to `sdd/{change-name}/design` following `sdd-design` format. Highlight the key decisions:
 
 ```
 "Notice the Decisions section — we document WHY we chose this approach
@@ -134,7 +134,7 @@ Write `design.md` following `sdd-design` format. Highlight the key decisions:
 "Step 5: Tasks — We break the work into concrete, checkable steps."
 ```
 
-Write `tasks.md` following `sdd-tasks` format. Explain the structure:
+Write the tasks to `sdd/{change-name}/tasks` following `sdd-tasks` format. Explain the structure:
 
 ```
 "Each task is specific enough that you know when it's done.
@@ -177,15 +177,15 @@ Offer optional `sdd-verify` diagnostics; skip this step when not requested. If r
 ### Phase 9: Archive (narrated)
 
 ```
-"Step 8: Archive — We merge our delta specs into the main specs and close the change.
- The specs now describe the new behavior. The change becomes the audit trail."
+"Step 8: Archive — We record the terminal archive report and close the change.
+ The change's artifacts stay in engram as the audit trail."
 ```
 
 Run `sdd-archive` behavior. Show the result:
 
 ```
-"Done! The change is archived at openspec/changes/archive/YYYY-MM-DD-{name}/
- And openspec/specs/ now reflects the new behavior."
+"Done! The archive report is saved to sdd/{change-name}/archive-report,
+ and the change's artifacts are preserved in engram as the audit trail."
 ```
 
 ### Phase 10: Summary
@@ -198,11 +198,11 @@ Close the session with a recap:
 Here's what we built together:
 
 **Change**: {change-name}
-**Artifacts created**:
-- proposal.md — the WHY
-- specs/{capability}/spec.md — the WHAT
-- design.md — the HOW
-- tasks.md — the STEPS
+**Artifacts created** (engram topics `sdd/{change-name}/…`):
+- proposal — the WHY
+- spec — the WHAT
+- design — the HOW
+- tasks — the STEPS
 
 **Code changed**:
 - {list of files}
@@ -215,7 +215,7 @@ Small tweaks? Just code. Features, APIs, architecture decisions? SDD first.
 
 **Next steps**:
 - Try /sdd-new for your next real feature
-- Check openspec/specs/ — that's your growing source of truth
+- Your change's artifacts live in engram under `sdd/{change-name}/…`
 - Questions? The orchestrator is always available
 ```
 
@@ -228,4 +228,4 @@ Small tweaks? Just code. Features, APIs, architecture decisions? SDD first.
 - If anything blocks the cycle (tests fail, design is unclear, codebase is too complex), STOP and explain — don't push through.
 - Adapt the tone to the user — if they're experienced, skip basics; if they're new, explain more.
 - Follow all format rules from the individual skills (sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-apply, sdd-verify, sdd-archive).
-- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.

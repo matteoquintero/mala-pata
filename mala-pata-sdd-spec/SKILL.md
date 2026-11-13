@@ -34,21 +34,18 @@ You are a sub-agent responsible for writing SPECIFICATIONS. You take the proposa
 
 From the orchestrator:
 - Change name
-- Artifact store mode (`engram | openspec | hybrid | none`)
+- Artifact store mode (`engram`)
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `skills/_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
 
 - **engram**: Read `sdd/{change-name}/proposal` (required). If specs span multiple domains, concatenate into a single artifact with domain headers. Save as `sdd/{change-name}/spec`.
-- **openspec**: Read and follow `skills/_shared/openspec-convention.md`.
-- **hybrid**: Follow BOTH conventions — persist to Engram (single concatenated artifact) AND write domain files to filesystem.
-- **none**: Return result only. Never create or modify project files.
 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/sdd-phase-common.md`.
 
 ### Step 2: Identify Affected Domains
 
@@ -56,54 +53,40 @@ Read the proposal's **Capabilities section** — this is your primary contract:
 
 ```
 FOR EACH entry under "New Capabilities":
-├── This becomes a NEW FULL spec: openspec/changes/{change-name}/specs/<capability-name>/spec.md
+├── This becomes a NEW FULL spec for <capability-name>
 └── Write a complete spec (not a delta) — no existing behavior to reference
 
 FOR EACH entry under "Modified Capabilities":
-├── This becomes a DELTA spec: openspec/changes/{change-name}/specs/<capability-name>/spec.md
-└── Read existing openspec/specs/<capability-name>/spec.md first — your delta modifies it
+├── This becomes a DELTA spec for <capability-name>
+└── Read the current behavior in the real code first — your delta modifies it
 ```
 
-Both kinds live under the change. A new capability is written under the change; sdd-archive promotes it to `openspec/specs/<capability-name>/spec.md`; never write to `openspec/specs/` during the spec phase. The dispatcher reads only `openspec/changes/{change-name}/specs/<capability-name>/spec.md`, and a spec written anywhere else keeps the change routed to `spec`.
+Both kinds are composed into the single spec artifact. The whole spec is persisted to the engram topic `sdd/{change-name}/spec` per §C.
 
 If the proposal has no Capabilities section (older format), fall back to inferring from "Affected Areas". But always prefer the explicit Capabilities mapping when present.
 
 ### Step 3: Read Existing Specs
 
-**IF mode is `openspec` or `hybrid`:** If `openspec/specs/{domain}/spec.md` exists, read it to understand CURRENT behavior. Your delta specs describe CHANGES to this behavior.
-
-**IF mode is `engram`:** Existing specs were already retrieved from Engram in the Persistence Contract. Skip filesystem reads.
-
-**IF mode is `none`:** Skip — no existing specs to read.
+Read the real code to understand CURRENT behavior. Your delta specs describe CHANGES to this behavior. Existing SDD context was already retrieved from Engram in the Persistence Contract.
 
 ### Step 4: Write Delta Specs
 
-**IF mode is `openspec` or `hybrid`:** Create specs inside the change folder:
-
-```
-openspec/changes/{change-name}/
-├── proposal.md              ← (already exists)
-└── specs/
-    └── {domain}/
-        └── spec.md          ← Delta spec
-```
-
-**IF mode is `engram` or `none`:** Do NOT create any `openspec/` directories or files. Compose the spec content in memory — you will persist it in Step 5.
+Compose the spec content in memory — you will persist it as an engram topic in Step 5. Do NOT create any project files or directories.
 
 #### MODIFIED Requirements Workflow (CRITICAL — read before writing deltas)
 
 When writing a `## MODIFIED Requirements` section, follow this exact workflow:
 
 ```
-1. Locate the requirement in openspec/specs/{domain}/spec.md
+1. Reconstruct the requirement's CURRENT behavior from the real code
 2. COPY the ENTIRE requirement block — from `### Requirement:` through ALL its scenarios
 3. PASTE it under `## MODIFIED Requirements`
 4. EDIT the copy to reflect the new behavior
 5. Add "(Previously: {one-line summary of what changed})" under the requirement text
 
 Why copy-full-then-edit?
-→ The archive step REPLACES the requirement in main specs with your MODIFIED block
-→ If your block is partial, the archive will lose scenarios you didn't copy
+→ A MODIFIED block must carry the FULL requirement, not just the changed scenario
+→ If your block is partial, you lose the scenarios you didn't carry over
 → Common pitfall: only writing the changed scenario and losing the rest
 → If adding NEW behavior WITHOUT changing existing behavior, use ADDED instead
 ```
@@ -170,7 +153,7 @@ The system {MUST/SHALL/SHOULD} {do something specific}.
 
 #### For NEW Specs (No Existing Spec)
 
-If this is a completely new domain, create a FULL spec (not a delta) at `openspec/changes/{change-name}/specs/{domain}/spec.md`. Do not write it to `openspec/specs/{domain}/spec.md`; sdd-archive promotes it there.
+If this is a completely new domain, write a FULL spec (not a delta) for that domain.
 
 ```markdown
 # {Domain} Specification
@@ -196,7 +179,7 @@ The system {MUST/SHALL/SHOULD} {behavior}.
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/sdd-phase-common.md`.
 - artifact: `spec`
 - topic_key: `sdd/{change-name}/spec`
 - type: `architecture`
@@ -235,13 +218,12 @@ Ready for design (sdd-design). If design already exists, ready for tasks (sdd-ta
 - Include both happy path AND edge case scenarios
 - Keep scenarios TESTABLE — someone should be able to write an automated test from each one
 - DO NOT include implementation details in specs — specs describe WHAT, not HOW
-- **MODIFIED requirements MUST be the FULL block** — copy entire requirement + all scenarios from main spec, then edit. Partial MODIFIED blocks lose content at archive time.
+- **MODIFIED requirements MUST be the FULL block** — reconstruct the entire requirement + all scenarios from the current behavior in the code, then edit. Partial MODIFIED blocks lose content.
 - If adding new behavior without changing existing behavior → use ADDED, not MODIFIED
 - REMOVED requirements MUST include Reason and SHOULD include Migration when consumers, persisted behavior, docs, or tests are affected
 - RENAMED requirements MUST state both old and new names explicitly and SHOULD include Migration guidance for references/tests/docs
-- Apply any `rules.specs` from `openspec/config.yaml`
 - **Sufficient detail**: Preserve complete requirements and testable Given/When/Then scenarios, including relevant edge cases. Use the detail each scenario needs to make its expected behavior unambiguous. Do not truncate required detail to meet a word or line cap.
-- Return envelope per **Section D** from `skills/_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
 
 ## RFC 2119 Keywords Quick Reference
 

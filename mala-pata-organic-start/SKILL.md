@@ -52,8 +52,8 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 2. If your own worktree does not exist → create it off the kickoff's `base` (the base does come from the kickoff as-is; it may be `main`/`development` or a feature in progress). **Delivery-mode guard:** if `delivery_mode` is `ff-umbrella`, the `base` MUST be the umbrella and MUST match `umbrella/*` — if not, STOP (FF is never allowed to `main`/`development`); branching off the umbrella is what lets the feature fast-forward back into it at close (Step 7 → loop-start 4.2 option c).
    ```bash
    git -C <ABS-repo> worktree add <ABS-repo>-worktrees/<change-name> -b <type>/<change-name> <base-from-kickoff>
-   ln -s <ABS-repo>/.env <ABS-repo>-worktrees/<change-name>/.env && ln -s <ABS-repo>/node_modules <ABS-repo>-worktrees/<change-name>/node_modules
-   # (adjust symlinks to the project's real stack)
+   bash ~/.agent-skills/_shared/link-worktree-deps.sh <ABS-repo> <ABS-repo>-worktrees/<change-name>
+   # links the stack's untracked deps (.env + node_modules; pass extra dep names as args) WITHOUT naming them on the command line, so a Read/Edit(.env) deny never blocks it — deterministic, no manual `!` step. See _shared/link-worktree-deps.sh.
    ```
 3. **ABSOLUTE paths ALWAYS** (Hard rule #3) — every `git`/`npm`/read/write references the worktree by absolute path (`git -C <ABS-worktree> …`, `npm --prefix <ABS-worktree> …`). Before any write: `git -C <ABS-worktree> rev-parse --show-toplevel` must return the worktree.
 3.5. **Drifted worktree check (one line, before operating)**: confirm that the worktree is at its canonical path `<ABS-repo>-worktrees/<change-name>` and that `git worktree list` shows it there, resolving on disk. If the registered id != the folder, or the path does not resolve (someone renamed it with `mv`), warn and offer `git worktree repair <path>` (or `git worktree prune` if it was deleted) before continuing. **NEVER use `mv` to rename a worktree** — use `git worktree move`.

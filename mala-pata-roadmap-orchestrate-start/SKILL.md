@@ -73,10 +73,10 @@ Then launch (Steps 1–3 below): **one worktree per code phase at `origin/<base>
 - **organic** → `/mala-pata-organic <slug>` (writes the kickoff from the triage draft) then `/mala-pata-organic-start <slug>`.
 - **loop** → NOT dispatched: there is no `triage → loop → loop-start` path. The phase is paused and handed to the human (Runtime guard); a phase already excluded by Hard rule #0 is never sent through triage-to-launch.
 
-Each tab runs its FULL cycle, including **per-commit RDD in-tab** (organic/shot) and the **phase smoke when the change needs it** (the lane-start's own gate decides applicability). **Each tab STOPS at its PR-ready gate: it does NOT merge and does NOT clean up** — merge and cleanup are central. The launch prompt carries that directive (Step 3).
+Each tab runs its FULL cycle, including **per-commit RDD in-tab** (organic/shot) and the **phase smoke when the change needs it** (the lane-start's own gate decides applicability). **Each tab STOPS at its PR-ready gate: it does NOT merge and does NOT clean up** — merge and cleanup are central. The launch prompt carries that directive (Step 3), and ALSO directs each tab to write its **phase-status marker** as its LAST action at PR-ready (or on park/fail) per `_shared/phase-status.md` — that marker is the signal this orchestrator waits on (its presence = the tab finished; its `handoff` carries the "For the orchestrator" notes).
 
-### Round step 4 — WAIT for the wave to reach PR-ready (observed in git)
-You do NOT answer in-tab gates and you do NOT follow the cycles. You **observe** with `/mala-pata-roadmap-radar`'s readiness logic plus the branch evidence. A code phase is PR-ready when ALL hold, with absolute paths:
+### Round step 4 — WAIT for the wave to reach PR-ready (phase-status markers + git)
+You do NOT answer in-tab gates and you do NOT follow the cycles. You **observe**. The **primary signal** is each phase's **phase-status marker** `<ABS-worktree>/mala-pata/.phase-status.json` (`_shared/phase-status.md`): its presence means the tab finished, and its `status` (`pr-ready` / `parked` / `failed`) + `handoff` drive the merge gate directly — no need to read the tab's scrollback. Corroborate `pr-ready` against git with `/mala-pata-roadmap-radar`'s readiness logic. A code phase is PR-ready when its marker says `pr-ready` AND all hold, with absolute paths:
 - its branch has its work-unit commits ahead of `origin/<base>` carrying the `Mala-Pata-Phase: <slug>` trailer (`git -C <ABS-repo> log origin/<base>..<branch> --format=%B`);
 - its worktree is clean (`git -C <ABS-worktree> status --porcelain` empty);
 - its feature-doc (if any) has no unchecked task, (read via `git -C <ABS-repo> show <branch>:<path>`);

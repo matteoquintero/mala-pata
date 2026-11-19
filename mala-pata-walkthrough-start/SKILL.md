@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -27,7 +27,7 @@ Your job: **execute** the QA walkthrough that `/mala-pata-walkthrough` described
 > **#1 — Playwright MCP, accessibility-first.** Act on roles/labels/refs, not pixel coordinates (layout shifts break coordinate clicks). Wait on real readiness (web-first assertions, `document.fonts.ready`), never fixed sleeps.
 > **#2 — Deterministic + isolated environment.** Run against the **TEST env on this worktree's port** (never prod). Apply the determinism levers: disable animations, fixed viewport, seeded data (via seed), block third-party noise (analytics, chat widgets, cookie banners) so they do not flake the run.
 > **#3 — Console + network gate.** Register `page.on('console')` and the response listener; **FAIL the run on any console error or any 4xx/5xx** during the flow (allowlist known-harmless noise, and keep warnings separate from errors). This catches the regressions the happy-path `Then` does not.
-> **#4 — Absolute paths**; evidence folder created with `mkdir -p`; write-only (no commit).
+> **#4 — Absolute paths, also in what you REPORT.** Resolve `<ABS-worktree>` once (`git rev-parse --show-toplevel` from the worktree the run uses) and define `<ABS-evidence>` = `<ABS-worktree>/mala-pata/walkthroughs/<slug>/evidence/`. Create it with `mkdir -p`; write-only (no commit). Every human-facing mention of the evidence folder or trace (BLUF, per-phase report, close, high-delicacy hand-off) uses `<ABS-evidence>`, never the repo-relative path: the run happens in an isolated worktree, so a relative path forces the human to reconstruct where it lives.
 
 ## Phase 0 — Load the walkthrough
 
@@ -53,37 +53,44 @@ Only **medium/high (or unset)** prompt the human about who runs it; **low procee
 
 ## Phase 3 — Run phase by phase (Playwright MCP)
 
-Create `mala-pata/walkthroughs/<slug>/evidence/` and **start the trace**. For each row of the Test table, in order:
+Create `<ABS-evidence>` (#4) and **start the trace**. For each row of the Test table, in order:
 
 1. **Perform the `When`** — the exact action(s) on accessibility refs.
 2. **Assert the `Then`** — a web-first/ARIA assertion on the observable result (text/role/URL/title). Match → phase `✓`. Mismatch → phase `✗`, capture the failure state.
-3. **Screenshot** → `evidence/<NN>-<step-slug>.png` (one per phase — the per-phase evidence the human scans).
+3. **Screenshot** → `<ABS-evidence><NN>-<step-slug>.png` (one per phase — the per-phase evidence the human scans). When you report progress per phase, name the screenshot by its absolute path.
 4. The console/network gate (#3) runs throughout; a console error or 4xx/5xx marks the run failed even if the `Then` passed.
 
 A `✗` on a phase stops the flow if later phases depend on it; otherwise continue and collect all failures. Never retry blindly; never fake a `Then`.
 
 ## Phase 4 — Evidence + verdict
 
-1. **Stop the trace** → save `evidence/trace.zip` (open with `npx playwright show-trace <path>` — DOM before/after each action + console + network + timeline).
+1. **Stop the trace** → save `<ABS-evidence>trace.zip` (open with `npx playwright show-trace <ABS-evidence>trace.zip` — DOM before/after each action + console + network + timeline).
 2. **Verdict** = all phases `✓` AND no console errors / no 4xx-5xx (minus allowlist). **Render the output contract: Declared report THEN Run record** — first, if the walkthrough's `## Outputs` declares a **Declared report**, render it IN FULL (even when the run stopped or escalated); then the **Run record** — BLUF then a real table (NEVER fenced; one line per cell):
 
-   `Smoke — <slug>: <pass/fail> · <k>/<n> phases · console/network <clean/ N errors> · delicacy <low/medium/high> · evidence → mala-pata/walkthroughs/<slug>/evidence/`
+   `Smoke — <slug>: <pass/fail> · <k>/<n> phases · console/network <clean/ N errors> · delicacy <low/medium/high> · evidence → <ABS-evidence>`
 
    | # | Phase | Assert (Then) | Evidence | Result |
    |---|---|---|---|---|
-   | 1 | <when → then> | <what was asserted> | `<NN>-<step>.png` | ✓ pass · ✗ fail |
+   | 1 | <when → then> | <what was asserted> | `<NN>-<step>.png` (in `<ABS-evidence>`) | ✓ pass · ✗ fail |
 
    **Canonical structural-labels rule — single source of truth.** Apply `_shared/mala-pata-structural-labels.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
    **Frozen Run-record labels** — BLUF label `Smoke —` with fields `console/network`, `delicacy` (`low` / `medium` / `high`) and `evidence →`; columns `#` · `Phase` · `Assert (Then)` · `Evidence` · `Result`; Result tokens `✓ pass` · `✗ fail`. Emit them verbatim in English even when the conversation is in another language; only the cell values are localized. A **Declared report** from the walkthrough's `## Outputs` keeps the walkthrough's own pinned labels, not this set.
 
-3. The **trace path** + the evidence folder (also in the BLUF).
+3. The **evidence folder** and **trace**, absolute, each as its own copy-paste line (a fenced block is fine here — these are commands, not the table):
+
+   ```
+   open <ABS-evidence>
+   npx playwright show-trace <ABS-evidence>trace.zip
+   ```
+
+   `open` is the macOS opener; on Linux emit `xdg-open <ABS-evidence>` instead. Never shorten either line to a repo-relative path.
 
 ## Phase 5 — Human gate (do not self-approve)
 
 The agent's run is the evidence, not the acceptance. Present the verdict + evidence and leave the acceptance to the smoke-test gate's question ("was the functionality met? yes/no"):
 - **low** → report pass/fail + evidence; the human confirms at the gate.
 - **medium** → same, with an explicit "**review the evidence**" line.
-- **high** → you did not run it; the human runs it from the step list and reports.
+- **high** → you did not run it; the human runs it from the step list and reports, dropping their screenshots into `<ABS-evidence>` (give them the absolute path + the `open` line).
 - **Never flip `qa_done`** — that is the human's flag (set only after a human actually runs the walkthrough).
 
 `Structure: Playwright-MCP accessibility-first execution + assertion-as-verdict / screenshot+trace-as-evidence + console/network gate + determinism levers + delicacy-driven who-runs-it. Evidence-in-repo (never /tmp) = house method.`
@@ -92,7 +99,8 @@ The agent's run is the evidence, not the acceptance. Present the verdict + evide
 
 - Does NOT decide a pass from a screenshot — only from assertions + the console/network gate.
 - Does NOT run against prod, nor the sensitive steps of a `delicacy: high` walkthrough.
-- Does NOT leave evidence in a temp/scratchpad dir — always `mala-pata/walkthroughs/<slug>/evidence/`.
+- Does NOT leave evidence in a temp/scratchpad dir — always `<ABS-worktree>/mala-pata/walkthroughs/<slug>/evidence/`.
+- Does NOT report the evidence folder or trace by a repo-relative path — always absolute, with the copy-paste `open` line.
 - Does NOT fake a run when Playwright MCP is missing — it hands the walkthrough to the human.
 - Does NOT flip `qa_done`, does NOT commit, does NOT write app code.
 

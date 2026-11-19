@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the kickoff that /mala-pata-loop
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.27.0"
+  version: "1.29.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -22,7 +22,7 @@ Your job: read the *kickoff* that `/mala-pata-loop` left and **run the COMPLETE 
 
 > **Stack-agnostic.** The concrete examples in this command (`.env`, `node_modules`, `npm`, `TEST_DB_URL`, Storybook, `gh`) are from the Node/Postgres/GitHub stack. **Map them to the project's real stack** (test environment/DB, dependency manager, config/secrets files, component workshop, PR host according to what the project uses). The project's convention rules over any example.
 
-> **Hard rule #3 — there is EXACTLY ONE mandatory preflight gate: gentle-ai SDD's canonical preflight (3 questions), asked ONLY ONCE in Step 2 (new sub-step, see Step 2.9), in the interactive root/parent session, BEFORE the first dispatch of an `sdd-*` Agent.** It is not optional nor discretionary for this skill: since gentle-ai 3.7, the `PreToolUse:Agent` hook (`gentle-ai sdd-preflight-hook`) **rejects every `sdd-*` dispatch** if it does not find, in the live transcript of the current session, a real, byte-exact `AskUserQuestion` already answered by the human — neither the kickoff, nor engram, nor any state on disk satisfies it. mala-pata's opinionated preferences (interactive pace, artifacts in engram, PR ask-on-risk) are still carried, but now as the **recommendation** inside the text of each question (taken from the kickoff's `sdd_preflight` block) — the human still chooses, because the hook demands a real answer and the labels/order of the options are fixed by gentle-ai (they cannot be annotated or reordered, see Step 2.9). The other human interactions of the cycle stay the same: base branch confirmation (Step 2.2) and PR/merge destination (Step 4). **RDD still does not run in the SDD cycle** — it belongs to the organic/ODD lane (see `mala-pata-organic`), so there is no receipt gate here. No additional PRE-CYCLE gates beyond these three (canonical preflight, base branch, PR/merge destination) — if you think of building an additional selection menu before starting the cycle, it is a sign that you are adding something outside this skill. The in-cycle gates (preview, smoke, cleanup, migration, conflict) are legitimate and unaffected.
+> **Hard rule #3 — ONE interactive preflight, in Step 2.9, before the first phase dispatch.** The loop is self-contained (gentle-ai retired SDD in 4.x): there is NO `sdd-preflight-hook` and NO native validator. Step 2.9 asks the human, ONCE, in the root/parent session, for the cycle's **pace** and **PR strategy** (artifacts are always engram now — nothing to choose there), using the kickoff's `sdd_preflight` block as the recommendation. The other human interactions of the cycle stay the same: base branch confirmation (Step 2.2) and PR/merge destination (Step 4). **RDD now runs per work-unit commit during apply** (Step 3 phase 7), under the user's switch — the same per-commit code review as the organic lane (preview reviews the plan, RDD reviews the code; it is a per-commit review, NOT a pre-cycle or close gate). No additional PRE-CYCLE gates beyond these three (preflight, base branch, PR/merge destination) — if you think of building an additional selection menu before starting the cycle, it is a sign that you are adding something outside this skill. The in-cycle gates (preview, smoke, cleanup, migration, conflict) are legitimate and unaffected.
 
 > **Hard rule #4 — the objective is defined BEFORE preview, never IN preview. Debate alarm.** Preview exists to review **whether what is going to be done is right**, NOT to discuss **whether the objective is right** — the WHAT already had to be closed in explore/propose/spec. During the planning phases (explore→spec), if you notice that the WHAT is **being debated a lot** — questions about the objective keep coming back, the scope moves, "and this too?" questions appear that do not close, or the same decision is re-discussed more than once — that is the signal that **the objective was not well defined** (red cards that slipped through `/mala-pata-loop`'s gate, see its Step 0). Do NOT keep pushing forward: **send the cycle back to explore or propose** to fix the WHAT again, and only when it is closed do you continue. An objective with the WHAT still under discussion **CANNOT reach preview**. This is not re-running phases for fun — planning on a moving objective guarantees throwing the plan away later.
 
@@ -30,12 +30,11 @@ Your job: read the *kickoff* that `/mala-pata-loop` left and **run the COMPLETE 
 
 mala-pata orchestrates community tools — it does not reimplement them. Check at startup:
 
-- **Required** (no fallback — if missing, STOP and ask for it to be installed, do not start):
-  - `gentle-ai` — `sdd-*` agents. Install: `brew install gentleman-programming/tap/gentle-ai`.
+- **Required**: none. The SDD phases are mala-pata-owned skills (`mala-pata-sdd-*`) run via general delegation — no gentle-ai `sdd-*` agents, no native SDD engine, no preflight hook.
 - **Recommended** (with fallback — if missing, warn in one line and continue degraded):
   - `codegraph` — code graph (anchoring and structure). Fallback: grep/Read. Install: global npm CLI; per-project init with `gentle-ai codegraph init --cwd <repo>`.
   - `serena` — symbol-level navigation and editing. Fallback: codegraph/grep. Install: `uv tool install -p 3.13 serena-agent && serena setup claude-code`.
-  - `engram` — persistent memory and continuity pointer. Fallback: continue without the pointer; the brief in the file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
+  - `engram` — persistent memory; the SDD artifacts live in engram topics `sdd/<change-name>/*`. Fallback: keep artifacts inline and warn; the kickoff file is the source. Install: ships with gentle-ai (`brew install gentleman-programming/tap/gentle-ai`).
 
 Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a required one is missing, do not continue.
 
@@ -53,7 +52,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
 5. **One-shot auto-migration**: if through the legacy route you obtained the FULL content from engram (pre-migration kickoff), write it to the new format (`mala-pata/kickoffs/<change-name>.md`) and update the engram observation to the one-line pointer — that way that kickoff is migrated and next time it enters through the normal route. Then continue with that file.
 6. If nothing is found → **STOP** and ask for the correct identifier.
 
-**Resuming an SDD paused in Preview**: as soon as the brief is loaded, check `mem_search("sdd/<change-name>/state")`. If the EXACT item says `paused-at-preview` (left by `sdd-preview`'s "Stop" gate) → do NOT re-run the planning phases: do the Step 2 preflight and jump DIRECTLY to the Preview gate (Step 3, phase 6) re-presenting the already-persisted `sdd/<change-name>/preview` artifact. `/sdd-continue` (a gentle-ai command) does NOT know the preview phase — the resume goes through here. If instead the EXACT item says `objective-not-ready-at-preview` (objective bounce from the preview, see Hard rule #4 and `sdd-preview`) → the WHAT was left open: **do NOT jump to preview**; do the preflight and **re-enter through explore/propose** to redefine the objective before advancing again.
+**Resuming an SDD paused in Preview**: as soon as the brief is loaded, check `mem_search("sdd/<change-name>/state")`. If the EXACT item says `paused-at-preview` (left by `sdd-preview`'s "Stop" gate) → do NOT re-run the planning phases: do the Step 2 preflight and jump DIRECTLY to the Preview gate (Step 3, phase 6) re-presenting the already-persisted `sdd/<change-name>/preview` artifact. The resume always goes through here (there is no native continue command). If instead the EXACT item says `objective-not-ready-at-preview` (objective bounce from the preview, see Hard rule #4 and `sdd-preview`) → the WHAT was left open: **do NOT jump to preview**; do the preflight and **re-enter through explore/propose** to redefine the objective before advancing again.
 
 ## Step 2 — Preflight + environment preparation (following the brief, without deciding)
 1. **Are you already in the brief's worktree?** `git branch --show-current`. If it matches the brief's branch → jump to point 5.
@@ -74,35 +73,17 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
    - **Commit on the feature branch** (ABSOLUTE paths — Step 2 point 4, never bare git): `git -C <ABS-worktree> add mala-pata/kickoffs/<change-name>.md [mala-pata/research/<slug>.md]` then `git -C <ABS-worktree> commit -m "docs(mala-pata): carry planning docs for <change-name> into the feature branch"`. One additive commit, separate from the cycle's apply commits. If nothing was moved, skip the commit.
    - **Update the engram pointer** `sdd/<change-name>/kickoff` to the new worktree path, and tell the human in one line that the docs now ride in this branch's PR (no longer loose on base).
 
-### Step 2.9 — gentle-ai canonical preflight gate (MANDATORY, only once)
+### Step 2.9 — Interactive preflight (pace + PR strategy, once)
 
-Before the **first** dispatch of an `sdd-*` Agent (that is, before the Explore phase of Step 3), make **ONE single call** to `AskUserQuestion` with exactly 3 single-select questions, in the root/parent session (never from a subagent — a subagent can never carry this authority, the hook reads the transcript of the session that fires the Agent). Without this, `gentle-ai sdd-preflight-hook` will reject the `sdd-explore` dispatch.
+Before the **first** phase dispatch (the Explore phase of Step 3), make **ONE** `AskUserQuestion` call, in the root/parent session, with **2** single-select questions — **Pace** and **PR strategy**. This is a mala-pata interactive gate (there is NO hook and NO validator since gentle-ai 4.x retired SDD): it sets how the cycle runs and surfaces the kickoff's recommendation so the human confirms or overrides. Artifacts are always engram, so there is no tracking question.
 
-**Exact shape, byte-exact — do not alter it:**
-
-- The question texts literally start with `Gentle AI SDD preflight 1/3:`, `Gentle AI SDD preflight 2/3:` and `Gentle AI SDD preflight 3/3:` (the validator uses the regex `/^Gentle AI SDD preflight \d\/3:\s*/`). What comes AFTER the marker is free — that is where you put the kickoff's recommendation.
-- The `header` of each group is EXACTLY: `Pace`, `Artifacts`, `PR strategy`.
-- The option labels are EXACT and go IN THIS ORDER — the validator compares by index, so do NOT reorder nor add suffixes like "(Recommended)":
-  - Q1 Pace: `Interactive`, then `Automatic`.
-  - Q2 Artifacts: `OpenSpec`, then `Engram`, then `Both`.
-  - Q3 PR strategy: `Ask me`, then `Single PR`, then `Auto`.
-- Canonical descriptions (use them as is):
-  - Interactive: `Confirm before each SDD phase advances.`
-  - Automatic: `Advance through SDD phases without per-phase confirmation.`
-  - OpenSpec: `Track this change with OpenSpec proposal, spec, design, and task files.`
-  - Engram: `Track this change with Engram memory topics.`
-  - Both: `Track this change with OpenSpec files and Engram memory together.`
-  - Ask me: `Ask before opening a pull request when review risk is high.`
-  - Single PR: `Deliver the change as a single pull request.`
-  - Auto: `Chain pull requests automatically as work completes.`
-
-**Literal payload template** (copy it as is, only filling in the recommendation between `<>` in each question text):
+Read the kickoff frontmatter `sdd_preflight:` block for the recommendation (`pace`, `pr_strategy`; ignore any legacy `artifacts` field). Put the recommendation label in each question's text. If the kickoff has no `sdd_preflight` block, recommend mala-pata's defaults: `Interactive` / `Ask me`.
 
 ```
 AskUserQuestion({
   questions: [
     {
-      question: "Gentle AI SDD preflight 1/3: Cycle pace — the kickoff recommends: <Interactive|Automatic>",
+      question: "Cycle pace — the kickoff recommends: <Interactive|Automatic>",
       header: "Pace",
       multiSelect: false,
       options: [
@@ -111,17 +92,7 @@ AskUserQuestion({
       ]
     },
     {
-      question: "Gentle AI SDD preflight 2/3: Tracking artifacts — the kickoff recommends: <OpenSpec|Engram|Both>",
-      header: "Artifacts",
-      multiSelect: false,
-      options: [
-        { label: "OpenSpec", description: "Track this change with OpenSpec proposal, spec, design, and task files." },
-        { label: "Engram", description: "Track this change with Engram memory topics." },
-        { label: "Both", description: "Track this change with OpenSpec files and Engram memory together." }
-      ]
-    },
-    {
-      question: "Gentle AI SDD preflight 3/3: PR strategy — the kickoff recommends: <Ask me|Single PR|Auto>",
+      question: "PR strategy — the kickoff recommends: <Ask me|Single PR|Auto>",
       header: "PR strategy",
       multiSelect: false,
       options: [
@@ -134,22 +105,16 @@ AskUserQuestion({
 })
 ```
 
-**Where the recommendation comes from**: read the kickoff's frontmatter, `sdd_preflight:` block (`pace` / `artifacts` / `pr_strategy` — see `/mala-pata-loop`, Step 4). Token-to-label mapping: Pace → `interactive`→`Interactive`, `automatic`→`Automatic`; Artifacts → `openspec`→`OpenSpec`, `engram`→`Engram`, `hybrid`→`Both`; PR strategy → `ask-on-risk`→`Ask me`, `single-pr`→`Single PR`, `auto-chain`→`Auto`. Inject that label as the recommendation in the text of the corresponding question (e.g.: `... — the kickoff recommends: Engram`). **If the kickoff does NOT bring a `sdd_preflight` block** (legacy kickoff), recommend mala-pata's defaults: `Interactive` / `Engram` / `Ask me`.
-
-**Hard rules of this gate:**
-- Exactly 3 questions, in ONE single call — never 3 separate calls nor more/fewer questions.
-- Byte-exact labels in the canonical order above — never reorder, never add suffixes ("(Recommended)" or any other) to a label. The recommendation goes ONLY in the question text, after the marker.
-- It has to run in the root/parent session — a subagent can never satisfy this gate.
-- **NEVER manually write or duplicate the `## SDD Session Preflight` block** — the runtime automatically prepends it to the child's prompt when the preflight resolves successfully.
+Token→label mapping from `sdd_preflight`: Pace `interactive`→`Interactive`, `automatic`→`Automatic`; PR strategy `ask-on-risk`→`Ask me`, `single-pr`→`Single PR`, `auto-chain`→`Auto`. The recommendation goes in the question text only; the human still chooses.
 
 **Automatic ceiling (enforced rule)**: right after the pace answer, check the profile. FULL / STANDARD may NOT end up Automatic — if the human answered Automatic, clamp the cycle to Interactive and say so in one line (a large objective in auto dams up confirmations at the preview). LITE / MINIMAL may stay Automatic. The preview phase is never automatic in any profile.
 
-With the human's answer (after the ceiling check), the hook already has what it needs: continue straight to Step 3 (dispatch of `sdd-explore`).
+With the pace answer (after the ceiling check) and the PR strategy recorded, continue straight to Step 3 (dispatch of the Explore phase).
 
 ## Step 3 — SDD CYCLE, one phase at a time (each phase: summary + PAUSE + OK)
 Run the phases IN ORDER, **one by one** (never two together, never spec and design in parallel), reusing the project's `sdd-*` skills and persisting each artifact in engram (`sdd/<change-name>/<artifact>`). Do not advance a phase without the user's OK.
 
-**Execution mechanism (do NOT deduce from elsewhere)**: each phase is executed with the **Agent** tool, `subagent_type` = the name in parentheses of that phase (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-preview`, `sdd-apply`, `sdd-verify`, `sdd-archive`) — NEVER by loading that phase's SKILL.md into the current context with the Skill tool (that would run the phase inline, without the context isolation that the apply/verify phases need). `model` = the one mapped for that phase in the Model Assignments table of `~/.claude/skills/_shared/sdd-orchestrator-workflow.md` (the lazy-loaded surface that CLAUDE.md references — the table does NOT live in CLAUDE.md itself). **mala-pata exception (that table is gentle-ai's and does not know `sdd-preview`)**: for `sdd-preview` use **`opus`** — it is the most judgment-heavy adversarial phase of the cycle, it goes in the same tier as propose/design, not in the default. If the table is not available for the other phases, use `sonnet`.
+**Execution mechanism (do NOT deduce from elsewhere)**: each phase runs via the **Agent** tool with `subagent_type` = the **registered mala-pata agent** for that phase — `mala-pata-sdd-<phase>` (where `<phase>` is the name in parentheses below: explore, propose, spec, design, tasks, apply, verify, archive), and `sdd-preview` for the preview phase. These are mala-pata-owned **dedicated** agents: each `agent.md` carries that phase's tool/model scoping and points at `~/.agent-skills/mala-pata-sdd-<phase>/SKILL.md` + `~/.agent-skills/_shared/sdd-phase-common.md`. There are NO gentle `sdd-*` agents and NO preflight hook. NEVER load a phase SKILL into the current context with the Skill tool (that runs it inline, losing the context isolation apply/verify need). `model` comes from each agent's own `agent.md` (owned, so it survives gentle-ai's sync): propose / design / preview → `opus`, archive / onboard → `haiku`, the rest → `sonnet`. Dispatching by `subagent_type` already applies it; if you pass `model` explicitly, use those values. Do NOT depend on the gentle-managed `## Model Assignments` table in CLAUDE.md (the sync may rewrite it).
 
 1. **Explore** (`sdd-explore`) — investigate the **real code and context of the worktree** to ground the proposal: current state, approaches, risks, what to reuse. Reads the kickoff as input. Does not write code. Persist `sdd/<change-name>/explore`. → **GATE**.
 2. **Propose** (`sdd-propose`) — the change's proposal (intent, scope, approach), backed by the explore + kickoff. Persist `sdd/<change-name>/proposal`. → **GATE**.
@@ -165,7 +130,7 @@ Run the phases IN ORDER, **one by one** (never two together, never spec and desi
    5. **A>0 and B>0** (the worktree ALREADY has commits of its own — typical when RESUMING mid-apply) → **the only situation that STOPS**: it is no longer ff, it is rebase/merge with possible conflict. Report and offer `git -C <ABS-worktree> rebase origin/<base>`; if there are conflicts, leave the worktree as is and wait for a human decision. **Never force** (`--force`, `reset --hard`, `--no-verify`).
    6. **Cross-check with migrations**: if `A>0` and this change has a migration, a sibling branch may have merged its migration in that advance → fire early the number re-verification of Step 4.1-bis (measure git). If your provisional number was taken by another branch, renumber (regenerate) **BEFORE apply**, not at merge — it is cheaper to discover it here.
    7. After the fast-forward, reconfirm the executable environment (the `.env`/`node_modules` symlinks survive an ff, but verify they are still resolved) before starting apply.
-7. **Apply** (`sdd-apply`) — only now is code written. **Execution strategy**: apply the kickoff's `execution_strategy` when ordering the tasks and **forward it to the `sdd-apply` delegation**, exactly as `tdd_mode` is forwarded. `none` → no change. Anything else → follow `_shared/mala-pata-execution-strategies.md` verbatim (including its mandatory wiring guardrail); do not restate it. **Bug entry check**: when the kickoff's `kind: bug`, apply `_shared/mala-pata-bug-entry-check.md` before the first code write and carry it into the `sdd-apply` delegation; `kind` never changes the lane. For each task: **STRICT TDD** (Red → Green → Refactor) + **100% verify** (0 warnings/critical). Migration with the kickoff's **provisional** number (it is NOT yet final — it is confirmed or renumbered at merge, see Step 4.1-bis), validated **according to the project's testing convention** (round-trip if applicable). Persist `apply-progress` (MERGE, not overwrite). On closing each batch/phase → summary + PAUSE.
+7. **Apply** (`sdd-apply`) — only now is code written. **Execution strategy**: apply the kickoff's `execution_strategy` when ordering the tasks and **forward it to the `sdd-apply` delegation**, exactly as `tdd_mode` is forwarded. `none` → no change. Anything else → follow `_shared/mala-pata-execution-strategies.md` verbatim (including its mandatory wiring guardrail); do not restate it. **Bug entry check**: when the kickoff's `kind: bug`, apply `_shared/mala-pata-bug-entry-check.md` before the first code write and carry it into the `sdd-apply` delegation; `kind` never changes the lane. For each task: **STRICT TDD** (Red → Green → Refactor) + **100% verify** (0 warnings/critical). Migration with the kickoff's **provisional** number (it is NOT yet final — it is confirmed or renumbered at merge, see Step 4.1-bis), validated **according to the project's testing convention** (round-trip if applicable). Persist `apply-progress` (MERGE, not overwrite). **Each work-unit/batch closes with ≥1 work-unit commit on the feature branch** (Conventional Commit, tests + docs alongside the behavior). **RDD per commit (user's switch, same as the organic lane):** after each work-unit commit, if RDD is on, run — in THIS root session, not inside the apply sub-agent — `gentle-ai review assess --cwd <ABS-worktree> --agent claude-code --base-ref <last reviewed boundary> --committed-only --json`, read `review_due`, and if true run verbatim the `next_transition.command` it returns (the boundary advances on acknowledgement). The scoped `--base-ref` is mandatory (first boundary = the branch point off `base`/umbrella, NEVER main) — apply `_shared/rdd-base-ref.md`. The full RDD detail (tiers, medium/high consent, continuations) lives in the CLAUDE.md ODD protocol — do not reimplement it. On closing each batch/phase → summary + PAUSE.
    - Phase 0 (if there is UI) — **MANDATORY Storybook-first + Atomic Design + reuse-first** (recurring error: things get created without this):
      - **BEFORE building, audit the project's library/workshop and list REUSES / ADAPTS / NEW per component** — reuse or compose on top of what exists, only create what does not exist.
      - Build with **Atomic Design**: **atom → molecule → organism**, in that order; no monolithic organisms. One story per component with its states/variants.
@@ -233,8 +198,8 @@ As soon as Verify is green, **STOP and ask yourself, without the human having to
 - In both cases: if there are conflicts or red CI → **STOP and report**, do not force.
 Do not continue to the closing without the human's explicit answer to this question.
 
-### 4.3 — (no RDD Gate in the SDD cycle)
-**RDD does NOT run in the loop/SDD.** Since gentle-ai v3, RDD is native to the **ODD** lane — it evaluates per *work-unit commit* (`gentle-ai review assess`), not at the closing of an SDD cycle. The one that orchestrates it is **`mala-pata-organic`** (see there). The SDD cycle closes without a receipt gate: from **4.2** (destination + human's OK) you go straight to **4.4** (CI). If someday you want a review on a specific SDD PR, you run it by hand outside — it is not a gate of the cycle.
+### 4.3 — (RDD is per-commit in apply, not a close gate)
+**RDD runs per work-unit commit DURING apply** (Step 3 phase 7), under the user's switch — the same per-commit code review as the organic lane. Now that mala-pata OWNS the SDD lane, the old "RDD belongs only to ODD" rule is gone (it was a gentle-era coupling, not a principle). RDD is NOT a close gate: by the time you reach the close, each work-unit commit was already assessed. So from **4.2** (destination + human's OK) you go straight to **4.4** (CI); there is no separate receipt gate at close. Preview (plan-level, pre-apply) and RDD (code-level, per-commit) are complementary, not redundant.
 
 ### 4.4 — Pipeline/CI review → your PROACTIVE check, not passive
 After opening the PR (or merging), **you yourself actively review the run's status** — do not wait for the human to ask you "and the CI?" nor assume it turned out green. Use the project's tool (GitHub Actions → `gh run list`/`gh run view`; Azure DevOps → `az pipelines runs list`/`az pipelines runs show`; GitLab → its CLI/API; Jenkins/others → whatever applies). Confirm that **ALL stages** of the relevant run are green before announcing anything.

@@ -6,7 +6,7 @@ description: >
   adversarial audit when sdd-tasks requests it. Always attaches a hard human gate with 3
   fixed options — approve (with 1-line comprehension autotest), adjust, or pause (resumable).
   The gate STOPS regardless of any auto mode set for the rest of the SDD.
-model: sonnet
+model: opus
 tools: Read, Grep, Glob, Bash, mcp__plugin_engram_engram__mem_search, mcp__plugin_engram_engram__mem_get_observation, mcp__plugin_engram_engram__mem_save
 ---
 
@@ -17,8 +17,8 @@ NO migrations, NO project files.
 
 ## Instructions
 
-Read the skill at `~/.claude/skills/sdd-preview/SKILL.md` and the shared conventions at
-`~/.claude/skills/_shared/sdd-phase-common.md`, then follow them exactly for the role indicated
+Read the skill at `~/.agent-skills/sdd-preview/SKILL.md` and the shared conventions at
+`~/.agent-skills/_shared/sdd-phase-common.md`, then follow them exactly for the role indicated
 in your invocation message (`reviewer` or `synthesis` — default `reviewer`).
 
 1. Retrieve full artifacts (search then `mem_get_observation` each — previews are truncated):

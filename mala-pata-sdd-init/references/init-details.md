@@ -16,7 +16,7 @@ Start at the authoritative workspace root. Complete this discovery before stack 
 3. Never descend into VCS, dependency, generated/build, cache, virtual-environment, or nested-repository boundaries. At minimum exclude `.git`, `node_modules`, `vendor`, `dist`, `build`, `out`, `target`, `.cache`, `__pycache__`, `.venv`, `venv`, and directories that contain their own `.git` file or directory.
 4. Treat a directory with a supported project marker as one project root. For every discovered project, retain its workspace-relative path, stack, test command, test layers, coverage command, and quality-tool commands. Do not collapse multiple commands into a chosen workspace runner.
 
-Use one workspace-level project-context and testing-capabilities result. In the result, represent projects as a table with one entry per relative path and keep each project's commands in that entry. In `openspec/config.yaml` when it is written, use a `projects:` list with the same entries and commands. Existing consumers may only render the aggregate result, so do not imply that they can execute a single combined command.
+Use one workspace-level project-context and testing-capabilities result. In the result, represent projects as a table with one entry per relative path and keep each project's commands in that entry. Existing consumers may only render the aggregate result, so do not imply that they can execute a single combined command.
 
 Resolve Strict TDD after the complete project list is evaluated; only then apply the no-runner fallback. An explicit workspace-level test command is an existing command or target defined by the workspace or explicit config that runs the complete in-scope set from the authoritative workspace root. Do not synthesize or concatenate independent project commands.
 
@@ -64,18 +64,6 @@ content: registry markdown
 capture_prompt: false when available
 ```
 
-## OpenSpec Skeleton
-
-```text
-openspec/
-├── config.yaml
-├── specs/
-└── changes/
-    └── archive/
-```
-
-`config.yaml` should include concise context, `strict_tdd`, testing capabilities, and phase rules for proposal/spec/design/tasks/apply/verify/archive. Keep `context:` under 10 lines.
-
 ## Testing Capabilities Format
 
 ```markdown
@@ -115,4 +103,4 @@ openspec/
 
 ## Output Templates
 
-For each mode, include project, stack, persistence, Strict TDD Mode, Testing Capabilities table, artifacts created/saved, limitations where relevant, and next steps. Engram mode must mention local/non-shareable limitations; none mode must recommend enabling persistence.
+Include project, stack, Strict TDD Mode, the Testing Capabilities table, the engram artifacts saved (observation IDs), local/non-shareable limitations, and next steps.

@@ -4,7 +4,7 @@ description: HARVESTS and ORGANIZES a project's STANDARD into a captured, versio
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # /mala-pata-standards — capture AND order a project's standard (harvest, do not invent)
@@ -138,7 +138,7 @@ Emit exactly this, from what you wrote (no invention):
 - A short readback table (`Area | Status | Evidence`) — one line per rule/area, so the human sees what is approved, what still awaits their YES, and what is contested. (Reorganize mode: the table shows where each rule MOVED.)
 - **OPEN** inconsistencies, if any — one per line (including any code-vs-docs conflict), each needing the human's ruling (never hidden).
 - **Files:** the ordered structure under `mala-pata/standards/` (root `_index.md` + the area leaves written).
-- **Next step** — the standard is the INPUT the rest of the suite grounds against: `/mala-pata-art` judges/applies the visual part, `/mala-pata-research` makes a vague DoD deterministic against it, the lanes conform. Resolve the OPEN rulings to raise coverage. **Pending adoption (separate change, do NOT assume done here):** the consumers `/mala-pata-art`, `/mala-pata-research` and `/mala-pata-triage` currently resolve the old flat path `mala-pata/standards/<domain>.md`; rewiring them to resolve the new `_index.md`/structure is a SEPARATE, deliberate change (it alters a contract those skills consume — high risk) and is not done by this skill.
+- **Next step** — the standard is the INPUT the rest of the suite grounds against: `/mala-pata-art` judges/applies the visual part, `/mala-pata-research` makes a vague DoD deterministic against it, the lanes conform. Resolve the OPEN rulings to raise coverage. **Pending adoption (separate change(s), do NOT assume done here):** (a) the 3 skills that read the standard TODAY — `/mala-pata-art`, `/mala-pata-research`, `/mala-pata-triage` — resolve the old flat path `mala-pata/standards/<domain>.md`; re-pathing them to the new `_index.md`/structure alters a contract they consume (high risk); and (b) the rest of the suite that SHOULD ground against the standard but does not yet — the `organic`/`loop`/`shot` lanes (deterministic DoD), `walkthrough`, `states`, `roadmap`, … — should be EXTENDED to consume it (per-skill new behavior). The ordered structure is what makes both practical; neither is done by this skill.
 
 `Structure: pattern-mining (infer the rule from repeated instances) + documentation harvest + inconsistency-as-question (ask, never pick) + faceted classification (area × bounded-context) + per-area discipline models (Atomic Design / ANSI-SPARC / Clean Architecture / Richardson / OWASP ASVS / test pyramid / three pillars). Harvest-not-invent + visual/interaction scope + two-level ordering = house method.`
 
@@ -156,7 +156,7 @@ This block is the only way to close on the happy path. **Only exceptions**: Phas
 - Does NOT lose a rule when reorganizing — every existing rule lands in the new structure with its status/evidence/provenance intact; ambiguous placement is asked.
 - Does NOT change code, restyle, or fix the inconsistencies — that is a lane's job, not this skill's.
 - Does NOT capture code/structural conventions in v1 — only visual + interaction/layout; the structural areas exist as reserved slots.
-- Does NOT rewire the consumers — the new structure's adoption by `/mala-pata-art` / `/mala-pata-research` / `/mala-pata-triage` is a separate change it only flags.
+- Does NOT rewire or broaden the consumers — (a) re-pathing the 3 current consumers (`/mala-pata-art` / `/mala-pata-research` / `/mala-pata-triage`) to the new structure and (b) extending grounding to the rest of the suite are separate changes it only flags.
 - Does NOT commit — write-only; the human commits in their PR flow.
 
 ## Relation to the family

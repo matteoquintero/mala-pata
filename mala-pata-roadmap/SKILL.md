@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.21.0"
+  version: "2.22.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -44,6 +44,8 @@ passes it to `/mala-pata-triage`, which decides the final lane with the informat
 > as organic or loop with your best reading of TODAY, but **triage re-decides on arrival** (see Step 4-bis):
 > previous phases resolve unknowns, so a phase forecast as loop may become organic
 > (or the other way around). You forecast; triage rules.
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, don't reinvent)
 

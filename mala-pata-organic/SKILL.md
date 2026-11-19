@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.19.0"
+  version: "3.20.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -20,6 +20,8 @@ Your only job is to turn that request into an **ODD kickoff** — a markdown fil
 > **The ODD protocol is the source of truth.** Its 7 steps, the feature-doc, the work-unit commits, RDD per commit and the delivery slicing live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill does not duplicate them — the kickoff you generate is the input that `/mala-pata-organic-start` uses to follow them. If CLAUDE.md and this skill differ on ODD mechanics, **CLAUDE.md rules**.
 
 > **Organic uses ODD workers (direct/delegated), NEVER the SDD `mala-pata-sdd-*` agents.** There is no SDD preflight gate in this lane (SDD is the loop lane; gentle-ai 4.x retired SDD and its `PreToolUse:Agent` hook). Do not invent a preflight gate here.
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, don't reinvent)
 

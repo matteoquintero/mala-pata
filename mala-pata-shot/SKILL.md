@@ -4,7 +4,7 @@ description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.13.0"
+  version: "1.14.0"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree
@@ -16,6 +16,8 @@ This is mala-pata's smallest lane: **bare ODD**. Same method as `/mala-pata-orga
 > **The ODD protocol is the source of truth.** Its steps, the work-unit commits and the RDD evaluation per commit live in your **global CLAUDE.md** (`## Implementation Routing → ### ODD protocol`). This skill runs the minimum subset of that protocol — the **direct inline** route. If the CLAUDE.md and this skill differ, **the CLAUDE.md wins**.
 
 > **Uses ODD workers (direct inline), NEVER `sdd-*` agents.** The gentle-ai `PreToolUse:Agent` preflight does not apply here, same as in `/mala-pata-organic`.
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, do not reinvent)
 

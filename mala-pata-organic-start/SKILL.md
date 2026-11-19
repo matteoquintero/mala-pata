@@ -4,7 +4,7 @@ description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff th
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.27.0"
+  version: "1.28.0"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file
@@ -18,6 +18,8 @@ Your job: read the kickoff and run the **native gentle-ai ODD cycle**, organized
 > **Uses ODD workers (direct inline / delegated direct), NEVER the SDD `mala-pata-sdd-*` agents.** There is no SDD preflight gate in this lane (SDD is the loop lane; gentle-ai 4.x retired SDD and its `PreToolUse:Agent` hook). Do not ask a canonical 3-question preflight here.
 
 > **Proportionality**: for a small, already-understood change, the phases below run in a single pass (explore → implement → close) without ceremonial pauses — the kickoff/start separation exists to give a review/handoff point between "what is going to be done" and "doing it", same as in the `mala-pata-loop`/`mala-pata-loop-start` pair, not to force bureaucracy on small things.
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, do not reinvent)
 

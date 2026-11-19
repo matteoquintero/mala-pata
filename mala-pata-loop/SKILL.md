@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.22.0"
+  version: "1.23.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -19,6 +19,8 @@ Your only job is to turn that request into a **COMPLETE TECHNICAL CONTEXT saved 
 > **When you are on the right lane (border with organic).** You arrive at `/mala-pata-loop` when you **cannot start coding yet because DESIGN is missing** — typically because the `/mala-pata-organic` gate diagnosed unresolved `Decisions already made` (an architecture fork, a contract/endpoint whose *shape* must be decided, disputed requirements). **Size alone NEVER sends you here**: a large but specifiable change (you can fill in What + Done + Decisions) goes to `/mala-pata-organic`; one bigger than a single cycle goes to `/mala-pata-roadmap`. If on reading the request you already know what to build and the architecture is decided, this is NOT loop — send it back to `/mala-pata-organic`.
 
 ---
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, don't reinvent)
 

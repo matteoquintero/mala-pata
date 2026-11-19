@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.3"
+  version: "1.11.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -12,6 +12,8 @@ metadata:
 User input: **delivered by the CLI** (a PR/change, or the path to a roadmap).
 
 Your job: turn an already-defined or already-delivered functionality into a **walkthrough a human can follow by hand** to test it, written so that it **can be reused as functioning documentation for the end customer**. You do NOT write code, do NOT run the SDD cycle, do NOT replace `sdd-verify`.
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, don't reinvent)
 

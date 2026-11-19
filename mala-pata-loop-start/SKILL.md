@@ -4,7 +4,7 @@ description: Starts and runs the SDD CYCLE from the kickoff that /mala-pata-loop
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.29.0"
+  version: "1.30.0"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file
@@ -25,6 +25,8 @@ Your job: read the *kickoff* that `/mala-pata-loop` left and **run the COMPLETE 
 > **Hard rule #3 — ONE interactive preflight, in Step 2.9, before the first phase dispatch.** The loop is self-contained (gentle-ai retired SDD in 4.x): there is NO `sdd-preflight-hook` and NO native validator. Step 2.9 asks the human, ONCE, in the root/parent session, for the cycle's **pace** and **PR strategy** (artifacts are always engram now — nothing to choose there), using the kickoff's `sdd_preflight` block as the recommendation. The other human interactions of the cycle stay the same: base branch confirmation (Step 2.2) and PR/merge destination (Step 4). **RDD now runs per work-unit commit during apply** (Step 3 phase 7), under the user's switch — the same per-commit code review as the organic lane (preview reviews the plan, RDD reviews the code; it is a per-commit review, NOT a pre-cycle or close gate). No additional PRE-CYCLE gates beyond these three (preflight, base branch, PR/merge destination) — if you think of building an additional selection menu before starting the cycle, it is a sign that you are adding something outside this skill. The in-cycle gates (preview, smoke, cleanup, migration, conflict) are legitimate and unaffected.
 
 > **Hard rule #4 — the objective is defined BEFORE preview, never IN preview. Debate alarm.** Preview exists to review **whether what is going to be done is right**, NOT to discuss **whether the objective is right** — the WHAT already had to be closed in explore/propose/spec. During the planning phases (explore→spec), if you notice that the WHAT is **being debated a lot** — questions about the objective keep coming back, the scope moves, "and this too?" questions appear that do not close, or the same decision is re-discussed more than once — that is the signal that **the objective was not well defined** (red cards that slipped through `/mala-pata-loop`'s gate, see its Step 0). Do NOT keep pushing forward: **send the cycle back to explore or propose** to fix the WHAT again, and only when it is closed do you continue. An objective with the WHAT still under discussion **CANNOT reach preview**. This is not re-running phases for fun — planning on a moving objective guarantees throwing the plan away later.
+
+> **Canonical standard-grounding rule (advisory).** Apply `_shared/mala-pata-standard-grounding.md` where applicable: prefer the project's `approved` captured standard when producing a DoD, kickoff, implementation or QA scenario (resolve via the two-level `mala-pata/standards/` structure, flat fallback; `approved` only). A nudge, not a gate; a NEW convention still goes through `/mala-pata-triage`'s new-standard permission; proceed best-effort if none covers it.
 
 ## Requirements (orchestrate, don't reinvent)
 

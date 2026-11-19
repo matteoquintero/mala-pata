@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.15.0"
+  version: "1.16.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -59,7 +59,7 @@ This is a **diagnosis from the text of the request**, proportional to the reques
 
 ## Phase 1.5 — Standard check (DoD determinism + new-standard permission)
 
-Two checks against the project's captured standard (`/mala-pata-standards` → `mala-pata/standards/<domain>.md`, `approved` rules only) BEFORE deciding the lane:
+Two checks against the project's captured standard (`/mala-pata-standards` → `mala-pata/standards/` two-level structure via the root `_index.md` → relevant `<area>`/`<sub-facet>` leaves, or the legacy flat `mala-pata/standards/<domain>.md` if unmigrated; `approved` rules only) BEFORE deciding the lane:
 
 1. **Non-deterministic DoD → bounce to research, do NOT dead-end.** A DoD that is statable but ARBITRARY (the ask could be satisfied many ways — "a button", "a screen", "somewhere") is different from "too vague to state What/Done at all" (that stays `vague work`). It needs GROUNDING in the standard, not a bounce to vagueness. If an `approved` standard covers it → state the deterministic DoD against it and continue. If not → bounce to `/mala-pata-research` to ground it (research AUTHORS the deterministic DoD; triage does NOT author it, it only detects and routes).
 2. **New-standard permission gate — ask BEFORE a new standard enters.** If the change would ESTABLISH a NEW standard (a visual/interaction convention not covered by an `approved` rule — a new component shape, a new placement, a new pattern), do NOT let it slip in as a de-facto standard. ASK the human's permission, one line: "this introduces a new standard (`<the convention>`) — approve it entering the project standard, or should it conform to an existing approved one?" Only on approval does it proceed as a new standard (captured later via `/mala-pata-standards`); on denial it must conform to an existing `approved` standard. Never admit a new standard silently.

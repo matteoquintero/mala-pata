@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.8.0"
+  version: "1.9.0"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -83,7 +83,7 @@ The only thing taken from ui-ux-pro-max; they make the judgment testable:
 
 ## Read the project's system (agnostic)
 
-**First, the captured standard.** If the project has a captured standard from `/mala-pata-standards` at `mala-pata/standards/<domain>.md`, read it FIRST and treat it as **authoritative** — but ground ONLY on its `approved` rules. A `proposed` or `OPEN` rule is NOT yet a standard: do not ground on it, and if the UI depends on one, flag that it needs the human's approval via `/mala-pata-standards`. The captured standard is the design system made explicit; prefer it over re-deriving values from the code.
+**First, the captured standard.** If the project has a captured standard from `/mala-pata-standards` under `mala-pata/standards/` (resolve via the root `_index.md` → the relevant `<area>` → its `<sub-facet>` leaves; **legacy fallback**: the flat `mala-pata/standards/<domain>.md` if the project has not migrated to the two-level structure), read it FIRST and treat it as **authoritative** — but ground ONLY on its `approved` rules. A `proposed` or `OPEN` rule is NOT yet a standard: do not ground on it, and if the UI depends on one, flag that it needs the human's approval via `/mala-pata-standards`. The captured standard is the design system made explicit; prefer it over re-deriving values from the code.
 
 **Then / else, read it from the code.** When there is no captured standard (or it does not cover what you need), find the **current project's design system** directly and treat it as authoritative: tokens (CSS vars / Tailwind config), spacing scale, typography, primitives (`Button`/`Card`/`Icon`/etc.), rules (design ESLint), Storybook, `DESIGN.md`/`ARCHITECTURE.md`. If it exists, the concrete values come from there (do not invent hex/fonts). A well-built system is the **reference pattern** of "what a good system looks like" — never hardcode any specific project as the source. When you had to re-derive values from the code, suggest running `/mala-pata-standards` to capture them so they stop being re-derived each time.
 
@@ -91,7 +91,7 @@ If the project has NO system at all, propose a minimal one (spacing scale, neutr
 
 ## Flow
 1. **Understand what to improve**: an HTML/component, an artifact, or a whole project. Look at the real UI (or the code/artifact).
-2. **Read the project's system** (previous section) — prefer the captured standard (`mala-pata/standards/<domain>.md`, `approved` rules only), else the code.
+2. **Read the project's system** (previous section) — prefer the captured standard (`mala-pata/standards/` two-level structure via `_index.md`, or the legacy flat `mala-pata/standards/<domain>.md`; `approved` rules only), else the code.
 3. **Diagnosis**: what is wrong against the **invariants** (first) and the **judgment** (Level 1-3). Anchor each finding to what is observable ("this block violates hierarchy: 3 focal points compete"; "emoji icons → SVG").
 4. **Advice MD (fixed shape)**: write the judgment applied to THIS case. Inline by default; if the human wants to save it, `mala-pata/art/<slug>.md`. Fixed format:
 

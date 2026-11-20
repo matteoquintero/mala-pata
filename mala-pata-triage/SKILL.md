@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.16.0"
+  version: "1.17.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -33,7 +33,7 @@ Ambiguity about whether it is a change → 1 specific question, you stop and wai
 
 ## Phase 0.5 — Read the research (ALL of it — one slug or several), synthesize, do NOT swallow
 
-If the input resolves to research docs that `/mala-pata-research` handed off, `Read` them and use their Define fields (What / Why / DoD / Decisions / Risk / size_signal) as the draft instead of only the raw request text. Then run the form gate below over that **synthesized** draft.
+If the input resolves to research docs that `/mala-pata-research` handed off, `Read` them and use their Define fields (What / Why / DoD(s) / Decisions / Risk / size_signal) as the draft instead of only the raw request text. Then run the form gate below over that **synthesized** draft. Research may hand several DoDs (one per requested rule) — keep them ALL; do not collapse them (they feed the multi-unit call in Phase 2).
 
 - **One or several — read them ALL.** The human may pass several slugs/paths, or ONE slug whose objective was researched in MORE THAN ONE pass. Before routing, find every research doc that belongs to THIS objective: the passed slug(s), plus sibling docs under the **same `domain:`** whose subject is clearly the same objective (a SHARPEN a later pass resolved, a second angle on the same thing). If there are signs of more than one pass on the same topic and only one was passed, say so and read the others — **never route off a single doc when several researched the same objective.**
 - **Synthesize, do NOT pick the latest and drop the rest.** Reconcile all of them into ONE draft: later evidence supersedes earlier on a direct conflict (NAME what it corrected — e.g. a value re-grounded in the authoritative source over a first pass that had inferred it), and the findings/sources UNION (no search is thrown away — the accumulated evidence is the asset). The draft's What/Why/DoD reflect the ACCUMULATED research, not the last file read. Carry an inference AS an inference — if a doc marked something `[inferred]` or OPEN (e.g. "e2e not proven"), it stays OPEN in the draft, never upgraded to a settled DoD.
@@ -79,7 +79,7 @@ If the project has no captured standard yet, say so in one line and continue (th
   - **Needs design** (a SCOPED design choice — boundaries known, several viable designs with tradeoffs) → **loop**, per the lane-gate. Answer: `→ run /mala-pata-loop`.
   - **Approach unknown** (broad; a probe is needed before options or boundaries can even be listed — per the lane-gate's ordered test) → **spike**. Answer: `→ run /mala-pata-research --spike "<question>"`, naming the specific unknown and handing the draft fields. `Reason: approach unknown, a probe is required before options can be listed`. Phase 0.5 already reads research docs, so the resulting spike finding is just one more doc to read when it comes back through triage.
 
-- **Genuinely multi-unit — TRIAGE OWNS the "roadmap or not" call.** Do NOT inherit it from research's `size_signal` nor from the human asking for a roadmap — those are hypotheses. It is a roadmap ONLY when the objective needs **decomposition into several INDEPENDENT vertical slices**, or carries **several open architecture decisions** that each need their own unit. It is NOT a roadmap just because the request is long or lists many things.
+- **Genuinely multi-unit — TRIAGE OWNS the "roadmap or not" call.** Do NOT inherit it from research's `size_signal` nor from the human asking for a roadmap — those are hypotheses. It is a roadmap ONLY when the objective needs **decomposition into several INDEPENDENT vertical slices**, or carries **several open architecture decisions** that each need their own unit. It is NOT a roadmap just because the request is long or lists many things. **Several INDEPENDENT DoDs from research (one per rule) is a strong multi-unit signal** → roadmap; but triage still confirms they are genuinely independent slices and not one coherent change stated as several DoDs (one coherent change → a single lane, even with multiple DoD clauses).
   - Genuinely needs decomposition → **roadmap**. Answer: `→ run /mala-pata-roadmap`.
   - On inspection it actually fits ONE unit → it is **NOT a roadmap**: route it to organic/loop/shot and say so (`Lane: <lane> — Reason: fits one unit, not a roadmap`). You have the power to overrule a roadmap suggestion.
   - Unsure if it is one or several units → prefer a single lane; roadmap's own entry gate bounces it back here if it turns out too big.

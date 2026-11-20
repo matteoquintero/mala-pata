@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.22.0"
+  version: "2.23.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -63,7 +63,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a r
 
 > **Canonical lane-routing gate — single source of truth.** Apply `_shared/mala-pata-lane-gate.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
-- **Research doc first**: if the input is a slug (or path) that resolves to an existing `mala-pata/research/<slug>.md`, `Read` it and use its Define fields and findings as the objective's starting context instead of only the raw text.
+- **Research doc first**: if the input is a slug (or path) that resolves to an existing `mala-pata/research/<slug>.md`, `Read` it and use its Define fields and findings as the objective's starting context instead of only the raw text. When the research carries **several DoDs (one per requested rule)**, treat each independent DoD as a **candidate phase** (one DoD → one shippable vertical slice) — but still verify each against the code (Hard rule #2, Step 4-ter): a DoD the code already satisfies is dropped (not made a phase), and if the whole set collapses to one unit, bounce to `/mala-pata-triage`.
 
 - **Is it big enough?** If the objective fits in ONE unit (one organic or one loop) → Hard rule
   #2 (redirect to `/mala-pata-triage`).

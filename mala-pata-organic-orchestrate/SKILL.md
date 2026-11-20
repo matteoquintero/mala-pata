@@ -4,7 +4,7 @@ description: READ-ONLY planner for a batch of ORGANIC (ODD) kickoffs — analyze
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # /mala-pata-organic-orchestrate — Plan a BATCH of organic kickoffs (READ-ONLY)
@@ -58,6 +58,8 @@ From each kickoff take:
 8. **Mixed bases**: if kickoffs declare different `base` branches, say so — a wave only mixes kickoffs of the SAME base (the executor derives readiness per base).
 
 ## Step 4 — Output: PLAN (BLUF) + wave table + warnings table + handoff
+
+> **Canonical output contract.** Apply `_shared/mala-pata-output-contract.md`: the deliverable is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before/after); run the pre-emit self-check.
 
 ALWAYS return, in this order:
 

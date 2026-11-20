@@ -14,7 +14,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.8.3"
+  version: "4.9.0"
 ---
 
 # /mala-pata-radar — SDD radar (discover + diagnose, read-only)
@@ -111,6 +111,8 @@ Execute in order, without skipping steps (detail in
    **Out-of-sync worktree name**: run `git worktree list` and flag any worktree whose path does not resolve on disk, or whose registered id != the folder (happens via `mv` without `git worktree move`) — suggest `git worktree repair <path>` (renamed) or `git worktree prune` (deleted). Without that, git errors name phantom folders you cannot find on disk.
 
 ## Output
+
+> **Canonical output contract.** Apply `_shared/mala-pata-output-contract.md`: the deliverable is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before/after); run the pre-emit self-check.
 
 Exactly the format of [references/table-format.md](references/table-format.md):
 freshness banner (+ the best-effort disclaimer if Phase A ran) + 8-column

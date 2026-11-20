@@ -6,6 +6,8 @@ it. Each skill ALSO enumerates its own frozen label set right next to its table 
 this file carries the rule, the skill carries the data. A pointer to this file
 without the enumerated set is not enough.
 
+> **Part of the output contract.** This labels rule works together with `_shared/mala-pata-output-contract.md` — the deliverable is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before it, nothing after it); run its pre-emit self-check. A skill that applies this rule applies that one too.
+
 ## The rule
 
 **Structural labels are frozen.** Every label of the block — section and block

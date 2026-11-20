@@ -4,7 +4,7 @@ description: READ-ONLY wave/execution planner for a ROADMAP — done-aware and r
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # /mala-pata-roadmap-orchestrate — Wave plan of a ROADMAP (READ-ONLY)
@@ -70,7 +70,7 @@ In short, in this order: derive live state (Step 2) → drop `✓ done` phases �
 
 > **Canonical output contract.** Apply `_shared/mala-pata-output-contract.md`: the deliverable is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before/after); run the pre-emit self-check.
 
-ALWAYS return, in this order:
+Reason INTERNALLY; emit ONLY the blocks below — STARTING at the banner (NOTHING before it: no narrative intro) and ending at the handoff (NOTHING after it). Every table cell is ONE line — no multi-sentence cells; compress, or move long detail to the `Note`/`Recommendation` column. Run the pre-emit self-check. Return, in this order:
 
 1. **Banner (plain text):** `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  Source: roadmap.md + live git · NO engram · <date-time>`. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 

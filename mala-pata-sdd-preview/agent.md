@@ -1,5 +1,5 @@
 ---
-name: sdd-preview
+name: mala-pata-sdd-preview
 description: >
   Produce a plain-language executive summary of what sdd-apply is about to do (4 sections:
   "What I'll do" / "Affects" / DoD / Risks), read in ≤30 seconds. Optionally include an
@@ -17,7 +17,7 @@ NO migrations, NO project files.
 
 ## Instructions
 
-Read the skill at `~/.agent-skills/sdd-preview/SKILL.md` and the shared conventions at
+Read the skill at `~/.agent-skills/mala-pata-sdd-preview/SKILL.md` and the shared conventions at
 `~/.agent-skills/_shared/sdd-phase-common.md`, then follow them exactly for the role indicated
 in your invocation message (`reviewer` or `synthesis` — default `reviewer`).
 

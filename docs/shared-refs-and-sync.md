@@ -21,22 +21,21 @@ The source of the mala-pata-owned files is **unprefixed** in the suite: `~/.agen
 
 Rule of thumb: a `_shared` file that lives in the suite source (`~/.agent-skills/_shared/`) is mala-pata-owned → reference it **prefixed**.
 
-## The sync command
+## Deploying a `_shared` file to the runtime
 
-The runtime root is refreshed by gentle-ai (there is no sync tooling in this repo — it is gentle-managed):
+The mala-pata skills themselves are **symlinked** into `~/.claude/skills/` (so skill edits are live automatically), but the runtime `_shared/` is a real **copy** directory — a new or changed mala-pata `_shared` file must be deployed to it explicitly, **prefixed**:
 
 ```
-gentle-ai sync --dry-run   # preview the plan first (read-only)
-gentle-ai sync             # deploy managed skills + the _shared compat root to the current version
+cp ~/.agent-skills/_shared/<name>.md ~/.claude/skills/_shared/mala-pata-<name>.md
 ```
 
-`skills` is one of gentle-ai's managed components, and the sync deploys the `_shared` references to each compatibility skill root. Run it after adding or renaming a `_shared/` file so the new file reaches the runtime.
+> **`gentle-ai sync` does NOT do this (confirmed empirically).** A `gentle-ai sync` only refreshes gentle-ai's own managed config/skills (e.g. `settings.json`, gemini guidance); it does NOT deploy the user-authored mala-pata `_shared` files. The original prefixed mala-pata `_shared` files were put in the runtime root by a separate deploy step — not `gentle-ai sync`, and no tooling for it lives in this repo. Until a dedicated deploy tool is set up, copy new/changed `_shared` files by hand as above.
 
-> **Caveat (verify, do not assume).** The `--dry-run` plan is reported at component level, so it was not confirmed file-by-file that `gentle-ai sync` deploys the mala-pata-**prefixed** `_shared` files. After running the sync, verify the new files actually landed (below). If they did not, the deploy of user-authored `_shared` files may be a separate step — check your install setup.
+> **The runtime files are copies, not symlinks** — editing `~/.agent-skills/_shared/<name>.md` later does NOT auto-update the runtime copy. Re-run the `cp` after any edit, for every compatibility skill root in use.
 
-## Post-sync verification
+## Post-deploy verification
 
-After a sync, confirm every mala-pata-owned `_shared` source file has a prefixed twin in the runtime root:
+After deploying, confirm every mala-pata-owned `_shared` source file has a prefixed twin in the runtime root:
 
 ```
 for f in ~/.agent-skills/_shared/*.md; do
@@ -47,6 +46,6 @@ done
 
 No output = every rule resolves. Any `MISSING` line = that rule's prefixed refs will not resolve until it is deployed.
 
-## Files awaiting their first deploy
+## History
 
-As of this note, these mala-pata-owned `_shared` files are newer than the last runtime refresh and need a sync to appear in the runtime root: `standard-grounding`, `phase-status`, `rdd-base-ref`, `sdd-phase-common`, `sdd-state`. Until the sync runs, their (correctly prefixed) references do not resolve at runtime.
+`standard-grounding`, `phase-status`, `rdd-base-ref`, `sdd-phase-common`, `sdd-state` were deployed to the runtime root by hand (the `cp` above) after a `gentle-ai sync` was observed NOT to deploy them. The verification above then passed for every mala-pata-owned `_shared` file.

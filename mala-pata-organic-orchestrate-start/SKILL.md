@@ -4,7 +4,7 @@ description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.2.2"
+  version: "1.3.0"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -116,6 +116,8 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - **Resume**: a kickoff `in progress` whose tab is gone gets a fresh tab on its existing worktree (organic-start resumes there); never create a second worktree.
 
 ## Step 4 — Reports (emit at each round boundary)
+
+> **Canonical output contract.** Apply `_shared/mala-pata-output-contract.md`: each report is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before/after); run the pre-emit self-check.
 
 **Launch report.** BLUF first: `Launched <n>/<n> sessions · round <N> · launch: <warp-tab|warp-window|terminal|manual counts>` (or `✗ partial: <which failed and why>`). Then one row per kickoff:
 

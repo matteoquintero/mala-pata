@@ -4,7 +4,7 @@ description: READ-ONLY wave/execution planner for a ROADMAP — done-aware and r
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.1"
+  version: "1.2.0"
 ---
 
 # /mala-pata-roadmap-orchestrate — Wave plan of a ROADMAP (READ-ONLY)
@@ -67,6 +67,8 @@ In short, in this order: derive live state (Step 2) → drop `✓ done` phases �
 7. **Base freshness (DETECT and WARN only)**: compare `git rev-parse <base>` vs `origin/<base>`; if local is BEHIND flag it — the executor advances the worktrees before launching.
 
 ## Step 4 — Output: BLUF + wave plan + warnings + handoff
+
+> **Canonical output contract.** Apply `_shared/mala-pata-output-contract.md`: the deliverable is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before/after); run the pre-emit self-check.
 
 ALWAYS return, in this order:
 

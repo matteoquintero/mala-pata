@@ -4,7 +4,7 @@ description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.2"
+  version: "1.4.0"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -137,6 +137,8 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path; close and relaunch with the new `directory`.
 
 ## Step 4 — Reports (emit at each round boundary)
+
+> **Canonical output contract.** Apply `_shared/mala-pata-output-contract.md`: each report is tables + fixed blocks, NO narrative; reason INTERNALLY and emit ONLY the block (nothing before/after); run the pre-emit self-check.
 
 **Launch report.** BLUF first: `Launched <n>/<n> sessions · <o> ops paused · round <N> · launch: <warp-tab|warp-window|terminal|manual counts>` (or `✗ partial: <which failed and why>`). One row per phase of the wave:
 

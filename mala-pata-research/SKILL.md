@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.22.0"
+  version: "1.23.0"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)
@@ -113,7 +113,7 @@ Collapse everything above into a **sharpened idea**: a clear problem statement p
 
 - **What** — concrete, observable objective.
 - **Why** — one-line motivation.
-- **DoD** — the testable definition, in Given/When/Then ("Given <state>, When <action>, Then <observable result>").
+- **DoD(s)** — the testable definition, in Given/When/Then ("Given <state>, When <action>, Then <observable result>"). **One DoD per requested rule** when the idea carries several — list them `DoD-1`, `DoD-2`, … so NOTHING requested is dropped; a single DoD only when the idea is genuinely one rule. The DoD set MUST cover every `necessary` piece (Phase 1e) and every MISSING item the objective requires (Phase 1f) — never collapse a multi-requirement ask into one partial DoD that silently loses requirements. Several independent DoDs (distinct vertical slices) is itself a **multi-unit signal** for triage/roadmap (the roadmap is the deterministic vehicle for a multi-DoD objective).
 - **Decisions already made** — what of the approach/architecture the research already settled.
 - **Open decisions** — what remains unresolved (this is exactly what triage needs to separate organic from loop).
 - **Risk** — blast radius in one line.
@@ -172,8 +172,8 @@ profile: infra | data | integration | generic   # optional; spike mode only — 
 |---|---|---|---|
 | 1 | <question, verbatim from the 7> | <answer> | [asked] / [assumed] / [noted] |
 ## Define — sharpened idea (draft for triage)
-- What / Why / DoD / Decisions made / Open decisions / Risk / Size signal / Spike candidates (if any)
-## DoR (hand-off gate): What ✓ · Why ✓ · DoD ✓ · Decisions ✓
+- What / Why / DoD(s) / Decisions made / Open decisions / Risk / Size signal / Spike candidates (if any)
+## DoR (hand-off gate): What ✓ · Why ✓ · DoD(s) ✓ (every requested rule covered) · Decisions ✓
 Completeness: lenses swept <N> · missing <M> · forks <F> (spike candidates <S>)
 ## Handoff
 

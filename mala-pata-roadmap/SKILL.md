@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.23.0"
+  version: "2.23.1"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -328,7 +328,7 @@ phases_total: <N>
 
 ## DAG of phases
 
-Render THIS exact shape — a REAL Markdown table, NEVER fenced; **one line per cell**; **each phase is ONE ROW**. The per-phase `#: N` block with stacked `Phase:` / `slug:` / `Kind:` / `Tentative route:` / `Depends on:` / `Deferrable?:` / `Vertical slice:` labels (one label per line, phases split by `---` rules) is the **BANNED prose shape — it is exactly the error this replaces.** The `Vertical slice` cell is a ONE-LINE summary; if it does not fit one line, **compress it to one line and move the long detail to that phase's block in `## Phases in detail` BELOW** (keyed by the phase `#`/slug — that section is where the long per-phase detail belongs). NEVER expand a cell into a stacked block, NEVER emit a phase as anything but a table row.
+Render THIS exact shape — a REAL pipe table, NEVER fenced; **one line per cell**; **each phase is ONE ROW**. The per-phase `#: N` block with stacked `Phase:` / `slug:` / `Kind:` / `Tentative route:` / `Depends on:` / `Deferrable?:` / `Vertical slice:` labels (one label per line, phases split by `---` rules) is the **BANNED prose shape — it is exactly the error this replaces.** The `Vertical slice` cell is a ONE-LINE summary; if it does not fit one line, **compress it to one line and move the long detail to that phase's block in `## Phases in detail` BELOW** (keyed by the phase `#`/slug — that section is where the long per-phase detail belongs). NEVER expand a cell into a stacked block, NEVER emit a phase as anything but a table row.
 
 | # | Phase | slug | Kind | Tentative route | Depends on | Deferrable? | Vertical slice (one line) |
 |---|-------|------|------|-----------------|-----------|-------------|----------------------------|

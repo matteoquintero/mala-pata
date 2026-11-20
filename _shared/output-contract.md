@@ -3,7 +3,7 @@
 Apply this verbatim wherever a skill references it. A skill's DELIVERABLE (its status / result / close block) is a fixed set of TABLES and labeled blocks — NOT narrative prose. Reasoning happens internally and is NEVER emitted.
 
 ## What may be emitted
-- **Tables** — a real Markdown table (never fenced), one ROW per item, one line per cell.
+- **Pipe tables** — a GFM Markdown **pipe table** (columns delimited by `|`, a `|---|` separator row), never fenced; one ROW per item, one line per cell. "pipe table" is the term for this format; use it instead of "table".
 - **Fixed labeled blocks** — the exact banner / BLUF / legend / footer lines the skill defines, verbatim.
 - **At most ONE BLUF / decision line** of prose (a verdict, a bottom-line), plus any question the skill EXPLICITLY mandates. Nothing else is prose.
 

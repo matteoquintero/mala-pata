@@ -4,7 +4,7 @@ description: Visual judgment / design director — loaded to guide HOW to improv
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.0"
+  version: "1.10.1"
 ---
 
 # /mala-pata-art — visual judgment (design director)
@@ -97,7 +97,7 @@ If the project has NO system at all, propose a minimal one (spacing scale, neutr
 
    **BLUF first** (plain line): `Bottom line: <n> issues (▲ <a> · ● <b> · ▼ <c>) — top fix: <the single highest-leverage change>`.
 
-   Then the **findings table** — reason through the diagnosis INTERNALLY (apply `_shared/mala-pata-output-contract.md` — never emit your reasoning as text), then emit THIS exact shape as the block, nothing narrative before it (a REAL Markdown table, NEVER fenced; **one line per cell**; invariants-first — rows that break a hard invariant come first, then the Level 1-3 judgment, each group ordered by `Severity`). **Each finding is ONE ROW.** The vertical `#: N` block with stacked `Finding:` / `Principle violated:` / `Severity:` / `Change:` labels (one label per line, split by `---`) is the **BANNED prose shape — it is exactly the error this replaces.** If a value does not fit one line, **compress it to one line and move the long detail to a sub-bullet BELOW the table** (keyed by the finding `#`); never expand a cell into a stacked block, never emit a finding as anything but a table row:
+   Then the **findings table** — reason through the diagnosis INTERNALLY (apply `_shared/mala-pata-output-contract.md` — never emit your reasoning as text), then emit THIS exact shape as the block, nothing narrative before it (a REAL pipe table, NEVER fenced; **one line per cell**; invariants-first — rows that break a hard invariant come first, then the Level 1-3 judgment, each group ordered by `Severity`). **Each finding is ONE ROW.** The vertical `#: N` block with stacked `Finding:` / `Principle violated:` / `Severity:` / `Change:` labels (one label per line, split by `---`) is the **BANNED prose shape — it is exactly the error this replaces.** If a value does not fit one line, **compress it to one line and move the long detail to a sub-bullet BELOW the table** (keyed by the finding `#`); never expand a cell into a stacked block, never emit a finding as anything but a table row:
 
    | # | Finding (observable) | Principle violated (cited) | Severity | Change |
    |---|---|---|---|---|

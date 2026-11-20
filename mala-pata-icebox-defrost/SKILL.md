@@ -4,7 +4,7 @@ description: PLAN the defrost of an icebox — classify each frozen cube (triage
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # /mala-pata-icebox-defrost — plan the melt (classify + approval table, then STOP)
@@ -80,7 +80,7 @@ plan_created_at: <ISO 8601>
 
 - Title: `**Defrost plan — <icebox-slug>**`
 - BLUF: `Plan <slug> · domain <domain> · <n> cubes · research <r> · triage-direct <t> · skip <s>`
-- The **approval table** rendered as a REAL Markdown table (never fenced, one line per cell) — the same rows written to the plan doc.
+- The **approval table** rendered as a REAL pipe table (never fenced, one line per cell) — the same rows written to the plan doc.
 - **Plan:** `mala-pata/icebox/<slug>-defrost-plan.md` — editable, write-only, commit on `<durable branch>`.
 - **Next step** (after you review/edit the `handling` column):
 

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: matteoquintero
-  version: "2.0"
+  version: "2.1"
   delegate_only: true
 ---
 
@@ -39,14 +39,14 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/mala-pata-sdd-phase-common.md`.
 
 - **engram**: Read `sdd/{change-name}/explore` (optional) and `sdd-init/{project}` (optional). Save artifact as `sdd/{change-name}/proposal`.
 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/mala-pata-sdd-phase-common.md`.
 
 ### Step 2: Read Existing Behavior
 
@@ -128,7 +128,7 @@ Reference the recommended approach from exploration if available.}
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/mala-pata-sdd-phase-common.md`.
 - artifact: `proposal`
 - topic_key: `sdd/{change-name}/proposal`
 - type: `architecture`
@@ -166,4 +166,4 @@ Ready for specs (sdd-spec) or design (sdd-design).
 - Modified Capabilities → each will become a delta spec
 - If nothing changes at the spec level (pure refactor, config change), explicitly write "None" under both sub-sections — don't leave them as template placeholders
 - **Sufficient detail**: Keep the proposal concise but complete enough to explain intent, scope, risks, rollback and success criteria. Use bullets or tables where they improve clarity. Do not truncate required detail to meet a word or line cap.
-- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/mala-pata-sdd-phase-common.md`.

@@ -19,7 +19,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # /mala-pata-atlas-start — run a feature's whole QA atlas, unit by unit, phase by phase
@@ -47,7 +47,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP). If the mandatory to
 ## Hard rules
 
 > **#1 — LIGHT, in place.** NO worktrees, NO new branches, NO merges, NO parallel tabs. You run the pipeline against the test env on the current checkout. Anything that looks like it needs a worktree/branch/merge is NOT this skill's job.
-> **#2 — Test DB / env ONLY, never prod.** Apply `_shared/test-db-guard.md` verbatim (it supersedes any restatement here): seeding and running happen against the project's **test DB / test env** only; if you cannot confirm the target is the test one, **STOP**. The seed and the run sub-skills enforce this too — do not weaken it.
+> **#2 — Test DB / env ONLY, never prod.** Apply `_shared/mala-pata-test-db-guard.md` verbatim (it supersedes any restatement here): seeding and running happen against the project's **test DB / test env** only; if you cannot confirm the target is the test one, **STOP**. The seed and the run sub-skills enforce this too — do not weaken it.
 > **#3 — Delicacy decides who runs each unit.** Each unit carries a `delicacy` (from the atlas / the walkthrough frontmatter). `low`/`medium` → the agent runs the smoke; **`high` → PAUSE the unit, hand the human the step list + access block, mark it `⚑ needs human`, and continue with the rest.** On any doubt, round UP.
 > **#4 — Never mark a unit done without its verdict (validate everything).** A unit is `✓ pass` only after `/mala-pata-walkthrough-start` returns a pass (assertions + console/network gate). No assumed passes, no faked runs. A `✗` on a unit that others depend on stops THAT chain; independent units continue.
 > **#5 — Absolute paths for evidence.** Evidence is written by `/mala-pata-walkthrough-start` to `<ABS>/mala-pata/walkthroughs/<unit>/evidence/`; report it absolute, with the `open` line, never a repo-relative path.
@@ -94,7 +94,7 @@ Then the **run ledger** — one unit per row, in run order:
 - **Next step** — fix the `✗` units; run the `⚑ needs human` units by hand from their step list; the human flips `qa_done: done` per walkthrough once it genuinely passes by hand (never flipped here). Re-running this skill is resumable — it skips the already-`done` units.
 - **Structure:** `Risk-ordered sequential execution of a coverage plan + per-unit pipeline drive (author → seed → run) + delicacy-driven who-runs-it + done-aware resume. Light in-place executor (no worktrees/branches/merges) = house method.`
 
-**Frozen structural label set** (this block applies `_shared/structural-labels.md` verbatim — emit these EXACTLY, in English, even when the conversation is in another language; only Value/Evidence content and surrounding prose are localized):
+**Frozen structural label set** (this block applies `_shared/mala-pata-structural-labels.md` verbatim — emit these EXACTLY, in English, even when the conversation is in another language; only Value/Evidence content and surrounding prose are localized):
 `Result:` · ledger headers `Walkthrough | Phase | Delicacy | Result | Evidence` · delicacy tokens `low` `medium` `high` · result tokens `✓ pass` `✗ fail` `⚑ needs human` `○ pending` · `Coverage rollup:` · `Next step` · `Structure:`. Rows are one-per-unit, in run order. No label is translated, renamed or added.
 
 This block is the only way to close on the happy path. **Only exceptions:** Phase 0 STOP (no atlas resolves); a Hard rule #2 STOP (unconfirmed test DB); a `delicacy: high` hand-off that pauses for the human.

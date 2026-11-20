@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: matteoquintero
-  version: "2.0"
+  version: "2.1"
   delegate_only: true
 ---
 
@@ -38,14 +38,14 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/mala-pata-sdd-phase-common.md`.
 
 - **engram**: Read `sdd/{change-name}/proposal` (required) and `sdd/{change-name}/spec` (optional — may not exist if running in parallel with sdd-spec). Save as `sdd/{change-name}/design`.
 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/mala-pata-sdd-phase-common.md`.
 
 ### Step 2: Read the Codebase
 
@@ -136,7 +136,7 @@ If not applicable, state "No migration required."}
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/mala-pata-sdd-phase-common.md`.
 - artifact: `design`
 - topic_key: `sdd/{change-name}/design`
 - type: `architecture`
@@ -175,7 +175,7 @@ Ready for tasks (sdd-tasks).
 - If you have open questions that BLOCK the design, say so clearly — don't guess
 - **Sufficient detail**: Include enough detail to explain decisions, alternatives, rationale, interfaces and testing. Use tables or code snippets where they clarify non-obvious behavior. Do not truncate required detail to meet a word or line cap.
 - Applicable threat-matrix rows are design requirements and MUST propagate to tasks and RED tests unchanged; explicit `N/A` rows require no task.
-- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/mala-pata-sdd-phase-common.md`.
 
 ## References
 

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: matteoquintero
-  version: "4.0"
+  version: "4.1"
   delegate_only: true
 ---
 
@@ -28,7 +28,7 @@ Public/contextual comments follow the target context language by default. Explic
 
 ## Hard Rules
 
-- Use the in-house state (`_shared/sdd-state.md`): the change identity, the engram artifacts `sdd/<change-name>/*`, and the kickoff. Verification grants no mutation authority; do not fix code or tasks.
+- Use the in-house state (`_shared/mala-pata-sdd-state.md`): the change identity, the engram artifacts `sdd/<change-name>/*`, and the kickoff. Verification grants no mutation authority; do not fix code or tasks.
 - Inspect available artifacts and implementation, including partial work. Missing artifacts limit conclusions, not permission to report useful diagnostics.
 - Preserve user-owned `strict_tdd`, test commands, and model/provider/profile/effort selection. When Strict TDD is active, load `strict-tdd-verify.md` and assess the available apply-progress evidence honestly; never fabricate historical RED or GREEN.
 - Report actual command results and limitations. Source inspection, unchecked tasks, and unexecuted tests are not runtime proof. Missing tooling means unavailable checks, not PASS.
@@ -61,4 +61,4 @@ Return concise findings, observed task state, executed checks and their outcomes
 
 - [references/report-format.md](references/report-format.md) — optional report outline.
 - [strict-tdd-verify.md](strict-tdd-verify.md) — only when Strict TDD is active.
-- `../_shared/sdd-phase-common.md` — skill loading, retrieval, persistence, and return envelope.
+- `../_shared/mala-pata-sdd-phase-common.md` — skill loading, retrieval, persistence, and return envelope.

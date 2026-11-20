@@ -9,7 +9,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.9.3"
+  version: "3.9.4"
 ---
 
 # sdd-preview — pre-apply executive summary (hard human gate)
@@ -46,7 +46,7 @@ The **audit mode and the number of reviewers (0/1/2) do NOT come from the orches
 
 ## Execution and Persistence Contract
 
-> Follow **Section A** (skill loading), **Section B** (retrieval), and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
+> Follow **Section A** (skill loading), **Section B** (retrieval), and **Section C** (persistence) from `_shared/mala-pata-sdd-phase-common.md`.
 
 Required reads (parallel + `mem_get_observation` — previews are truncated):
 - `sdd/{change-name}/tasks` (required)
@@ -282,5 +282,5 @@ When the Self-assessment decided 2 reviewers:
 - **The gate cannot be passed without the autotest** (1 written line).
 - **The gate stops even if the rest of the SDD is in auto mode** — this phase is interactive by design.
 - Size budget of the **summary** per profile (see table). Audit has no cap.
-- Return envelope per **Section D** from `_shared/sdd-phase-common.md`; `next_recommended: sdd-apply` **only** after gate approval.
+- Return envelope per **Section D** from `_shared/mala-pata-sdd-phase-common.md`; `next_recommended: sdd-apply` **only** after gate approval.
 - **Record the dispositions in the persisted artifact** (`sdd/<change>/preview`): for each finding, its final disposition (REUSE / REFACTOR / IGNORE / accepted-as-gap). The goal is ONE pass: if there was an "Adjust", also record the requested delta and that the close was via a delta re-gate, not another audit pass (ANTI-LOOP section).

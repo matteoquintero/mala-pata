@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: matteoquintero
-  version: "2.0"
+  version: "2.1"
   delegate_only: true
 ---
 
@@ -39,14 +39,14 @@ From the orchestrator:
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/mala-pata-sdd-phase-common.md`.
 
 - **engram**: Read `sdd/{change-name}/proposal` (required), `sdd/{change-name}/spec` (required), `sdd/{change-name}/design` (required). Save as `sdd/{change-name}/tasks`.
 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/mala-pata-sdd-phase-common.md`.
 
 ### Step 2: Analyze the Design
 
@@ -189,7 +189,7 @@ Phase 5: Cleanup (if needed)
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/mala-pata-sdd-phase-common.md`.
 - artifact: `tasks`
 - topic_key: `sdd/{change-name}/tasks`
 - type: `architecture`
@@ -240,4 +240,4 @@ Return to the orchestrator:
 - **Sufficient detail**: Use checklist format with enough detail to identify each task, its dependencies, concrete changes and verification. Expand task descriptions when necessary while preserving numbering and prior progress. Do not truncate required detail to meet a word or line cap.
 - **Review workload guard**: ALWAYS include the Review Workload Forecast. If likely above 400 changed lines, recommend chained PRs and honor the received delivery strategy for whether a decision/exception is needed before apply.
 - **Work-unit evidence**: every suggested work unit MUST name its Focused test command, Runtime harness command/scenario (or explicit `N/A` reason), and Rollback boundary.
-- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/mala-pata-sdd-phase-common.md`.

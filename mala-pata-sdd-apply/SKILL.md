@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: matteoquintero
-  version: "3.0"
+  version: "3.1"
   delegate_only: true
 ---
 
@@ -37,11 +37,11 @@ From the orchestrator:
 - The kickoff absolute path (for the verbatim What / Why / DoD)
 - Delivery strategy and resolved workload decision (`ask-on-risk | auto-chain | single-pr | exception-ok`, plus PR slice or `size:exception` when applicable)
 
-State is in-house (`_shared/sdd-state.md`): read the artifacts from their engram topics `sdd/<change-name>/*` and derive `applyState` from the `tasks` checkboxes. There is no native status JSON and no store to detect — it is always engram.
+State is in-house (`_shared/mala-pata-sdd-state.md`): read the artifacts from their engram topics `sdd/<change-name>/*` and derive `applyState` from the `tasks` checkboxes. There is no native status JSON and no store to detect — it is always engram.
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/mala-pata-sdd-phase-common.md`.
 
 **Reads (engram topics).** Read `proposal`, `spec`, `design`, and `tasks` (all required) from their engram topics `sdd/<change-name>/<artifact>`, and `apply-progress` from `sdd/<change-name>/apply-progress` whenever it exists. Always also `Read` the kickoff at the absolute path you were given.
 
@@ -49,7 +49,7 @@ State is in-house (`_shared/sdd-state.md`): read the artifacts from their engram
 
 ## Status and Workspace Guard
 
-Before writing code, derive `applyState` from the `tasks` artifact's checkboxes (per `_shared/sdd-state.md`):
+Before writing code, derive `applyState` from the `tasks` artifact's checkboxes (per `_shared/mala-pata-sdd-state.md`):
 
 - `blocked` (tasks missing, or a required upstream artifact absent) → STOP and return `blocked` with what is missing.
 - `all_done` (every implementation task `[x]`) → do not edit. Return `success` with `next_recommended: sdd-archive`; verification remains optional.
@@ -60,7 +60,7 @@ Before writing code, derive `applyState` from the `tasks` artifact's checkboxes 
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/mala-pata-sdd-phase-common.md`.
 
 ### Step 2: Read Context
 
@@ -185,7 +185,7 @@ Update `tasks.md` — change `- [ ]` to `- [x]` for completed tasks:
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/mala-pata-sdd-phase-common.md`.
 - artifact: `apply-progress`
 - topic_key: `sdd/{change-name}/apply-progress`
 - type: `architecture`
@@ -262,4 +262,4 @@ If none, say "None."}
 - Skill loading is handled in Step 1 — follow any loaded skills strictly when writing code
 - If Strict TDD Mode is active (Step 3), load `strict-tdd.md` and follow its cycle INSTEAD of Step 4
 - When Strict TDD is active, the `strict-tdd.md` module's rules OVERRIDE Step 4 entirely
-- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/mala-pata-sdd-phase-common.md`.

@@ -19,7 +19,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # /mala-pata-atlas — map the complete testable surface of a feature, before any walkthrough is written
@@ -102,7 +102,7 @@ Cut the matrix into **walkthrough-units** — each a coherent, runnable slice of
 
 On approval, write `<repo-root>/mala-pata/atlas/<slug>.md` (`mkdir -p` the folder), starting with YAML frontmatter: `feature: <slug>`, `domain: <X>`, `roadmap: <slug | none>`, `created_at: <ISO 8601>`, `coverage: <planned | partial>`. Fill `created_at` from the machine's clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output; never invent the time, never default to UTC.
 
-> **Canonical `domain` rule — single source of truth.** Apply `_shared/domain-rule.md` verbatim; it supersedes any restatement here. Do not paraphrase or re-derive it. **NEVER blank — on ANY doubt, ASK one question before writing.**
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement here. Do not paraphrase or re-derive it. **NEVER blank — on ANY doubt, ASK one question before writing.**
 
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the atlas is stranded): a feature-in-progress → that feature base branch; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question and wait. **Write only — do NOT commit/push:** write the file; the skill does NOT create a commit. Tell the human the path + the durable branch so they add it in their normal flow. Leave a one-line engram pointer `atlas/<slug>` (fallback: the `.md` is the source).
 
@@ -135,7 +135,7 @@ Then the **walkthrough roadmap** — one unit per row, risk-ordered:
   ```
 - **Structure:** `Requirements Traceability Matrix + ISO/IEC/IEEE 29119 (test design) + Equivalence Partitioning / Boundary Value Analysis / State-Transition / Pairwise (Myers) + Risk-Based Testing + per-table CRUD matrix + BDD / Living Documentation (North / Adzic). Coverage-matrix → risk-ordered roadmap-of-walkthroughs feeding the existing pipeline + the honest coverage ledger = house method.`
 
-**Frozen structural label set** (this block applies `_shared/structural-labels.md` verbatim — emit these EXACTLY, in English, even when the conversation is in another language; only Value/Evidence content and surrounding prose are localized):
+**Frozen structural label set** (this block applies `_shared/mala-pata-structural-labels.md` verbatim — emit these EXACTLY, in English, even when the conversation is in another language; only Value/Evidence content and surrounding prose are localized):
 `Result:` · matrix headers `Axis | Kind | Case classes | Covered by | Status` · kind tokens `functionality` `table` · status tokens `covered` `deferred` `out-of-scope` · `MECE check:` · roadmap headers `Walkthrough | Scope (functionalities + tables) | Case classes | Risk | Depends on | Delicacy | Phase` · risk tokens `high` `medium` `low` · delicacy tokens `low` `medium` `high` · `Ledger` · `Target:` · `Next step` · `Structure:`. Rows are one-per-axis / one-per-unit. No label is translated, renamed or added.
 
 This block is the only way to close on the happy path. **Only exceptions:** Phase 0 read-only stance; the Step 1 STOP when the feature cannot be bounded; the Step 6 gate question (`domain`/branch) before writing.
@@ -155,5 +155,5 @@ The **atlas `.md`** is the artifact — the coverage plan lives there. Optionall
 ## Relation to the family
 
 - The **planning altitude above the walkthrough pipeline** — it emits the roadmap-of-walkthroughs that `/mala-pata-walkthrough` already knows how to consume ("a roadmap → N units"), so there is zero rework of the describer, seeder or runner.
-- **Reuses** `_shared/domain-rule.md` (the `domain:` field) and `_shared/structural-labels.md` (close labels).
+- **Reuses** `_shared/mala-pata-domain-rule.md` (the `domain:` field) and `_shared/mala-pata-structural-labels.md` (close labels).
 - **Different from** `/mala-pata-roadmap` (plans construction into shippable slices), `/mala-pata-gaps` (what is MISSING to cover the objective), `/mala-pata-walkthrough` (authors one unit's scenarios). atlas is the per-feature QA coverage MAP, drawn before any walkthrough is written.

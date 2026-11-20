@@ -12,14 +12,14 @@ description: >
   worktrees or write code; the only thing it writes is the unit's own `.md`.
   Concrete tools/techniques never enter the skill — a broad approach-unknown is
   flagged `needs spike: <profile>` and resolved later in the spike (reuses
-  `_shared/spike-catalog.md`), so the skill stays domain-neutral.
+  `_shared/mala-pata-spike-catalog.md`), so the skill stays domain-neutral.
   Trigger — "radiografiá esta fase/kickoff/idea", "qué le falta a cada fase
   antes de ejecutar", "mostrame lo oculto de <unidad>", "detallá fase por fase",
   "profundizá <unidad> antes de ejecutar".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # /mala-pata-xray — reveal the hidden implementation detail of a unit, before executing it
@@ -60,7 +60,7 @@ Detect the input type and resolve it (prefer the slug — the full path is a pai
 
 ## Step 2 — Load the lens set (the film)
 
-Load `_shared/spike-catalog.md` (the profile index) and assemble the **x-ray lenses** you will shine on each unit. Each lens asks for a decision the planning left implicit:
+Load `_shared/mala-pata-spike-catalog.md` (the profile index) and assemble the **x-ray lenses** you will shine on each unit. Each lens asks for a decision the planning left implicit:
 
 - **Cost / budget** — what does this unit consume at run time (compute, calls to a costly dependency, storage, wall-clock)? Is there a budget? If a dependency is expensive per use, the budget is a decision to make NOW, not at apply time.
 - **Shape of what is fed to each dependency** — for every dependency the unit calls, decide the **shape and size of the payload** you hand it. Passing the raw/whole thing when a reduced or pre-processed form would do is a decision deferred by accident.
@@ -105,7 +105,7 @@ Then the table — **one unit per row**, 4 columns:
 - **Next step** — route each unit by `/mala-pata-triage` as usual (the x-ray detail now rides in the unit; triage still rules the lane).
 - **Structure:** `RUP Elaboration (resolve implementation risk per increment before construction) + risk-driven Spikes (XP) + Stage-Gate verdicts (Cooper) + Tracer-bullet "riskiest integration first" (Hunt & Thomas) / Walking Skeleton (Cockburn). X-ray metaphor + per-unit write-back + spike-catalog reuse = house method.`
 
-**Frozen structural label set** (this block applies `_shared/structural-labels.md` verbatim — emit these EXACTLY, in English, even when the conversation is in another language; only Value/Evidence content and surrounding prose are localized):
+**Frozen structural label set** (this block applies `_shared/mala-pata-structural-labels.md` verbatim — emit these EXACTLY, in English, even when the conversation is in another language; only Value/Evidence content and surrounding prose are localized):
 `Result:` · table headers `Unit | Verdict | Added / Removed | Spike` · verdict tokens `keep` `re-scope` `split` `drop` `add` · flag `needs spike: <profile>` · `Target:` · `Next step` · `Structure:`. Rows are one-per-unit; the `Spike` cell is `∅` when none. No label is translated, renamed or added.
 
 This block is the only way to close on the happy path. **Only exceptions:** Phase 0 read-only stance; a Step 3 gate question on a unit with a real decision; the Step 1 STOP when nothing resolves.
@@ -125,5 +125,5 @@ The **enriched unit `.md`** is the artifact — that is where the detail now liv
 ## Relation to the family
 
 - An **orthogonal companion**, usable at any point of the pipeline: after `/mala-pata-roadmap` (detail each phase), before a kickoff is executed (detail the change), or on a raw idea / research doc (detail the approach). Not a route and not a gate — it enriches whatever unit you point it at.
-- **Reuses** `_shared/spike-catalog.md` (profiles) and `_shared/structural-labels.md` (close labels).
+- **Reuses** `_shared/mala-pata-spike-catalog.md` (profiles) and `_shared/mala-pata-structural-labels.md` (close labels).
 - **Different from** `/mala-pata-research` (afila el QUÉ, pre-triage), `/mala-pata-gaps` (completitud del dominio), `/mala-pata-roadmap-radar` (estado contra git). xray is about the per-unit HOW, surfaced before execution.

@@ -6,7 +6,7 @@ user-invocable: false
 license: MIT
 metadata:
   author: matteoquintero
-  version: "3.0"
+  version: "3.1"
   delegate_only: true
 ---
 
@@ -36,7 +36,7 @@ From the orchestrator:
 - The kickoff absolute path
 - Explicit final-state facts for work completed after intermediate artifacts were persisted (verify warnings fixed in later commits, blockers resolved, updated test counts), when the orchestrator has them
 
-State is in-house (`_shared/sdd-state.md`): read the cycle's artifacts from their engram topics `sdd/<change-name>/*`.
+State is in-house (`_shared/mala-pata-sdd-state.md`): read the cycle's artifacts from their engram topics `sdd/<change-name>/*`.
 
 ## Final-State Authority
 
@@ -62,7 +62,7 @@ This hierarchy governs reporting, not admission. Missing, stale, malformed, or f
 
 ## Execution and Persistence Contract
 
-> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/sdd-phase-common.md`.
+> Follow **Section B** (retrieval) and **Section C** (persistence) from `_shared/mala-pata-sdd-phase-common.md`.
 
 Read `sdd/<change-name>/proposal`, `sdd/<change-name>/spec`, `sdd/<change-name>/design`, `sdd/<change-name>/tasks`, and `sdd/<change-name>/verify-report` when available (verification is optional). Record every observation ID actually read in the archive report for traceability. Save the archive report as `sdd/<change-name>/archive-report`.
 
@@ -77,7 +77,7 @@ Read the available tasks and reports before closure. Record completed and unfini
 ## What to Do
 
 ### Step 1: Load Skills
-Follow **Section A** from `_shared/sdd-phase-common.md`.
+Follow **Section A** from `_shared/mala-pata-sdd-phase-common.md`.
 
 ### Step 2: Read the Cycle's Artifacts
 
@@ -91,7 +91,7 @@ Write the terminal record: what the change set out to do (from the kickoff), wha
 
 **This step is MANDATORY — do NOT skip it.**
 
-Follow **Section C** from `_shared/sdd-phase-common.md`.
+Follow **Section C** from `_shared/mala-pata-sdd-phase-common.md`.
 - artifact: `archive-report`
 - topic_key: `sdd/{change-name}/archive-report`
 - type: `architecture`
@@ -127,5 +127,5 @@ Unfinished tasks and unresolved findings: {list or none observed}.
 - Archive is engram-only: there is NO spec merge and NO change-folder move; preserve every artifact topic as the audit trail, never delete or modify it.
 - Archive may close incomplete work, but must never describe it as fully implemented or verified. Record unfinished tasks and unresolved findings honestly.
 - Use the `tasks` checkboxes as the observed completion source; do not repair them during archive.
-- Return envelope per **Section D** from `_shared/sdd-phase-common.md`.
+- Return envelope per **Section D** from `_shared/mala-pata-sdd-phase-common.md`.
 ```

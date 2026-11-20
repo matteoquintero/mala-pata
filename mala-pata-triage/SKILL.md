@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.17.0"
+  version: "1.18.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -92,7 +92,7 @@ If the project has no captured standard yet, say so in one line and continue (th
 
 ### Output format (BLUF — decision first)
 
-Reason through the gate first; the LAST thing you emit is EXACTLY the shape below — same lines, same columns, same order, values filled in. Never replace the table with vertical `Field:/Value:` blocks or with prose.
+Apply `_shared/mala-pata-output-contract.md`: reason through the gate INTERNALLY (never as emitted text); emit ONLY the shape below — same lines, same columns, same order, values filled in — nothing before it and nothing after it. Never replace the table with vertical `Field:/Value:` blocks or with prose.
 
 1. **Decision line (always first):** `Lane: <shot | organic | loop | roadmap | spike> — Reason: <the test that applied, one line>`.
 2. **Draft (only when routing to organic/loop)** — copy this table and fill the values. **Every cell is ONE line** — no multi-sentence cells, no `<br>`, no paragraphs; if a value needs more, compress it (the full detail belongs in the kickoff the lane writes, not here):

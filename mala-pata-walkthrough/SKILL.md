@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.11.0"
+  version: "1.12.0"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -81,7 +81,7 @@ Hard rule: **if a step cannot be followed by someone who did not write the code,
 - **Test credentials**: the test user/login to use — **reference the credential SOURCE (the seeder/factory that creates the QA user, `.env.test`, or the secret manager), NEVER the literal value**. The QA file is committed to the repo (`mala-pata/walkthroughs/`, Step 6), so a pasted password / token / API-key would leak into git history. Test environment only.
 - **Server running**: how to bring up the app against the **test DB** and confirm it is up before starting.
 
-**Test table (MANDATORY, fixed format).** From the core, ONE row per scenario — emit EXACTLY this table (reason first, render it last); never vertical `Field:/Value:` blocks, never prose; one line per cell, long detail below the table. This is the exact format, do not change it:
+**Test table (MANDATORY, fixed format).** From the core, ONE row per scenario — emit EXACTLY this table (apply `_shared/mala-pata-output-contract.md`: reason INTERNALLY, emit ONLY the table — nothing narrative before/after); never vertical `Field:/Value:` blocks, never prose; one line per cell, long detail below the table. This is the exact format, do not change it:
 
 | # | Given (path) | When | Then (what you must see) | Pass/Fail | Failure signal | Evidence |
 |---|---|---|---|---|---|---|

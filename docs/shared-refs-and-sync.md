@@ -4,10 +4,10 @@ How the suite's `_shared/` references resolve, the naming convention to follow, 
 
 ## Where `_shared/` resolves at runtime
 
-Skills reference shared rules as `_shared/<name>.md`. At runtime those resolve from the **gentle-ai compatibility skill root**: `~/.claude/skills/_shared/`. That directory is a real copy (not a symlink), populated by gentle-ai's install/sync, and it holds two kinds of file:
+Skills reference shared rules as `_shared/<name>.md`. At runtime those resolve from each **compatibility skill root** that has mala-pata installed — e.g. `~/.claude/skills/_shared/` and `~/.codex/skills/_shared/`. That directory is real (not a symlink) and holds two kinds of file:
 
-- **gentle-owned** references, deployed **unprefixed**: `engram-convention.md`, `persistence-contract.md`, `skill-resolver.md`, `research-lifecycle.md`, `review-ledger-contract*.md`, `README.md`.
-- **mala-pata-owned** references, deployed **prefixed** with `mala-pata-` (to avoid colliding with the gentle-owned ones): e.g. `mala-pata-domain-rule.md`, `mala-pata-structural-labels.md`, `mala-pata-lane-gate.md`.
+- **gentle-owned** references, deployed **unprefixed** by gentle-ai: `engram-convention.md`, `persistence-contract.md`, `skill-resolver.md`, `research-lifecycle.md`, `review-ledger-contract*.md`, `README.md`.
+- **mala-pata-owned** references, as **prefixed symlinks** to the source (`mala-pata-<name>.md` → `~/.agent-skills/_shared/<name>.md`), created by `_shared/deploy-shared.sh` (see below). The `mala-pata-` prefix avoids colliding with the gentle-owned files; the symlink keeps each rule live.
 
 The source of the mala-pata-owned files is **unprefixed** in the suite: `~/.agent-skills/_shared/<name>.md` (and its repo mirror `_shared/<name>.md`). The `mala-pata-` prefix is added on deploy, not in the source.
 
@@ -23,15 +23,15 @@ Rule of thumb: a `_shared` file that lives in the suite source (`~/.agent-skills
 
 ## Deploying a `_shared` file to the runtime
 
-The mala-pata skills themselves are **symlinked** into `~/.claude/skills/` (so skill edits are live automatically), but the runtime `_shared/` is a real **copy** directory — a new or changed mala-pata `_shared` file must be deployed to it explicitly, **prefixed**:
+Each compatibility skill root holds mala-pata's `_shared` rules as **prefixed symlinks** to the source. Because they are symlinks, editing a source rule is **immediately live — no re-deploy needed**. You run the deploy only when **adding a new** `_shared` rule (to create its prefixed link in each root):
 
 ```
-cp ~/.agent-skills/_shared/<name>.md ~/.claude/skills/_shared/mala-pata-<name>.md
+bash _shared/deploy-shared.sh
 ```
 
-> **`gentle-ai sync` does NOT do this (confirmed empirically).** A `gentle-ai sync` only refreshes gentle-ai's own managed config/skills (e.g. `settings.json`, gemini guidance); it does NOT deploy the user-authored mala-pata `_shared` files. The original prefixed mala-pata `_shared` files were put in the runtime root by a separate deploy step — not `gentle-ai sync`, and no tooling for it lives in this repo. Until a dedicated deploy tool is set up, copy new/changed `_shared` files by hand as above.
+It auto-detects every skill root where mala-pata is installed (e.g. `~/.claude/skills`, `~/.codex/skills`) and links all source `_shared/*.md` rules there, prefixed; roots without mala-pata installed are left untouched. Idempotent. Pass explicit roots as args, or override the source dir with `MALA_PATA_SHARED_SRC`. It verifies every rule resolves before exiting.
 
-> **The runtime files are copies, not symlinks** — editing `~/.agent-skills/_shared/<name>.md` later does NOT auto-update the runtime copy. Re-run the `cp` after any edit, for every compatibility skill root in use.
+> **`gentle-ai sync` does NOT do this (confirmed empirically).** A `gentle-ai sync` only refreshes gentle-ai's own managed config/skills (e.g. `settings.json`, gemini guidance); it never touches the mala-pata `_shared` links. Use `deploy-shared.sh`, not the sync.
 
 ## Post-deploy verification
 
@@ -48,4 +48,4 @@ No output = every rule resolves. Any `MISSING` line = that rule's prefixed refs 
 
 ## History
 
-`standard-grounding`, `phase-status`, `rdd-base-ref`, `sdd-phase-common`, `sdd-state` were deployed to the runtime root by hand (the `cp` above) after a `gentle-ai sync` was observed NOT to deploy them. The verification above then passed for every mala-pata-owned `_shared` file.
+Before `deploy-shared.sh` existed, the mala-pata `_shared` links were present only in `~/.claude/skills/_shared/`, and even there the five newest rules (`standard-grounding`, `phase-status`, `rdd-base-ref`, `sdd-phase-common`, `sdd-state`) were missing. `~/.codex/skills/_shared/` had the mala-pata skills installed but **none** of the `_shared` rules — every reference there dangled. The script now links all 19 rules into every root where mala-pata is installed (claude + codex), as symlinks, and the verification passes.

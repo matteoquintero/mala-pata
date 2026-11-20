@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.0"
+  version: "1.14.1"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -109,7 +109,7 @@ Derivation rules:
 
 > **Canonical output contract — single source of truth.** Apply `_shared/mala-pata-output-contract.md` verbatim: the deliverable is tables + fixed labeled blocks, NO narrative. **Reason INTERNALLY; emit ONLY the block below — NOTHING before it** (no preamble, no narrative recap like "Four of the five phases are already in development…") **and NOTHING after it.** Run its pre-emit self-check before emitting.
 
-**Render the table as a REAL Markdown table — NEVER inside a ``` code fence, and NEVER as the per-phase stacked `#: N` block (one label per line, phases split by `---`) — ONE ROW per phase, one line per cell** (a fenced table shows raw pipes and does not render). Do not emit your reasoning as text; fill the skeleton and stop. The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real Markdown table. The format, in order:
+**Render the table as a REAL pipe table — NEVER inside a ``` code fence, and NEVER as the per-phase stacked `#: N` block (one label per line, phases split by `---`) — ONE ROW per phase, one line per cell** (a fenced table shows raw pipes and does not render). Do not emit your reasoning as text; fill the skeleton and stop. The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real pipe table. The format, in order:
 
 Banner (3 lines):
 `Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`

@@ -4,7 +4,7 @@ description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), genera
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.12.0"
+  version: "1.12.1"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base
@@ -100,7 +100,7 @@ This lane is an **actionable checklist**, not prose. The **access block** and th
 ## Step 3.5 — `## Seed` section (fixtures recipe, for `mala-pata-seed`)
 
 walkthrough does NOT seed (it stays read-only) — it leaves the **recipe** for `mala-pata-seed` (standalone, on a branch) or the smoke-test gate (in-cycle, 4.1-ter / Step 7) to execute. If the change touches data, add a `## Seed (fixtures)` section to the QA:
-One row per fixture (a REAL Markdown table, NEVER fenced), **derived from the core's `Given` + `Test data`** (+ the kickoff's `smoke_test.data` if it exists):
+One row per fixture (a REAL pipe table, NEVER fenced), **derived from the core's `Given` + `Test data`** (+ the kickoff's `smoke_test.data` if it exists):
 
 | Fixture | Derived from (Given) | Mechanism | Key | Status |
 |---|---|---|---|---|

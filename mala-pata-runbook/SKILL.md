@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.5.1"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -94,7 +94,7 @@ last_reviewed: <ISO 8601>
 | Evidence | What to record on each run (ids, timestamps, who ran it) for audit. |
 | Outputs | **The output contract — what the run renders at close, two parts.** **Declared report** = this runbook's OWN result format, pinned HERE at creation (the domain tables/figures/sections it must produce; `none` when the Run record is enough). **Run record** = the house execution close (BLUF + the run/step/evidence table), ALWAYS. The runner renders BOTH in full, even when the run stops or escalates. |
 
-Render the Steps as a real Markdown table (NEVER fenced, one line per cell; long detail as a sub-bullet under the table, not inside a cell):
+Render the Steps as a real pipe table (NEVER fenced, one line per cell; long detail as a sub-bullet under the table, not inside a cell):
 
 | # | Action | Expected output | If not as expected |
 |---|---|---|---|

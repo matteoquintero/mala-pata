@@ -4,7 +4,7 @@ description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") in
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.4.0"
+  version: "0.4.1"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog
@@ -82,7 +82,7 @@ Emit exactly this, from what you actually did (no invention):
 
 - Title: `**Cube frozen — <icebox-slug>**` (or `**Icebox created — <icebox-slug>**` on create mode).
 - BLUF: `Icebox <slug> · domain <domain> · <N> cubes · <created | appended>`.
-- **The cube(s) you added.** One cube → its `c<N>` line. **Two or more (bulk) → a REAL Markdown table** (never fenced, one line per cell):
+- **The cube(s) you added.** One cube → its `c<N>` line. **Two or more (bulk) → a REAL pipe table** (never fenced, one line per cell):
 
   | # | Cube (DoD) | size-hint | Status |
   |---|---|---|---|

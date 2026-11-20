@@ -4,7 +4,7 @@ description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.3.0"
+  version: "2.3.1"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level
@@ -92,7 +92,7 @@ Beyond "was it built", show whether each change got its QA, diagram and seed —
 
 ## Output — fixed format (ALWAYS identical)
 
-Apply `_shared/mala-pata-output-contract.md`: reason INTERNALLY (never emit your reasoning as text); emit ONLY this shape — a BLUF line then ONE real Markdown table (NEVER fenced, never prose, one line per cell), nothing before it and nothing after it.
+Apply `_shared/mala-pata-output-contract.md`: reason INTERNALLY (never emit your reasoning as text); emit ONLY this shape — a BLUF line then ONE real pipe table (NEVER fenced, never prose, one line per cell), nothing before it and nothing after it.
 
 Banner (plain text):
 `Domain: <domain>  ·  repo: <name>  ·  integration: <branch>@<short-sha>  ·  <date-time>`

@@ -4,7 +4,7 @@ description: READ-ONLY status of an ICEBOX — how many of its cubes are still f
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # /mala-pata-icebox-radar — status of an icebox against git (fixed format)
@@ -72,7 +72,7 @@ Rules:
 
 ## Output — fixed format (ALWAYS identical)
 
-**Render the table as a REAL Markdown table — NEVER inside a code fence. Apply `_shared/mala-pata-output-contract.md`: reason INTERNALLY, emit ONLY the block (nothing before/after); one line per cell.** The banner, BLUF, legend and Structure footer are plain text; the middle is a real Markdown table. In order:
+**Render the table as a REAL pipe table — NEVER inside a code fence. Apply `_shared/mala-pata-output-contract.md`: reason INTERNALLY, emit ONLY the block (nothing before/after); one line per cell.** The banner, BLUF, legend and Structure footer are plain text; the middle is a real pipe table. In order:
 
 Banner (3 lines):
 `Icebox: <name/slug>  ·  domain: <domain>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`

@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.5.1"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -93,7 +93,7 @@ last_reviewed: <ISO 8601>
 | Crystallization | Which branches are stabilizing toward a runbook, and the note to promote them. |
 | Outputs | **The output contract — what the run renders at close, two parts.** **Declared report** = this playbook's OWN result format, pinned HERE at creation (the domain tables/figures/sections; `none` when the Run record is enough). **Run record** = the house execution close, ALWAYS. The runner renders BOTH in full, even when the run stops or escalates. |
 
-Render the decision tree as a real Markdown table (NEVER fenced; one line per cell; long detail as a sub-bullet):
+Render the decision tree as a real pipe table (NEVER fenced; one line per cell; long detail as a sub-bullet):
 
 | Condition (observed, measurable) | Branch | Action (inline steps or runbook) | Expected outcome | Owner | Rollback |
 |---|---|---|---|---|---|

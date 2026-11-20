@@ -4,7 +4,7 @@ description: RUN an approved defrost plan — the execution half of the melt. Re
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # /mala-pata-icebox-defrost-start — run the approved defrost plan
@@ -67,7 +67,7 @@ Surface any **RECONSIDER** prominently (research may propose killing/parking a c
    - Title: `**Defrosted — <icebox-slug>**`
    - BLUF: `Melted <n> cubes → recommend ONE <vehicle> covering all · <k> reconsider · <h> sharpen  (domain <domain>)`
    - **Recommendation**: one line — the single vehicle + WHY (the set's aggregate shape that put it there, e.g. "multi-unit: 4 independent slices → roadmap" / "specifiable, one unit → organic").
-   - The real Markdown table (one row per cube in the covering set — these are the set's contents, and the roadmap's candidate phases when the vehicle is roadmap — NEVER fenced):
+   - The real pipe table (one row per cube in the covering set — these are the set's contents, and the roadmap's candidate phases when the vehicle is roadmap — NEVER fenced):
 
      | Cube | Sharpened (What) | Verdict | In the set as |
      |---|---|---|---|

@@ -186,7 +186,7 @@ Structure: Heilmeier Catechism (DARPA) + Double Diamond (Design Council) + objec
 
 ## Phase 5 — Mandatory close: VERDICT + plain-language summary + doc
 
-Same spirit as `/sdd-preview` (your invention): a close that is **scannable in ~30 s and lets the reader understand WHAT
+Same spirit as `/mala-pata-sdd-preview` (your invention): a close that is **scannable in ~30 s and lets the reader understand WHAT
 it will do and WHETHER IT IS WORTH IT without opening the md**. It comes from the doc, without inventing, and is NOT the
 whole doc pasted. The human decides with this alone.
 

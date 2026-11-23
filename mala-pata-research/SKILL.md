@@ -152,7 +152,7 @@ created_at: <ISO 8601>
 next: triage | none (SHARPEN/RECONSIDER)   # on PROCEED always triage — roadmap-or-not is triage's call, not research's
 size_signal: one-unit | multi-unit
 kind: research | spike   # omit for a normal research; `spike` only in spike mode (see "Spike mode")
-profile: infra | data | integration | generic   # optional; spike mode only — the profile applied
+profile: infra | data | integration | bug | generic   # optional; spike mode only — the profile applied
 ---
 # Research: <idea>
 ## Verdict: <PROCEED | SHARPEN | RECONSIDER>

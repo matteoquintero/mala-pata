@@ -11,6 +11,7 @@ turns research into the home of design, verification or execution — it only pr
 | `infra` | Infrastructure | `_shared/mala-pata-spike-infra.md` | new provisioning or a capacity ceiling |
 | `data` | Data | `_shared/mala-pata-spike-data.md` | schema shape, volume/legacy reality, migration or backfill strategy |
 | `integration` | Integrations | `_shared/mala-pata-spike-integration.md` | an external system's contract, limits or failure semantics |
+| `bug` | Reliability / a defect | `_shared/mala-pata-spike-bug.md` | a defect's ROOT CAUSE is unknown, so the fix cannot be sized or routed (entry alias `/mala-pata-bug`) |
 | `generic` | any other / `<other>` | (this file) | no profile matches |
 
 **Never a profile** (they fail the fork test or are not read-only-probable): user-facing, access,

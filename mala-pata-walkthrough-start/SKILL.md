@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -79,18 +79,18 @@ A `✗` on a phase stops the flow if later phases depend on it; otherwise contin
 3. The **evidence folder** and **trace**, absolute, each as its own copy-paste line (a fenced block is fine here — these are commands, not the table):
 
    ```
-   open <ABS-evidence>
+   <opener> <ABS-evidence>
    npx playwright show-trace <ABS-evidence>trace.zip
    ```
 
-   `open` is the macOS opener; on Linux emit `xdg-open <ABS-evidence>` instead. Never shorten either line to a repo-relative path.
+   `<opener>` is the platform primitive from `_shared/mala-pata-platform.md` (`open` on macOS, `xdg-open` on Linux); emit the RESOLVED command for the detected platform. Never shorten either line to a repo-relative path.
 
 ## Phase 5 — Human gate (do not self-approve)
 
 The agent's run is the evidence, not the acceptance. Present the verdict + evidence and leave the acceptance to the smoke-test gate's question ("was the functionality met? yes/no"):
 - **low** → report pass/fail + evidence; the human confirms at the gate.
 - **medium** → same, with an explicit "**review the evidence**" line.
-- **high** → you did not run it; the human runs it from the step list and reports, dropping their screenshots into `<ABS-evidence>` (give them the absolute path + the `open` line).
+- **high** → you did not run it; the human runs it from the step list and reports, dropping their screenshots into `<ABS-evidence>` (give them the absolute path + the resolved `<opener>` line).
 - **Never flip `qa_done`** — that is the human's flag (set only after a human actually runs the walkthrough).
 
 `Structure: Playwright-MCP accessibility-first execution + assertion-as-verdict / screenshot+trace-as-evidence + console/network gate + determinism levers + delicacy-driven who-runs-it. Evidence-in-repo (never /tmp) = house method.`
@@ -100,7 +100,7 @@ The agent's run is the evidence, not the acceptance. Present the verdict + evide
 - Does NOT decide a pass from a screenshot — only from assertions + the console/network gate.
 - Does NOT run against prod, nor the sensitive steps of a `delicacy: high` walkthrough.
 - Does NOT leave evidence in a temp/scratchpad dir — always `<ABS-worktree>/mala-pata/walkthroughs/<slug>/evidence/`.
-- Does NOT report the evidence folder or trace by a repo-relative path — always absolute, with the copy-paste `open` line.
+- Does NOT report the evidence folder or trace by a repo-relative path — always absolute, with the copy-paste `<opener>` line (resolved for the platform).
 - Does NOT fake a run when Playwright MCP is missing — it hands the walkthrough to the human.
 - Does NOT flip `qa_done`, does NOT commit, does NOT write app code.
 

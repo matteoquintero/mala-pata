@@ -4,7 +4,7 @@ description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -128,9 +128,9 @@ git -C <ABS-repo>-worktrees/<slug> merge --ff-only origin/<base>
 ```
 Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEAD`). If a worktree already had commits and the ff failed, STOP and warn (do not force). `ff-only` is the only advance allowed.
 
-## Step 3 — Launch the wave as Warp tabs (one Claude session per code phase)
-- Verify `claude` in PATH (`which claude`).
-- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per code phase, ops phases get NO tab; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+## Step 3 — Launch the wave as Warp tabs (one agent session per code phase; macOS or Linux)
+- `<agent>` = the CLI this orchestrator runs on (`claude` or `codex`, the Agents table of the wave-launch procedure); verify it is in PATH (`command -v <agent>`). The tab color comes from the agent (claude → red, codex → white), never from the wave or the lane.
+- Run the shared procedure in `_shared/mala-pata-wave-launch.md` under the running agent's skills root (`~/.claude/skills/` for Claude, `~/.codex/skills/` for Codex), resolving its OS primitives from `_shared/mala-pata-platform.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per code phase, ops phases get NO tab; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
 - **Per-tab prompt** (written verbatim to the phase's `.prompt` file; depends on the RESOLVED lane):
   - organic: `Run /mala-pata-organic <phase-slug> with the triage draft, then /mala-pata-organic-start <phase-slug>. wave-mode: this phase is run by /mala-pata-roadmap-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
   - shot: `Run /mala-pata-shot <phase-slug>. wave-mode: commit on this worktree's branch, open a PR, STOP at PR-ready; do NOT merge nor clean up.`
@@ -194,6 +194,6 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - It does not read engram for state: roadmap `.md` + live git only.
 
 ## Runtime compatibility
-The Warp/Claude block (Step 3) only runs when the runtime is Claude with Warp. In another CLI: create the worktrees + anti-stale and return, per worktree, the resolved lane's commands (`/mala-pata-organic <slug>` + `/mala-pata-organic-start <slug>`, or `/mala-pata-shot <slug>`) with the wave-mode directive; do not invoke `claude`, Warp or `.claude/` paths that do not apply. The readiness derivation, triage, ops attestation, the merge-gate table, the central merges and the cleanup are portable git/`gh` work and run on any CLI.
+The Warp/Claude block (Step 3) only runs when the runtime is an agent listed in the wave-launch Agents table (claude, codex) with Warp, on macOS or Linux. Otherwise: create the worktrees + anti-stale and return, per worktree, the resolved lane's commands (`/mala-pata-organic <slug>` + `/mala-pata-organic-start <slug>`, or `/mala-pata-shot <slug>`) with the wave-mode directive; do not invoke an agent CLI, Warp or skills-root paths that do not apply. The readiness derivation, triage, ops attestation, the merge-gate table, the central merges and the cleanup are portable git/`gh` work and run on any CLI.
 
 **Structure:** house method (route-aware batch worktree + Warp launch + hybrid-by-waves central delivery).

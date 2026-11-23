@@ -4,7 +4,7 @@ description: CREATES or EDITS a mala-pata skill — the OWNED authoring path for
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # /mala-pata-skill — author a mala-pata skill (owned flow + context gate)
@@ -45,6 +45,7 @@ Before you persist anything, review the FULL draft for real-project context that
 
 1. **Mechanical assist (structural — these shapes never need maintenance):** grep the draft for the SHAPES real context takes, not a word list:
    - absolute paths (`/Users/`, `~/Job/`, any `/.../`), worktree fragments (`-worktrees/`), file-with-line refs (`\.[a-z]+:[0-9]+`), URLs to a client system.
+   - **portability (same gate, different leak — one OS baked in):** a bare `open `, `xdg-open`, `osascript`, `Terminal.app`, `~/.warp`, `lsof`, `/proc/` outside `_shared/platform.md`. Each hit must become the matching primitive (`<opener>`, `<warp-open>`, `<warp-tab-dir>`, `<terminal-fallback>`, `<proc-cwd>`) from `_shared/mala-pata-platform.md`; a genuinely new OS-dependent command is added THERE as a new primitive with both macOS and Linux columns, never hard-coded in the skill.
 2. **Judge each concrete token** (the grep hits + every proper noun / identifier / domain term you wrote): is it a GENERIC placeholder, or does it only make sense in ONE real project (a client/app/domain name, a real path, a real identifier)?
    - Generic → keep.
    - Real / one-project-only → it must become a placeholder.

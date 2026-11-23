@@ -4,7 +4,7 @@ description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -108,9 +108,9 @@ git -C <ABS-repo>-worktrees/<change-name> merge --ff-only origin/<base>
 ```
 Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEAD`). If a worktree already had commits and the ff failed, STOP and warn (do not force): that worktree is not born clean. `ff-only` does not lose history — it is the only advance allowed here.
 
-## Step 3 — Launch the wave as Warp tabs (one Claude session per kickoff)
-- Verify `claude` in PATH (`which claude`).
-- Run the shared procedure in `~/.claude/skills/_shared/mala-pata-wave-launch.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+## Step 3 — Launch the wave as Warp tabs (one agent session per kickoff; macOS or Linux)
+- `<agent>` = the CLI this orchestrator runs on (`claude` or `codex`, the Agents table of the wave-launch procedure); verify it is in PATH (`command -v <agent>`). The tab color comes from the agent (claude → red, codex → white), never from the wave or the lane.
+- Run the shared procedure in `_shared/mala-pata-wave-launch.md` under the running agent's skills root (`~/.claude/skills/` for Claude, `~/.codex/skills/` for Codex), resolving its OS primitives from `_shared/mala-pata-platform.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
 - **Per-tab prompt** (written verbatim to the kickoff's `.prompt` file): `/mala-pata-organic-start <absolute-path-of-kickoff.md> -- wave-mode: this phase is run by /mala-pata-organic-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
 - **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path and fall back to main; close and relaunch them with the new `directory`.
 - **Resume**: a kickoff `in progress` whose tab is gone gets a fresh tab on its existing worktree (organic-start resumes there); never create a second worktree.
@@ -167,6 +167,6 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 - It does not wipe the shared test DB or delete seeds.
 
 ## Runtime compatibility
-The Warp/Claude block (Step 3) only runs when the runtime is Claude with Warp. In another CLI: create the worktrees + anti-stale and return the `/mala-pata-organic-start <absolute-kickoff-path>` command per worktree (with the wave-mode directive); do not invoke `claude`, Warp or `.claude/` paths that do not apply. The readiness derivation, the merge-gate table, the central merges and the cleanup are portable git/`gh` work and run on any CLI.
+The Warp/Claude block (Step 3) only runs when the runtime is an agent listed in the wave-launch Agents table (claude, codex) with Warp, on macOS or Linux. Otherwise: create the worktrees + anti-stale and return the `/mala-pata-organic-start <absolute-kickoff-path>` command per worktree (with the wave-mode directive); do not invoke an agent CLI, Warp or skills-root paths that do not apply. The readiness derivation, the merge-gate table, the central merges and the cleanup are portable git/`gh` work and run on any CLI.
 
 **Structure:** house method (batch worktree + Warp launch + hybrid-by-waves central delivery).

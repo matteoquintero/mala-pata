@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.15.1"
+  version: "1.15.2"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -42,7 +42,7 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
    - If the input is a path → `Read` directly.
    - If it is a **slug** → look for `mala-pata/roadmap/<slug>.md`.
    - If it is a **domain** (e.g. `<domain>`) → list `mala-pata/roadmap/*.md` and keep ONLY those whose frontmatter `domain:` matches (the owner field — do NOT guess by filename). Roadmaps of OTHER domains are excluded: **never mix domains in one run.** An old roadmap with no `domain:` → fall back to matching its slug/name and note it was matched heuristically.
-   - If several roadmaps match (a domain, a list, or none specified) → do NOT ask: run the radar on EACH and emit one compact block per roadmap (see Output, multi-roadmap).
+   - If several roadmaps of the SAME domain match (a domain, a list, or none specified) → do NOT ask: run the radar on EACH and emit one compact block per roadmap (see Output, multi-roadmap). If the candidates span SEVERAL domains → ask which domain (one question, stop and wait); never render roadmaps of different domains in one run — mixing domains loses the objective.
    - If NO roadmap matches → do NOT dead-end: if the domain was built via SDD loops/changes (no roadmap), point to `/mala-pata-radar` (needs no roadmap `.md`); if the roadmap was archived, ask for its path. Do not invent phases.
 3. Read the roadmap's frontmatter `domain:` (the owner — used for scoping above). Then from the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`/`spike`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**; for `spike` phases the **question** and the finding doc slug (`mala-pata/research/<slug>.md`). From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
 

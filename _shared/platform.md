@@ -34,6 +34,29 @@ is never proof of anything; `pgrep`, `readlink`, `bash`, `git`, `rsync` exist on
 - When a report hands the human a copy-paste command, emit the RESOLVED command for the detected
   platform (e.g. `xdg-open /abs/path` on Linux), not the primitive name.
 
+## Concurrency lock — atomic `mkdir` (both platforms)
+
+A shared action only ONE actor may do at a time (a per-worktree merge/cleanup, the single central
+suite-run owner, a sub-agent dedup slot) uses an ATOMIC lock, NEVER an advisory check-then-act (a
+sentinel + `lsof` heuristic races in the window between the check and the act). `mkdir` is atomic on
+macOS and Linux: it either creates the dir (you hold the lock) or fails because it exists (another
+holds it) — one syscall, no window.
+
+| Primitive | Both platforms |
+|---|---|
+| `<lock-acquire> <lockdir>` | `mkdir "<lockdir>" 2>/dev/null` — exit 0 = ACQUIRED; non-zero = held by another. On acquire, write `<lockdir>/owner` = `<pid> <ISO-8601> <run-token>`. |
+| `<lock-release> <lockdir>` | `rm -rf "<lockdir>"` — only the holder releases; never release a lock you did not acquire (check `<lockdir>/owner` carries your `run-token` first). |
+| `<lock-stale?> <lockdir>` | reclaimable when the owner pid is dead (`kill -0 <pid>` fails) OR the lock is older than its TTL (`owner` mtime + TTL < now). Reclaim with `rm -rf`, then retry `<lock-acquire>` ONCE. |
+
+Rules:
+- NEVER check-then-mkdir ("if not exists, mkdir") — that reintroduces the race. The `mkdir` IS the test.
+- The lockdir lives beside the resource it guards (`<ABS-worktree>/mala-pata/.lock-<action>`), is
+  transient (never committed; excluded like `.phase-status.json`), and names the action.
+- `run-token` is unique per run (`date +%s`-`$$`-`$RANDOM`) so an owner proves a lock is its own before
+  releasing, and a reclaimed-then-reacquired lock is distinguishable.
+- A crashed holder leaves a stale lock; the `<lock-stale?>` reclaim (dead pid OR TTL) prevents a
+  permanent wedge. Default TTL = the action's generous expected max (minutes), never seconds.
+
 ## Linux probe (human-run, once per machine; flips the PROVISIONAL status)
 
 On Ubuntu with Warp installed and one Warp window open:

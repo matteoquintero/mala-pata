@@ -4,7 +4,7 @@ description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.1"
+  version: "1.6.0"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -16,6 +16,23 @@ You are the **roadmap executor and delivery owner**. You take ONE roadmap and ru
 > **You never live inside a phase's cycle.** Each tab is an independent Claude session running its lane's full cycle with its own context and gates. **Per-commit RDD and the phase smoke stay INSIDE each tab** — RDD is per work-unit commit under user-owned consent, smoke is per change; neither can be centralized. You own what happens **BETWEEN waves**: sequencing, merges, cleanups.
 
 > **The roadmap route is a FORECAST, triage rules.** The phase's `Tentative route` was written with the information of the day it was planned; previous phases resolve unknowns. So every code phase passes `/mala-pata-triage <slug>` on arrival — the resolved lane, not the forecast, decides the tab command.
+
+## Unattended + concurrency + edit-surface (hardening canonicals)
+
+- **RUN-MODE.** This orchestrator runs each phase UNATTENDED: inject `RUN-MODE: unattended` into every
+  launch prompt and apply `_shared/mala-pata-unattended-policy.md` — a gate that would ask a human PARKS
+  (into `phase-status` `parked_decisions[]`) and the wave finishes everything else; the queue is surfaced
+  ONCE at the end. A consent/destructive decision ALWAYS parks blocked, never auto-answered.
+- **Atomic lock for the central turn.** The merge / cleanup / base-advance that only the orchestrator may
+  do uses the atomic `mkdir` lock from `_shared/mala-pata-platform.md` (`<lock-acquire>`/`<lock-release>`),
+  not an advisory check — two waves or two orchestrators cannot both own the central delivery. One central
+  single-suite-run owner, post-merge.
+- **Restricted edit-surface (makes "never live inside a phase cycle" verifiable).** The orchestrator writes
+  NO source code: it only creates worktrees, launches tabs, reads markers, merges, renumbers migrations and
+  cleans up. It never edits a phase's files — that is the phase tab's job inside its own worktree.
+- **Recovery (a merged phase is immutable).** A defect found after a phase merged re-enters through
+  `/mala-pata-triage` (or `/mala-pata-bug` for an unknown cause) as a NEW unit — never an in-place fix on
+  the merged result. Every landed change stays traceable to its own cycle.
 
 ## Requirements (orchestrate, do not reinvent)
 

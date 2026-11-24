@@ -19,7 +19,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.1"
+  version: "0.1.2"
 ---
 
 # /mala-pata-atlas-start — run a feature's whole QA atlas, unit by unit, phase by phase
@@ -50,7 +50,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP). If the mandatory to
 > **#2 — Test DB / env ONLY, never prod.** Apply `_shared/mala-pata-test-db-guard.md` verbatim (it supersedes any restatement here): seeding and running happen against the project's **test DB / test env** only; if you cannot confirm the target is the test one, **STOP**. The seed and the run sub-skills enforce this too — do not weaken it.
 > **#3 — Delicacy decides who runs each unit.** Each unit carries a `delicacy` (from the atlas / the walkthrough frontmatter). `low`/`medium` → the agent runs the smoke; **`high` → PAUSE the unit, hand the human the step list + access block, mark it `⚑ needs human`, and continue with the rest.** On any doubt, round UP.
 > **#4 — Never mark a unit done without its verdict (validate everything).** A unit is `✓ pass` only after `/mala-pata-walkthrough-start` returns a pass (assertions + console/network gate). No assumed passes, no faked runs. A `✗` on a unit that others depend on stops THAT chain; independent units continue.
-> **#5 — Absolute paths for evidence.** Evidence is written by `/mala-pata-walkthrough-start` to `<ABS>/mala-pata/walkthroughs/<unit>/evidence/`; report it absolute, with the `open` line, never a repo-relative path.
+> **#5 — Absolute paths for evidence.** Evidence is written by `/mala-pata-walkthrough-start` to `<ABS>/mala-pata/walkthroughs/<unit>/evidence/`; report it absolute, with the resolved `<opener>` line (`_shared/mala-pata-platform.md`), never a repo-relative path.
 
 ## Phase 0 — Load the atlas
 

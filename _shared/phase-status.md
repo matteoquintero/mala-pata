@@ -28,6 +28,7 @@ As the **LAST action** before the tab stops — at the PR-ready stop (orchestrat
   "ci": "green | red | none | pending",
   "evidence": "<ABS path to the evidence folder, or n/a>",
   "handoff": "<the 'For the orchestrator' notes: DB fork, merge-conflict warning, flaky test, etc. — verbatim, the same content the close prints>",
+  "parked_decisions": [{"question": "<what was asked>", "options": "<the choices>", "default": "<safe default taken, or \"blocked\" when none>", "blocks": "<what it holds up>"}],
   "finished_at": "<ISO 8601 local time with offset>"
 }
 ```
@@ -36,6 +37,8 @@ As the **LAST action** before the tab stops — at the PR-ready stop (orchestrat
 - **pr-ready** — branch pushed, worktree clean, checks green, smoke pass/n-a, RDD not declined/ pending; safe for the central merge gate.
 - **parked** — stopped on a gate that is not PR-ready (red verify/CI, smoke fail/needs-human, open decision, RDD consent pending/declined, triage upgraded to loop). `reason` says which. NOT merged.
 - **failed** — the cycle could not complete. `reason` says why.
+
+`parked_decisions[]` (per `_shared/mala-pata-unattended-policy.md`): a run that hit a human gate while `RUN-MODE: unattended` PARKS it here instead of blocking — the orchestrator surfaces the queue once at the end. A non-orchestrated unattended run writes the mirror file `mala-pata/parked-decisions/<change>.md` instead. A consent/destructive decision parks with `default: blocked` (never a silent default).
 
 ## Orchestrator side
 

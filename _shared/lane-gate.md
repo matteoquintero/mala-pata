@@ -1,5 +1,7 @@
 # Lane-routing gate — mala-pata single source of truth
 
+> **Re-read on apply (stale-context guard).** This is a PROCESS canonical — no output signature a hook can check — so the guard is explicit: at the moment you APPLY this rule, re-read THIS file from disk (it is a live symlink; it may have changed since it entered your context) and apply the on-disk version — it wins over any stale copy you hold.
+
 Canonical rule for choosing a lane. Every lane-touching skill (`mala-pata-triage`,
 `mala-pata-research`, `mala-pata-roadmap`, `mala-pata-organic`,
 `mala-pata-icebox-defrost` / `-start`) applies THIS verbatim and never paraphrases
@@ -20,6 +22,14 @@ Non-blocking: **Why** (one line), **Risk** (optional). Never a gate: **Where** �
 - **loop** — a SCOPED design decision: the unit's boundaries are known, and the open question is *which* of several viable designs fits (tradeoffs to weigh). An expert could lay out the options now. May be standalone or a phase inside a roadmap.
 - **spike (research)** — a BROAD approach-unknown: you do not know HOW to do it, the answer would change what the units even are, and the options cannot be listed without probing (prototype, measurement, reading an unfamiliar system, feasibility check). Not a lane that ships — it produces knowledge, then re-enters the pipeline (`/mala-pata-research --spike`, then triage).
 - **roadmap** — needs decomposition into several INDEPENDENT vertical slices, OR carries several open architecture decisions each needing its own unit.
+
+## Consumer re-derivation (a handoff is a claim, not proof — re-derive and BLOCK on mismatch)
+
+A lane handoff (triage → organic/loop/shot, or a roadmap phase's forecast route) is a CLAIM, not a proof token. The RECEIVING lane re-applies this gate to the draft/code it actually sees BEFORE acting, and if the gate yields a DIFFERENT lane than the handoff claims, it REFUSES (it does not warn-and-continue):
+- Received organic/shot but the re-derived gate says **loop** (a design decision is genuinely open) → STOP, bounce to `/mala-pata-loop` with the reason.
+- Received loop but the gate says **organic** (the decision is decidable with one answer) → STOP, say so, route to organic.
+- Received any lane but **What / DoD / Decisions** do not pass the form gate → STOP and ask for the missing field; never proceed on a draft that fails the gate.
+The lane re-derives from the ACTUAL draft/code, not from the upstream label. A matching re-derivation IS the receipt; a mismatch blocks. This closes the honor-system gap where a lane trusts a routing label it never re-checked.
 
 ## THE loop discriminator (the rule most often gotten wrong)
 

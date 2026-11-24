@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.1"
+  version: "1.15.2"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -42,14 +42,16 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
    - If the input is a path → `Read` directly.
    - If it is a **slug** → look for `mala-pata/roadmap/<slug>.md`.
    - If it is a **domain** (e.g. `<domain>`) → list `mala-pata/roadmap/*.md` and keep ONLY those whose frontmatter `domain:` matches (the owner field — do NOT guess by filename). Roadmaps of OTHER domains are excluded: **never mix domains in one run.** An old roadmap with no `domain:` → fall back to matching its slug/name and note it was matched heuristically.
-   - If several candidates and none specified → list them and ask which one (one question, stop and wait).
+   - If several roadmaps of the SAME domain match (a domain, a list, or none specified) → do NOT ask: run the radar on EACH and emit one compact block per roadmap (see Output, multi-roadmap). If the candidates span SEVERAL domains → ask which domain (one question, stop and wait); never render roadmaps of different domains in one run — mixing domains loses the objective.
    - If NO roadmap matches → do NOT dead-end: if the domain was built via SDD loops/changes (no roadmap), point to `/mala-pata-radar` (needs no roadmap `.md`); if the roadmap was archived, ask for its path. Do not invent phases.
 3. Read the roadmap's frontmatter `domain:` (the owner — used for scoping above). Then from the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`/`spike`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**; for `spike` phases the **question** and the finding doc slug (`mala-pata/research/<slug>.md`). From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
+
+> **Canonical phase kind — single source of truth.** Apply `_shared/mala-pata-phase-kind.md` verbatim: a `code` phase is proven by git, an `ops` phase by the human-maintained Verify/Status/Evidence (`[attested]`), a `spike` by its finding (`[finding]`). Never read an `ops`/`spike` phase as "no git → pending".
 
 ## Phase 1 — Freshness (live git, zero cache)
 
 1. `git -C <repo> fetch --all --prune`.
-2. Detect and **confirm** the integration branch (do not assume it: `main`/`development`/whichever the repo uses). Note its SHA for the banner.
+2. Detect and **confirm** the integration branch (do not assume it: `main`/`development`/whichever the repo uses). Note its SHA (internal; not printed).
 3. If there is a `gh`/PR CLI, fetch the repo's list of open/merged PRs.
 
 ## Phase 2 — State per phase, live (code: from git reality · ops: by declared status)
@@ -95,7 +97,7 @@ Derivation rules:
 - **Ready to start now** — phases in state `pending` (not `blocked`) whose dependencies are ALL `done`.
 - **In parallel** — within the "ready now", group those the DAG marks as parallelizable with each other (from the roadmap's `Parallelizable: {..}` block) and that declare no conflict — that is the wave that can be launched together.
 - **In process now** — those already running (so as not to relaunch them).
-- **Roadmap completion (derived from git, NOT stored)** — the roadmap carries `created_at` (when it was planned); its FINISH time is **derived**: when ALL phases are `done`, it is the **latest git date among the done phases** (the last merge/commit that landed a phase). Roadmaps have no "close" step that writes it back, so report it in the Timeline banner; never invent it, and if not 100% say "in progress, <d>/<N>".
+- **Roadmap completion (derived from git, NOT stored)** — the roadmap carries `created_at` (when it was planned); its FINISH time is **derived**: when ALL phases are `done`, it is the **latest git date among the done phases** (the last merge/commit that landed a phase). Roadmaps have no "close" step that writes it back; it is NOT printed (compact output) — derive it only if the human asks, never invent it.
 - **Next step per ready phase (stage-aware chain — emitted as TEXT in the Output).** The entry is NOT `-start`; follow the real pipeline `triage → lane (loop/organic/shot) → -start`, detecting the stage from the phase's Route + whether a kickoff file exists (read-only; triage leaves no artifact, so "triage done" is inferred from the roadmap having fixed the Route):
   - **Route undecided / `?`** (no lane fixed → triage not done) → `/mala-pata-triage <slug>` (decide the lane first).
   - **Route = shot** → `/mala-pata-shot <slug>` (direct, no kickoff).
@@ -105,50 +107,34 @@ Derivation rules:
   - **Route = spike** → `/mala-pata-research --spike "<question>"` (pending); in progress with a written finding → `/mala-pata-triage <finding path>` to re-enter the pipeline.
   - **Route = ops** → no command; verify manually per the phase's `Verify` (attested).
 
-## Output — fixed format (ALWAYS identical)
+## Output — fixed format (ALWAYS identical, compact)
 
-> **Canonical output contract — single source of truth.** Apply `_shared/mala-pata-output-contract.md` verbatim: the deliverable is tables + fixed labeled blocks, NO narrative. **Reason INTERNALLY; emit ONLY the block below — NOTHING before it** (no preamble, no narrative recap like "Four of the five phases are already in development…") **and NOTHING after it.** Run its pre-emit self-check before emitting.
+> **Canonical output contract — single source of truth.** Apply `_shared/mala-pata-output-contract.md` verbatim. **Reason INTERNALLY; emit ONLY the block below — NOTHING before it and NOTHING after it.** No generalities, ever: no banner (repo / source / integration / timeline), no legend, no Structure footer, no preamble, no recap. **No progress narration between tool calls either** ("Let me read…", "Now let me fetch…", "All N slugs are present…") — run the reads silently. Run the contract's pre-emit self-check before emitting.
 
-**Render the table as a REAL pipe table — NEVER inside a ``` code fence, and NEVER as the per-phase stacked `#: N` block (one label per line, phases split by `---`) — ONE ROW per phase, one line per cell** (a fenced table shows raw pipes and does not render). Do not emit your reasoning as text; fill the skeleton and stop. The banner, the BLUF lines, the legend and the Structure footer are plain text lines; the table in the middle is a real pipe table. The format, in order:
+The block, in order (nothing else):
 
-Banner (3 lines):
-`Roadmap: <name/slug>  ·  repo: <name>  ·  integration: <branch>@<short-sha>`
-`Source: roadmap.md + live git · NO engram · <date-time>`
-`Timeline: created <roadmap created_at> · <when 100% done: completed <latest git date among the done phases> (derived from git) — else: in progress, <d>/<N> phases done>`
+1. **Heading** (one line): `**<roadmap-slug>**` — with several roadmaps, `#<i> — <roadmap-slug>` and the full block (heading + Bottom line + table + Next) repeats per roadmap, in file order, with nothing between blocks.
+2. **Bottom line** (one line): `Bottom line: <non-zero counts only, in this order: ✓ <d> done · ◐ <p> in progress · ○ <q> pending · ✗ <b> blocked> (of <N>) · Ready now: <phase <x> (<slug or short name>), … | none>`
+   - A zero count is omitted (`✓ 16 done (of 16)`, not `✓ 16 done · ◐ 0 in progress · …`). Pending `ops` phases carry `(ops)` after their count.
+3. **The table** — a REAL pipe table, never inside a ``` fence, never as stacked per-phase blocks; one row per roadmap phase, in the `.md` order, none omitted:
 
-For the run time `<date-time>` in the Source line: fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC. (The Timeline's `created_at` is the roadmap's stored value — read it, never regenerate it.)
+| # | Phase | slug | Status | Evidence |
+|---|---|---|---|---|
+| 1 | <short name> | <slug> | ✓ done | <short-sha> |
+| 2 | <short name> | <slug> | ◐ in progress | branch <type>/<slug> +<k> |
+| 3 | <short name> | <slug> | ○ pending | — |
+| 4 | <short name> | <slug> | ✓ done | <env / health / date> (attested) |
+| 5 | <short name> | <slug> | ✗ blocked | waits for 2 |
+| 6 | <short name> | <slug> | ✓ done | finding written |
 
-BLUF (3 lines):
-`Bottom line: ✓ <d> done · ◐ <p> in progress · ○ <q> pending · ✗ <b> blocked  (of <N> phases)`
-`Ready to start now: phases <list> (deps all done)  ·  launch in parallel: { <phase>, <phase> }`
-`In progress now: <phases, or none>  ·  Blocked: phase <x> (waits for <y>)`
+4. **Next** (ONLY when `Ready now` is not `none`; one line per ready phase, copy-paste, the radar never runs it): `Next: phase <x> → <stage-aware command from Phase 3>` (`ops` → `Next: phase <x> → verify manually per Verify`).
 
-Then the real table:
-
-| # | Phase | slug | Route | Depends on | Status | Evidence |
-|---|---|---|---|---|---|---|
-| 1 | <name> | <slug> | loop:STANDARD | — | ✓ done | merge <sha> / PR #<n> [git] |
-| 2 | <name> | <slug> | organic | 1 | ◐ in progress | branch <type>/<slug> +<k> commits [git] |
-| 3 | <name> | <slug> | shot | 1 | ○ pending | no trailer/branch |
-| 4 | <name> | <slug> | ops | — | ✓ done | <env URL / health 200 / date> [attested] |
-| 5 | <name> | <slug> | loop:LITE | 2 | ✗ blocked | waits for phase 2 |
-| 6 | <name> | <slug> | spike | — | ✓ done | finding mala-pata/research/<slug>.md, re-entered via triage [finding] |
-
-Then, for the "ready to start now" phases, the **Next step** block (plain text, copy-paste — the radar does NOT run it and does NOT offer to; it only shows the command the human may copy):
-`Next step per ready phase (pipeline triage → lane → start):`
-`  · phase <x> (<slug>, route <lane>): <stage-aware command — see Phase 3>`
-`  · phase <y> (<slug>, route shot): /mala-pata-shot <slug>`
-(one line per ready-now phase; `ops` phases show "verify manually per Verify", no command. In-progress phases with a live kickoff show the `-start` runner to resume.)
-
-Then the closing lines (plain text):
-`Legend: ✓ done = landed in integration — confirmed by git reality (merge / PR / slug commit / artifact / optional trailer) for code, or declared with evidence for ops · ◐ in progress = live branch/PR not merged · ○ pending = NO evidence at all (code) or Status pending (ops) · ? unbound = work exists but not tied to the slug (confirm) · ✗ blocked = pending with unfinished deps · [git] = proven in git · [attested] = ops, human-declared · [finding] = spike, finding doc written AND re-entered via triage (a spike never lands as code)`
-`Structure: information radiator (Cockburn) + workflow-state lexicon. Live-git state derivation + ready-now computation = house method.`
-
-- The table carries **one row per roadmap phase**, in the `.md` order. No phase is omitted.
-- State with a leading curated glyph + the text token (`✓ done` / `◐ in progress` / `○ pending` / `✗ blocked`); no emoji, no invented colors.
-- **Concrete evidence + provenance** per row: `[git]` (trailer/merge SHA, PR#, commits ahead), `[attested]` (ops — the declared URL/id/health/date) or `[finding]` (spike — the finding doc path) — never a bare "ok". The provenance tag is MANDATORY so a git-proven state is never confused with an attested one.
-- If `gh`/the PR CLI was missing, the banner says so ("PRs not queried; status by branches/merges").
-- **Emit this block's structural labels verbatim in English** — section headers, field labels, table/column headers, and enum/option tokens stay English even when the conversation is in the user's language; only the values and content are localized.
+Cell rules:
+- **Phase** = a short name (2–4 words), never the full sentence from the roadmap.
+- **Status** = curated glyph + English token: `✓ done` / `◐ in progress` / `○ pending` / `? unbound` / `✗ blocked`. No emoji, no colors.
+- **Evidence** = the shortest concrete proof, never a bare "ok": `code` done → the landing commit/merge short SHA (9 chars) only — no "merge", no PR number, no `[git]` tag; in progress → `branch <type>/<slug> +<k>`; blocked → `waits for <#>`; `ops` → the declared evidence + `(attested)`; `spike` → `finding written` (or `finding written, awaiting triage`); pending → `—`.
+- Route, Depends on, integration SHA, timeline and data sources are NOT shown — they are internal inputs to the state derivation, not output.
+- Labels (`Bottom line`, `Ready now`, `Next`, column headers, status tokens) stay verbatim in English; only names and values follow the conversation language.
 
 ## Rules
 
@@ -156,5 +142,5 @@ Then the closing lines (plain text):
 - **READ-ONLY.** Never mutate anything; never execute nor offer to execute a phase.
 - **Merge = git only.** A ticked DoD or an archive-report does NOT prove a merge.
 - **Match `code` phases from git reality** — any of: merged PR/branch, slug commit ancestor, delivering artifact, recorded sha, or the OPTIONAL `Mala-Pata-Phase` trailer; the trailer is NOT required and its absence never downgrades a confirmed match. **`ops` phases by declared `Status`/`Evidence`.** **Scope by the roadmap's `domain:`** — never mix domains in one run. `pending` only with zero evidence; work-exists-but-unbound → `? unbound`, never a false pending.
-- **Fixed format** — same columns, same order, same lexicon, always.
+- **Fixed compact format** — heading, Bottom line, 5-column table, optional Next lines; same columns, same order, same lexicon, always. Never generalities.
 - **No data**: if there is no roadmap `.md`, ask for it; if there is no git, do not run. Never invent the state of a phase.

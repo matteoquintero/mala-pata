@@ -23,6 +23,8 @@ conversation is in another language.
   applies conditionally; it is never RENAMED.
 - **Only the Value / Evidence content and the surrounding prose are localized.**
 
+> **Status glyphs are single-sourced separately.** The glyph that leads a status token (`✓ ◐ ○ ✗ ∅ ?`) follows `_shared/mala-pata-verdict-glyphs.md` — this file freezes the label WORDS, that one freezes the glyph→meaning. A skill that emits status tokens applies both.
+
 ## Why the left column is named
 
 A generic "labels stay English" clause was observed to fail: the agent read the

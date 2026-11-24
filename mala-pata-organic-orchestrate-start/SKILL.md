@@ -4,7 +4,7 @@ description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -14,6 +14,23 @@ You are the **batch executor and delivery owner** for the ODD lane. You are hand
 > **You never live inside a phase's cycle.** Each tab is an independent Claude session running the full `/mala-pata-organic-start` cycle with its own context and gates. **Per-commit RDD and the phase smoke stay INSIDE each tab** — RDD is per work-unit commit under user-owned consent, and smoke is per change; neither can be centralized. You own what happens **BETWEEN waves**: sequencing, merges, cleanups.
 
 > **Parallelism is the purpose of the launch.** Launch ALL kickoffs of the ready wave even if they share files — worktrees isolate the work. Conflicting ready phases are not "held back inside a wave": they are **serialized across rounds** (core / highest fan-in first), and that decision is made when the wave is derived (Round step 1), never silently.
+
+## Unattended + concurrency + edit-surface (hardening canonicals)
+
+- **RUN-MODE.** This orchestrator runs each phase UNATTENDED: inject `RUN-MODE: unattended` into every
+  launch prompt and apply `_shared/mala-pata-unattended-policy.md` — a gate that would ask a human PARKS
+  (into `phase-status` `parked_decisions[]`) and the wave finishes everything else; the queue is surfaced
+  ONCE at the end. A consent/destructive decision ALWAYS parks blocked, never auto-answered.
+- **Atomic lock for the central turn.** The merge / cleanup / base-advance that only the orchestrator may
+  do uses the atomic `mkdir` lock from `_shared/mala-pata-platform.md` (`<lock-acquire>`/`<lock-release>`),
+  not an advisory check — two waves or two orchestrators cannot both own the central delivery. One central
+  single-suite-run owner, post-merge.
+- **Restricted edit-surface (makes "never live inside a phase cycle" verifiable).** The orchestrator writes
+  NO source code: it only creates worktrees, launches tabs, reads markers, merges, renumbers migrations and
+  cleans up. It never edits a phase's files — that is the phase tab's job inside its own worktree.
+- **Recovery (a merged phase is immutable).** A defect found after a phase merged re-enters through
+  `/mala-pata-triage` (or `/mala-pata-bug` for an unknown cause) as a NEW unit — never an in-place fix on
+  the merged result. Every landed change stays traceable to its own cycle.
 
 ## Requirements (orchestrate, do not reinvent)
 
@@ -33,7 +50,7 @@ Check: `command -v <tool>` (CLI) or `claude mcp list` (MCP, e.g. serena). If a m
 - Input: the batch of organic kickoffs (absolute paths, or change-names resolving to `<repo-root>/mala-pata/kickoffs/<change-name>.md` via `git -C <cwd> rev-parse --show-toplevel`). `Read` each in full and take `change_name`, `route`, `base`, `branch`, `worktree`, `depends_on`, `parallelizable_with`, `domain`, `roadmap` from the frontmatter. If `route` is not `organic` → exclude it and say so (loop kickoffs always need a human; run them by hand with `/mala-pata-loop-start`).
 - **Base confirmation — ALWAYS, once**: show each kickoff's base ("`<change>` off `<base>`") and wait for a SINGLE OK. The kickoff's `base` rules; if the human corrects one, update that kickoff's frontmatter before launching. A wave only mixes kickoffs of the SAME base; different bases run as separate rounds.
 - **Delivery strategy — ask once, cache for the whole run**: `ask-on-risk` (default, **attended** — pauses at each wave's merge gate so you decide) / `auto-chain` (**fire-and-forget** — merges autonomously with no per-wave prompt, so you run it and walk away and come back to the whole batch implemented) / `single-pr` / `exception-ok` (same vocabulary as the ODD delivery contract). It governs the central merge gate (Round step 4). State plainly which one gives unattended completion (`auto-chain`).
-  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke, and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
+  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke (delicacy per `_shared/mala-pata-delicacy.md`), and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
 - If the user did not say what to run, run **every non-deferred kickoff passed**, round after round.
 - **Stateless by design**: nothing is stored between rounds. Every round re-derives readiness from git, so re-invoking this skill with the same batch RESUMES it (already-merged kickoffs are `done`, live worktrees are `in progress`).
 

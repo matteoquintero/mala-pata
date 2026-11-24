@@ -4,7 +4,7 @@ description: Single front-door of mala-pata. Trigger — any change request, BEF
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.18.0"
+  version: "1.19.0"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)
@@ -108,7 +108,7 @@ Apply `_shared/mala-pata-output-contract.md`: reason through the gate INTERNALLY
    **One objective per What — a compound What is a routing signal, not a formatting problem.** If the What only holds together with an "and" joining two independent deliverables (e.g. "rename the field AND hide the toggle AND fix the printout"), do NOT cram them into one cell: either they are ONE coherent vertical change — then state the single OUTCOME they add up to (the one capability or behavior the pieces serve together) — or they are several, which is the multi-unit signal (consider roadmap, or name the primary and flag the rest). Same rule for the DoD: Given/When/Then describes ONE observable outcome; stacked `And` clauses each asserting a different deliverable are the same smell. Compress to the real objective; never let the draft smuggle a decomposition past the gate as "one line".
 
    Add a `change_name: <slug>` row when triage was invoked for a roadmap phase (omit when free-standing).
-   Add a `kind: <feature|bug>` row (default `feature`) — a **NON-routing** tag: a bug still routes by size×uncertainty like any other change (it never adds a lane and never changes the gate), exactly as `size-hint` does not route. When `kind: bug`, add one line under the draft: `Bug: apply _shared/mala-pata-bug-entry-check.md in the chosen lane.` The lane carries `kind` into the kickoff.
+   Add a `kind: <feature|bug>` row (default `feature`) — a **NON-routing** tag: a bug still routes by size×uncertainty like any other change (it never adds a lane and never changes the gate), exactly as `size-hint` does not route. When `kind: bug`, add one line under the draft: `Bug: apply _shared/mala-pata-bug-entry-check.md in the chosen lane.` The lane carries `kind` into the kickoff. **Bug-cause gate:** if the ROOT CAUSE is NOT established (no finding doc and no research naming the cause), do NOT route a fix blind — answer `→ run /mala-pata-bug <defect>` first (the read-only bug-spike diagnoses the cause, writes a finding, and re-enters triage). Only route a lane once the cause is known (a finding doc exists, or the cause is obvious).
    Add a `research: <slug[, slug...]>` row when triage came FROM `/mala-pata-research` (the arg is a research slug, the request names a research doc, or Phase 0.5 synthesized several), so the lane records them in the kickoff and `organic-start`/`loop-start` carries EVERY `mala-pata/research/<slug>.md` into the feature's PR, tied to the commit. List ALL the synthesized slugs, not just one. Omit the row when there was no research (the lane defaults to `research: none`).
 
    **Open product decisions — flag, do NOT invent.** If a draft field hides a scope/behavior call only the human can make (what is IN vs OUT, who can do it / permissions, side-effects on other systems or data), write the cell as `open: <the question>` instead of guessing a value. The lane (organic/loop) MUST ask these one at a time before locking the kickoff — triage decides the lane and flags them; `/mala-pata-research` is what resolves them fully when the uncertainty is deep. Guessing a product decision and passing it as settled is the failure.

@@ -1,5 +1,7 @@
 # Bug entry check — mala-pata single source of truth
 
+> **Re-read on apply (stale-context guard).** This is a PROCESS canonical — no output signature a hook can check — so the guard is explicit: at the moment you APPLY this rule, re-read THIS file from disk (it is a live symlink; it may have changed since it entered your context) and apply the on-disk version — it wins over any stale copy you hold.
+
 Canonical checks for a change tagged `kind: bug`. Read by the lane skills that carry
 `kind` (`mala-pata-triage` captures it; `mala-pata-organic` / `-start`, `mala-pata-loop` / `-start` and `mala-pata-shot` apply it). Apply verbatim; do not restate in a skill.
 

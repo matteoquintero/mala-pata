@@ -4,7 +4,7 @@ description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -16,6 +16,23 @@ You are the **roadmap executor and delivery owner**. You take ONE roadmap and ru
 > **You never live inside a phase's cycle.** Each tab is an independent Claude session running its lane's full cycle with its own context and gates. **Per-commit RDD and the phase smoke stay INSIDE each tab** — RDD is per work-unit commit under user-owned consent, smoke is per change; neither can be centralized. You own what happens **BETWEEN waves**: sequencing, merges, cleanups.
 
 > **The roadmap route is a FORECAST, triage rules.** The phase's `Tentative route` was written with the information of the day it was planned; previous phases resolve unknowns. So every code phase passes `/mala-pata-triage <slug>` on arrival — the resolved lane, not the forecast, decides the tab command.
+
+## Unattended + concurrency + edit-surface (hardening canonicals)
+
+- **RUN-MODE.** This orchestrator runs each phase UNATTENDED: inject `RUN-MODE: unattended` into every
+  launch prompt and apply `_shared/mala-pata-unattended-policy.md` — a gate that would ask a human PARKS
+  (into `phase-status` `parked_decisions[]`) and the wave finishes everything else; the queue is surfaced
+  ONCE at the end. A consent/destructive decision ALWAYS parks blocked, never auto-answered.
+- **Atomic lock for the central turn.** The merge / cleanup / base-advance that only the orchestrator may
+  do uses the atomic `mkdir` lock from `_shared/mala-pata-platform.md` (`<lock-acquire>`/`<lock-release>`),
+  not an advisory check — two waves or two orchestrators cannot both own the central delivery. One central
+  single-suite-run owner, post-merge.
+- **Restricted edit-surface (makes "never live inside a phase cycle" verifiable).** The orchestrator writes
+  NO source code: it only creates worktrees, launches tabs, reads markers, merges, renumbers migrations and
+  cleans up. It never edits a phase's files — that is the phase tab's job inside its own worktree.
+- **Recovery (a merged phase is immutable).** A defect found after a phase merged re-enters through
+  `/mala-pata-triage` (or `/mala-pata-bug` for an unknown cause) as a NEW unit — never an in-place fix on
+  the merged result. Every landed change stays traceable to its own cycle.
 
 ## Requirements (orchestrate, do not reinvent)
 
@@ -44,7 +61,7 @@ After loading the roadmap (Step 0) and deriving live state (Round step 1): drop 
 - Extract per phase: `#`, name, `slug` (the stable change-name), `Kind` (`code`/`ops`), `Tentative route`, `Depends on`, `Deferrable?`, and for ops phases `Verify` / `Status` / `Evidence`; plus `Parallelizable: {…}` and `Deferred: {…}` from the DAG closing.
 - **Base confirmation — ALWAYS, once**: confirm the integration branch (`main` / `development` / whichever the repo uses; the roadmap's durable branch) and wait for a SINGLE OK.
 - **Delivery strategy — ask once, cache for the whole run**: `ask-on-risk` (default, **attended** — pauses at each wave's merge gate so you decide) / `auto-chain` (**fire-and-forget** — merges autonomously with no per-wave prompt, so you run it and walk away and come back to the whole roadmap implemented) / `single-pr` / `exception-ok`. It governs the central merge gate (Round step 5). State plainly which one gives unattended completion (`auto-chain`) so the human picks knowingly.
-  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an `ops` phase (external infra — you attest it), a phase triage upgrades to loop, an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke, and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
+  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an `ops` phase (external infra — you attest it), a phase triage upgrades to loop, an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke (delicacy per `_shared/mala-pata-delicacy.md`), and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
 - **Deferred phases** (`Deferrable? = yes`) are NOT started unless the human promotes them; core phases (`no`) run first. Say which are deferred in the first report.
 - **Stateless by design**: nothing is stored between rounds. Each round re-derives from the `.md` + live git, so re-invoking this skill with the same slug RESUMES it.
 

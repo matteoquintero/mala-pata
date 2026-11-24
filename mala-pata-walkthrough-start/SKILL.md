@@ -4,7 +4,7 @@ description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — execute
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.1"
+  version: "1.6.2"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence
@@ -37,6 +37,8 @@ Your job: **execute** the QA walkthrough that `/mala-pata-walkthrough` described
 ## Phase 1 — Delicacy gate (who runs it)
 
 Resolve `smoke_delicacy` (infer from the change if unset — money, prod-like data, irreversible writes, or judgment-heavy UX → round UP on doubt):
+
+> **Canonical delicacy — single source of truth.** Apply `_shared/mala-pata-delicacy.md` verbatim (the `low | medium | high` levels and who runs each). Do not re-derive it.
 
 - **low** — objective, reversible, no money/prod data → **the agent runs it** (Phases 2-4), reports with evidence, **no question**.
 - **medium** — the agent runs it, and the report **flags "review the evidence"** before the human confirms.

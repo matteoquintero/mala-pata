@@ -13,9 +13,12 @@ Design invariants:
   house-method footer, the status banner, or the banned stacked block). Ordinary
   chat is never touched.
 - BLOCK ONCE: respects stop_hook_active so it can never loop.
-- NARROW: flags only (1) the banned per-item stacked `#: N` block and (2)
-  standalone narrative paragraphs inside a structured deliverable. Multi-sentence
-  table cells and borderline prose are left to the prompt-level self-check.
+- NARROW: flags only (1) the banned per-item stacked `#: N` block, (2)
+  standalone narrative paragraphs inside a structured deliverable, and (3) a
+  frozen structural label emitted in another language (structural-labels.md).
+  Multi-sentence table cells and borderline prose are left to the self-check.
+
+Contracts: _shared/mala-pata-output-contract.md + _shared/mala-pata-structural-labels.md.
 """
 import sys, json, re
 
@@ -69,11 +72,29 @@ def main():
 
     body = text.split("\n")
 
+    # --- A frozen structural label emitted translated (structural-labels.md). ---
+    # Computed FIRST: a translated frozen label is BOTH a deliverable signal and a
+    # violation — a fully-translated close would otherwise escape the English gate.
+    # Only the most unambiguous labels, in clearly-structural positions. Fail-open.
+    TRANSLATED_LABELS = [
+        (r"(?mi)^\s*\*{0,2}(Estructura|Estrutura)\*{0,2}:\s", "Structure"),
+        (r"(?mi)^\s*\*{0,2}(Siguiente paso|Pr[oó]ximo paso)\*{0,2}:\s", "Next step"),
+        (r"(?mi)^\s*\*{0,2}Leyenda\*{0,2}:\s", "Legend"),
+        (r"(?mi)\|\s*Campo\s*\|\s*Valor\s*\|", "Field | Value"),
+        (r"(?mi)\|\s*Hito\s*\|\s*Estado\s*\|", "Milestone | Status"),
+    ]
+    translated = None
+    for _pat, _canon in TRANSLATED_LABELS:
+        if re.search(_pat, text):
+            translated = _canon
+            break
+
     # --- Scope: is this a mala-pata DELIVERABLE? ---
     is_deliverable = (
         re.search(r"(?mi)^\s*Structure:\s", text) is not None
         or re.search(r"(?mi)^\s*(Roadmap|Source|Bottom line|Timeline|Plan):\s", text) is not None
         or re.search(r"(?m)^#:?\s*\d+\b", text) is not None
+        or translated is not None
     )
     if not is_deliverable:
         _exit_ok()
@@ -117,7 +138,7 @@ def main():
     if has_table and narrative_lines >= 1:
         narrative = True
 
-    if not (stacked or narrative):
+    if not (stacked or narrative or translated):
         _exit_ok()
 
     reasons = []
@@ -125,6 +146,8 @@ def main():
         reasons.append("a banned per-item stacked `#: N` block (one label per line) — emit items as TABLE ROWS, one row per item, one line per cell")
     if narrative:
         reasons.append("standalone narrative prose — the deliverable is tables + fixed blocks only; reason internally and emit ONLY the block (no preamble/recap outside the single BLUF line)")
+    if translated:
+        reasons.append("a frozen structural label emitted in another language (e.g. `" + translated + "`) — structural labels are verbatim English per _shared/mala-pata-structural-labels.md; only values and prose are localized. Re-emit with the English label")
 
     _block(
         "Output-contract violation (_shared/mala-pata-output-contract.md): "

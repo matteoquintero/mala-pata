@@ -4,7 +4,7 @@ description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.3"
+  version: "1.5.0"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)
@@ -55,9 +55,9 @@ You seed ONLY against the project's **test DB** (`TEST_DB_URL` or the equivalent
 
    `Structure: xUnit Test Patterns — fixture setup (Meszaros). Test-DB-never-prod safety rule = house method.`
 
-6. **Leave a record (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** Write a lightweight record `mala-pata/seeds/<change>.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (**copy it from the walkthrough QA frontmatter you read in step 1**; if that QA has no `domain`, infer FEATURE → area → `main` and **ASK the human on ANY doubt** — never blank), `roadmap: <slug | none>` (from the same QA), `change: <change-name>`, `seeded_at: <ISO 8601>`. Body: one line naming the fixtures seeded and the target test DB (no secrets — reference the mechanism, not credentials). This is how domain-radar sees a change was seeded. **Write only — do NOT commit/push**; name the path to the human. This record is the ONE repo artifact seed leaves — it still writes no app code and still touches only the test DB. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
+6. **Leave a record (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** Write a lightweight record `mala-pata/seeds/<change>.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (**copy it from the walkthrough QA frontmatter you read in step 1**; inherited, so no question — say it in one line; if that QA has no `domain`, propose FEATURE → area → `main` and **have the human CONFIRM it** (confirmation gate) — never blank), `roadmap: <slug | none>` (from the same QA), `change: <change-name>`, `seeded_at: <ISO 8601>`. Body: one line naming the fixtures seeded and the target test DB (no secrets — reference the mechanism, not credentials). This is how domain-radar sees a change was seeded. **Write only — do NOT commit/push**; name the path to the human. This record is the ONE repo artifact seed leaves — it still writes no app code and still touches only the test DB. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
-   > **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+   > **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 ## Teardown (optional, asked — default NO)
 

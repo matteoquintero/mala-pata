@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.23.2"
+  version: "2.24.0"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -292,7 +292,7 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 
 ## Step 6 — Where to save + write the roadmap
 
-> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 1. **Where to save — path + DURABLE branch.**
    - **Path**: default **`mala-pata/roadmap/<slug>.md`** (inside the repo, versioned — like the rest of the mala-pata artifacts). Allow override.
@@ -310,7 +310,7 @@ Then **wait for OK before writing the `.md`**. Options: **Approve** (write the r
 objective: <short title of the large objective>
 slug: <kebab-case>
 project: <project>
-domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 created_at: <ISO 8601>
 phases_total: <N>
 ---

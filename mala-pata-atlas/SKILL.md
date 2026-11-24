@@ -19,7 +19,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.1"
+  version: "0.2.0"
 ---
 
 # /mala-pata-atlas — map the complete testable surface of a feature, before any walkthrough is written
@@ -102,7 +102,7 @@ Cut the matrix into **walkthrough-units** — each a coherent, runnable slice of
 
 On approval, write `<repo-root>/mala-pata/atlas/<slug>.md` (`mkdir -p` the folder), starting with YAML frontmatter: `feature: <slug>`, `domain: <X>`, `roadmap: <slug | none>`, `created_at: <ISO 8601>`, `coverage: <planned | partial>`. Fill `created_at` from the machine's clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output; never invent the time, never default to UTC.
 
-> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement here. Do not paraphrase or re-derive it. **NEVER blank — on ANY doubt, ASK one question before writing.**
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement here. Do not paraphrase or re-derive it. **NEVER blank — ALWAYS confirmed by the human via its confirmation gate before writing.**
 
 **Branch — DURABLE, never an ephemeral change/worktree branch** (those get deleted in cleanup → the atlas is stranded): a feature-in-progress → that feature base branch; standalone → the integration default (`main`/`development`); ambiguous → ask ONE question and wait. **Write only — do NOT commit/push:** write the file; the skill does NOT create a commit. Tell the human the path + the durable branch so they add it in their normal flow. Leave a one-line engram pointer `atlas/<slug>` (fallback: the `.md` is the source).
 

@@ -4,7 +4,7 @@ description: Reinterprets a request into technical terms, chooses an execution p
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.23.0"
+  version: "1.24.0"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD
@@ -87,7 +87,7 @@ Before reinterpreting anything, measure whether the request is **ready to enter 
    - **Branch type**: advise the conventional prefix according to WHAT the change is (`feature/` new functionality, `fix/`/`bugfix/` correction, `hotfix/` prod urgency, `refactor/`, `chore/`, `docs/`, `release/`) and propose the full name `<type>/<change-name>`. **Never `sdd/...`**. E.g.: a bug fix → proposal `fix/<change-name>`; a new feature → `feature/<change-name>`.
    - **Wait for the OK** before setting `branch:` and `branch_base` in the kickoff. These two confirmations can go together with the profile one (Step 1.5) in a single interaction. The working branch is ALWAYS the new `<type>/<change-name>` and the `worktree` is ALWAYS a new dir per change — never put an integration branch as `branch:` nor a worktree to reuse; the executor (loop-start) works isolated in its own worktree and consolidates at merge.
    - **Delivery mode — ask in the SAME interaction**: PR (default) or **fast-forward to an umbrella**. Ask `¿Entrega por PR, o fast-forward a una umbrella (umbrella/<name>)?`. If **ff-umbrella**: the umbrella MUST match `umbrella/*` (FF is NEVER allowed to `main`/`development` — a non-`umbrella/*` target refuses the FF and keeps `pr`), and the **`branch_base` becomes that umbrella** so the feature can fast-forward back into it. Set `delivery_mode` + `umbrella` in the frontmatter; default `pr`.
-   - **Set `domain` from `branch_base`**: `feature/<X>` → `domain: <X>` (the feature — e.g. `feature/<X>` → `<X>`, even if the change touches other sub-areas, which are NOT the domain); `main`/`development` → the functional AREA, else `main`. **If there is ANY doubt, ASK the human — never guess.**
+   - **Set `domain` from `branch_base`**: `feature/<X>` → `domain: <X>` (the feature — e.g. `feature/<X>` → `<X>`, even if the change touches other sub-areas, which are NOT the domain); `main`/`development` → the functional AREA, else `main`. **Then CONFIRM it with the human — always, per the confirmation gate of `_shared/mala-pata-domain-rule.md` (list existing domains → propose → confirm); never write an unconfirmed domain.**
 
 ---
 
@@ -185,7 +185,7 @@ Assemble the brief with this structure, **INJECTING** the rules MDs:
 change_name: <change-name>
 profile: <PERFIL>
 project: <project>
-domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.g. feature/<X> → <X>, EVEN IF it touches other sub-areas; those are NOT the domain). If branch_base is main/development → the functional AREA; else 'main'. NEVER blank — if there is ANY doubt, STOP and ASK the user; never guess>
+domain: <the FEATURE it belongs to — from branch_base: feature/<X> → <X> (e.g. feature/<X> → <X>, EVEN IF it touches other sub-areas; those are NOT the domain). If branch_base is main/development → the functional AREA; else 'main'. NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 research: <research slug if this change came from /mala-pata-research, else none>   # loop-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 branch: <type>/<change-name>   # confirmed type (feature|fix|hotfix|refactor|chore|docs|release) — never sdd/

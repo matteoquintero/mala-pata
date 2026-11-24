@@ -4,7 +4,7 @@ description: HARVESTS and ORGANIZES a project's STANDARD into a captured, versio
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.1"
+  version: "0.4.0"
 ---
 
 # /mala-pata-standards — capture AND order a project's standard (harvest, do not invent)
@@ -97,7 +97,7 @@ Resolution convention: an `_index.md` at the root and one per area so consumers 
 ```markdown
 ---
 slug: <kebab>
-domain: <the bounded-context this leaf's rules govern — else 'global'; NEVER blank, ANY doubt → ASK the human>
+domain: <the bounded-context this leaf's rules govern — else 'global'; NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md (value semantics stay as defined here: a bounded context or `global`)>
 area: <the Level-1 area, e.g. ui | data | architecture | …>
 sub_facet: <the Level-2 sub-facet, e.g. foundations | atoms | conceptual | …>
 kind: standard

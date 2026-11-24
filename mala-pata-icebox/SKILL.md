@@ -4,7 +4,7 @@ description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") in
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.4.1"
+  version: "0.5.0"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog
@@ -40,7 +40,7 @@ Freezing a cube writes ONLY the icebox file (`mala-pata/icebox/<slug>.md`). It w
    - **No slug** → ask which icebox (one question: an existing slug, or a name to create). Stop and wait. Do not guess.
 3. **`domain` (create mode only) — MANDATORY, never blank.** An icebox belongs to a domain like every other mala-pata artifact (so `mala-pata-domain-radar` can group it). Infer it from what the icebox is FOR, per the canonical rule below. (Append mode reuses the file's existing `domain`.)
 
-   > **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+   > **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 ## Phase 2 — Capture the cube(s) (one line each, cheap)
 
@@ -58,7 +58,7 @@ Freezing a cube writes ONLY the icebox file (`mala-pata/icebox/<slug>.md`). It w
 ---
 icebox_slug: <slug>
 project: <project>
-domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 created_at: <ISO 8601>
 ---
 # Icebox: <name>
@@ -107,7 +107,7 @@ This block is the only way to close on the happy path. **Only exceptions**: Phas
 - Does NOT solve the cube now — deferral is the point.
 - Does NOT decompose like a roadmap — the icebox is a flat pool of independent cubes, not a dependent DAG.
 - Does NOT commit/push — write-only; the human commits it in their flow.
-- Does NOT invent `domain` or a size — it asks on doubt, and the size stays a hint.
+- Does NOT invent `domain` or a size — the human always confirms the domain, and the size stays a hint.
 
 ## Relation to the family
 

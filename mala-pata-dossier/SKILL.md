@@ -4,7 +4,7 @@ description: CREATES a project DISCOVERY document — captures what the client a
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.1"
+  version: "0.3.0"
 ---
 
 # /mala-pata-dossier — capture project discovery (does not propose the solution)
@@ -57,12 +57,12 @@ This is the step that makes the discovery correct. The 6 questions ARE the inter
 
 Write to `mala-pata/dossier/<slug>.md` (inside the repo, versioned; `mkdir -p`). **Frontmatter** (feeds `/mala-pata-domain-radar`):
 
-> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 ```markdown
 ---
 slug: <kebab>
-domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 phase: discovery
 kind: discovery
 client: <who the discovery is for>

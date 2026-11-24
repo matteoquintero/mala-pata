@@ -4,7 +4,7 @@ description: Generates the kickoff of an ODD (Organic Driven Development) change
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.20.0"
+  version: "3.21.0"
 ---
 
 # /mala-pata-organic — ODD kickoff generator (route already decided)
@@ -82,10 +82,10 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 
 ## Phase 2 — Generate the organic kickoff (if the capture ended up complete)
 
-> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 1. `change-name`: if the incoming draft carries a `change_name` (a roadmap phase slug), HONOR it as-is — do NOT derive a new one (the branch `<type>/<slug>` must match what `mala-pata-roadmap-radar` searches for). Only when `change_name` is absent, derive a short one in kebab-case.
-2. **Base — propose and confirm (Hard rule #2)**: where the code lives (`main`/`development` or an in-progress feature). Wait for the OK. **Then set `domain` FROM the base**: `feature/<X>` → `domain: <X>` (the feature, even if the change touches sub-areas of it — those are NOT the domain); `main`/`development` → the functional AREA it touches, else `main`. **If there is ANY doubt about the domain, ASK the human (one question) — never guess.**
+2. **Base — propose and confirm (Hard rule #2)**: where the code lives (`main`/`development` or an in-progress feature). Wait for the OK. **Then set `domain` FROM the base**: `feature/<X>` → `domain: <X>` (the feature, even if the change touches sub-areas of it — those are NOT the domain); `main`/`development` → the functional AREA it touches, else `main`. **Then CONFIRM the domain with the human (confirmation gate of `_shared/mala-pata-domain-rule.md`) — always, never only on doubt.**
 3. **Branch type — advise and confirm**: `feature/`/`fix/`/`hotfix/`/`refactor/`/`chore/`/`docs/` — never `sdd/`. The full name goes as the proposed `worktree` (absolute path, `<ABS-repo>-worktrees/<change-name>`) — you do **not create it here**, `/mala-pata-organic-start` executes that.
 3.5. **Delivery mode — ask WITH the base/branch (same interaction)**: PR (default) or **fast-forward to an umbrella**. Ask: `¿Entrega por PR, o fast-forward a una umbrella (umbrella/<name>)?`. If **ff-umbrella**: the umbrella target MUST match `umbrella/*` (FF is NEVER allowed to `main`/`development` — if they name a non-`umbrella/*` target, refuse the FF and keep `pr`), and the **base becomes that umbrella branch** so the feature can fast-forward back into it (set `base` accordingly). Record `delivery_mode` + `umbrella` in the frontmatter; default `pr`.
 4. **Init guard**: `mem_search("sdd-init/{project}")` (only the EXACT item). If it does not exist → run `sdd-init` first to detect the stack and `strict_tdd`. Take `tdd_mode` from there for the frontmatter.
@@ -96,7 +96,7 @@ A small change = one line per field, ~10 seconds to fill. The gate does not ask 
 ---
 change_name: <change-name>
 project: <project>
-domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ANY doubt → ASK the human>
+domain: <per _shared/mala-pata-domain-rule.md — NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 roadmap: <roadmap-slug if this change is a phase of a roadmap, else none>   # relates it to a roadmap (or standalone) for domain-radar
 research: <research slug if this change came from /mala-pata-research, else none>   # organic-start carries mala-pata/research/<slug>.md into the worktree + PR, tied to the commit
 route: organic

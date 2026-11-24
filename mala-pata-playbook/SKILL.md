@@ -4,7 +4,7 @@ description: CREATES a playbook — a markdown for a SCENARIO that has branches 
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.1"
+  version: "1.6.0"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)
@@ -50,7 +50,7 @@ Write to `mala-pata/playbooks/<slug>.md` (inside the repo, versioned; `mkdir -p`
 ```markdown
 ---
 slug: <kebab>
-domain: <the operational area/system it covers — else 'main'; NEVER blank, ANY doubt → ASK the human>
+domain: <the operational area/system it covers — else 'main'; NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 kind: incident | diagnostic | reconciliation | decision | recovery
 scenario: <one line: the situation this handles>
 signals: [<observable entry triggers>]

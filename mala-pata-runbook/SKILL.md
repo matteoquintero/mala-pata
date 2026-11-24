@@ -4,7 +4,7 @@ description: CREATES a runbook/playbook — a markdown that tells an agent (or h
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.1"
+  version: "1.6.0"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
@@ -52,7 +52,7 @@ Write to `mala-pata/runbooks/<slug>.md` (inside the repo, versioned; `mkdir -p`)
 ```markdown
 ---
 slug: <kebab>
-domain: <the operational area/system it touches (deploy, release, database, <system>, <feature>, ...) — else 'main'; NEVER blank, ANY doubt → ASK the human>
+domain: <the operational area/system it touches (deploy, release, database, <system>, <feature>, ...) — else 'main'; NEVER blank; ALWAYS confirmed by the human — confirmation gate of _shared/mala-pata-domain-rule.md>
 kind: operational | deploy | database | recovery | diagnostic
 trigger: <the phrase/condition that starts it>
 standing_authorization: yes | no   # yes = the trigger authorizes ALL steps without per-step confirmation

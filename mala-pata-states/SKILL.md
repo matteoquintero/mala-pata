@@ -4,7 +4,7 @@ description: Given a feature by name, extracts its state machine(s) from the cod
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.5"
+  version: "1.7.0"
 ---
 
 # mala-pata-states — Faithful state machine diagram
@@ -118,7 +118,7 @@ Default output (if the user does not ask for another path): `<project-root>/docs
 
 **Frontmatter pointer (mandatory — forward-only, feeds `/mala-pata-domain-radar`).** The deliverable (`.json`/`.html`) carries no YAML, so ALSO write a one-screen pointer `mala-pata/diagrams/<feature>-states.md` (`mkdir -p` the folder) that STARTS with YAML frontmatter: `domain: <X>` (per the canonical rule below), `roadmap: <slug | none>`, `change: <change-name | feature>`, `feature: <feature>`, `created_at: <ISO 8601>`. Body: one line with the delivered `.html` and `.json` paths. This is how domain-radar sees that a domain has its state diagram. Same **write-only** rule — do NOT commit; name the path + the durable branch to the human. Fill every generated timestamp from the machine's local clock — run `date '+%Y-%m-%dT%H:%M:%S%z'` and use its exact output (local time with UTC offset, e.g. `2026-11-01T17:25:40-0500`); never invent the time and never default to UTC.
 
-> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim; it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
+> **Canonical `domain` rule — single source of truth.** Apply `_shared/mala-pata-domain-rule.md` verbatim, INCLUDING its mandatory confirmation gate (list existing domains → propose → the human confirms, every time); it supersedes any restatement in this skill. Do not paraphrase or re-derive it.
 
 ## Phase 5 — Close (without judging)
 

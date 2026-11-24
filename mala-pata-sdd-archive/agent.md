@@ -4,7 +4,7 @@ description: >
   Archive the actual state of an SDD change, including unfinished work. Use when the change
   needs to be closed — merges delta specs into main specs, moves change folder to archive,
   and persists the final archive report. Completes the SDD cycle.
-model: haiku
+model: sonnet
 tools: Read, Edit, Write, Glob, Bash, mcp__engram__mem_search, mcp__plugin_engram_engram__mem_search, mcp__engram__mem_get_observation, mcp__plugin_engram_engram__mem_get_observation, mcp__engram__mem_save, mcp__plugin_engram_engram__mem_save, mcp__codegraph__codegraph_explore
 ---
 

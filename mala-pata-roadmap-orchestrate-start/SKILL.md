@@ -4,7 +4,7 @@ description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves del
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.5.1"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -44,7 +44,7 @@ After loading the roadmap (Step 0) and deriving live state (Round step 1): drop 
 - Extract per phase: `#`, name, `slug` (the stable change-name), `Kind` (`code`/`ops`), `Tentative route`, `Depends on`, `Deferrable?`, and for ops phases `Verify` / `Status` / `Evidence`; plus `Parallelizable: {…}` and `Deferred: {…}` from the DAG closing.
 - **Base confirmation — ALWAYS, once**: confirm the integration branch (`main` / `development` / whichever the repo uses; the roadmap's durable branch) and wait for a SINGLE OK.
 - **Delivery strategy — ask once, cache for the whole run**: `ask-on-risk` (default, **attended** — pauses at each wave's merge gate so you decide) / `auto-chain` (**fire-and-forget** — merges autonomously with no per-wave prompt, so you run it and walk away and come back to the whole roadmap implemented) / `single-pr` / `exception-ok`. It governs the central merge gate (Round step 5). State plainly which one gives unattended completion (`auto-chain`) so the human picks knowingly.
-  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an `ops` phase (external infra — you attest it), a phase triage upgrades to loop, an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke, and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
+  - **Unattended run (`auto-chain`) — what STILL parks for you** (irreducibly human; the run finishes everything else and lists these at the end, never blocking the rest): an `ops` phase (external infra — you attest it), a phase triage upgrades to loop, an RDD medium/high consent while RDD is ON, a medium/high-delicacy smoke (delicacy per `_shared/mala-pata-delicacy.md`), and any red CI / conflict. To minimize parking before you walk away, YOU may disable RDD (`gentle-ai review mode disable`) and keep smoke delicacy low — your switches, never toggled automatically.
 - **Deferred phases** (`Deferrable? = yes`) are NOT started unless the human promotes them; core phases (`no`) run first. Say which are deferred in the first report.
 - **Stateless by design**: nothing is stored between rounds. Each round re-derives from the `.md` + live git, so re-invoking this skill with the same slug RESUMES it.
 

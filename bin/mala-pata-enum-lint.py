@@ -51,6 +51,8 @@ VOCABS = {
 HUBS = {
     "_shared/output-contract.md": "mala-pata-verdict-glyphs",
     "_shared/structural-labels.md": "mala-pata-verdict-glyphs",
+    "mala-pata-walkthrough-start/SKILL.md": "mala-pata-delicacy",
+    "mala-pata-walkthrough/SKILL.md": "mala-pata-delicacy",
 }
 
 

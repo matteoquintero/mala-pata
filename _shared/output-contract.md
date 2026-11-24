@@ -6,6 +6,7 @@ Apply this verbatim wherever a skill references it. A skill's DELIVERABLE (its s
 - **Pipe tables** — a GFM Markdown **pipe table** (columns delimited by `|`, a `|---|` separator row), never fenced; one ROW per item, one line per cell. "pipe table" is the term for this format; use it instead of "table".
 - **Fixed labeled blocks** — the exact banner / BLUF / legend / footer lines the skill defines, verbatim.
 - **At most ONE BLUF / decision line** of prose (a verdict, a bottom-line), plus any question the skill EXPLICITLY mandates. Nothing else is prose.
+- **Status glyphs** — any status / verdict token that leads a cell or a legend follows `_shared/mala-pata-verdict-glyphs.md` (the frozen glyph→meaning lexicon `✓ ◐ ○ ✗ ∅ ?`); the skill keeps its own context word, the glyph is canonical.
 
 ## Banned shapes (never emit)
 - **Narrative paragraphs** — any free-flowing prose that recaps, explains, contextualizes, or editorializes ("Four of the five phases are already in development…", "I mentioned it as an option…", "Let me explain…"). The deliverable has none.

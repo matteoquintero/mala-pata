@@ -4,7 +4,7 @@ description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.1"
+  version: "1.14.2"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)
@@ -45,6 +45,8 @@ Check: `command -v <tool>`. If a mandatory tool is missing, do not continue.
    - If several candidates and none specified → list them and ask which one (one question, stop and wait).
    - If NO roadmap matches → do NOT dead-end: if the domain was built via SDD loops/changes (no roadmap), point to `/mala-pata-radar` (needs no roadmap `.md`); if the roadmap was archived, ask for its path. Do not invent phases.
 3. Read the roadmap's frontmatter `domain:` (the owner — used for scoping above). Then from the `.md` extract per phase: **#**, **name**, **slug** (the stable change-name), **kind** (`code`/`ops`/`spike`; default `code` if the column is absent in an old roadmap), **route**, **Depends on**, and — for `ops` phases — the declared **Status** / **Evidence** / **Verify**; for `spike` phases the **question** and the finding doc slug (`mala-pata/research/<slug>.md`). From the DAG closing take the **topological order** and the **parallelizable** ones (`{..}`). If the roadmap is old and a phase has no `slug`, mark that phase `no-slug` (it cannot be matched deterministically — see Phase 2).
+
+> **Canonical phase kind — single source of truth.** Apply `_shared/mala-pata-phase-kind.md` verbatim: a `code` phase is proven by git, an `ops` phase by the human-maintained Verify/Status/Evidence (`[attested]`), a `spike` by its finding (`[finding]`). Never read an `ops`/`spike` phase as "no git → pending".
 
 ## Phase 1 — Freshness (live git, zero cache)
 

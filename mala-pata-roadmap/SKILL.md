@@ -15,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.23.1"
+  version: "2.23.2"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)
@@ -371,6 +371,9 @@ Suggested order (topological): 1 → (2 // 3) → …   ·   Parallelizable: {2,
 - **Tentative route**: loop:STANDARD  ·  **Depends on**: —  ·  **Deferrable?**: no (core) | yes
 - **Deferrable?**: `no` = core, it has to be done for the value to exist; `yes` = can be done later without breaking the core. It is a business PRIORITY axis, distinct from "Depends on" (which is technical). The gate (Step 5) reads this mark for core-vs-complete.
 - **Kind**: `code` (git-tracked; the radar derives state from the commit trailer) | `ops` (external infra/manual — hosting/database/repo-platform settings/paperwork — **no git artifact**) | `spike` (a read-only probe of an unknown approach, tentative route `spike`, run via `/mala-pata-research --spike`; its output is a research finding, not a code commit — state is read from the finding doc, and its dependents stay blocked until it lands).
+
+> **Canonical phase kind — single source of truth.** Apply `_shared/mala-pata-phase-kind.md` verbatim (the `code | ops | spike` kinds and how each proves "done": git / attestation / finding). It freezes the kind→proof mapping; this skill keeps its column. Do not re-derive it.
+
 - **Verify / Status / Evidence** (ops phases ONLY): `Verify:` how a human confirms it (URL / command / health check) · `Status:` pending | done · `Evidence:` env URL / project id / health 200 / date — maintained as the ops work lands; the radar reads this (provenance `[attested]`), since git cannot see ops phases.
 - **slug**: `<stable-kebab>` — the change-name it will use when executed (branch `<type>/<slug>`). On execution the landing commit carries the trailer `Mala-Pata-Phase: <slug>`, and `mala-pata-roadmap-radar` matches progress **by that trailer** — not by branch or commit subject, because branches get deleted on cleanup. Unique and stable; do not change it between roadmap versions.
 - **Why that route**: <if loop: THE DESIGN decision that makes it loop — what triage re-checks (a decision decidable-with-a-question does NOT go to loop); if organic/shot: "What+Done+Decisions already statable">

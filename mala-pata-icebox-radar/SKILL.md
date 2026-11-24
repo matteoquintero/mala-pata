@@ -1,10 +1,11 @@
 ---
 name: mala-pata-icebox-radar
+cognitive_tier: light
 description: READ-ONLY status of an ICEBOX — how many of its cubes are still frozen, thawed (defrosted + routed, not started), in progress, or done, deriving `done` LIVE against git (the twin of /mala-pata-roadmap-radar, for cubes instead of roadmap phases). Source is the icebox `.md` (in the repo) + git — NEVER engram, zero cache, re-derived every run. Cubes are an independent pool (no DAG, no blocked/parallel). It does NOT orchestrate, does NOT execute, does NOT mutate anything. Fixed, immutable output format. Trigger — "status del icebox <slug>", "cómo va el icebox", "cuántos cubes quedan", "icebox radar <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.1"
+  version: "0.2.2"
 ---
 
 # /mala-pata-icebox-radar — status of an icebox against git (fixed format)

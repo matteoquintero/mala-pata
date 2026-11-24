@@ -1,10 +1,11 @@
 ---
 name: mala-pata-icebox
+cognitive_tier: light
 description: FREEZE a desired outcome for LATER — captures a DoD (a "cube") into a deferred backlog (an "icebox") WITHOUT solving it now. An icebox is a flat, append-only list of INDEPENDENT cubes you accumulate over time (cheap, no research, no routing); you DEFROST it later (`/mala-pata-icebox-defrost`) to run research + triage over the whole thing and get ONE recommended vehicle (shot/organic/loop/roadmap) that covers the whole set. Different from a roadmap (ONE objective decomposed into a dependent DAG right now) — the icebox is a bottom-up POOL of independent asks for later. It does NOT research, does NOT route, does NOT size authoritatively, does NOT read code, does NOT execute; it only appends one or many cubes to `mala-pata/icebox/<slug>.md` (write-only, no commit). Supports bulk — freeze a whole findings list in one pass, and DECOMPOSES a long/unstructured text into one cube per distinct outcome (splitting a "cube" that is really several, and recommending the division) so each cube is one DoD — granular cubes make defrost/roadmap more deterministic. Trigger — "agregá un cube al icebox <slug>", "congelá esto para después", "metelo al icebox", "guardá esta idea para después", "congelá estos hallazgos", "freeze this", "congelá este texto largo".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.5.0"
+  version: "0.5.1"
 ---
 
 # /mala-pata-icebox — freeze a cube into a deferred backlog

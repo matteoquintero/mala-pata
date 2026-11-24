@@ -1,10 +1,11 @@
 ---
 name: mala-pata-shot
+cognitive_tier: standard
 description: MINIMUM lane of ODD — the "direct inline" of ODD with no worktree and no ceremony, for the smallest, already-understood change (a color, a copy, a flag, a one-line fix). Runs in a single pass — authorize → enter the safe branch → understand (1-3 files) → edit with the project's TDD mode → work-unit commit (+ RDD per commit if on). Does NOT create a worktree, does NOT write a feature-doc, does NOT do preview or smoke test, does NOT dispatch sdd-*. If midway a decision appears, the blast radius grows or design is needed → STOP and bounce to /mala-pata-organic. Trigger — trivial change + understood + minimal blast radius, or when /mala-pata-triage routes here.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.1"
+  version: "1.14.2"
 ---
 
 # /mala-pata-shot — ODD in a single pass, no worktree

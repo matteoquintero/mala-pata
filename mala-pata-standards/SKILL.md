@@ -1,10 +1,11 @@
 ---
 name: mala-pata-standards
+cognitive_tier: standard
 description: HARVESTS and ORGANIZES a project's STANDARD into a captured, versioned, well-ordered artifact — the VISUAL language and the INTERACTION / LAYOUT conventions (where things go, how components behave), inferred READ-ONLY from the repeated patterns in the real CODE and the stated conventions in the project's DOCUMENTATION, so the rest of the suite can GROUND against it instead of guessing. It does NOT invent the standard — where the project is INCONSISTENT (or where code and docs disagree) it shows the variants and ASKS the human which one IS the standard; it never picks for them. Nothing enters the captured standard without the human's explicit per-rule approval — the foundation is approve-each-one-by-one (heavy on purpose), lighter after. It writes the standard into an ORDERED two-level structure (an open set of AREAS × bounded-context, each area decomposed by its discipline's recognized internal model) — not one flat md. Three modes — harvest FRESH from code + docs, ADOPT an existing standards doc and normalize it, or REORGANIZE an already-messy standards folder into the ordered structure. v1 captured scope is visual + interaction/layout; code / structural conventions (naming, folder architecture) are a named FUTURE layer, out of v1 — but the structure RESERVES their slots. Writes under mala-pata/standards/ with a domain; READ-ONLY on the project (it captures, it never changes code). Trigger — "estandarizá el proyecto", "capturá el estándar de <área>", "organizá los estándares del proyecto", "buscá el estándar en el código y la documentación", "ordená la carpeta de estándares", "cuál es el estándar de los modales / botones / pantallas", "armá el design standard de <proyecto>", "normalizá este estándar al formato".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.4.0"
+  version: "0.4.2"
 ---
 
 # /mala-pata-standards — capture AND order a project's standard (harvest, do not invent)
@@ -138,7 +139,7 @@ Emit exactly this, from what you wrote (no invention):
 - A short readback table (`Area | Status | Evidence`) — one line per rule/area, so the human sees what is approved, what still awaits their YES, and what is contested. (Reorganize mode: the table shows where each rule MOVED.)
 - **OPEN** inconsistencies, if any — one per line (including any code-vs-docs conflict), each needing the human's ruling (never hidden).
 - **Files:** the ordered structure under `mala-pata/standards/` (root `_index.md` + the area leaves written).
-- **Next step** — the standard is the INPUT the rest of the suite grounds against: `/mala-pata-art` judges/applies the visual part, `/mala-pata-research` makes a vague DoD deterministic against it, the lanes conform. Resolve the OPEN rulings to raise coverage. **Pending adoption (separate change(s), do NOT assume done here):** (a) the 3 skills that read the standard TODAY — `/mala-pata-art`, `/mala-pata-research`, `/mala-pata-triage` — resolve the old flat path `mala-pata/standards/<domain>.md`; re-pathing them to the new `_index.md`/structure alters a contract they consume (high risk); and (b) the rest of the suite that SHOULD ground against the standard but does not yet — the `organic`/`loop`/`shot` lanes (deterministic DoD), `walkthrough`, `states`, `roadmap`, … — should be EXTENDED to consume it (per-skill new behavior). The ordered structure is what makes both practical; neither is done by this skill.
+- **Next step** — the standard is the INPUT the rest of the suite grounds against: `/mala-pata-art` judges/applies the visual part, `/mala-pata-research` makes a vague DoD deterministic against it, the lanes conform. Resolve the OPEN rulings to raise coverage. If the project still has legacy flat standards files (`mala-pata/standards/<domain>.md`), run this skill in **reorganize** mode to move their rules into the ordered structure. Consumers already resolve the ordered structure (root `_index.md` → `<area>` → `<sub-facet>`, with the legacy flat fallback) — `/mala-pata-art`, `/mala-pata-research` and `/mala-pata-triage` directly, the lanes through `_shared/mala-pata-standard-grounding.md` — so a new `approved` rule grounds them with no further change. Do NOT tell the human to re-path or extend the consumers.
 
 `Structure: pattern-mining (infer the rule from repeated instances) + documentation harvest + inconsistency-as-question (ask, never pick) + faceted classification (area × bounded-context) + per-area discipline models (Atomic Design / ANSI-SPARC / Clean Architecture / Richardson / OWASP ASVS / test pyramid / three pillars). Harvest-not-invent + visual/interaction scope + two-level ordering = house method.`
 
@@ -156,12 +157,12 @@ This block is the only way to close on the happy path. **Only exceptions**: Phas
 - Does NOT lose a rule when reorganizing — every existing rule lands in the new structure with its status/evidence/provenance intact; ambiguous placement is asked.
 - Does NOT change code, restyle, or fix the inconsistencies — that is a lane's job, not this skill's.
 - Does NOT capture code/structural conventions in v1 — only visual + interaction/layout; the structural areas exist as reserved slots.
-- Does NOT rewire or broaden the consumers — (a) re-pathing the 3 current consumers (`/mala-pata-art` / `/mala-pata-research` / `/mala-pata-triage`) to the new structure and (b) extending grounding to the rest of the suite are separate changes it only flags.
+- Does NOT edit the consumers — they already resolve the ordered structure (with the legacy flat fallback); a change to how a consumer reads the standard is a separate skill edit, not this skill's job.
 - Does NOT commit — write-only; the human commits in their PR flow.
 
 ## Relation to the family
 
-- **Feeds** `/mala-pata-art` (which judges/applies the VISUAL standard but assumes it exists — this skill is what CAPTURES it) and `/mala-pata-research` (which grounds a vague DoD against the captured standard so it becomes deterministic). The lanes conform to it. The ordered structure is what makes broad consumption practical — the whole suite should ground against it, not just three skills.
+- **Feeds** `/mala-pata-art` (which judges/applies the VISUAL standard but assumes it exists — this skill is what CAPTURES it) and `/mala-pata-research` (which grounds a vague DoD against the captured standard so it becomes deterministic). `/mala-pata-triage` checks it before routing, and the lanes ground against it through `_shared/mala-pata-standard-grounding.md`. All of them resolve the ordered structure via the root `_index.md`, with the legacy flat file as fallback.
 - **Different from** `/mala-pata-art` — art is visual JUDGMENT (how to improve a given artefact); standards is CAPTURE + ORDER (what the project's standard IS and where each rule lives). Capture first, judge/apply after.
 - **Indexed by** `/mala-pata-domain-radar` (reads the `domain:` frontmatter, like the other mala-pata artifacts).
 - It is a capture/doc-authoring skill, orthogonal to the lanes (`shot`/`organic`/`loop`/`roadmap`), not a route.

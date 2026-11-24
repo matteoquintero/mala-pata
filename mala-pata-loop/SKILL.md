@@ -1,10 +1,11 @@
 ---
 name: mala-pata-loop
+cognitive_tier: standard
 description: Reinterprets a request into technical terms, chooses an execution profile with the human, and generates the full context in a markdown file (inside the repo, `mala-pata/kickoffs/`, versioned) to start an interactive SDD — with only a one-line pointer in engram. It does NOT run the SDD — it only leaves the brief ready for another agent to run it. Trigger — "armá el kickoff de este SDD", "prepará el contexto para un SDD de <objetivo>", "generá el brief del loop".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.24.0"
+  version: "1.24.1"
 ---
 
 # /mala-pata-loop — Context generator to start an SDD

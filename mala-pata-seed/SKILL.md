@@ -1,10 +1,11 @@
 ---
 name: mala-pata-seed
+cognitive_tier: light
 description: Deterministic fixture seeder for testing on a branch, OUTSIDE shot/organic/loop. Reads the `## Seed` section of the QA that mala-pata-walkthrough generated (which fixtures, derived from the Givens + the kickoff's smoke_test.data) and seeds them with the project's mechanism (seeders/factories that sdd-init detected), idempotently, against the test DB. It does NOT improvise — if the recipe or the mechanism is missing, it STOPS and warns. It does NOT touch prod, does NOT write app code, does NOT run tests. It is also the executor that the smoke test gate (4.1-ter) delegates to in-cycle. Trigger — "sembrá los fixtures", "seed para probar <feature>", or run it on a branch before testing by hand.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.5.1"
 ---
 
 # /mala-pata-seed — deterministic fixture seeder (reads walkthrough)

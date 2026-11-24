@@ -1,10 +1,11 @@
 ---
 name: mala-pata-skill
+cognitive_tier: standard
 description: CREATES or EDITS a mala-pata skill — the OWNED authoring path for the suite. It runs the meta-work flow end to end (edit the live symlink source → mirror to the repo → version bump → Conventional commit, zero attribution, branch-first) so that flow cannot be skipped, and it enforces two invariants the suite depends on: skills stay DOMAIN-NEUTRAL (examples are placeholders, never a real project's nouns/paths), and a CONTEXT-LEAK GATE reviews every concrete token by JUDGMENT and ASKS THE HUMAN on any doubt — it never bans or strips a word on its own, so it cannot damage a skill and it does not grow a denylist. Two modes — create a NEW mala-pata skill from a description, or EDIT/normalize an existing one. READ-ONLY on your real projects: a real-project case is only CONTEXT for WHY a skill changes, never material that enters the skill. It does NOT push/PR/merge (the human's call). Trigger — "creá un skill mala-pata para X", "editá el skill <name>", "mejorá el skill <name>", "normalizá este skill al estándar".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # /mala-pata-skill — author a mala-pata skill (owned flow + context gate)

@@ -1,10 +1,11 @@
 ---
 name: mala-pata-playbook
+cognitive_tier: standard
 description: CREATES a playbook — a markdown for a SCENARIO that has branches (not a single path), built around a decision tree so an agent (or human) navigates "if observed A → branch X; if B → branch Y", where each leaf either runs inline steps or hands off to a runbook. It is the scenario-level counterpart of mala-pata-runbook (one procedure): the playbook narrows an ambiguous situation to a known condition, then routes. Two modes — create NEW from a scenario description, or ADOPT an existing doc and normalize it. Writes mala-pata/playbooks/<slug>.md + a companion findings file; READ-ONLY on your projects, NEVER executes (the runner is mala-pata-playbook-start). Before writing it confirms understanding and asks the open decisions one at a time. Trigger — "creá un playbook para X", "armá el playbook de diagnóstico/incidente/reconciliación de X", "normalizá este playbook al estándar".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-playbook — create a scenario playbook (decision tree; does not run it)

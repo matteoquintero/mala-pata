@@ -1,10 +1,11 @@
 ---
 name: mala-pata-walkthrough
+cognitive_tier: standard
 description: From a PR/change OR a roadmap (a PR = "a one-node roadmap"), generates a test walkthrough of the functionality in Given/When/Then + followable steps, and projects it into TWO lanes WITHOUT mixing them (Diátaxis) — (1) internal QA/UAT guide "what to test / how to test" and (2) how-to/tutorial documentation for the end customer. Living documentation (BDD): the same Given/When/Then verifies AND documents. It does NOT write code, does NOT run the SDD cycle, does NOT replace sdd-verify (which is machine verification). Trigger: "documentá cómo probar esto", "guía de prueba", "tutorial de la funcionalidad", "doc de funcionamiento para el cliente", starting from a PR, a change-name or a roadmap.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.13.0"
+  version: "1.13.1"
 ---
 
 # /mala-pata-walkthrough — test walkthrough + customer doc base

@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-apply
+cognitive_tier: standard
 description: "Implement SDD tasks from specs and design. Trigger: orchestrator launches apply for one or more change tasks."
 disable-model-invocation: true
 user-invocable: false

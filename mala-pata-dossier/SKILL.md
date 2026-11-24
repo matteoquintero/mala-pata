@@ -1,10 +1,11 @@
 ---
 name: mala-pata-dossier
+cognitive_tier: standard
 description: CREATES a project DISCOVERY document — captures what the client actually wants BEFORE proposing architecture or features, following a house 6-question framework (CLARIFY / MAP / DECOMPOSE / VERSION 1 / MEASURE / PROTECT). It is the first MODE of a phased documentation family (the project PHASE is a mode; discovery = module 1; scope/build/delivery are future modes). Produces TWO renderings WITHOUT mixing them (Diátaxis) — an internal 6-question traceability doc AND a client-only questionnaire. Two modes — create NEW from a client/project context, or ADOPT an existing discovery doc and normalize it to the standard. It writes to mala-pata/dossier/<slug>.md with a domain; it is READ-ONLY on your projects and NEVER proposes the solution (discovery only). Before writing, it confirms understanding and asks the open questions one at a time (JTBD style). Trigger — "levantá la información de X", "documentá el discovery de <cliente>", "armá el cuestionario de descubrimiento", "qué quiere el cliente en <proyecto>", "normalizá este discovery al estándar".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # /mala-pata-dossier — capture project discovery (does not propose the solution)

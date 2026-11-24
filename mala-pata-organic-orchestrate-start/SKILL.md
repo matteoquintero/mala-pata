@@ -1,10 +1,11 @@
 ---
 name: mala-pata-organic-orchestrate-start
+cognitive_tier: standard
 description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves delivery — in ROUNDS, one per wave. Each round derives the READY wave live against git, creates one worktree per kickoff (anti-stale at origin/<base>), opens one Claude tab per kickoff in the active Warp window (validated tab configs, launch verified) running /mala-pata-organic-start (which keeps per-commit RDD and the smoke gate inside its own tab and STOPS at PR-ready), waits for the wave to reach PR-ready, then runs the CENTRAL delivery itself — one merge-gate table (smoke verdict + RDD outcome per phase), merges in dependency order with migration renumbering, central worktree/branch cleanup — and advances the base for the next round. The orchestrator OWNS merges, cleanups and sequencing between waves. Trigger — "lanzá estos organic en olas", "corré el lote de ODD con merge central", "arrancá la ola de kickoffs organic y mergeá por mí", "orquestá y entregá estos cambios organic".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)

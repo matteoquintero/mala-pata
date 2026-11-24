@@ -1,10 +1,11 @@
 ---
 name: mala-pata-loop-start
+cognitive_tier: standard
 description: Starts and runs the SDD CYCLE from the kickoff that /mala-pata-loop left (by its slug) — explore → propose → spec → design → tasks → preview → apply → verify → archive, one phase at a time (sequential, spec and design NOT in parallel), interactive with a gate per phase. Preview is a MANDATORY human gate between tasks and apply (plain-language walkthrough + anti-duplication). The init is guaranteed by /mala-pata-loop (once per project). Planning goes BEFORE touching code. The brief is input to the cycle, NOT an order to implement directly. Trigger — "arrancá el SDD de este kickoff", "corré el ciclo de <kickoff.md>", "/mala-pata-loop-start <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.30.2"
+  version: "1.30.3"
 ---
 
 # /mala-pata-loop-start — Runs the SDD CYCLE from a kickoff file

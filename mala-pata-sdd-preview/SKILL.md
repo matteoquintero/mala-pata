@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-preview
+cognitive_tier: heavy
 description: >
   Pre-Apply executive summary — a short plain-language walkthrough of what sdd-apply is going to
   do, with a hard human gate that STOPS until approval is obtained. The preview itself reads
@@ -9,7 +10,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "3.11.0"
+  version: "3.11.1"
 ---
 
 # mala-pata-sdd-preview — pre-apply executive summary (hard human gate)

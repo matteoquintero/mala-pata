@@ -1,10 +1,11 @@
 ---
 name: mala-pata-walkthrough-start
+cognitive_tier: standard
 description: RUNS a QA walkthrough that /mala-pata-walkthrough wrote — executes it phase by phase in a real browser via Playwright MCP, leaving EVIDENCE per phase (a screenshot + a Playwright trace) in the repo, with the verdict decided by assertions (not by interpreting the image) and a console/network error gate. Honors the walkthrough's delicacy level: low → the agent runs it and reports with evidence; medium → runs it and flags "review the evidence"; high/delicate → the agent does NOT run the sensitive steps, it seeds + opens the app + hands the step list to the human. Standalone, and also the executor the smoke-test gate delegates to (twin of mala-pata-seed). Trigger — "/mala-pata-walkthrough-start <slug>", "corré el smoke de <feature>", "hacé el walkthrough por browser".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.2"
+  version: "1.6.3"
 ---
 
 # /mala-pata-walkthrough-start — run a walkthrough in the browser, leave evidence

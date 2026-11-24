@@ -1,5 +1,6 @@
 ---
 name: mala-pata-atlas
+cognitive_tier: standard
 description: >
   READ-ONLY QA-coverage planner for a WHOLE large feature — maps the complete
   testable surface (every functionality AND every DB table, anchored to the real
@@ -19,7 +20,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # /mala-pata-atlas — map the complete testable surface of a feature, before any walkthrough is written

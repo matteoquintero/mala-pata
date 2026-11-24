@@ -1,10 +1,11 @@
 ---
 name: mala-pata-states
+cognitive_tier: standard
 description: Given a feature by name, extracts its state machine(s) from the code (enum + guards) and draws them with archify (lifecycle) as a faithful HTML for human visual inspection — onboarding and detection of broken transitions. Read-only on the project's code (does not modify it); does NOT dispatch sdd-*. Trigger — "máquina de estados de <feature>", "diagramá los estados de X", "mala-pata-states <feature>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.7.0"
+  version: "1.7.1"
 ---
 
 # mala-pata-states — Faithful state machine diagram

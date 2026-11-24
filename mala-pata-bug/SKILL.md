@@ -1,10 +1,11 @@
 ---
 name: mala-pata-bug
+cognitive_tier: heavy
 description: ENTRY for a defect whose ROOT CAUSE is UNKNOWN — you cannot size or route the fix because you do not know WHY it happens. It runs a read-only BUG-SPIKE (the `bug` profile of `/mala-pata-research --spike`): reproduce → isolate → root cause → fix options sized by the cause; it writes a finding and hands to `/mala-pata-triage` (which routes the fix shot/organic/loop, and the chosen lane applies `_shared/mala-pata-bug-entry-check.md`). It does NOT fix the code and does NOT decide the lane. If the cause is ALREADY known, this is the WRONG skill → use `/mala-pata-research` (sharpen the fix) → `/mala-pata-triage`. Trigger — "no sé por qué pasa este bug", "investigá por qué falla X", "diagnosticá este error", "bug de causa desconocida", "/mala-pata-bug <defecto>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # /mala-pata-bug — diagnose a defect of unknown root cause (bug-spike entry)

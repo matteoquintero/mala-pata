@@ -1,10 +1,11 @@
 ---
 name: mala-pata-domain-radar
+cognitive_tier: light
 description: READ-ONLY high-level overview of a whole DOMAIN — one level ABOVE mala-pata-roadmap-radar. Given a domain (e.g. `<domain>`), it gathers EVERY mala-pata artifact that belongs to it — research, kickoffs (organics/loops), shots and roadmaps — by the `domain:` frontmatter field + the `Mala-Pata-Domain` commit trailer (so shots, which leave no .md, are found by their commit). It groups them: roadmaps (with a one-line rollup → run roadmap-radar for the phase detail) vs standalone items not under any roadmap. Coarse status (done / in progress / pending) from live git reality. It ALSO shows a completeness view per change — whether its QA walkthrough was run by hand (the `qa_done` human flag), whether it was seeded, whether its state diagram was drawn — plus the domain-level gaps rollup (Release GO/NO-GO) read from the gaps report. It does NOT replace roadmap-radar (phase detail) nor gaps (the full missing-work audit); it is the INDEX + completeness dashboard of a domain. It does NOT orchestrate, execute, or mutate anything. Trigger — "qué se hizo en el dominio <X>", "overview de <dominio>", "todo lo de caja", "domain radar <dominio>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.3.1"
+  version: "2.3.2"
 ---
 
 # /mala-pata-domain-radar — everything in a domain, from a high level

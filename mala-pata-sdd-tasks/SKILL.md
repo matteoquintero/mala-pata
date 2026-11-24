@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-tasks
+cognitive_tier: standard
 description: "Break an SDD change into implementation tasks. Trigger: orchestrator launches task planning for a change."
 disable-model-invocation: true
 user-invocable: false

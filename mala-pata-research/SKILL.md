@@ -1,5 +1,6 @@
 ---
 name: mala-pata-research
+cognitive_tier: heavy
 description: >
   Pre-triage idea shaper; takes a raw idea, researches it (how it is done
   today + limits, anchoring to the code, JTBD), sharpens it with the Heilmeier
@@ -15,7 +16,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.24.0"
+  version: "1.24.1"
 ---
 
 # /mala-pata-research — raw idea shaper (pre-triage)

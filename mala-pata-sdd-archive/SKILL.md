@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-archive
+cognitive_tier: light
 description: "Close an SDD change honestly and record its terminal archive report. Trigger: orchestrator launches archive."
 disable-model-invocation: true
 user-invocable: false

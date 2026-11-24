@@ -1,10 +1,11 @@
 ---
 name: mala-pata-icebox-defrost
+cognitive_tier: standard
 description: PLAN the defrost of an icebox — classify each frozen cube (triage-first, cheap, NO research yet) into "needs research" vs "triage-direct", write an editable approval table to a plan doc, and STOP. It is the PLAN half of the melt (its runner is `/mala-pata-icebox-defrost-start`): you review and EDIT the plan, then run the start to actually research + triage. It does NOT run research, does NOT route, does NOT execute — it only reads the icebox + reasons the triage form-gate per cube and writes `mala-pata/icebox/<slug>-defrost-plan.md` (write-only, no commit). Splitting plan from run keeps the expensive research behind an explicit human approval. Trigger — "planeá el defrost de <slug>", "qué cubes necesitan research", "preparemos el defrost del icebox <slug>", "defrost plan <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.1"
+  version: "0.3.2"
 ---
 
 # /mala-pata-icebox-defrost — plan the melt (classify + approval table, then STOP)

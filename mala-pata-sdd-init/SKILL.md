@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-init
+cognitive_tier: standard
 description: "Trigger: sdd init, iniciar sdd. Initialize SDD context, testing capabilities, and skill registry in engram."
 disable-model-invocation: true
 user-invocable: false

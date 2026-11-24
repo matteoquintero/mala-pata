@@ -1,5 +1,7 @@
 # Lane-routing gate — mala-pata single source of truth
 
+> **Re-read on apply (stale-context guard).** This is a PROCESS canonical — no output signature a hook can check — so the guard is explicit: at the moment you APPLY this rule, re-read THIS file from disk (it is a live symlink; it may have changed since it entered your context) and apply the on-disk version — it wins over any stale copy you hold.
+
 Canonical rule for choosing a lane. Every lane-touching skill (`mala-pata-triage`,
 `mala-pata-research`, `mala-pata-roadmap`, `mala-pata-organic`,
 `mala-pata-icebox-defrost` / `-start`) applies THIS verbatim and never paraphrases

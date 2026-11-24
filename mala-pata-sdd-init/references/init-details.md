@@ -64,6 +64,18 @@ content: registry markdown
 capture_prompt: false when available
 ```
 
+## Project Policy File
+
+Detect and write the per-project delivery policy per `_shared/mala-pata-project-policy.md` to
+`<repo>/mala-pata/project-policy.md` (versioned, idempotent):
+- `integration_base` from git (the branch features merge into — confirm, do not assume).
+- `ci.present` from the repo's workflow files (`.github/workflows`, `.gitlab-ci.yml`, …); `ci.gate`
+  = whether a green run is required before a change lands (ASK if ambiguous).
+- `code_delivery` (`pr` | `direct`) and `delivery_strategy` from the project's convention; ASK the human
+  when unclear — never guess a delivery mode.
+- Do NOT write `strict_tdd` into this file (v4 no-op; it stays in the testing-capabilities result).
+Re-init UPDATES the file in place; it never duplicates it. Report the written path in the output.
+
 ## Testing Capabilities Format
 
 ```markdown

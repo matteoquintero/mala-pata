@@ -1,10 +1,11 @@
 ---
 name: mala-pata-runbook-start
+cognitive_tier: standard
 description: RUNS a runbook created by /mala-pata-runbook — reads the runbook md and executes it step by step, deterministically: recomputes context-dependent values at run time, runs each step's exact Action, compares the real output to the Expected output, and on a mismatch follows the step's "If not as expected" (branch or STOP). Honors preconditions, safety rails, timing gates, rollback and stop/escalation; aborts after N failed attempts instead of looping. Authorization is governed by the runbook's standing_authorization + trigger; destructive/remote steps are gated when it is not standing. It executes ONLY what the runbook documents, against ONLY the targets it names. Trigger — "/mala-pata-runbook-start <slug>", "corré el runbook <slug>", or the runbook's own trigger phrase.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # /mala-pata-runbook-start — run a runbook deterministically

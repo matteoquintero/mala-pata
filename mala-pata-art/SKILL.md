@@ -1,10 +1,11 @@
 ---
 name: mala-pata-art
+cognitive_tier: heavy
 description: Visual judgment / design director — loaded to guide HOW to improve something that does not look right visually, with a cited body of principles (Gestalt, Swiss, Bauhaus, Rams, Vignelli, Albers, Norman, Laws of UX, Refactoring UI, Atomic Design, Component-Driven, Value-Sensitive Design, modern craft) + hard invariants + the project's design system. Given a prompt like "usá este skill para mejorar este artefacto/HTML/componente", it generates an advice MD (the judgment applied to THAT case) and, if asked, applies the improvement in the same run — with the human eye as the final gate. It is to ODD what clean-architecture/solid are to code. It is NOT a router — it does NOT decide or propose organic/loop/shot (it is orthogonal to the lanes). It does NOT use prescriptive palettes/typefaces; the concrete values come from the project's system (the captured standard from /mala-pata-standards — approved rules — when it exists, else read from the code) + the judgment. Trigger — "mejorá visualmente esto", "usá mala-pata-art para…", "esto no me gusta cómo se ve", "guía de diseño para X".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.10.1"
+  version: "1.10.2"
 ---
 
 # /mala-pata-art — visual judgment (design director)

@@ -1,10 +1,11 @@
 ---
 name: mala-pata-organic-orchestrate
+cognitive_tier: standard
 description: READ-ONLY planner for a batch of ORGANIC (ODD) kickoffs — analyzes several kickoffs with `route: organic` and returns a wave plan (dependencies, parallelism, file/migration conflicts, recommended splits, deferrals) + the single copy-paste command that launches wave 1. It does NOT create worktrees, does NOT advance branches, does NOT launch sessions, does NOT merge — /mala-pata-organic-orchestrate-start does that. Organic kickoffs only: loops always need a human and are never batch-orchestrated. Trigger — "planificá estos kickoffs organic en olas", "qué cambios organic puedo correr en paralelo", "orquestá este lote de ODD", "armá el plan de olas de los organic".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # /mala-pata-organic-orchestrate — Plan a BATCH of organic kickoffs (READ-ONLY)

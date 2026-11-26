@@ -1,10 +1,11 @@
 ---
 name: mala-pata-organic-start
+cognitive_tier: standard
 description: Runs the ODD (Organic Driven Development) CYCLE from the kickoff that `/mala-pata-organic` left (by its slug) — worktree+base → explore (this is where the Where is discovered) → resolve uncertainty → classify → (feature-doc if substantial) → implement task-by-task (work-unit commit + RDD per commit) → close (PR/CI/cleanup) → table. The init (`sdd-init`) is guaranteed by `/mala-pata-organic` (once per project). Uses ODD workers (direct/delegated), NEVER `sdd-*` agents — the gentle-ai `PreToolUse:Agent` preflight hook does not apply here. For small work, the phases run in a single pass; the separate kickoff exists for review/handoff, same as in the loop/loop-start pair. Trigger — "arrancá el cambio organic de este kickoff", "corré el ciclo ODD de <kickoff.md>", "/mala-pata-organic-start <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.28.2"
+  version: "1.28.3"
 ---
 
 # /mala-pata-organic-start — Runs the ODD CYCLE from a kickoff file

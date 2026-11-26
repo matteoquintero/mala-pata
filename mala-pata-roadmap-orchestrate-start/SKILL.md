@@ -1,10 +1,11 @@
 ---
 name: mala-pata-roadmap-orchestrate-start
+cognitive_tier: standard
 description: Executes a ROADMAP as a done-aware, route-aware hybrid-by-waves delivery (done phases are skipped; genuine loop phases are excluded and flagged "⚑ needs a human" instead of refusing the roadmap — loops always need a human at their gates; a phase that triage upgrades to loop at run time is paused and handed to the human) — in ROUNDS, one per wave. Each round derives the READY wave live against git (reusing /mala-pata-roadmap-radar's readiness logic), passes each phase through /mala-pata-triage (the roadmap route is only a FORECAST; triage re-decides with current info), creates one worktree per code phase (anti-stale at origin/<base>), opens one Claude tab per phase in the active Warp window (validated tab configs, launch verified) running its resolved lane (shot, or organic + organic-start), and PAUSES on Kind ops phases for human attestation (Verify/Status/Evidence). Per-commit RDD and the phase smoke stay inside each phase's tab, which STOPS at PR-ready; the orchestrator then runs the CENTRAL delivery — one merge-gate table with smoke verdict and RDD outcome, merges in dependency order with migration renumbering, central cleanup — and advances the base for the next round. Trigger — "ejecutá el roadmap <slug> en olas", "corré el roadmap completo con merge central", "arrancá las fases listas del roadmap y mergeá por mí", "orquestá y entregá el roadmap <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.7.1"
 ---
 
 # /mala-pata-roadmap-orchestrate-start — Run a ROADMAP in WAVES (route-aware launch + central delivery)
@@ -147,7 +148,7 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 
 ## Step 3 — Launch the wave as Warp tabs (one agent session per code phase; macOS or Linux)
 - `<agent>` = the CLI this orchestrator runs on (`claude` or `codex`, the Agents table of the wave-launch procedure); verify it is in PATH (`command -v <agent>`). The tab color comes from the agent (claude → red, codex → white), never from the wave or the lane.
-- Run the shared procedure in `_shared/mala-pata-wave-launch.md` under the running agent's skills root (`~/.claude/skills/` for Claude, `~/.codex/skills/` for Codex), resolving its OS primitives from `_shared/mala-pata-platform.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per code phase, ops phases get NO tab; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+- Run the shared procedure in `_shared/mala-pata-wave-launch.md` under the running agent's skills root (`~/.claude/skills/` for Claude, `~/.codex/skills/` for Codex), resolving its OS primitives from `_shared/mala-pata-platform.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per code phase, ops phases get NO tab; each `<worktree>` is the ABSOLUTE worktree path, never the main repo. Resolve each tab's `<model>`/`<effort>` from the phase's RESOLVED lane tier per `_shared/mala-pata-model-policy.md` (project `model_tiers` override → default; orchestrated lanes shot/organic are `standard`); omit the flag when unresolved (fail-open).
 - **Per-tab prompt** (written verbatim to the phase's `.prompt` file; depends on the RESOLVED lane):
   - organic: `Run /mala-pata-organic <phase-slug> with the triage draft, then /mala-pata-organic-start <phase-slug>. wave-mode: this phase is run by /mala-pata-roadmap-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
   - shot: `Run /mala-pata-shot <phase-slug>. wave-mode: commit on this worktree's branch, open a PR, STOP at PR-ready; do NOT merge nor clean up.`

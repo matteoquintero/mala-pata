@@ -1,5 +1,6 @@
 ---
 name: mala-pata-xray
+cognitive_tier: standard
 description: >
   READ-ONLY per-unit detail pass — an x-ray of a unit of work that REVEALS the
   implementation-strategy detail the planning left implicit (cost/budget, the
@@ -19,7 +20,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.1"
+  version: "0.1.2"
 ---
 
 # /mala-pata-xray — reveal the hidden implementation detail of a unit, before executing it

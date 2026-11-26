@@ -1,10 +1,11 @@
 ---
 name: mala-pata-organic-orchestrate-start
+cognitive_tier: standard
 description: Executes a batch of ORGANIC (ODD) kickoffs as a hybrid-by-waves delivery — in ROUNDS, one per wave. Each round derives the READY wave live against git, creates one worktree per kickoff (anti-stale at origin/<base>), opens one Claude tab per kickoff in the active Warp window (validated tab configs, launch verified) running /mala-pata-organic-start (which keeps per-commit RDD and the smoke gate inside its own tab and STOPS at PR-ready), waits for the wave to reach PR-ready, then runs the CENTRAL delivery itself — one merge-gate table (smoke verdict + RDD outcome per phase), merges in dependency order with migration renumbering, central worktree/branch cleanup — and advances the base for the next round. The orchestrator OWNS merges, cleanups and sequencing between waves. Trigger — "lanzá estos organic en olas", "corré el lote de ODD con merge central", "arrancá la ola de kickoffs organic y mergeá por mí", "orquestá y entregá estos cambios organic".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-organic-orchestrate-start — Run a BATCH of organic kickoffs in WAVES (launch + central delivery)
@@ -127,7 +128,7 @@ Verify each worktree ends at `origin/<base>` (`git -C <wt> rev-parse --short HEA
 
 ## Step 3 — Launch the wave as Warp tabs (one agent session per kickoff; macOS or Linux)
 - `<agent>` = the CLI this orchestrator runs on (`claude` or `codex`, the Agents table of the wave-launch procedure); verify it is in PATH (`command -v <agent>`). The tab color comes from the agent (claude → red, codex → white), never from the wave or the lane.
-- Run the shared procedure in `_shared/mala-pata-wave-launch.md` under the running agent's skills root (`~/.claude/skills/` for Claude, `~/.codex/skills/` for Codex), resolving its OS primitives from `_shared/mala-pata-platform.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo.
+- Run the shared procedure in `_shared/mala-pata-wave-launch.md` under the running agent's skills root (`~/.claude/skills/` for Claude, `~/.codex/skills/` for Codex), resolving its OS primitives from `_shared/mala-pata-platform.md` (prompt files, tab configs, validate, open, verify, fallback, cleanup, launch table). `<run-id>` = `<batch-slug>-r<N>-<epoch-seconds>` (unique per run; tab configs are `mpl-<run-id>-<slug>`); one tab per kickoff; each `<worktree>` is the ABSOLUTE worktree path, never the main repo. Resolve each tab's `<model>`/`<effort>` from its lane's tier per `_shared/mala-pata-model-policy.md` (project `model_tiers` override → default; organic is `standard`); omit the flag when unresolved (fail-open).
 - **Per-tab prompt** (written verbatim to the kickoff's `.prompt` file): `/mala-pata-organic-start <absolute-path-of-kickoff.md> -- wave-mode: this phase is run by /mala-pata-organic-orchestrate-start. Run the FULL cycle including per-commit RDD and the smoke gate. At the destination gate choose open a PR (never merge directly); STOP at PR-ready (green CI, PR open, worktree clean). Do NOT merge, do NOT run cleanup 4.5 — the orchestrator merges and cleans centrally.`
 - **Worktree moved/renamed = relaunch, do not fix on the fly.** Sessions stay anchored to the old path and fall back to main; close and relaunch them with the new `directory`.
 - **Resume**: a kickoff `in progress` whose tab is gone gets a fresh tab on its existing worktree (organic-start resumes there); never create a second worktree.

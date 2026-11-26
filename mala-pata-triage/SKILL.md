@@ -1,10 +1,11 @@
 ---
 name: mala-pata-triage
+cognitive_tier: standard
 description: Single front-door of mala-pata. Trigger — any change request, BEFORE touching code. Reads the request, applies the form gate (What + DoD + Decisions), and ANSWERS which lane/skill to run — `/mala-pata-shot`, `/mala-pata-organic`, `/mala-pata-loop` or `/mala-pata-roadmap` — handing the chosen lane the draft of already-inferred fields. It does NOT generate files, does NOT create worktrees, does NOT execute anything: it is a decision skill, not an execution one.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.19.0"
+  version: "1.19.1"
 ---
 
 # /mala-pata-triage — Entry router (decides, does not execute)

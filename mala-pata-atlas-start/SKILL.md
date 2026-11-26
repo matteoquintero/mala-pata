@@ -1,5 +1,6 @@
 ---
 name: mala-pata-atlas-start
+cognitive_tier: standard
 description: >
   RUNS the atlas that `/mala-pata-atlas` wrote — walks its roadmap of
   walkthrough-units phase by phase, in risk order, honoring dependencies, and
@@ -19,7 +20,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.1.2"
+  version: "0.1.3"
 ---
 
 # /mala-pata-atlas-start — run a feature's whole QA atlas, unit by unit, phase by phase

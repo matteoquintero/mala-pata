@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-research
+cognitive_tier: standard
 description: "Trigger: SDD research, external evidence, source-backed research. Investigate optional questions using available authorized sources."
 disable-model-invocation: true
 user-invocable: false

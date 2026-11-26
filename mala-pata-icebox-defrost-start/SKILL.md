@@ -1,10 +1,11 @@
 ---
 name: mala-pata-icebox-defrost-start
+cognitive_tier: standard
 description: RUN an approved defrost plan — the execution half of the melt. Reads the plan doc `/mala-pata-icebox-defrost` wrote (the per-cube research-vs-triage-direct table the human reviewed/edited), then runs research IN PARALLEL on the research-flagged cubes, triages every non-skip cube to inform, and recommends ONE vehicle that covers the WHOLE melted set — a single shot / organic / loop / roadmap, never a cube-by-cube table — stamping each melted cube `thawed` in the icebox. The vehicle is chosen by the whole set's aggregate shape (trivial→shot, specifiable→organic, design-open→loop, genuinely multi-unit→roadmap with the cubes as phases). It RECOMMENDS, it does NOT execute (no worktrees, no kickoffs, no code, no merges) — research is PAID here (only on the approved cubes); the human runs the single emitted command. Trigger — "corré el defrost de <slug>", "defrost start <slug>", "ejecutá el plan de defrost", "ya aprobé el plan, derretí <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.3.1"
+  version: "0.3.2"
 ---
 
 # /mala-pata-icebox-defrost-start — run the approved defrost plan

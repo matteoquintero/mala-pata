@@ -23,8 +23,13 @@ orchestrator itself runs on). The tab color identifies the agent, never the wave
 
 | Agent | Tab command (`<agent-cmd>`) | Process match (late-start guard) | Tab `color` |
 |---|---|---|---|
-| `claude` | `claude "$(cat '<prompt-file>')"` | `pgrep -x claude` | `red` |
-| `codex` | `codex "$(cat '<prompt-file>')"` | `pgrep -f codex` (the cwd check filters false hits) | `white` |
+| `claude` | `claude --model <model> "$(cat '<prompt-file>')"` | `pgrep -x claude` | `red` |
+| `codex` | `codex -c model_reasoning_effort=<effort> "$(cat '<prompt-file>')"` | `pgrep -f codex` (the cwd check filters false hits) | `white` |
+
+`<model>` (Claude) / `<effort>` (Codex) is resolved from the item's phase TIER per `model-policy.md`
+(project `model_tiers` override → shipped default). If the consumer cannot resolve a tier for an item,
+it passes NO model/effort for that item and the flag is OMITTED entirely (the tab runs on the agent's
+own session default) — fail-open, never guess a model.
 
 An agent not in this table → skip this procedure and return the per-worktree commands. Warp accepts
 only `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white` as `color` (the shade comes
@@ -32,8 +37,9 @@ from the active theme; no hex, no per-tab background); never write any other val
 
 ## Inputs (from the consumer)
 
-Per item: `<slug>`, `<worktree>` (ABSOLUTE path, never the main repo), and the prompt text the tab
-runs. Plus `<agent>` (default `claude`) and one `<run-id>` for the round, UNIQUE per orchestration run
+Per item: `<slug>`, `<worktree>` (ABSOLUTE path, never the main repo), the prompt text the tab runs, and
+`<model>`/`<effort>` resolved from the item's phase tier (per `model-policy.md`; omit when the tier is
+unknown). Plus `<agent>` (default `claude`) and one `<run-id>` for the round, UNIQUE per orchestration run
 (e.g. `<roadmap-or-batch-slug>-r<N>-<epoch-seconds>`), so concurrent runs, or same-slug phases from
 different repos, never share a file name.
 
@@ -56,7 +62,8 @@ different repos, never share a file name.
    commands = ["touch '<sentinel>' && <agent-cmd>"]
    ```
    `<agent-cmd>` keeps its inner double quotes escaped inside the TOML string, e.g. for claude:
-   `commands = ["touch '<sentinel>' && claude \"$(cat '<prompt-file>')\""]`.
+   `commands = ["touch '<sentinel>' && claude --model <model> \"$(cat '<prompt-file>')\""]`
+   (omit `--model <model>` when no tier resolved; the codex row uses `-c model_reasoning_effort=<effort>`).
 3. **Validate BEFORE opening**, per file: `<toml-check> <file>`. On a parse failure: STOP, show the
    parser error, open nothing. Validation unavailable (no `tomllib`/`tomli`) is also a STOP.
 4. **Open serially**, short pause (~2s) between tabs: `<warp-open> "warp://tab_config/mpl-<run-id>-<slug>"`.

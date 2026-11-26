@@ -1,10 +1,11 @@
 ---
 name: mala-pata-gaps
+cognitive_tier: standard
 description: READ-ONLY completeness auditor for a DOMAIN — given one or several roadmaps of the same domain + the real CODE, it finds what is missing to cover the total objective and classifies each gap by disposition — `open` (attack now), `deferred` (parked behind an explicit gate), or `closed` (already absorbed). Even if all phases are finished, something may be missing. It cross-checks 3 sources — the total objective (roadmaps), the follow-ups already NOTED (Level-2 / deferred / extra proposals not done / TODO-FIXME in code) and the gaps INFERRED from the code (codegraph/serena, anchored to evidence). Each gap comes out with a disposition (open/deferred/closed), tagged [noted] or [inferred], with evidence (file:line or the annotation); deferred gaps name the gate that parks them. It does NOT look only at the .md — it analyzes the code. It does NOT execute phases or touch code — it leaves its report in mala-pata/gaps/<domain>.md (versioned) + an engram pointer, and suggests routing. Different from mala-pata-roadmap-radar (that one is phase status vs git; this one is completeness of the objective). Trigger — "tenemos follow ups", "gaps de <dominio>", "qué falta del dominio <X>", "qué falta para cubrir <objetivo>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.14.0"
+  version: "1.14.1"
 ---
 
 # /mala-pata-gaps — what is missing to cover a domain's objective (against the code)

@@ -1,10 +1,11 @@
 ---
 name: mala-pata-roadmap-radar
+cognitive_tier: light
 description: READ-ONLY status of a ROADMAP (not of loose SDDs — that is /mala-pata-radar). Takes a domain's roadmap .md (versioned in the repo, NOT memory), derives the state of EACH phase LIVE against git (done / in progress / pending / blocked), and shows a fixed table + what is ready to start now, which can go in parallel, and the stage-aware next command per ready phase (pipeline triage → lane → -start, as copy-paste text). It does NOT look at engram, does NOT orchestrate, does NOT execute, does NOT mutate anything. Fixed, immutable output format. Trigger — "status del roadmap", "cómo va el roadmap de <dominio>", "avance del roadmap <slug>", or the path/slug of a roadmap.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.15.2"
+  version: "1.15.3"
 ---
 
 # /mala-pata-roadmap-radar — progress of a roadmap against git (fixed format)

@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-verify
+cognitive_tier: standard
 description: "Trigger: explicitly requested SDD verification. Run optional practical diagnostics against available implementation and artifacts."
 disable-model-invocation: true
 user-invocable: false

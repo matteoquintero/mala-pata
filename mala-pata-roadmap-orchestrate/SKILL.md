@@ -1,10 +1,11 @@
 ---
 name: mala-pata-roadmap-orchestrate
+cognitive_tier: standard
 description: READ-ONLY wave/execution planner for a ROADMAP — done-aware and route-accurate: it drops done phases, resolves each remaining phase's ACTUAL route, plans the shot/organic phases in waves and excludes genuine loop phases with a "⚑ needs a human" flag (loops always need a human at their gates; the roadmap is never refused as a whole) — takes a roadmap slug or .md path, derives each phase's state LIVE against git (reusing /mala-pata-roadmap-radar's readiness logic), and returns the execution plan: which phases are ready now, which parallelize in this wave, which are deferred, which are ops phases (human-attested), which are blocked and why, plus the single copy-paste /mala-pata-roadmap-orchestrate-start <slug>. It is to roadmap-orchestrate-start what roadmap-radar is to execution, but focused on the WAVE plan rather than pure status. It does NOT execute, does NOT create worktrees, does NOT launch, does NOT mutate. Trigger — "planificá las olas del roadmap <slug>", "qué fases del roadmap puedo correr en paralelo ahora", "plan de ejecución del roadmap", "orquestá el roadmap <slug>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # /mala-pata-roadmap-orchestrate — Wave plan of a ROADMAP (READ-ONLY)

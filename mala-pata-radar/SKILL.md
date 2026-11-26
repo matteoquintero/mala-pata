@@ -1,5 +1,6 @@
 ---
 name: mala-pata-radar
+cognitive_tier: light
 description: >
   READ-ONLY SDD radar — discovers AND diagnoses in a single run (absorbs the
   former control tower). Phase A: discovers the active SDDs in memory
@@ -14,7 +15,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "4.9.0"
+  version: "4.9.1"
 ---
 
 # /mala-pata-radar — SDD radar (discover + diagnose, read-only)

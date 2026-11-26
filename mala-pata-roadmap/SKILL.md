@@ -1,5 +1,6 @@
 ---
 name: mala-pata-roadmap
+cognitive_tier: heavy
 description: >
   Planning layer ABOVE the lanes (organic/loop), routed by /mala-pata-triage.
   Receives ONE large objective, analyzes it, researches how it is solved (web + how the big players
@@ -15,7 +16,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "2.24.0"
+  version: "2.24.1"
 ---
 
 # /mala-pata-roadmap — large objective → DAG of unit-sized phases (organic or loop)

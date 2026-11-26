@@ -1,10 +1,11 @@
 ---
 name: mala-pata-playbook-start
+cognitive_tier: standard
 description: RUNS a playbook created by /mala-pata-playbook — walks its decision tree for a real situation: confirms the entry signals, gathers evidence and commits to a route before acting, evaluates each branch's condition against OBSERVED evidence (first match wins; Others is the fallback), then executes that branch inline or hands off to a runbook via /mala-pata-runbook-start. STOPS instead of guessing when the evidence is ambiguous, matches several branches, or fits none. Honors the playbook's principles, gotchas, roles and escalation; verifies the exit criteria; appends a per-case finding. Trigger — "/mala-pata-playbook-start <slug>", "corré el playbook <slug>", or the scenario's own signal.
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.5.0"
+  version: "1.5.1"
 ---
 
 # /mala-pata-playbook-start — run a playbook (walk the decision tree)

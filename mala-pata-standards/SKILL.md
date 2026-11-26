@@ -1,10 +1,11 @@
 ---
 name: mala-pata-standards
+cognitive_tier: standard
 description: HARVESTS and ORGANIZES a project's STANDARD into a captured, versioned, well-ordered artifact — the VISUAL language and the INTERACTION / LAYOUT conventions (where things go, how components behave), inferred READ-ONLY from the repeated patterns in the real CODE and the stated conventions in the project's DOCUMENTATION, so the rest of the suite can GROUND against it instead of guessing. It does NOT invent the standard — where the project is INCONSISTENT (or where code and docs disagree) it shows the variants and ASKS the human which one IS the standard; it never picks for them. Nothing enters the captured standard without the human's explicit per-rule approval — the foundation is approve-each-one-by-one (heavy on purpose), lighter after. It writes the standard into an ORDERED two-level structure (an open set of AREAS × bounded-context, each area decomposed by its discipline's recognized internal model) — not one flat md. Three modes — harvest FRESH from code + docs, ADOPT an existing standards doc and normalize it, or REORGANIZE an already-messy standards folder into the ordered structure. v1 captured scope is visual + interaction/layout; code / structural conventions (naming, folder architecture) are a named FUTURE layer, out of v1 — but the structure RESERVES their slots. Writes under mala-pata/standards/ with a domain; READ-ONLY on the project (it captures, it never changes code). Trigger — "estandarizá el proyecto", "capturá el estándar de <área>", "organizá los estándares del proyecto", "buscá el estándar en el código y la documentación", "ordená la carpeta de estándares", "cuál es el estándar de los modales / botones / pantallas", "armá el design standard de <proyecto>", "normalizá este estándar al formato".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "0.4.1"
+  version: "0.4.2"
 ---
 
 # /mala-pata-standards — capture AND order a project's standard (harvest, do not invent)

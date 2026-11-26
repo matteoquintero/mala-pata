@@ -1,5 +1,6 @@
 ---
 name: mala-pata-sdd-onboard
+cognitive_tier: light
 description: "Walk users through the SDD workflow on the real codebase. Trigger: orchestrator launches onboarding for the full SDD cycle."
 disable-model-invocation: true
 user-invocable: false

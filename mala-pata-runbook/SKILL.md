@@ -1,10 +1,11 @@
 ---
 name: mala-pata-runbook
+cognitive_tier: standard
 description: CREATES a runbook/playbook — a markdown that tells an agent (or human) how to execute an operational task step by step, with the EXPECTED OUTPUT of each step, so the execution is deterministic and self-verifiable (runbooks-as-agent-instructions). Two modes — create a NEW runbook from a task description, or ADOPT an existing doc and normalize it to the standard. It writes the runbook to mala-pata/runbooks/<slug>.md with a domain; it is READ-ONLY on your projects and NEVER executes the runbook (the runner is a separate skill). Before writing, it confirms understanding and asks the open decisions one at a time. Trigger — "creá un runbook para X", "armá el playbook de X", "normalizá este runbook al estándar", "runbook de <tarea operativa>".
 license: Apache-2.0
 metadata:
   author: matteoquintero
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # /mala-pata-runbook — create a deterministic runbook (does not run it)
